@@ -118,3 +118,6 @@ assets/images/security/badrudi-exploit.mp4
 # Local review markers
 .opencode/code-review-quick-base
 .opencode/markers/
+
+# Playwright MCP local state
+.playwright-mcp/

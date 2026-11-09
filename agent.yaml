@@ -58,6 +58,7 @@ skills:
   - database-migrations
   - deep-research
   - deployment-patterns
+  - design-build
   - design-contract-system
   - design-system
   - django-patterns
@@ -269,6 +270,8 @@ commands:
   - refactor-clean
   - resume-session
   - review-pr
+  - rules-add
+  - rules-map
   - rust-build
   - rust-review
   - rust-test

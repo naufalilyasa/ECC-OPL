@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "totalCommands": 99,
+  "totalCommands": 102,
   "commands": [
     {
       "command": "aside",
@@ -132,6 +132,18 @@
         "redis-patterns"
       ],
       "path": "commands/database-review.md"
+    },
+    {
+      "command": "design-build",
+      "description": "Build a frontend page section by section with an interactive canvas approval loop. Policy lives in the design-build skill; this shim carries only the arguments and the host CLI adapters.",
+      "type": "review",
+      "primaryAgents": [],
+      "allAgents": [],
+      "skills": [
+        "design-build",
+        "plan-canvas"
+      ],
+      "path": "commands/design-build.md"
     },
     {
       "command": "ecc-guide",
@@ -916,6 +928,24 @@
       "path": "commands/review-pr.md"
     },
     {
+      "command": "rules-add",
+      "description": "Add or revise a project rule with owner approval - draft it, conflict-check it, then write only after explicit confirmation",
+      "type": "review",
+      "primaryAgents": [],
+      "allAgents": [],
+      "skills": [],
+      "path": "commands/rules-add.md"
+    },
+    {
+      "command": "rules-map",
+      "description": "Inventory the rules that already govern this project and report duplicates, conflicts, staleness, and unenforced rules without changing anything",
+      "type": "review",
+      "primaryAgents": [],
+      "allAgents": [],
+      "skills": [],
+      "path": "commands/rules-map.md"
+    },
+    {
       "command": "rust-build",
       "description": "Fix Rust build errors, borrow checker issues, and dependency problems incrementally. Invokes the rust-build-resolver agent for minimal, surgical fixes.",
       "type": "testing",
@@ -1101,7 +1131,7 @@
       "orchestration": 13,
       "planning": 2,
       "refactoring": 1,
-      "review": 16,
+      "review": 19,
       "testing": 53
     },
     "topAgents": [
@@ -1176,15 +1206,15 @@
         "count": 3
       },
       {
+        "skill": "plan-canvas",
+        "count": 3
+      },
+      {
         "skill": "rust-patterns",
         "count": 3
       },
       {
         "skill": "cpp-coding-standards",
-        "count": 2
-      },
-      {
-        "skill": "cpp-testing",
         "count": 2
       }
     ]

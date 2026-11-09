@@ -473,6 +473,18 @@
       "description": "Create a detailed implementation plan for complex features",
       "template": "{file:commands/plan.md}\n\n$ARGUMENTS"
     },
+    "rules-map": {
+      "description": "Inventory existing project rules and report duplicates, conflicts, and gaps without changing anything",
+      "template": "{file:commands/rules-map.md}\n\n$ARGUMENTS"
+    },
+    "rules-add": {
+      "description": "Add or revise a project rule with owner approval",
+      "template": "{file:commands/rules-add.md}\n\n$ARGUMENTS"
+    },
+    "design-build": {
+      "description": "Build a frontend section by section with an interactive canvas review loop: material, taste deal, frozen contract, per-section approve, purpose-driven assets, scaffold, and anti-slop gate",
+      "template": "{file:commands/design-build.md}\n\n$ARGUMENTS"
+    },
     "tdd": {
       "description": "Enforce TDD workflow with 80%+ test coverage",
       "template": "{file:commands/tdd.md}\n\n$ARGUMENTS"
