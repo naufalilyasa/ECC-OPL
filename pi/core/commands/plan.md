@@ -30,12 +30,14 @@ Use `/plan` when:
 The assistant will:
 
 1. **Analyze the request** and restate requirements in clear terms
-2. **Ground the plan** in relevant codebase patterns when the repo is available
-3. **Break down into phases** with specific, actionable steps
-4. **Identify dependencies** between components
-5. **Assess risks** and potential blockers
-6. **Estimate complexity** (High/Medium/Low)
-7. **Present the plan** and WAIT for your explicit confirmation
+2. **Name the affected user and ideal state**, recording IS-n / GAP-n rows; every task must close a GAP row
+3. **Ground the plan** in relevant codebase patterns when the repo is available
+4. **Break down into phases** with specific, actionable steps
+5. **Run the gap pass** (contradictions, ambiguity, missing constraints, execution risks, topology, brownfield) and resolve findings before writing
+6. **Identify dependencies** between components
+7. **Assess risks** and potential blockers
+8. **Estimate complexity** (High/Medium/Low)
+9. **Present the plan** and WAIT for your explicit confirmation
 
 ## Input Modes
 
@@ -76,6 +78,21 @@ When called with a `.prd.md` file, write the plan to `.claude/plans/{kebab-case-
 ## Summary
 {2-3 sentences}
 
+## Affected User and Ideal State
+**Affected user**: {who, and how they use it today and after}
+
+| Row | Statement | Reason |
+|---|---|---|
+| IS-1 | {what the user does, sees, or never has break} | {why} |
+| GAP-1 | {how today differs from IS-1} | {why it matters} |
+
+## Scope
+### Must have
+- {requirement}
+
+### Must NOT have
+- {what this plan deliberately does not do}
+
 ## Patterns to Mirror
 | Category | Source | Pattern |
 |---|---|---|
@@ -91,8 +108,11 @@ When called with a `.prd.md` file, write the plan to `.claude/plans/{kebab-case-
 ## Tasks
 ### Task 1: {name}
 - **Action**: {what to do}
+- **Closes**: GAP-n
 - **Mirror**: {pattern to follow}
+- **References**: {paths the executor must read first}
 - **Validate**: {command that proves correctness}
+- **QA**: happy - {tool + steps + expected result + evidence path}; failure - {same for the failure path}
 
 ## Validation
 ```bash
@@ -103,10 +123,17 @@ When called with a `.prd.md` file, write the plan to `.claude/plans/{kebab-case-
 | Risk | Likelihood | Mitigation |
 |---|---|---|
 
+## Decisions I made for you
+| Decision | Default chosen | Reversible? |
+|---|---|---|
+| {fork} | {choice} | yes/no |
+
 ## Acceptance
 - [ ] All tasks complete
 - [ ] Validation passes
 - [ ] Patterns mirrored, not reinvented
+- [ ] Every IS row proven by a success criterion with QA evidence
+- [ ] Every task closes a GAP row
 ````
 
 After writing the artifact, report its path and WAIT for confirmation before writing code.
@@ -186,6 +213,7 @@ If you want changes, respond with:
 ## Integration with Other Commands
 
 After planning:
+- Verify the written plan with the `plan-reviewer` subagent. It runs two passes - executability (references exist, tasks startable, no critical blocker, QA scenarios executable) and adversarial (ideal-state fidelity, scope creep, contradictions, unvalidated assumptions, undefined success) - then returns one verdict, and treats APPROVE with notes as approval. Cap the loop at 3 rounds; later rounds verify accepted blockers and regressions from fixes, never a fresh full review.
 - Use `/plan-canvas` to run the confirmation gate visually in the browser (annotate + approve)
 - Use the `tdd-workflow` skill to implement with test-driven development
 - Use `/build-fix` if build errors occur

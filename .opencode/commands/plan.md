@@ -33,9 +33,11 @@ subagent(agent="planner", description="Plan: <feature-or-task-slug>")
 ## Planning Directives
 1. Follow your system prompt: announce Intent (CLEAR vs UNCLEAR).
 2. If outcome is CLEAR, ask only surviving owner-decision forks. If UNCLEAR, research and adopt best-practice defaults.
-3. Write the finalized plan to docs/plans/<slug>.plan.md.
-4. Include: Requirements, Architecture Changes, Implementation Phases with file paths, Testing Strategy (unit/integration/E2E), Risks & Mitigations, and Success Criteria.
-5. Do NOT execute or implement any code."
+3. Before writing, name the affected user and record IS-n / GAP-n rows. Every task closes a GAP row.
+4. Run the inline gap pass (contradictions, ambiguity, missing constraints, execution risks, topology, brownfield) and resolve findings before writing.
+5. Write the finalized plan to docs/plans/<slug>.plan.md.
+6. Include: Affected User and Ideal State (IS/GAP table), Requirements with Must have / Must NOT have, Architecture Changes, Implementation Phases with file paths and per-step References + Acceptance + happy/failure QA, Testing Strategy, Risks & Mitigations, Decisions I made for you, and Success Criteria mapped to IS rows.
+7. Do NOT execute or implement any code."
 ```
 
 ### 3. Present & Gate

@@ -15,6 +15,7 @@ You are the Lead Orchestrator handling the `/tdd` command. Your job is to gather
 Gather the target specification from the active session:
 - **Target Feature/Function**: If `$ARGUMENTS` is provided, that is your target. If `$ARGUMENTS` is empty, extract the function, component, or bug just discussed in this session.
 - **Interfaces & Types**: Include any schemas, types, or data models established in recent turns.
+- **Plan Artifact**: If `docs/plans/<slug>.plan.md` exists (written by `/plan`), read it. Take each task's Acceptance and its happy + failure QA scenarios as the required test list, and its GAP rows as the behavior to prove. Do not invent a test list the plan already specifies.
 - **Test Runner Context**: Detect the project test runner (npm, Bun, pnpm, Vitest, Jest, pytest, cargo test) and note it.
 
 ### 2. Dispatch TDD-Guide Subagent
@@ -30,12 +31,18 @@ subagent(agent="tdd-guide", description="TDD: <feature-or-function>")
 ## Session Context
 <recent context, interfaces, and constraints from this session>
 
+## Plan Context
+Plan file: <path, or "none">
+Required tests from the plan's Acceptance + QA:
+- <task>: happy - <scenario>; failure - <scenario>
+
 ## Mandatory TDD Rules
 1. RED: Write the failing test FIRST and verify it fails for the right reason.
 2. GREEN: Write the minimal implementation to pass the test.
 3. REFACTOR: Improve code cleanliness while keeping all tests passing.
 4. Target 80%+ test coverage across unit and integration tests.
-5. Do not write production code without an existing failing test."
+5. Do not write production code without an existing failing test.
+6. If a plan file is supplied, every Acceptance criterion and QA scenario in it must be covered. A missing one is an unfinished task, not an optional extra."
 ```
 
 ### 3. Report to User
