@@ -1,0 +1,2898 @@
+{
+  "schema_version": 1,
+  "verified_at": "2026-09-06T00:49:04+00:00",
+  "google_fonts_revision": "5e35378e6bda803962ee6fd257e444a7d459660d",
+  "verification_scope": "Pinned repository METADATA.pb only. CSS delivery, actual glyphs, shaping and OpenType features require separate checks.",
+  "families": [
+    {
+      "family": "Alegreya",
+      "category": "SERIF",
+      "designer": "Juan Pablo del Peral, HT Fonts",
+      "license": "OFL",
+      "repository_path": "ofl/alegreya",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/alegreya/METADATA.pb",
+      "metadata_sha256": "9bff810f5954762cad87d175c60b4bd7a5dbd1c6deb2540c56dfaf1186d5f5fc",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/alegreya/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/Alegreya",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "cyrillic",
+        "cyrillic-ext",
+        "greek",
+        "greek-ext",
+        "latin",
+        "latin-ext",
+        "menu",
+        "vietnamese"
+      ],
+      "axes": {
+        "wght": {
+          "min": 400.0,
+          "max": 900.0
+        }
+      },
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "Alegreya[wght].ttf",
+          "variable_axes": [
+            "wght"
+          ],
+          "weight_range": {
+            "min": 400.0,
+            "max": 900.0
+          }
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 400.0,
+          "filename": "Alegreya-Italic[wght].ttf",
+          "variable_axes": [
+            "wght"
+          ],
+          "weight_range": {
+            "min": 400.0,
+            "max": 900.0
+          }
+        }
+      ],
+      "upstream_url": "https://github.com/huertatipografica/Alegreya",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "Alegreya Sans",
+      "category": "SANS_SERIF",
+      "designer": "Juan Pablo del Peral, HT Fonts",
+      "license": "OFL",
+      "repository_path": "ofl/alegreyasans",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/alegreyasans/METADATA.pb",
+      "metadata_sha256": "3b4bf3eae006b88adad1c8a73ba4701d0847eb92f89f531ea5a61abe53a29e97",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/alegreyasans/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/Alegreya+Sans",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "cyrillic",
+        "cyrillic-ext",
+        "greek",
+        "greek-ext",
+        "latin",
+        "latin-ext",
+        "menu",
+        "vietnamese"
+      ],
+      "axes": {},
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 100.0,
+          "filename": "AlegreyaSans-Thin.ttf",
+          "variable_axes": [],
+          "weight": 100.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 100.0,
+          "filename": "AlegreyaSans-ThinItalic.ttf",
+          "variable_axes": [],
+          "weight": 100.0
+        },
+        {
+          "style": "normal",
+          "metadata_weight": 300.0,
+          "filename": "AlegreyaSans-Light.ttf",
+          "variable_axes": [],
+          "weight": 300.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 300.0,
+          "filename": "AlegreyaSans-LightItalic.ttf",
+          "variable_axes": [],
+          "weight": 300.0
+        },
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "AlegreyaSans-Regular.ttf",
+          "variable_axes": [],
+          "weight": 400.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 400.0,
+          "filename": "AlegreyaSans-Italic.ttf",
+          "variable_axes": [],
+          "weight": 400.0
+        },
+        {
+          "style": "normal",
+          "metadata_weight": 500.0,
+          "filename": "AlegreyaSans-Medium.ttf",
+          "variable_axes": [],
+          "weight": 500.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 500.0,
+          "filename": "AlegreyaSans-MediumItalic.ttf",
+          "variable_axes": [],
+          "weight": 500.0
+        },
+        {
+          "style": "normal",
+          "metadata_weight": 700.0,
+          "filename": "AlegreyaSans-Bold.ttf",
+          "variable_axes": [],
+          "weight": 700.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 700.0,
+          "filename": "AlegreyaSans-BoldItalic.ttf",
+          "variable_axes": [],
+          "weight": 700.0
+        },
+        {
+          "style": "normal",
+          "metadata_weight": 800.0,
+          "filename": "AlegreyaSans-ExtraBold.ttf",
+          "variable_axes": [],
+          "weight": 800.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 800.0,
+          "filename": "AlegreyaSans-ExtraBoldItalic.ttf",
+          "variable_axes": [],
+          "weight": 800.0
+        },
+        {
+          "style": "normal",
+          "metadata_weight": 900.0,
+          "filename": "AlegreyaSans-Black.ttf",
+          "variable_axes": [],
+          "weight": 900.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 900.0,
+          "filename": "AlegreyaSans-BlackItalic.ttf",
+          "variable_axes": [],
+          "weight": 900.0
+        }
+      ],
+      "upstream_url": "https://github.com/huertatipografica/Alegreya-Sans",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "Archivo",
+      "category": "SANS_SERIF",
+      "designer": "Omnibus-Type",
+      "license": "OFL",
+      "repository_path": "ofl/archivo",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/archivo/METADATA.pb",
+      "metadata_sha256": "a2e8f63ffa4f9dfe43a65c349b4742e9cd85298802aed890a6315152f2ae231d",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/archivo/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/Archivo",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "latin",
+        "latin-ext",
+        "menu",
+        "vietnamese"
+      ],
+      "axes": {
+        "wdth": {
+          "min": 62.0,
+          "max": 125.0
+        },
+        "wght": {
+          "min": 100.0,
+          "max": 900.0
+        }
+      },
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "Archivo[wdth,wght].ttf",
+          "variable_axes": [
+            "wdth",
+            "wght"
+          ],
+          "weight_range": {
+            "min": 100.0,
+            "max": 900.0
+          }
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 400.0,
+          "filename": "Archivo-Italic[wdth,wght].ttf",
+          "variable_axes": [
+            "wdth",
+            "wght"
+          ],
+          "weight_range": {
+            "min": 100.0,
+            "max": 900.0
+          }
+        }
+      ],
+      "upstream_url": "https://github.com/Omnibus-Type/Archivo",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "Archivo Black",
+      "category": "SANS_SERIF",
+      "designer": "Omnibus-Type",
+      "license": "OFL",
+      "repository_path": "ofl/archivoblack",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/archivoblack/METADATA.pb",
+      "metadata_sha256": "def0eb81b3f0d8739a25566ce484cac9e396ad46108a02a809dd8a04c26bfdc5",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/archivoblack/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/Archivo+Black",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "latin",
+        "latin-ext",
+        "menu"
+      ],
+      "axes": {},
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "ArchivoBlack-Regular.ttf",
+          "variable_axes": [],
+          "weight": 400.0
+        }
+      ],
+      "upstream_url": "https://github.com/Omnibus-Type/ArchivoBlack",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "Atkinson Hyperlegible Next",
+      "category": "SANS_SERIF",
+      "designer": "Braille Institute, Applied Design Works, Elliott Scott, Megan Eiswerth, Letters From Sweden",
+      "license": "OFL",
+      "repository_path": "ofl/atkinsonhyperlegiblenext",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/atkinsonhyperlegiblenext/METADATA.pb",
+      "metadata_sha256": "9d0050e8a74b976099f69ba23a25063b60deeb91eae89388bb20dffb5b4a5669",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/atkinsonhyperlegiblenext/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/Atkinson+Hyperlegible+Next",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "latin",
+        "latin-ext",
+        "menu"
+      ],
+      "axes": {
+        "wght": {
+          "min": 200.0,
+          "max": 800.0
+        }
+      },
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "AtkinsonHyperlegibleNext[wght].ttf",
+          "variable_axes": [
+            "wght"
+          ],
+          "weight_range": {
+            "min": 200.0,
+            "max": 800.0
+          }
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 400.0,
+          "filename": "AtkinsonHyperlegibleNext-Italic[wght].ttf",
+          "variable_axes": [
+            "wght"
+          ],
+          "weight_range": {
+            "min": 200.0,
+            "max": 800.0
+          }
+        }
+      ],
+      "upstream_url": "https://github.com/googlefonts/atkinson-hyperlegible-next",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "Barlow",
+      "category": "SANS_SERIF",
+      "designer": "Jeremy Tribby",
+      "license": "OFL",
+      "repository_path": "ofl/barlow",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/barlow/METADATA.pb",
+      "metadata_sha256": "636e983a5a87c2d7aa3ff9f6544f65910eac0c8537a2a8b29c584d786770d878",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/barlow/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/Barlow",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "latin",
+        "latin-ext",
+        "menu",
+        "vietnamese"
+      ],
+      "axes": {},
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 100.0,
+          "filename": "Barlow-Thin.ttf",
+          "variable_axes": [],
+          "weight": 100.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 100.0,
+          "filename": "Barlow-ThinItalic.ttf",
+          "variable_axes": [],
+          "weight": 100.0
+        },
+        {
+          "style": "normal",
+          "metadata_weight": 200.0,
+          "filename": "Barlow-ExtraLight.ttf",
+          "variable_axes": [],
+          "weight": 200.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 200.0,
+          "filename": "Barlow-ExtraLightItalic.ttf",
+          "variable_axes": [],
+          "weight": 200.0
+        },
+        {
+          "style": "normal",
+          "metadata_weight": 300.0,
+          "filename": "Barlow-Light.ttf",
+          "variable_axes": [],
+          "weight": 300.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 300.0,
+          "filename": "Barlow-LightItalic.ttf",
+          "variable_axes": [],
+          "weight": 300.0
+        },
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "Barlow-Regular.ttf",
+          "variable_axes": [],
+          "weight": 400.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 400.0,
+          "filename": "Barlow-Italic.ttf",
+          "variable_axes": [],
+          "weight": 400.0
+        },
+        {
+          "style": "normal",
+          "metadata_weight": 500.0,
+          "filename": "Barlow-Medium.ttf",
+          "variable_axes": [],
+          "weight": 500.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 500.0,
+          "filename": "Barlow-MediumItalic.ttf",
+          "variable_axes": [],
+          "weight": 500.0
+        },
+        {
+          "style": "normal",
+          "metadata_weight": 600.0,
+          "filename": "Barlow-SemiBold.ttf",
+          "variable_axes": [],
+          "weight": 600.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 600.0,
+          "filename": "Barlow-SemiBoldItalic.ttf",
+          "variable_axes": [],
+          "weight": 600.0
+        },
+        {
+          "style": "normal",
+          "metadata_weight": 700.0,
+          "filename": "Barlow-Bold.ttf",
+          "variable_axes": [],
+          "weight": 700.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 700.0,
+          "filename": "Barlow-BoldItalic.ttf",
+          "variable_axes": [],
+          "weight": 700.0
+        },
+        {
+          "style": "normal",
+          "metadata_weight": 800.0,
+          "filename": "Barlow-ExtraBold.ttf",
+          "variable_axes": [],
+          "weight": 800.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 800.0,
+          "filename": "Barlow-ExtraBoldItalic.ttf",
+          "variable_axes": [],
+          "weight": 800.0
+        },
+        {
+          "style": "normal",
+          "metadata_weight": 900.0,
+          "filename": "Barlow-Black.ttf",
+          "variable_axes": [],
+          "weight": 900.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 900.0,
+          "filename": "Barlow-BlackItalic.ttf",
+          "variable_axes": [],
+          "weight": 900.0
+        }
+      ],
+      "upstream_url": "https://github.com/jpt/barlow",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "Barlow Condensed",
+      "category": "SANS_SERIF",
+      "designer": "Jeremy Tribby",
+      "license": "OFL",
+      "repository_path": "ofl/barlowcondensed",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/barlowcondensed/METADATA.pb",
+      "metadata_sha256": "fdb9c7b3c0c2c1069bc0193f0b72fb95efef36dc155c281e307da71b7dcfc558",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/barlowcondensed/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/Barlow+Condensed",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "latin",
+        "latin-ext",
+        "menu",
+        "vietnamese"
+      ],
+      "axes": {},
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 100.0,
+          "filename": "BarlowCondensed-Thin.ttf",
+          "variable_axes": [],
+          "weight": 100.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 100.0,
+          "filename": "BarlowCondensed-ThinItalic.ttf",
+          "variable_axes": [],
+          "weight": 100.0
+        },
+        {
+          "style": "normal",
+          "metadata_weight": 200.0,
+          "filename": "BarlowCondensed-ExtraLight.ttf",
+          "variable_axes": [],
+          "weight": 200.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 200.0,
+          "filename": "BarlowCondensed-ExtraLightItalic.ttf",
+          "variable_axes": [],
+          "weight": 200.0
+        },
+        {
+          "style": "normal",
+          "metadata_weight": 300.0,
+          "filename": "BarlowCondensed-Light.ttf",
+          "variable_axes": [],
+          "weight": 300.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 300.0,
+          "filename": "BarlowCondensed-LightItalic.ttf",
+          "variable_axes": [],
+          "weight": 300.0
+        },
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "BarlowCondensed-Regular.ttf",
+          "variable_axes": [],
+          "weight": 400.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 400.0,
+          "filename": "BarlowCondensed-Italic.ttf",
+          "variable_axes": [],
+          "weight": 400.0
+        },
+        {
+          "style": "normal",
+          "metadata_weight": 500.0,
+          "filename": "BarlowCondensed-Medium.ttf",
+          "variable_axes": [],
+          "weight": 500.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 500.0,
+          "filename": "BarlowCondensed-MediumItalic.ttf",
+          "variable_axes": [],
+          "weight": 500.0
+        },
+        {
+          "style": "normal",
+          "metadata_weight": 600.0,
+          "filename": "BarlowCondensed-SemiBold.ttf",
+          "variable_axes": [],
+          "weight": 600.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 600.0,
+          "filename": "BarlowCondensed-SemiBoldItalic.ttf",
+          "variable_axes": [],
+          "weight": 600.0
+        },
+        {
+          "style": "normal",
+          "metadata_weight": 700.0,
+          "filename": "BarlowCondensed-Bold.ttf",
+          "variable_axes": [],
+          "weight": 700.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 700.0,
+          "filename": "BarlowCondensed-BoldItalic.ttf",
+          "variable_axes": [],
+          "weight": 700.0
+        },
+        {
+          "style": "normal",
+          "metadata_weight": 800.0,
+          "filename": "BarlowCondensed-ExtraBold.ttf",
+          "variable_axes": [],
+          "weight": 800.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 800.0,
+          "filename": "BarlowCondensed-ExtraBoldItalic.ttf",
+          "variable_axes": [],
+          "weight": 800.0
+        },
+        {
+          "style": "normal",
+          "metadata_weight": 900.0,
+          "filename": "BarlowCondensed-Black.ttf",
+          "variable_axes": [],
+          "weight": 900.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 900.0,
+          "filename": "BarlowCondensed-BlackItalic.ttf",
+          "variable_axes": [],
+          "weight": 900.0
+        }
+      ],
+      "upstream_url": "https://github.com/jpt/barlow",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "Bitter",
+      "category": "SERIF",
+      "designer": "Sol Matas",
+      "license": "OFL",
+      "repository_path": "ofl/bitter",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/bitter/METADATA.pb",
+      "metadata_sha256": "15a488064d44b2405c6a35befff3ba87ceb002db947793f99c6fd509b2a19c39",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/bitter/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/Bitter",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "cyrillic",
+        "cyrillic-ext",
+        "latin",
+        "latin-ext",
+        "menu",
+        "vietnamese"
+      ],
+      "axes": {
+        "wght": {
+          "min": 100.0,
+          "max": 900.0
+        }
+      },
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "Bitter[wght].ttf",
+          "variable_axes": [
+            "wght"
+          ],
+          "weight_range": {
+            "min": 100.0,
+            "max": 900.0
+          }
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 400.0,
+          "filename": "Bitter-Italic[wght].ttf",
+          "variable_axes": [
+            "wght"
+          ],
+          "weight_range": {
+            "min": 100.0,
+            "max": 900.0
+          }
+        }
+      ],
+      "upstream_url": "https://github.com/solmatas/BitterPro",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "Bodoni Moda",
+      "category": "SERIF",
+      "designer": "Owen Earl",
+      "license": "OFL",
+      "repository_path": "ofl/bodonimoda",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/bodonimoda/METADATA.pb",
+      "metadata_sha256": "f4ba29335a79d264135d7062fc1c79e8fa9a076719e99095416334e27aa00489",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/bodonimoda/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/Bodoni+Moda",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "latin",
+        "latin-ext",
+        "math",
+        "menu",
+        "symbols"
+      ],
+      "axes": {
+        "opsz": {
+          "min": 6.0,
+          "max": 96.0
+        },
+        "wght": {
+          "min": 400.0,
+          "max": 900.0
+        }
+      },
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "BodoniModa[opsz,wght].ttf",
+          "variable_axes": [
+            "opsz",
+            "wght"
+          ],
+          "weight_range": {
+            "min": 400.0,
+            "max": 900.0
+          }
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 400.0,
+          "filename": "BodoniModa-Italic[opsz,wght].ttf",
+          "variable_axes": [
+            "opsz",
+            "wght"
+          ],
+          "weight_range": {
+            "min": 400.0,
+            "max": 900.0
+          }
+        }
+      ],
+      "upstream_url": "https://github.com/indestructible-type/Bodoni",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "Bricolage Grotesque",
+      "category": "SANS_SERIF",
+      "designer": "Mathieu Triay",
+      "license": "OFL",
+      "repository_path": "ofl/bricolagegrotesque",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/bricolagegrotesque/METADATA.pb",
+      "metadata_sha256": "b15e69738219507699f04337a3d6e8f2a22cfac5a81d0a6106c343355cca456c",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/bricolagegrotesque/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/Bricolage+Grotesque",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "latin",
+        "latin-ext",
+        "menu",
+        "vietnamese"
+      ],
+      "axes": {
+        "opsz": {
+          "min": 12.0,
+          "max": 96.0
+        },
+        "wdth": {
+          "min": 75.0,
+          "max": 100.0
+        },
+        "wght": {
+          "min": 200.0,
+          "max": 800.0
+        }
+      },
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "BricolageGrotesque[opsz,wdth,wght].ttf",
+          "variable_axes": [
+            "opsz",
+            "wdth",
+            "wght"
+          ],
+          "weight_range": {
+            "min": 200.0,
+            "max": 800.0
+          }
+        }
+      ],
+      "upstream_url": "https://github.com/ateliertriay/bricolage",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "Commissioner",
+      "category": "SANS_SERIF",
+      "designer": "Kostas Bartsokas",
+      "license": "OFL",
+      "repository_path": "ofl/commissioner",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/commissioner/METADATA.pb",
+      "metadata_sha256": "a165710f26679e7811b9a80ce85015ec1716ed80d6ff996f0336790e0d4ab58a",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/commissioner/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/Commissioner",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "cyrillic",
+        "cyrillic-ext",
+        "greek",
+        "latin",
+        "latin-ext",
+        "menu",
+        "vietnamese"
+      ],
+      "axes": {
+        "FLAR": {
+          "min": 0.0,
+          "max": 100.0
+        },
+        "VOLM": {
+          "min": 0.0,
+          "max": 100.0
+        },
+        "slnt": {
+          "min": -12.0,
+          "max": 0.0
+        },
+        "wght": {
+          "min": 100.0,
+          "max": 900.0
+        }
+      },
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "Commissioner[FLAR,VOLM,slnt,wght].ttf",
+          "variable_axes": [
+            "FLAR",
+            "VOLM",
+            "slnt",
+            "wght"
+          ],
+          "weight_range": {
+            "min": 100.0,
+            "max": 900.0
+          }
+        }
+      ],
+      "upstream_url": "https://github.com/m4rc1e/Commissioner",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "Cormorant Garamond",
+      "category": "SERIF",
+      "designer": "Christian Thalmann",
+      "license": "OFL",
+      "repository_path": "ofl/cormorantgaramond",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/cormorantgaramond/METADATA.pb",
+      "metadata_sha256": "faa16a5e79613ca7cadd599ada1f4cf6891f3cb6731631fbed2a0b18a342e556",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/cormorantgaramond/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/Cormorant+Garamond",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "cyrillic",
+        "cyrillic-ext",
+        "latin",
+        "latin-ext",
+        "menu",
+        "vietnamese"
+      ],
+      "axes": {
+        "wght": {
+          "min": 300.0,
+          "max": 700.0
+        }
+      },
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "CormorantGaramond[wght].ttf",
+          "variable_axes": [
+            "wght"
+          ],
+          "weight_range": {
+            "min": 300.0,
+            "max": 700.0
+          }
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 400.0,
+          "filename": "CormorantGaramond-Italic[wght].ttf",
+          "variable_axes": [
+            "wght"
+          ],
+          "weight_range": {
+            "min": 300.0,
+            "max": 700.0
+          }
+        }
+      ],
+      "upstream_url": "https://github.com/CatharsisFonts/Cormorant",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "DM Sans",
+      "category": "SANS_SERIF",
+      "designer": "Colophon Foundry",
+      "license": "OFL",
+      "repository_path": "ofl/dmsans",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/dmsans/METADATA.pb",
+      "metadata_sha256": "55b3697a416f7d08c093918a4019a75cca7186c64bc56b1bb23e197a5d559dee",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/dmsans/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/DM+Sans",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "latin",
+        "latin-ext",
+        "menu"
+      ],
+      "axes": {
+        "opsz": {
+          "min": 9.0,
+          "max": 40.0
+        },
+        "wght": {
+          "min": 100.0,
+          "max": 1000.0
+        }
+      },
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "DMSans[opsz,wght].ttf",
+          "variable_axes": [
+            "opsz",
+            "wght"
+          ],
+          "weight_range": {
+            "min": 100.0,
+            "max": 1000.0
+          }
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 400.0,
+          "filename": "DMSans-Italic[opsz,wght].ttf",
+          "variable_axes": [
+            "opsz",
+            "wght"
+          ],
+          "weight_range": {
+            "min": 100.0,
+            "max": 1000.0
+          }
+        }
+      ],
+      "upstream_url": "https://github.com/googlefonts/dm-fonts",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "DM Serif Display",
+      "category": "SERIF",
+      "designer": "Colophon Foundry",
+      "license": "OFL",
+      "repository_path": "ofl/dmserifdisplay",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/dmserifdisplay/METADATA.pb",
+      "metadata_sha256": "3014380ddec81e774af2ab07a903542367573ce4e4d19ca8c01b928e970c1268",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/dmserifdisplay/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/DM+Serif+Display",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "latin",
+        "latin-ext",
+        "menu"
+      ],
+      "axes": {},
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "DMSerifDisplay-Regular.ttf",
+          "variable_axes": [],
+          "weight": 400.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 400.0,
+          "filename": "DMSerifDisplay-Italic.ttf",
+          "variable_axes": [],
+          "weight": 400.0
+        }
+      ],
+      "upstream_url": "https://github.com/googlefonts/dm-fonts",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "Figtree",
+      "category": "SANS_SERIF",
+      "designer": "Erik Kennedy",
+      "license": "OFL",
+      "repository_path": "ofl/figtree",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/figtree/METADATA.pb",
+      "metadata_sha256": "0f70233b05de662ffa31a5dc3d310cb4eb047dc3b776046f937219179d79d905",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/figtree/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/Figtree",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "latin",
+        "latin-ext",
+        "menu"
+      ],
+      "axes": {
+        "wght": {
+          "min": 300.0,
+          "max": 900.0
+        }
+      },
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "Figtree[wght].ttf",
+          "variable_axes": [
+            "wght"
+          ],
+          "weight_range": {
+            "min": 300.0,
+            "max": 900.0
+          }
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 400.0,
+          "filename": "Figtree-Italic[wght].ttf",
+          "variable_axes": [
+            "wght"
+          ],
+          "weight_range": {
+            "min": 300.0,
+            "max": 900.0
+          }
+        }
+      ],
+      "upstream_url": "https://github.com/erikdkennedy/figtree",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "Fraunces",
+      "category": "SERIF",
+      "designer": "Undercase Type, Phaedra Charles, Flavia Zimbardi",
+      "license": "OFL",
+      "repository_path": "ofl/fraunces",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/fraunces/METADATA.pb",
+      "metadata_sha256": "812aeaea90af8021a306b8fbb5490e0a861c27a5291d2253b403d9fc9f37afd5",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/fraunces/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/Fraunces",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "latin",
+        "latin-ext",
+        "menu",
+        "vietnamese"
+      ],
+      "axes": {
+        "SOFT": {
+          "min": 0.0,
+          "max": 100.0
+        },
+        "WONK": {
+          "min": 0.0,
+          "max": 1.0
+        },
+        "opsz": {
+          "min": 9.0,
+          "max": 144.0
+        },
+        "wght": {
+          "min": 100.0,
+          "max": 900.0
+        }
+      },
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "Fraunces[SOFT,WONK,opsz,wght].ttf",
+          "variable_axes": [
+            "SOFT",
+            "WONK",
+            "opsz",
+            "wght"
+          ],
+          "weight_range": {
+            "min": 100.0,
+            "max": 900.0
+          }
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 400.0,
+          "filename": "Fraunces-Italic[SOFT,WONK,opsz,wght].ttf",
+          "variable_axes": [
+            "SOFT",
+            "WONK",
+            "opsz",
+            "wght"
+          ],
+          "weight_range": {
+            "min": 100.0,
+            "max": 900.0
+          }
+        }
+      ],
+      "upstream_url": "https://github.com/undercasetype/Fraunces",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "Fredoka",
+      "category": "SANS_SERIF",
+      "designer": "Milena Brandão, Hafontia",
+      "license": "OFL",
+      "repository_path": "ofl/fredoka",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/fredoka/METADATA.pb",
+      "metadata_sha256": "17f260d0faf7c588c9331a9a1b720b55c2b871563423f42704c8cbb0953a574a",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/fredoka/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/Fredoka",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "hebrew",
+        "latin",
+        "latin-ext",
+        "menu"
+      ],
+      "axes": {
+        "wdth": {
+          "min": 75.0,
+          "max": 125.0
+        },
+        "wght": {
+          "min": 300.0,
+          "max": 700.0
+        }
+      },
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "Fredoka[wdth,wght].ttf",
+          "variable_axes": [
+            "wdth",
+            "wght"
+          ],
+          "weight_range": {
+            "min": 300.0,
+            "max": 700.0
+          }
+        }
+      ],
+      "upstream_url": "https://github.com/hafontia-zz/Fredoka-One",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "Hanken Grotesk",
+      "category": "SANS_SERIF",
+      "designer": "Alfredo Marco Pradil, Hanken Design Co.",
+      "license": "OFL",
+      "repository_path": "ofl/hankengrotesk",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/hankengrotesk/METADATA.pb",
+      "metadata_sha256": "2785c9062dc4009786aa2102548372207a23429e341e0ba30012b9e0791932db",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/hankengrotesk/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/Hanken+Grotesk",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "cyrillic-ext",
+        "latin",
+        "latin-ext",
+        "menu",
+        "vietnamese"
+      ],
+      "axes": {
+        "wght": {
+          "min": 100.0,
+          "max": 900.0
+        }
+      },
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "HankenGrotesk[wght].ttf",
+          "variable_axes": [
+            "wght"
+          ],
+          "weight_range": {
+            "min": 100.0,
+            "max": 900.0
+          }
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 400.0,
+          "filename": "HankenGrotesk-Italic[wght].ttf",
+          "variable_axes": [
+            "wght"
+          ],
+          "weight_range": {
+            "min": 100.0,
+            "max": 900.0
+          }
+        }
+      ],
+      "upstream_url": "https://github.com/marcologous/hanken-grotesk",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "IBM Plex Mono",
+      "category": "MONOSPACE",
+      "designer": "Mike Abbink, Bold Monday",
+      "license": "OFL",
+      "repository_path": "ofl/ibmplexmono",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/ibmplexmono/METADATA.pb",
+      "metadata_sha256": "2eb58f75e032cc5e021887aa7b02bf11bf548710fc5b6f23eb19c440df101a0b",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/ibmplexmono/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/IBM+Plex+Mono",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "cyrillic",
+        "cyrillic-ext",
+        "latin",
+        "latin-ext",
+        "menu",
+        "vietnamese"
+      ],
+      "axes": {},
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 100.0,
+          "filename": "IBMPlexMono-Thin.ttf",
+          "variable_axes": [],
+          "weight": 100.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 100.0,
+          "filename": "IBMPlexMono-ThinItalic.ttf",
+          "variable_axes": [],
+          "weight": 100.0
+        },
+        {
+          "style": "normal",
+          "metadata_weight": 200.0,
+          "filename": "IBMPlexMono-ExtraLight.ttf",
+          "variable_axes": [],
+          "weight": 200.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 200.0,
+          "filename": "IBMPlexMono-ExtraLightItalic.ttf",
+          "variable_axes": [],
+          "weight": 200.0
+        },
+        {
+          "style": "normal",
+          "metadata_weight": 300.0,
+          "filename": "IBMPlexMono-Light.ttf",
+          "variable_axes": [],
+          "weight": 300.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 300.0,
+          "filename": "IBMPlexMono-LightItalic.ttf",
+          "variable_axes": [],
+          "weight": 300.0
+        },
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "IBMPlexMono-Regular.ttf",
+          "variable_axes": [],
+          "weight": 400.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 400.0,
+          "filename": "IBMPlexMono-Italic.ttf",
+          "variable_axes": [],
+          "weight": 400.0
+        },
+        {
+          "style": "normal",
+          "metadata_weight": 500.0,
+          "filename": "IBMPlexMono-Medium.ttf",
+          "variable_axes": [],
+          "weight": 500.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 500.0,
+          "filename": "IBMPlexMono-MediumItalic.ttf",
+          "variable_axes": [],
+          "weight": 500.0
+        },
+        {
+          "style": "normal",
+          "metadata_weight": 600.0,
+          "filename": "IBMPlexMono-SemiBold.ttf",
+          "variable_axes": [],
+          "weight": 600.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 600.0,
+          "filename": "IBMPlexMono-SemiBoldItalic.ttf",
+          "variable_axes": [],
+          "weight": 600.0
+        },
+        {
+          "style": "normal",
+          "metadata_weight": 700.0,
+          "filename": "IBMPlexMono-Bold.ttf",
+          "variable_axes": [],
+          "weight": 700.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 700.0,
+          "filename": "IBMPlexMono-BoldItalic.ttf",
+          "variable_axes": [],
+          "weight": 700.0
+        }
+      ],
+      "upstream_url": "https://github.com/googlefonts/plex",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "IBM Plex Sans",
+      "category": "SANS_SERIF",
+      "designer": "Mike Abbink, Bold Monday",
+      "license": "OFL",
+      "repository_path": "ofl/ibmplexsans",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/ibmplexsans/METADATA.pb",
+      "metadata_sha256": "85f7e73668461cfacc4d9ecf94a7b67dd14dc24a71c0ae2cecd36215f0ca856c",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/ibmplexsans/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/IBM+Plex+Sans",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "cyrillic",
+        "cyrillic-ext",
+        "greek",
+        "latin",
+        "latin-ext",
+        "menu",
+        "vietnamese"
+      ],
+      "axes": {
+        "wdth": {
+          "min": 75.0,
+          "max": 100.0
+        },
+        "wght": {
+          "min": 100.0,
+          "max": 700.0
+        }
+      },
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "IBMPlexSans[wdth,wght].ttf",
+          "variable_axes": [
+            "wdth",
+            "wght"
+          ],
+          "weight_range": {
+            "min": 100.0,
+            "max": 700.0
+          }
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 400.0,
+          "filename": "IBMPlexSans-Italic[wdth,wght].ttf",
+          "variable_axes": [
+            "wdth",
+            "wght"
+          ],
+          "weight_range": {
+            "min": 100.0,
+            "max": 700.0
+          }
+        }
+      ],
+      "upstream_url": "https://github.com/googlefonts/plex",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "IBM Plex Serif",
+      "category": "SERIF",
+      "designer": "Mike Abbink, Bold Monday",
+      "license": "OFL",
+      "repository_path": "ofl/ibmplexserif",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/ibmplexserif/METADATA.pb",
+      "metadata_sha256": "abe4d1c45c123aba1988cd20f98fccd5cecaf8c6ff2746b34e7b0ecc1364c3a3",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/ibmplexserif/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/IBM+Plex+Serif",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "cyrillic",
+        "cyrillic-ext",
+        "latin",
+        "latin-ext",
+        "menu",
+        "vietnamese"
+      ],
+      "axes": {},
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 100.0,
+          "filename": "IBMPlexSerif-Thin.ttf",
+          "variable_axes": [],
+          "weight": 100.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 100.0,
+          "filename": "IBMPlexSerif-ThinItalic.ttf",
+          "variable_axes": [],
+          "weight": 100.0
+        },
+        {
+          "style": "normal",
+          "metadata_weight": 200.0,
+          "filename": "IBMPlexSerif-ExtraLight.ttf",
+          "variable_axes": [],
+          "weight": 200.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 200.0,
+          "filename": "IBMPlexSerif-ExtraLightItalic.ttf",
+          "variable_axes": [],
+          "weight": 200.0
+        },
+        {
+          "style": "normal",
+          "metadata_weight": 300.0,
+          "filename": "IBMPlexSerif-Light.ttf",
+          "variable_axes": [],
+          "weight": 300.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 300.0,
+          "filename": "IBMPlexSerif-LightItalic.ttf",
+          "variable_axes": [],
+          "weight": 300.0
+        },
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "IBMPlexSerif-Regular.ttf",
+          "variable_axes": [],
+          "weight": 400.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 400.0,
+          "filename": "IBMPlexSerif-Italic.ttf",
+          "variable_axes": [],
+          "weight": 400.0
+        },
+        {
+          "style": "normal",
+          "metadata_weight": 500.0,
+          "filename": "IBMPlexSerif-Medium.ttf",
+          "variable_axes": [],
+          "weight": 500.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 500.0,
+          "filename": "IBMPlexSerif-MediumItalic.ttf",
+          "variable_axes": [],
+          "weight": 500.0
+        },
+        {
+          "style": "normal",
+          "metadata_weight": 600.0,
+          "filename": "IBMPlexSerif-SemiBold.ttf",
+          "variable_axes": [],
+          "weight": 600.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 600.0,
+          "filename": "IBMPlexSerif-SemiBoldItalic.ttf",
+          "variable_axes": [],
+          "weight": 600.0
+        },
+        {
+          "style": "normal",
+          "metadata_weight": 700.0,
+          "filename": "IBMPlexSerif-Bold.ttf",
+          "variable_axes": [],
+          "weight": 700.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 700.0,
+          "filename": "IBMPlexSerif-BoldItalic.ttf",
+          "variable_axes": [],
+          "weight": 700.0
+        }
+      ],
+      "upstream_url": "https://github.com/googlefonts/plex",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "Inria Sans",
+      "category": "SANS_SERIF",
+      "designer": "Grégori Vincens, Jérémie Hornus",
+      "license": "OFL",
+      "repository_path": "ofl/inriasans",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/inriasans/METADATA.pb",
+      "metadata_sha256": "4f8ee70c672fc62055f1225d29efd566102b8d863126cd33d34caf6257a5c2b8",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/inriasans/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/Inria+Sans",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "latin",
+        "latin-ext",
+        "menu"
+      ],
+      "axes": {},
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 300.0,
+          "filename": "InriaSans-Light.ttf",
+          "variable_axes": [],
+          "weight": 300.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 300.0,
+          "filename": "InriaSans-LightItalic.ttf",
+          "variable_axes": [],
+          "weight": 300.0
+        },
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "InriaSans-Regular.ttf",
+          "variable_axes": [],
+          "weight": 400.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 400.0,
+          "filename": "InriaSans-Italic.ttf",
+          "variable_axes": [],
+          "weight": 400.0
+        },
+        {
+          "style": "normal",
+          "metadata_weight": 700.0,
+          "filename": "InriaSans-Bold.ttf",
+          "variable_axes": [],
+          "weight": 700.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 700.0,
+          "filename": "InriaSans-BoldItalic.ttf",
+          "variable_axes": [],
+          "weight": 700.0
+        }
+      ],
+      "upstream_url": "https://github.com/BlackFoundryCom/InriaFonts",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "Inria Serif",
+      "category": "SERIF",
+      "designer": "Grégori Vincens, Jérémie Hornus",
+      "license": "OFL",
+      "repository_path": "ofl/inriaserif",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/inriaserif/METADATA.pb",
+      "metadata_sha256": "7ed22a90aa1535a57ed833ccb437e6ac804c2ea63d6806ac038ad1734a10d615",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/inriaserif/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/Inria+Serif",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "latin",
+        "latin-ext",
+        "menu"
+      ],
+      "axes": {},
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 300.0,
+          "filename": "InriaSerif-Light.ttf",
+          "variable_axes": [],
+          "weight": 300.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 300.0,
+          "filename": "InriaSerif-LightItalic.ttf",
+          "variable_axes": [],
+          "weight": 300.0
+        },
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "InriaSerif-Regular.ttf",
+          "variable_axes": [],
+          "weight": 400.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 400.0,
+          "filename": "InriaSerif-Italic.ttf",
+          "variable_axes": [],
+          "weight": 400.0
+        },
+        {
+          "style": "normal",
+          "metadata_weight": 700.0,
+          "filename": "InriaSerif-Bold.ttf",
+          "variable_axes": [],
+          "weight": 700.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 700.0,
+          "filename": "InriaSerif-BoldItalic.ttf",
+          "variable_axes": [],
+          "weight": 700.0
+        }
+      ],
+      "upstream_url": "https://github.com/BlackFoundryCom/InriaFonts",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "Instrument Sans",
+      "category": "SANS_SERIF",
+      "designer": "Rodrigo Fuenzalida, Jordan Egstad",
+      "license": "OFL",
+      "repository_path": "ofl/instrumentsans",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/instrumentsans/METADATA.pb",
+      "metadata_sha256": "111191daf841919d5d09b88ca7a17fb691c4b835c61ca81c958f334c40c11535",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/instrumentsans/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/Instrument+Sans",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "latin",
+        "latin-ext",
+        "menu"
+      ],
+      "axes": {
+        "wdth": {
+          "min": 75.0,
+          "max": 100.0
+        },
+        "wght": {
+          "min": 400.0,
+          "max": 700.0
+        }
+      },
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "InstrumentSans[wdth,wght].ttf",
+          "variable_axes": [
+            "wdth",
+            "wght"
+          ],
+          "weight_range": {
+            "min": 400.0,
+            "max": 700.0
+          }
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 400.0,
+          "filename": "InstrumentSans-Italic[wdth,wght].ttf",
+          "variable_axes": [
+            "wdth",
+            "wght"
+          ],
+          "weight_range": {
+            "min": 400.0,
+            "max": 700.0
+          }
+        }
+      ],
+      "upstream_url": "https://github.com/Instrument/instrument-sans",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "Instrument Serif",
+      "category": "SERIF",
+      "designer": "Rodrigo Fuenzalida, Jordan Egstad",
+      "license": "OFL",
+      "repository_path": "ofl/instrumentserif",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/instrumentserif/METADATA.pb",
+      "metadata_sha256": "9a650bee57af3478f9294c8765292dcea36322082b987b857e29a2ea64861f6a",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/instrumentserif/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/Instrument+Serif",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "latin",
+        "latin-ext",
+        "menu"
+      ],
+      "axes": {},
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "InstrumentSerif-Regular.ttf",
+          "variable_axes": [],
+          "weight": 400.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 400.0,
+          "filename": "InstrumentSerif-Italic.ttf",
+          "variable_axes": [],
+          "weight": 400.0
+        }
+      ],
+      "upstream_url": "https://github.com/Instrument/instrument-serif",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "Literata",
+      "category": "SERIF",
+      "designer": "TypeTogether",
+      "license": "OFL",
+      "repository_path": "ofl/literata",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/literata/METADATA.pb",
+      "metadata_sha256": "8dbc5c48f254be32c879f006391cb5f6781941beb1a643c13acf66fa989b6a83",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/literata/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/Literata",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "cyrillic",
+        "cyrillic-ext",
+        "greek",
+        "greek-ext",
+        "latin",
+        "latin-ext",
+        "menu",
+        "vietnamese"
+      ],
+      "axes": {
+        "opsz": {
+          "min": 7.0,
+          "max": 72.0
+        },
+        "wght": {
+          "min": 200.0,
+          "max": 900.0
+        }
+      },
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "Literata[opsz,wght].ttf",
+          "variable_axes": [
+            "opsz",
+            "wght"
+          ],
+          "weight_range": {
+            "min": 200.0,
+            "max": 900.0
+          }
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 400.0,
+          "filename": "Literata-Italic[opsz,wght].ttf",
+          "variable_axes": [
+            "opsz",
+            "wght"
+          ],
+          "weight_range": {
+            "min": 200.0,
+            "max": 900.0
+          }
+        }
+      ],
+      "upstream_url": "https://github.com/googlefonts/literata",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "Lora",
+      "category": "SERIF",
+      "designer": "Cyreal",
+      "license": "OFL",
+      "repository_path": "ofl/lora",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/lora/METADATA.pb",
+      "metadata_sha256": "6d9e38cc8926e903359a1c4c358fd2e71864f422aae9550d0d9a2ae0c62ddb8d",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/lora/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/Lora",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "cyrillic",
+        "cyrillic-ext",
+        "latin",
+        "latin-ext",
+        "math",
+        "menu",
+        "symbols",
+        "vietnamese"
+      ],
+      "axes": {
+        "wght": {
+          "min": 400.0,
+          "max": 700.0
+        }
+      },
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "Lora[wght].ttf",
+          "variable_axes": [
+            "wght"
+          ],
+          "weight_range": {
+            "min": 400.0,
+            "max": 700.0
+          }
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 400.0,
+          "filename": "Lora-Italic[wght].ttf",
+          "variable_axes": [
+            "wght"
+          ],
+          "weight_range": {
+            "min": 400.0,
+            "max": 700.0
+          }
+        }
+      ],
+      "upstream_url": "https://github.com/cyrealtype/Lora-Cyrillic",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "Manrope",
+      "category": "SANS_SERIF",
+      "designer": "Mikhail Sharanda",
+      "license": "OFL",
+      "repository_path": "ofl/manrope",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/manrope/METADATA.pb",
+      "metadata_sha256": "368beda3aa55b0afe90edc142d67cf37e743258c76481d520172afbc148c6cca",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/manrope/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/Manrope",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "cyrillic",
+        "cyrillic-ext",
+        "greek",
+        "latin",
+        "latin-ext",
+        "menu",
+        "vietnamese"
+      ],
+      "axes": {
+        "wght": {
+          "min": 200.0,
+          "max": 800.0
+        }
+      },
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "Manrope[wght].ttf",
+          "variable_axes": [
+            "wght"
+          ],
+          "weight_range": {
+            "min": 200.0,
+            "max": 800.0
+          }
+        }
+      ],
+      "upstream_url": "https://github.com/aaronbell/manrope",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "Newsreader",
+      "category": "SERIF",
+      "designer": "Production Type",
+      "license": "OFL",
+      "repository_path": "ofl/newsreader",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/newsreader/METADATA.pb",
+      "metadata_sha256": "dc0bcb264c09d663c9a4f559e4f5392fd7d9f62139ad9cbba39253ec43aa315b",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/newsreader/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/Newsreader",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "latin",
+        "latin-ext",
+        "menu",
+        "vietnamese"
+      ],
+      "axes": {
+        "opsz": {
+          "min": 6.0,
+          "max": 72.0
+        },
+        "wght": {
+          "min": 200.0,
+          "max": 800.0
+        }
+      },
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "Newsreader[opsz,wght].ttf",
+          "variable_axes": [
+            "opsz",
+            "wght"
+          ],
+          "weight_range": {
+            "min": 200.0,
+            "max": 800.0
+          }
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 400.0,
+          "filename": "Newsreader-Italic[opsz,wght].ttf",
+          "variable_axes": [
+            "opsz",
+            "wght"
+          ],
+          "weight_range": {
+            "min": 200.0,
+            "max": 800.0
+          }
+        }
+      ],
+      "upstream_url": "https://github.com/productiontype/NewsReader",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "Noto Naskh Arabic",
+      "category": "SERIF",
+      "designer": "Google",
+      "license": "OFL",
+      "repository_path": "ofl/notonaskharabic",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/notonaskharabic/METADATA.pb",
+      "metadata_sha256": "764bf357c5009432b715b931271f59ae0f7588c99ff2537bfc0c7dbe56b3b1bb",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/notonaskharabic/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/Noto+Naskh+Arabic",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "arabic",
+        "latin",
+        "latin-ext",
+        "math",
+        "menu",
+        "symbols"
+      ],
+      "axes": {
+        "wght": {
+          "min": 400.0,
+          "max": 700.0
+        }
+      },
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "NotoNaskhArabic[wght].ttf",
+          "variable_axes": [
+            "wght"
+          ],
+          "weight_range": {
+            "min": 400.0,
+            "max": 700.0
+          }
+        }
+      ],
+      "upstream_url": "https://github.com/notofonts/arabic",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "Noto Sans",
+      "category": "SANS_SERIF",
+      "designer": "Google",
+      "license": "OFL",
+      "repository_path": "ofl/notosans",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/notosans/METADATA.pb",
+      "metadata_sha256": "9fd9566184e9833ae3a33b8950e2782a8abb1f0a9d6fb2c51b3fb615f2d78cfe",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/notosans/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/Noto+Sans",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "cyrillic",
+        "cyrillic-ext",
+        "devanagari",
+        "greek",
+        "greek-ext",
+        "latin",
+        "latin-ext",
+        "menu",
+        "vietnamese"
+      ],
+      "axes": {
+        "wdth": {
+          "min": 62.5,
+          "max": 100.0
+        },
+        "wght": {
+          "min": 100.0,
+          "max": 900.0
+        }
+      },
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "NotoSans[wdth,wght].ttf",
+          "variable_axes": [
+            "wdth",
+            "wght"
+          ],
+          "weight_range": {
+            "min": 100.0,
+            "max": 900.0
+          }
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 400.0,
+          "filename": "NotoSans-Italic[wdth,wght].ttf",
+          "variable_axes": [
+            "wdth",
+            "wght"
+          ],
+          "weight_range": {
+            "min": 100.0,
+            "max": 900.0
+          }
+        }
+      ],
+      "upstream_url": "https://github.com/notofonts/latin-greek-cyrillic",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "Noto Sans Arabic",
+      "category": "SANS_SERIF",
+      "designer": "Google",
+      "license": "OFL",
+      "repository_path": "ofl/notosansarabic",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/notosansarabic/METADATA.pb",
+      "metadata_sha256": "514bf8961fb28742be1947e6627d6c46f5a5bf3c6d7136548b16e9a8885991b9",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/notosansarabic/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/Noto+Sans+Arabic",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "arabic",
+        "latin",
+        "latin-ext",
+        "math",
+        "menu",
+        "symbols"
+      ],
+      "axes": {
+        "wdth": {
+          "min": 62.5,
+          "max": 100.0
+        },
+        "wght": {
+          "min": 100.0,
+          "max": 900.0
+        }
+      },
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "NotoSansArabic[wdth,wght].ttf",
+          "variable_axes": [
+            "wdth",
+            "wght"
+          ],
+          "weight_range": {
+            "min": 100.0,
+            "max": 900.0
+          }
+        }
+      ],
+      "upstream_url": "https://github.com/notofonts/arabic",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "Noto Sans Devanagari",
+      "category": "SANS_SERIF",
+      "designer": "Google",
+      "license": "OFL",
+      "repository_path": "ofl/notosansdevanagari",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/notosansdevanagari/METADATA.pb",
+      "metadata_sha256": "41e3f15a051c89cfc8dda20837b4e18643c55192e91d3b7bd766e97c70636263",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/notosansdevanagari/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/Noto+Sans+Devanagari",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "devanagari",
+        "latin",
+        "latin-ext",
+        "menu"
+      ],
+      "axes": {
+        "wdth": {
+          "min": 62.5,
+          "max": 100.0
+        },
+        "wght": {
+          "min": 100.0,
+          "max": 900.0
+        }
+      },
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "NotoSansDevanagari[wdth,wght].ttf",
+          "variable_axes": [
+            "wdth",
+            "wght"
+          ],
+          "weight_range": {
+            "min": 100.0,
+            "max": 900.0
+          }
+        }
+      ],
+      "upstream_url": "https://github.com/notofonts/devanagari",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "Noto Sans JP",
+      "category": "SANS_SERIF",
+      "designer": "Google",
+      "license": "OFL",
+      "repository_path": "ofl/notosansjp",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/notosansjp/METADATA.pb",
+      "metadata_sha256": "5aa23f70fba3eb1afa6d92cb89de3b5c4690018caddbdded678b5e595e56825b",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/notosansjp/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/Noto+Sans+JP",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "cyrillic",
+        "japanese",
+        "latin",
+        "latin-ext",
+        "menu",
+        "vietnamese"
+      ],
+      "axes": {
+        "wght": {
+          "min": 100.0,
+          "max": 900.0
+        }
+      },
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "NotoSansJP[wght].ttf",
+          "variable_axes": [
+            "wght"
+          ],
+          "weight_range": {
+            "min": 100.0,
+            "max": 900.0
+          }
+        }
+      ],
+      "upstream_url": "https://github.com/notofonts/noto-cjk",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "Noto Serif",
+      "category": "SERIF",
+      "designer": "Google",
+      "license": "OFL",
+      "repository_path": "ofl/notoserif",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/notoserif/METADATA.pb",
+      "metadata_sha256": "659cf6a2475eabfa3e3bbb92e3ed15c604e6fb035b3b1057d469cc88e67357bb",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/notoserif/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/Noto+Serif",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "cyrillic",
+        "cyrillic-ext",
+        "greek",
+        "greek-ext",
+        "latin",
+        "latin-ext",
+        "math",
+        "menu",
+        "vietnamese"
+      ],
+      "axes": {
+        "wdth": {
+          "min": 62.5,
+          "max": 100.0
+        },
+        "wght": {
+          "min": 100.0,
+          "max": 900.0
+        }
+      },
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "NotoSerif[wdth,wght].ttf",
+          "variable_axes": [
+            "wdth",
+            "wght"
+          ],
+          "weight_range": {
+            "min": 100.0,
+            "max": 900.0
+          }
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 400.0,
+          "filename": "NotoSerif-Italic[wdth,wght].ttf",
+          "variable_axes": [
+            "wdth",
+            "wght"
+          ],
+          "weight_range": {
+            "min": 100.0,
+            "max": 900.0
+          }
+        }
+      ],
+      "upstream_url": "https://github.com/notofonts/latin-greek-cyrillic",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "Noto Serif Devanagari",
+      "category": "SERIF",
+      "designer": "Google",
+      "license": "OFL",
+      "repository_path": "ofl/notoserifdevanagari",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/notoserifdevanagari/METADATA.pb",
+      "metadata_sha256": "856f397e3a689af1374f22d2bb34a3a39bd957e800400e057ed77223a1f87b80",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/notoserifdevanagari/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/Noto+Serif+Devanagari",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "devanagari",
+        "latin",
+        "latin-ext",
+        "menu"
+      ],
+      "axes": {
+        "wdth": {
+          "min": 62.5,
+          "max": 100.0
+        },
+        "wght": {
+          "min": 100.0,
+          "max": 900.0
+        }
+      },
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "NotoSerifDevanagari[wdth,wght].ttf",
+          "variable_axes": [
+            "wdth",
+            "wght"
+          ],
+          "weight_range": {
+            "min": 100.0,
+            "max": 900.0
+          }
+        }
+      ],
+      "upstream_url": "https://github.com/notofonts/devanagari",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "Noto Serif JP",
+      "category": "SERIF",
+      "designer": "Google",
+      "license": "OFL",
+      "repository_path": "ofl/notoserifjp",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/notoserifjp/METADATA.pb",
+      "metadata_sha256": "265cb1cd38f7c12837feb5b26c59328ef7ff8f0b2b5683b1a47303c68d373622",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/notoserifjp/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/Noto+Serif+JP",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "cyrillic",
+        "japanese",
+        "latin",
+        "latin-ext",
+        "menu",
+        "vietnamese"
+      ],
+      "axes": {
+        "wght": {
+          "min": 200.0,
+          "max": 900.0
+        }
+      },
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "NotoSerifJP[wght].ttf",
+          "variable_axes": [
+            "wght"
+          ],
+          "weight_range": {
+            "min": 200.0,
+            "max": 900.0
+          }
+        }
+      ],
+      "upstream_url": "https://www.github.com/notofonts/noto-cjk",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "Nunito",
+      "category": "SANS_SERIF",
+      "designer": "Vernon Adams, Cyreal, Jacques Le Bailly",
+      "license": "OFL",
+      "repository_path": "ofl/nunito",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/nunito/METADATA.pb",
+      "metadata_sha256": "3e20743c7ddab54c6ac57d79a6be522d4bae795223855ce90a1b13c4132f0754",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/nunito/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/Nunito",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "cyrillic",
+        "cyrillic-ext",
+        "latin",
+        "latin-ext",
+        "menu",
+        "vietnamese"
+      ],
+      "axes": {
+        "wght": {
+          "min": 200.0,
+          "max": 1000.0
+        }
+      },
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "Nunito[wght].ttf",
+          "variable_axes": [
+            "wght"
+          ],
+          "weight_range": {
+            "min": 200.0,
+            "max": 1000.0
+          }
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 400.0,
+          "filename": "Nunito-Italic[wght].ttf",
+          "variable_axes": [
+            "wght"
+          ],
+          "weight_range": {
+            "min": 200.0,
+            "max": 1000.0
+          }
+        }
+      ],
+      "upstream_url": "https://github.com/googlefonts/nunito",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "Nunito Sans",
+      "category": "SANS_SERIF",
+      "designer": "Vernon Adams, Jacques Le Bailly, Manvel Shmavonyan, Alexei Vanyashin",
+      "license": "OFL",
+      "repository_path": "ofl/nunitosans",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/nunitosans/METADATA.pb",
+      "metadata_sha256": "b60c93a2cdadb477316d22d22c8d43fa957899a4e4fe75cbb2b9e39e03c5e96e",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/nunitosans/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/Nunito+Sans",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "cyrillic",
+        "cyrillic-ext",
+        "latin",
+        "latin-ext",
+        "menu",
+        "vietnamese"
+      ],
+      "axes": {
+        "YTLC": {
+          "min": 440.0,
+          "max": 540.0
+        },
+        "opsz": {
+          "min": 6.0,
+          "max": 12.0
+        },
+        "wdth": {
+          "min": 75.0,
+          "max": 125.0
+        },
+        "wght": {
+          "min": 200.0,
+          "max": 1000.0
+        }
+      },
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "NunitoSans[YTLC,opsz,wdth,wght].ttf",
+          "variable_axes": [
+            "YTLC",
+            "opsz",
+            "wdth",
+            "wght"
+          ],
+          "weight_range": {
+            "min": 200.0,
+            "max": 1000.0
+          }
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 400.0,
+          "filename": "NunitoSans-Italic[YTLC,opsz,wdth,wght].ttf",
+          "variable_axes": [
+            "YTLC",
+            "opsz",
+            "wdth",
+            "wght"
+          ],
+          "weight_range": {
+            "min": 200.0,
+            "max": 1000.0
+          }
+        }
+      ],
+      "upstream_url": "https://github.com/googlefonts/NunitoSans",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "Public Sans",
+      "category": "SANS_SERIF",
+      "designer": "USWDS, Dan Williams, Pablo Impallari, Rodrigo Fuenzalida",
+      "license": "OFL",
+      "repository_path": "ofl/publicsans",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/publicsans/METADATA.pb",
+      "metadata_sha256": "a6bf37ce312a499068a820ae995601242aaf7c6d92fbcfe1e4c609392c1defb7",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/publicsans/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/Public+Sans",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "latin",
+        "latin-ext",
+        "menu",
+        "vietnamese"
+      ],
+      "axes": {
+        "wght": {
+          "min": 100.0,
+          "max": 900.0
+        }
+      },
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "PublicSans[wght].ttf",
+          "variable_axes": [
+            "wght"
+          ],
+          "weight_range": {
+            "min": 100.0,
+            "max": 900.0
+          }
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 400.0,
+          "filename": "PublicSans-Italic[wght].ttf",
+          "variable_axes": [
+            "wght"
+          ],
+          "weight_range": {
+            "min": 100.0,
+            "max": 900.0
+          }
+        }
+      ],
+      "upstream_url": "https://github.com/uswds/public-sans",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "Recursive",
+      "category": "SANS_SERIF",
+      "designer": "Arrow Type, Stephen Nixon",
+      "license": "OFL",
+      "repository_path": "ofl/recursive",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/recursive/METADATA.pb",
+      "metadata_sha256": "a9655873ecee0272ebba38e374acd5b80d887460ca8787fb727e2d162febf632",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/recursive/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/Recursive",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "cyrillic-ext",
+        "latin",
+        "latin-ext",
+        "menu",
+        "vietnamese"
+      ],
+      "axes": {
+        "CASL": {
+          "min": 0.0,
+          "max": 1.0
+        },
+        "CRSV": {
+          "min": 0.0,
+          "max": 1.0
+        },
+        "MONO": {
+          "min": 0.0,
+          "max": 1.0
+        },
+        "slnt": {
+          "min": -15.0,
+          "max": 0.0
+        },
+        "wght": {
+          "min": 300.0,
+          "max": 1000.0
+        }
+      },
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "Recursive[CASL,CRSV,MONO,slnt,wght].ttf",
+          "variable_axes": [
+            "CASL",
+            "CRSV",
+            "MONO",
+            "slnt",
+            "wght"
+          ],
+          "weight_range": {
+            "min": 300.0,
+            "max": 1000.0
+          }
+        }
+      ],
+      "upstream_url": "https://github.com/arrowtype/recursive",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "Schibsted Grotesk",
+      "category": "SANS_SERIF",
+      "designer": "Bakken & Bæck, Henrik Kongsvoll",
+      "license": "OFL",
+      "repository_path": "ofl/schibstedgrotesk",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/schibstedgrotesk/METADATA.pb",
+      "metadata_sha256": "d1adceaf0f93819b907c4ee7777944372ba18ea801128e730c9638a10c1449ac",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/schibstedgrotesk/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/Schibsted+Grotesk",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "latin",
+        "latin-ext",
+        "menu"
+      ],
+      "axes": {
+        "wght": {
+          "min": 400.0,
+          "max": 900.0
+        }
+      },
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "SchibstedGrotesk[wght].ttf",
+          "variable_axes": [
+            "wght"
+          ],
+          "weight_range": {
+            "min": 400.0,
+            "max": 900.0
+          }
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 400.0,
+          "filename": "SchibstedGrotesk-Italic[wght].ttf",
+          "variable_axes": [
+            "wght"
+          ],
+          "weight_range": {
+            "min": 400.0,
+            "max": 900.0
+          }
+        }
+      ],
+      "upstream_url": "https://github.com/schibsted/schibsted-grotesk",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "Source Sans 3",
+      "category": "SANS_SERIF",
+      "designer": "Paul D. Hunt",
+      "license": "OFL",
+      "repository_path": "ofl/sourcesans3",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/sourcesans3/METADATA.pb",
+      "metadata_sha256": "f855c7833e0c780c90e5a797a003f86e1201990c0af65b9c75d0a04c9be05ed7",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/sourcesans3/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/Source+Sans+3",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "cyrillic",
+        "cyrillic-ext",
+        "greek",
+        "greek-ext",
+        "latin",
+        "latin-ext",
+        "menu",
+        "vietnamese"
+      ],
+      "axes": {
+        "wght": {
+          "min": 200.0,
+          "max": 900.0
+        }
+      },
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "SourceSans3[wght].ttf",
+          "variable_axes": [
+            "wght"
+          ],
+          "weight_range": {
+            "min": 200.0,
+            "max": 900.0
+          }
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 400.0,
+          "filename": "SourceSans3-Italic[wght].ttf",
+          "variable_axes": [
+            "wght"
+          ],
+          "weight_range": {
+            "min": 200.0,
+            "max": 900.0
+          }
+        }
+      ],
+      "upstream_url": "https://github.com/adobe-fonts/source-sans",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "Source Serif 4",
+      "category": "SERIF",
+      "designer": "Frank Grießhammer",
+      "license": "OFL",
+      "repository_path": "ofl/sourceserif4",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/sourceserif4/METADATA.pb",
+      "metadata_sha256": "f7b88902c1d2f41839a3f7bf6723d1e64044c7c183b82871ce770a95f24b84e3",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/sourceserif4/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/Source+Serif+4",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "cyrillic",
+        "cyrillic-ext",
+        "greek",
+        "latin",
+        "latin-ext",
+        "menu",
+        "vietnamese"
+      ],
+      "axes": {
+        "opsz": {
+          "min": 8.0,
+          "max": 60.0
+        },
+        "wght": {
+          "min": 200.0,
+          "max": 900.0
+        }
+      },
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "SourceSerif4[opsz,wght].ttf",
+          "variable_axes": [
+            "opsz",
+            "wght"
+          ],
+          "weight_range": {
+            "min": 200.0,
+            "max": 900.0
+          }
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 400.0,
+          "filename": "SourceSerif4-Italic[opsz,wght].ttf",
+          "variable_axes": [
+            "opsz",
+            "wght"
+          ],
+          "weight_range": {
+            "min": 200.0,
+            "max": 900.0
+          }
+        }
+      ],
+      "upstream_url": "https://github.com/adobe-fonts/source-serif",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "Space Grotesk",
+      "category": "SANS_SERIF",
+      "designer": "Florian Karsten",
+      "license": "OFL",
+      "repository_path": "ofl/spacegrotesk",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/spacegrotesk/METADATA.pb",
+      "metadata_sha256": "3713adf5c1a21affdbede103b6bb23f551d4195771fa8bc1b91ce813bd1623ee",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/spacegrotesk/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/Space+Grotesk",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "latin",
+        "latin-ext",
+        "menu",
+        "vietnamese"
+      ],
+      "axes": {
+        "wght": {
+          "min": 300.0,
+          "max": 700.0
+        }
+      },
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "SpaceGrotesk[wght].ttf",
+          "variable_axes": [
+            "wght"
+          ],
+          "weight_range": {
+            "min": 300.0,
+            "max": 700.0
+          }
+        }
+      ],
+      "upstream_url": "https://github.com/floriankarsten/space-grotesk",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "Space Mono",
+      "category": "MONOSPACE",
+      "designer": "Colophon Foundry",
+      "license": "OFL",
+      "repository_path": "ofl/spacemono",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/spacemono/METADATA.pb",
+      "metadata_sha256": "5dadfea714098a304264ff8c2e8420d04a457a62caf3685ad01c9abdb7fddb45",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/spacemono/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/Space+Mono",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "latin",
+        "latin-ext",
+        "menu",
+        "vietnamese"
+      ],
+      "axes": {},
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "SpaceMono-Regular.ttf",
+          "variable_axes": [],
+          "weight": 400.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 400.0,
+          "filename": "SpaceMono-Italic.ttf",
+          "variable_axes": [],
+          "weight": 400.0
+        },
+        {
+          "style": "normal",
+          "metadata_weight": 700.0,
+          "filename": "SpaceMono-Bold.ttf",
+          "variable_axes": [],
+          "weight": 700.0
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 700.0,
+          "filename": "SpaceMono-BoldItalic.ttf",
+          "variable_axes": [],
+          "weight": 700.0
+        }
+      ],
+      "upstream_url": "https://github.com/googlefonts/spacemono",
+      "glyph_and_feature_verification": "not_checked"
+    },
+    {
+      "family": "Work Sans",
+      "category": "SANS_SERIF",
+      "designer": "Wei Huang",
+      "license": "OFL",
+      "repository_path": "ofl/worksans",
+      "metadata_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/worksans/METADATA.pb",
+      "metadata_sha256": "b55627dfda8d7bdb0b2500b0f6b2b942c1f8242bf756ca5c98e8a7cd22b28946",
+      "license_url": "https://github.com/google/fonts/blob/5e35378e6bda803962ee6fd257e444a7d459660d/ofl/worksans/OFL.txt",
+      "specimen_url": "https://fonts.google.com/specimen/Work+Sans",
+      "verified_at": "2026-09-06T00:49:04+00:00",
+      "subsets": [
+        "latin",
+        "latin-ext",
+        "menu",
+        "vietnamese"
+      ],
+      "axes": {
+        "wght": {
+          "min": 100.0,
+          "max": 900.0
+        }
+      },
+      "faces": [
+        {
+          "style": "normal",
+          "metadata_weight": 400.0,
+          "filename": "WorkSans[wght].ttf",
+          "variable_axes": [
+            "wght"
+          ],
+          "weight_range": {
+            "min": 100.0,
+            "max": 900.0
+          }
+        },
+        {
+          "style": "italic",
+          "metadata_weight": 400.0,
+          "filename": "WorkSans-Italic[wght].ttf",
+          "variable_axes": [
+            "wght"
+          ],
+          "weight_range": {
+            "min": 100.0,
+            "max": 900.0
+          }
+        }
+      ],
+      "upstream_url": "https://github.com/weiweihuanghuang/Work-Sans",
+      "glyph_and_feature_verification": "not_checked"
+    }
+  ]
+}

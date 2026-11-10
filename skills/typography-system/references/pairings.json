@@ -1,0 +1,1495 @@
+{
+  "schema_version": 1,
+  "researched_on": "2026-09-05",
+  "editorial_status": "Curated starting points. Role assignments and contextual fit are design judgments, not empirical rankings.",
+  "weight_status": "All role weights, styles, and explicit axis coordinates validated against the bundled Google Fonts repository catalog at revision 5e35378e6bda803962ee6fd257e444a7d459660d.",
+  "validation_status": "Specimen font delivery and desktop/mobile behavior checked in Chromium. Contextual suitability, complete glyph/feature coverage, and destination-site quality still require real-content review.",
+  "family_count": 47,
+  "recipe_count": 30,
+  "recipes": [
+    {
+      "id": "source-editorial",
+      "name": "A coherent editorial system",
+      "contexts": [
+        "editorial",
+        "journalism",
+        "knowledge base"
+      ],
+      "roles": {
+        "display": {
+          "family": "Source Serif 4",
+          "weight": 600
+        },
+        "body": {
+          "family": "Source Serif 4",
+          "weight": 400
+        },
+        "ui": {
+          "family": "Source Sans 3",
+          "weight": 600
+        }
+      },
+      "rationale": "Let the serif carry both the story title and sustained reading; the sans identifies navigation and actions. Related proportions make the role change feel intentional without requiring every heading to shout.",
+      "cautions": [
+        "Enable optical sizing when the loaded font supports it; test the actual body size and longest headline.",
+        "Do not add a third display family merely to make the hero different."
+      ],
+      "specimen": {
+        "heading": "The city after the last train",
+        "body": "At midnight, the station becomes a meeting place for another city. We spent a week with the people who keep it moving.",
+        "lang": "en",
+        "dir": "ltr"
+      },
+      "evidence": "Source Serif 4 was designed to complement Source Sans 3 through related proportions and typographic color; Source Sans was designed for interfaces.",
+      "sources": [
+        "https://raw.githubusercontent.com/google/fonts/main/ofl/sourceserif4/DESCRIPTION.en_us.html",
+        "https://raw.githubusercontent.com/google/fonts/main/ofl/sourcesans3/DESCRIPTION.en_us.html"
+      ],
+      "google_specimens": [
+        {
+          "family": "Source Serif 4",
+          "url": "https://fonts.google.com/specimen/Source+Serif+4"
+        },
+        {
+          "family": "Source Sans 3",
+          "url": "https://fonts.google.com/specimen/Source+Sans+3"
+        }
+      ]
+    },
+    {
+      "id": "newsreader-public",
+      "name": "Reporting with a clear front door",
+      "contexts": [
+        "news",
+        "policy journalism",
+        "nonprofit publishing"
+      ],
+      "roles": {
+        "display": {
+          "family": "Public Sans",
+          "weight": 700
+        },
+        "body": {
+          "family": "Newsreader",
+          "weight": 400
+        },
+        "ui": {
+          "family": "Public Sans",
+          "weight": 600
+        }
+      },
+      "rationale": "Use sturdy sans headlines for rapid scanning and the more articulated serif for the article itself. Sharing the headline family with navigation keeps a content-heavy publication from accumulating extra voices.",
+      "cautions": [
+        "Evaluate Newsreader at reading size, with optical sizing when available.",
+        "A compact news index can use Public Sans throughout; do not force article typography into tiny summary cards."
+      ],
+      "specimen": {
+        "heading": "What a neighborhood needs to thrive",
+        "body": "The new library will open beside the market this autumn. Residents helped choose the spaces, services, and opening hours.",
+        "lang": "en",
+        "dir": "ltr"
+      },
+      "evidence": "Newsreader was designed for continuous on-screen reading. Public Sans was developed by the United States Web Design System for interfaces, text, and headings.",
+      "sources": [
+        "https://raw.githubusercontent.com/google/fonts/main/ofl/newsreader/DESCRIPTION.en_us.html",
+        "https://raw.githubusercontent.com/google/fonts/main/ofl/publicsans/DESCRIPTION.en_us.html"
+      ],
+      "google_specimens": [
+        {
+          "family": "Public Sans",
+          "url": "https://fonts.google.com/specimen/Public+Sans"
+        },
+        {
+          "family": "Newsreader",
+          "url": "https://fonts.google.com/specimen/Newsreader"
+        }
+      ]
+    },
+    {
+      "id": "literata-library",
+      "name": "A digital reading room",
+      "contexts": [
+        "digital library",
+        "essays",
+        "education",
+        "documentation"
+      ],
+      "roles": {
+        "display": {
+          "family": "Literata",
+          "weight": 600
+        },
+        "body": {
+          "family": "Literata",
+          "weight": 400
+        },
+        "ui": {
+          "family": "Source Sans 3",
+          "weight": 600
+        }
+      },
+      "rationale": "Keep the reading voice continuous from title to paragraph and let a restrained sans organize search, contents, and notes. This suits a product where reading is the primary experience.",
+      "cautions": [
+        "Test the italic with real emphasis and citations; its upright construction has a distinct texture.",
+        "Support reader font-size preferences; an editorial face cannot compensate for a narrow reading area or cramped leading."
+      ],
+      "specimen": {
+        "heading": "An atlas of everyday discoveries",
+        "body": "A good question can change the way a familiar place looks. This collection follows small observations into larger ideas.",
+        "lang": "en",
+        "dir": "ltr"
+      },
+      "evidence": "Literata originated in Google Play Books and its current design includes optical sizes for editorial text across headlines, paragraphs, and captions.",
+      "sources": [
+        "https://www.type-together.com/literata-font",
+        "https://raw.githubusercontent.com/google/fonts/main/ofl/sourcesans3/DESCRIPTION.en_us.html"
+      ],
+      "google_specimens": [
+        {
+          "family": "Literata",
+          "url": "https://fonts.google.com/specimen/Literata"
+        },
+        {
+          "family": "Source Sans 3",
+          "url": "https://fonts.google.com/specimen/Source+Sans+3"
+        }
+      ]
+    },
+    {
+      "id": "alegreya-literary",
+      "name": "Literary warmth from one type system",
+      "contexts": [
+        "literature",
+        "cultural journal",
+        "independent publisher"
+      ],
+      "roles": {
+        "display": {
+          "family": "Alegreya",
+          "weight": 700
+        },
+        "body": {
+          "family": "Alegreya",
+          "weight": 400
+        },
+        "ui": {
+          "family": "Alegreya Sans",
+          "weight": 700
+        }
+      },
+      "rationale": "The serif's moving, calligraphic rhythm gives essays a human voice, while its sans sibling keeps contents and labels related. Bold creates hierarchy without introducing an unrelated display style.",
+      "cautions": [
+        "Inspect the small apparent size of UI labels before settling on CSS size.",
+        "Reserve the strongest weights and extended italics for purposeful emphasis; do not make every pull quote decorative."
+      ],
+      "specimen": {
+        "heading": "Stories carried across the water",
+        "body": "The first letter arrived without a return address. Years later, its route through the islands became the beginning of this book.",
+        "lang": "en",
+        "dir": "ltr"
+      },
+      "evidence": "Alegreya and Alegreya Sans are sibling families originally intended for literature; both draw on humanist or calligraphic forms.",
+      "sources": [
+        "https://raw.githubusercontent.com/google/fonts/main/ofl/alegreya/DESCRIPTION.en_us.html",
+        "https://raw.githubusercontent.com/google/fonts/main/ofl/alegreyasans/DESCRIPTION.en_us.html"
+      ],
+      "google_specimens": [
+        {
+          "family": "Alegreya",
+          "url": "https://fonts.google.com/specimen/Alegreya"
+        },
+        {
+          "family": "Alegreya Sans",
+          "url": "https://fonts.google.com/specimen/Alegreya+Sans"
+        }
+      ]
+    },
+    {
+      "id": "plex-product",
+      "name": "One family for a working product",
+      "contexts": [
+        "SaaS",
+        "dashboard",
+        "finance operations",
+        "enterprise"
+      ],
+      "roles": {
+        "display": {
+          "family": "IBM Plex Sans",
+          "weight": 600
+        },
+        "body": {
+          "family": "IBM Plex Sans",
+          "weight": 400
+        },
+        "ui": {
+          "family": "IBM Plex Sans",
+          "weight": 500
+        }
+      },
+      "rationale": "Build the hierarchy with size, spacing, and a few weights. The combination of curved exteriors and engineered details can give a practical interface recognizable character without interrupting data work.",
+      "cautions": [
+        "Verify tabular figures in the delivered font before using them for aligned financial columns.",
+        "IBM Plex has a recognizable origin; use it when that technical voice suits the product, not as a universal replacement for every sans."
+      ],
+      "specimen": {
+        "heading": "A clearer view of the work ahead",
+        "body": "Review open orders, compare weekly totals, and see which deliveries need attention. Your team's latest changes appear in one shared view.",
+        "lang": "en",
+        "dir": "ltr"
+      },
+      "evidence": "IBM describes Plex as a system balancing natural and engineered forms, with related Sans, Serif, Mono, and Condensed families.",
+      "sources": [
+        "https://www.ibm.com/design/impact/plex/"
+      ],
+      "google_specimens": [
+        {
+          "family": "IBM Plex Sans",
+          "url": "https://fonts.google.com/specimen/IBM+Plex+Sans"
+        }
+      ]
+    },
+    {
+      "id": "schibsted-marketplace",
+      "name": "A focused marketplace interface",
+      "contexts": [
+        "marketplace",
+        "SaaS",
+        "search",
+        "dashboard"
+      ],
+      "roles": {
+        "display": {
+          "family": "Schibsted Grotesk",
+          "weight": 700
+        },
+        "body": {
+          "family": "Schibsted Grotesk",
+          "weight": 400
+        },
+        "ui": {
+          "family": "Schibsted Grotesk",
+          "weight": 500
+        }
+      },
+      "rationale": "Use a single sans voice across search results, seller details, and transactional controls. Keep large headings expressive through composition while leaving dense information predictable.",
+      "cautions": [
+        "Judge the family with actual product names, prices, and filter labels at narrow widths.",
+        "Do not compress letter spacing in dense results to fit more content; adjust columns or label copy first."
+      ],
+      "specimen": {
+        "heading": "Find the next useful thing",
+        "body": "Compare carefully described items from independent sellers. Save your shortlist and return when you are ready to decide.",
+        "lang": "en",
+        "dir": "ltr"
+      },
+      "evidence": "Schibsted Grotesk is explicitly described by its project as a digital-first family crafted for user interfaces.",
+      "sources": [
+        "https://raw.githubusercontent.com/google/fonts/main/ofl/schibstedgrotesk/DESCRIPTION.en_us.html"
+      ],
+      "google_specimens": [
+        {
+          "family": "Schibsted Grotesk",
+          "url": "https://fonts.google.com/specimen/Schibsted+Grotesk"
+        }
+      ]
+    },
+    {
+      "id": "commissioner-civic",
+      "name": "A civic voice with adjustable character",
+      "contexts": [
+        "civic",
+        "professional services",
+        "membership",
+        "education"
+      ],
+      "roles": {
+        "display": {
+          "family": "Commissioner",
+          "weight": 600
+        },
+        "body": {
+          "family": "Commissioner",
+          "weight": 400
+        },
+        "ui": {
+          "family": "Commissioner",
+          "weight": 500
+        }
+      },
+      "rationale": "Use the restrained default voice for services and forms. If the brand needs more character, introduce a measured amount of flair only in larger headings after comparing it with the default.",
+      "cautions": [
+        "Keep custom flair and volume axes at defaults until a concrete visual comparison supports a change.",
+        "Do not mistake a variable font's many possibilities for a requirement to use all of them."
+      ],
+      "specimen": {
+        "heading": "Useful services, closer to home",
+        "body": "Find the support available in your neighborhood and the documents you may need. Each guide explains the next step in plain language.",
+        "lang": "en",
+        "dir": "ltr"
+      },
+      "evidence": "Commissioner is a low-contrast humanist sans with classical proportions and custom axes that can change terminal forms.",
+      "sources": [
+        "https://raw.githubusercontent.com/google/fonts/main/ofl/commissioner/DESCRIPTION.en_us.html"
+      ],
+      "google_specimens": [
+        {
+          "family": "Commissioner",
+          "url": "https://fonts.google.com/specimen/Commissioner"
+        }
+      ]
+    },
+    {
+      "id": "hanken-saas",
+      "name": "A personable product workhorse",
+      "contexts": [
+        "SaaS",
+        "collaboration",
+        "productivity",
+        "commerce"
+      ],
+      "roles": {
+        "display": {
+          "family": "Hanken Grotesk",
+          "weight": 700
+        },
+        "body": {
+          "family": "Hanken Grotesk",
+          "weight": 400
+        },
+        "ui": {
+          "family": "Hanken Grotesk",
+          "weight": 600
+        }
+      },
+      "rationale": "Use a solid weight difference for headings and keep descriptions even. Its grotesque construction can support a friendly product tone while one family keeps component styling manageable.",
+      "cautions": [
+        "Compare the 400 and 600 weights in the smallest real control; equal CSS sizes can look different across platforms.",
+        "Personality should also come from language and composition; changing this font alone will not repair weak hierarchy."
+      ],
+      "specimen": {
+        "heading": "Make room for the work that matters",
+        "body": "Collect ideas, agree on priorities, and give each task a clear owner. A shared plan makes the next step easier to see.",
+        "lang": "en",
+        "dir": "ltr"
+      },
+      "evidence": "The Hanken Grotesk project describes its geometry, metrics, and OpenType work as supporting text, interfaces, websites, and mobile applications.",
+      "sources": [
+        "https://raw.githubusercontent.com/google/fonts/main/ofl/hankengrotesk/DESCRIPTION.en_us.html"
+      ],
+      "google_specimens": [
+        {
+          "family": "Hanken Grotesk",
+          "url": "https://fonts.google.com/specimen/Hanken+Grotesk"
+        }
+      ]
+    },
+    {
+      "id": "plex-developer",
+      "name": "A related voice for prose and code",
+      "contexts": [
+        "developer tools",
+        "API documentation",
+        "technical SaaS"
+      ],
+      "roles": {
+        "display": {
+          "family": "IBM Plex Sans",
+          "weight": 600
+        },
+        "body": {
+          "family": "IBM Plex Sans",
+          "weight": 400
+        },
+        "ui": {
+          "family": "IBM Plex Sans",
+          "weight": 500
+        },
+        "code": {
+          "family": "IBM Plex Mono",
+          "weight": 400
+        }
+      },
+      "rationale": "Let proportional text explain the product and a related mono distinguish executable examples. Shared family details connect the two without making ordinary documentation occupy code-like widths.",
+      "cautions": [
+        "Apply the mono to code and identifiers, not every paragraph or label.",
+        "Verify ambiguous characters, punctuation, and code wrapping in real snippets; a mono's name is not a legibility guarantee."
+      ],
+      "specimen": {
+        "heading": "From your first request to production",
+        "body": "Create a test key and send a request from your terminal. The guide explains each response before you add the integration to your application.",
+        "lang": "en",
+        "dir": "ltr"
+      },
+      "evidence": "IBM explicitly uses Plex Mono for code snippets and Plex Sans for informative supporting text.",
+      "sources": [
+        "https://www.ibm.com/design/language/typography/typeface/",
+        "https://www.ibm.com/brand/experience-guides/developer/brand/typography/"
+      ],
+      "google_specimens": [
+        {
+          "family": "IBM Plex Sans",
+          "url": "https://fonts.google.com/specimen/IBM+Plex+Sans"
+        },
+        {
+          "family": "IBM Plex Mono",
+          "url": "https://fonts.google.com/specimen/IBM+Plex+Mono"
+        }
+      ]
+    },
+    {
+      "id": "recursive-tool",
+      "name": "A variable system for a technical playground",
+      "contexts": [
+        "developer tools",
+        "interactive education",
+        "technical portfolio"
+      ],
+      "roles": {
+        "display": {
+          "family": "Recursive",
+          "weight": 650,
+          "axes": {
+            "MONO": 0,
+            "CASL": 1
+          }
+        },
+        "body": {
+          "family": "Recursive",
+          "weight": 400,
+          "axes": {
+            "MONO": 0,
+            "CASL": 0
+          }
+        },
+        "ui": {
+          "family": "Recursive",
+          "weight": 500,
+          "axes": {
+            "MONO": 0,
+            "CASL": 0
+          }
+        },
+        "code": {
+          "family": "Recursive",
+          "weight": 400,
+          "axes": {
+            "MONO": 1,
+            "CASL": 0
+          }
+        }
+      },
+      "rationale": "Use the casual proportional style to introduce the experience, a linear proportional style for explanation, and mono for code. The character change has an explicit job within a single family.",
+      "cautions": [
+        "The loader must request MONO and CASL axes; a weight-only request cannot reproduce this recipe.",
+        "Keep code at MONO 1 and test punctuation; do not animate axis values during reading."
+      ],
+      "specimen": {
+        "heading": "Small experiments, useful discoveries",
+        "body": "Change one value and see how the system responds. Each example includes a short explanation and code you can adapt.",
+        "lang": "en",
+        "dir": "ltr"
+      },
+      "evidence": "Recursive's designer documents a MONO axis spanning proportional and fixed-width forms, plus a CASL axis spanning linear and casual forms.",
+      "sources": [
+        "https://www.recursive.design/"
+      ],
+      "google_specimens": [
+        {
+          "family": "Recursive",
+          "url": "https://fonts.google.com/specimen/Recursive"
+        }
+      ]
+    },
+    {
+      "id": "space-technical",
+      "name": "A distinctive title above practical text",
+      "contexts": [
+        "creative technology",
+        "architecture tools",
+        "engineering portfolio"
+      ],
+      "roles": {
+        "display": {
+          "family": "Space Grotesk",
+          "weight": 600
+        },
+        "body": {
+          "family": "Source Sans 3",
+          "weight": 400
+        },
+        "ui": {
+          "family": "Source Sans 3",
+          "weight": 600
+        }
+      },
+      "rationale": "The heading retains visible traces of monospaced construction, while a UI-oriented sans supplies the supporting text. Make the scale difference clear so two sans families do not compete in the same role.",
+      "cautions": [
+        "If the two voices look redundant at the project's real sizes, simplify to one family.",
+        "Avoid assigning Space Grotesk a coding role merely because of its name; it is proportional."
+      ],
+      "specimen": {
+        "heading": "Tools for ideas that take shape",
+        "body": "Explore a workspace for models, measurements, and decisions. Share a proposal with the people who will help bring it into the world.",
+        "lang": "en",
+        "dir": "ltr"
+      },
+      "evidence": "Space Grotesk is a proportional adaptation of Space Mono that retains idiosyncratic details; Source Sans was designed for interfaces.",
+      "sources": [
+        "https://raw.githubusercontent.com/google/fonts/main/ofl/spacegrotesk/DESCRIPTION.en_us.html",
+        "https://raw.githubusercontent.com/google/fonts/main/ofl/sourcesans3/DESCRIPTION.en_us.html"
+      ],
+      "google_specimens": [
+        {
+          "family": "Space Grotesk",
+          "url": "https://fonts.google.com/specimen/Space+Grotesk"
+        },
+        {
+          "family": "Source Sans 3",
+          "url": "https://fonts.google.com/specimen/Source+Sans+3"
+        }
+      ]
+    },
+    {
+      "id": "bricolage-studio",
+      "name": "Expressive headings with a steady support voice",
+      "contexts": [
+        "creative studio",
+        "arts portfolio",
+        "cultural events"
+      ],
+      "roles": {
+        "display": {
+          "family": "Bricolage Grotesque",
+          "weight": 700
+        },
+        "body": {
+          "family": "Public Sans",
+          "weight": 400
+        },
+        "ui": {
+          "family": "Public Sans",
+          "weight": 600
+        }
+      },
+      "rationale": "Let the headline's irregular character occupy a few large moments and keep practical copy direct. The quieter supporting face makes the display choice more legible as a deliberate editorial decision.",
+      "cautions": [
+        "Use a few large headlines; avoid carrying exaggerated width or tight tracking into mobile body text.",
+        "The display family has optical and width axes; inspect which instance the loader actually delivers."
+      ],
+      "specimen": {
+        "heading": "Good ideas rarely arrive in a straight line",
+        "body": "We work with artists, organizations, and curious teams to turn unfinished ideas into public experiences. Every project begins with a useful question.",
+        "lang": "en",
+        "dir": "ltr"
+      },
+      "evidence": "Bricolage Grotesque blends French and British grotesque sources, with more neutral forms at small optical sizes; Public Sans targets text and interfaces.",
+      "sources": [
+        "https://raw.githubusercontent.com/google/fonts/main/ofl/bricolagegrotesque/DESCRIPTION.en_us.html",
+        "https://raw.githubusercontent.com/google/fonts/main/ofl/publicsans/DESCRIPTION.en_us.html"
+      ],
+      "google_specimens": [
+        {
+          "family": "Bricolage Grotesque",
+          "url": "https://fonts.google.com/specimen/Bricolage+Grotesque"
+        },
+        {
+          "family": "Public Sans",
+          "url": "https://fonts.google.com/specimen/Public+Sans"
+        }
+      ]
+    },
+    {
+      "id": "instrument-portfolio",
+      "name": "A considered creative portfolio",
+      "contexts": [
+        "portfolio",
+        "architecture",
+        "design studio"
+      ],
+      "roles": {
+        "display": {
+          "family": "Instrument Serif",
+          "weight": 400
+        },
+        "body": {
+          "family": "Instrument Sans",
+          "weight": 400
+        },
+        "ui": {
+          "family": "Instrument Sans",
+          "weight": 500
+        }
+      },
+      "rationale": "A condensed serif headline can provide a distinct signature while leaving descriptions and navigation precise. Their shared brand origin offers a plausible starting relationship, not a guarantee that any settings will fit.",
+      "cautions": [
+        "Instrument Serif is a display face; keep project descriptions and small card titles in the sans when the serif becomes fragile.",
+        "Do not request a synthetic bold for the serif. Its regular style can establish hierarchy through size and space."
+      ],
+      "specimen": {
+        "heading": "Places made for the way we live",
+        "body": "A selection of spaces, objects, and identities developed through close collaboration. Each project balances a clear purpose with the details people notice over time.",
+        "lang": "en",
+        "dir": "ltr"
+      },
+      "evidence": "Instrument Serif was designed for large sizes; Instrument Sans is the variable neo-grotesque family created for the same brand.",
+      "sources": [
+        "https://github.com/Instrument/instrument-serif/blob/main/README.md",
+        "https://raw.githubusercontent.com/google/fonts/main/ofl/instrumentsans/DESCRIPTION.en_us.html"
+      ],
+      "google_specimens": [
+        {
+          "family": "Instrument Serif",
+          "url": "https://fonts.google.com/specimen/Instrument+Serif"
+        },
+        {
+          "family": "Instrument Sans",
+          "url": "https://fonts.google.com/specimen/Instrument+Sans"
+        }
+      ]
+    },
+    {
+      "id": "bodoni-luxury",
+      "name": "Precise contrast for premium objects",
+      "contexts": [
+        "luxury",
+        "fashion",
+        "beauty",
+        "design retail"
+      ],
+      "roles": {
+        "display": {
+          "family": "Bodoni Moda",
+          "weight": 500
+        },
+        "body": {
+          "family": "Manrope",
+          "weight": 400
+        },
+        "ui": {
+          "family": "Manrope",
+          "weight": 600
+        }
+      },
+      "rationale": "Use Bodoni's strong thick–thin rhythm as a display accent and Manrope for product facts and purchase controls. This can create a composed retail voice without sacrificing the information that supports a decision.",
+      "cautions": [
+        "Check hairlines against the actual background on modest displays; do not use light, high-contrast serifs for small prices or controls.",
+        "Avoid Manrope faux italics; use a supported emphasis strategy if the selected release lacks italics."
+      ],
+      "specimen": {
+        "heading": "Objects worth keeping",
+        "body": "Materials are chosen for how they feel today and how they will age. Explore the collection and the care behind each piece.",
+        "lang": "en",
+        "dir": "ltr"
+      },
+      "evidence": "Bodoni Moda's project includes optical sizes, weights, and italics; Manrope is a variable sans-serif family.",
+      "sources": [
+        "https://raw.githubusercontent.com/google/fonts/main/ofl/bodonimoda/DESCRIPTION.en_us.html",
+        "https://raw.githubusercontent.com/google/fonts/main/ofl/manrope/DESCRIPTION.en_us.html"
+      ],
+      "google_specimens": [
+        {
+          "family": "Bodoni Moda",
+          "url": "https://fonts.google.com/specimen/Bodoni+Moda"
+        },
+        {
+          "family": "Manrope",
+          "url": "https://fonts.google.com/specimen/Manrope"
+        }
+      ]
+    },
+    {
+      "id": "cormorant-culture",
+      "name": "A gallery voice with readable practical details",
+      "contexts": [
+        "museum",
+        "gallery",
+        "heritage",
+        "classical performance"
+      ],
+      "roles": {
+        "display": {
+          "family": "Cormorant Garamond",
+          "weight": 500
+        },
+        "body": {
+          "family": "Work Sans",
+          "weight": 400
+        },
+        "ui": {
+          "family": "Work Sans",
+          "weight": 600
+        }
+      },
+      "rationale": "A finely drawn display serif can frame artwork or a performance while the sans handles schedules, accessibility information, and tickets. Broad spacing around the heading matters as much as the family itself.",
+      "cautions": [
+        "Cormorant is a display project; do not assume its Garamond name makes it suitable for long small text.",
+        "Keep dates and ticket controls in the supporting sans; test the serif at the smallest responsive headline size."
+      ],
+      "specimen": {
+        "heading": "An encounter with light and form",
+        "body": "Discover works that reveal the changing relationship between a place and its people. Plan your visit or explore the exhibition from home.",
+        "lang": "en",
+        "dir": "ltr"
+      },
+      "evidence": "Cormorant is explicitly a display family. Work Sans's middle weights were optimized for medium-sized on-screen text.",
+      "sources": [
+        "https://raw.githubusercontent.com/google/fonts/main/ofl/cormorantgaramond/DESCRIPTION.en_us.html",
+        "https://raw.githubusercontent.com/google/fonts/main/ofl/worksans/DESCRIPTION.en_us.html"
+      ],
+      "google_specimens": [
+        {
+          "family": "Cormorant Garamond",
+          "url": "https://fonts.google.com/specimen/Cormorant+Garamond"
+        },
+        {
+          "family": "Work Sans",
+          "url": "https://fonts.google.com/specimen/Work+Sans"
+        }
+      ]
+    },
+    {
+      "id": "dm-hospitality",
+      "name": "A welcoming place to stay",
+      "contexts": [
+        "hospitality",
+        "restaurant",
+        "travel",
+        "boutique hotel"
+      ],
+      "roles": {
+        "display": {
+          "family": "DM Serif Display",
+          "weight": 400
+        },
+        "body": {
+          "family": "DM Sans",
+          "weight": 400
+        },
+        "ui": {
+          "family": "DM Sans",
+          "weight": 500
+        }
+      },
+      "rationale": "Use the serif for the place's name and story, and the sans for room details, menus, and booking controls. Rounded supporting forms keep the strong display contrast from feeling overly formal.",
+      "cautions": [
+        "DM Serif Display is intended for large settings; switch small titles to DM Sans.",
+        "Use the serif's actual regular or italic style; do not synthesize a bold weight."
+      ],
+      "specimen": {
+        "heading": "A slower morning, a better view",
+        "body": "Wake to the garden, share a generous breakfast, and make the day your own. Our small hotel is a base for exploring the coast at your pace.",
+        "lang": "en",
+        "dir": "ltr"
+      },
+      "evidence": "DM Serif Display is a high-contrast transitional design for large settings, while DM Sans is a low-contrast geometric design intended for smaller text.",
+      "sources": [
+        "https://raw.githubusercontent.com/google/fonts/main/ofl/dmserifdisplay/DESCRIPTION.en_us.html",
+        "https://raw.githubusercontent.com/google/fonts/main/ofl/dmsans/DESCRIPTION.en_us.html"
+      ],
+      "google_specimens": [
+        {
+          "family": "DM Serif Display",
+          "url": "https://fonts.google.com/specimen/DM+Serif+Display"
+        },
+        {
+          "family": "DM Sans",
+          "url": "https://fonts.google.com/specimen/DM+Sans"
+        }
+      ]
+    },
+    {
+      "id": "fraunces-food",
+      "name": "Character for food made with care",
+      "contexts": [
+        "food",
+        "bakery",
+        "independent retail",
+        "hospitality"
+      ],
+      "roles": {
+        "display": {
+          "family": "Fraunces",
+          "weight": 650
+        },
+        "body": {
+          "family": "Hanken Grotesk",
+          "weight": 400
+        },
+        "ui": {
+          "family": "Hanken Grotesk",
+          "weight": 600
+        }
+      },
+      "rationale": "Give a short headline Fraunces's soft, irregular energy and let the sans handle ingredients, prices, and ordering. This can suggest warmth and craft without setting the whole experience in a decorative voice.",
+      "cautions": [
+        "Choose and test the optical instance; Fraunces's softness and wonk axes can change the tone substantially.",
+        "Do not turn every food brand into a retro bakery. If the brand needs precision, reduce the display treatment or choose another route."
+      ],
+      "specimen": {
+        "heading": "Made slowly. Shared generously.",
+        "body": "Our menu follows the season and the ingredients our growers bring us. Come for a familiar favorite or something you have never tried before.",
+        "lang": "en",
+        "dir": "ltr"
+      },
+      "evidence": "Fraunces was developed as a characterful display family inspired by an informal Old Style genre; its designer documents optical-size, softness, and wonk axes.",
+      "sources": [
+        "https://fraunces.undercase.xyz/",
+        "https://raw.githubusercontent.com/google/fonts/main/ofl/hankengrotesk/DESCRIPTION.en_us.html"
+      ],
+      "google_specimens": [
+        {
+          "family": "Fraunces",
+          "url": "https://fonts.google.com/specimen/Fraunces"
+        },
+        {
+          "family": "Hanken Grotesk",
+          "url": "https://fonts.google.com/specimen/Hanken+Grotesk"
+        }
+      ]
+    },
+    {
+      "id": "barlow-outdoors",
+      "name": "Movement without sacrificing clarity",
+      "contexts": [
+        "outdoors",
+        "sport",
+        "travel",
+        "events"
+      ],
+      "roles": {
+        "display": {
+          "family": "Barlow Condensed",
+          "weight": 700
+        },
+        "body": {
+          "family": "Barlow",
+          "weight": 400
+        },
+        "ui": {
+          "family": "Barlow",
+          "weight": 600
+        }
+      },
+      "rationale": "Use condensed headings to create vertical energy and the regular width for itinerary details or product copy. Shared construction connects both roles while width establishes a visible difference.",
+      "cautions": [
+        "Do not use the condensed family to squeeze long paragraphs or form labels into fixed boxes.",
+        "Test long place names and translated headings; narrower letters do not eliminate reflow needs."
+      ],
+      "specimen": {
+        "heading": "Take the route you will remember",
+        "body": "Follow the ridge, pause at the lake, and return before the evening light fades. Each route includes practical notes from people who have walked it.",
+        "lang": "en",
+        "dir": "ltr"
+      },
+      "evidence": "Barlow is a slightly rounded, low-contrast grotesque informed by California transport lettering; Condensed and regular-width families belong to its superfamily.",
+      "sources": [
+        "https://raw.githubusercontent.com/google/fonts/main/ofl/barlowcondensed/DESCRIPTION.en_us.html"
+      ],
+      "google_specimens": [
+        {
+          "family": "Barlow Condensed",
+          "url": "https://fonts.google.com/specimen/Barlow+Condensed"
+        },
+        {
+          "family": "Barlow",
+          "url": "https://fonts.google.com/specimen/Barlow"
+        }
+      ]
+    },
+    {
+      "id": "archivo-campaign",
+      "name": "Direct impact for a retail campaign",
+      "contexts": [
+        "ecommerce",
+        "sport",
+        "events",
+        "campaign"
+      ],
+      "roles": {
+        "display": {
+          "family": "Archivo Black",
+          "weight": 400
+        },
+        "body": {
+          "family": "Archivo",
+          "weight": 400
+        },
+        "ui": {
+          "family": "Archivo",
+          "weight": 600
+        }
+      },
+      "rationale": "Let the heavy headline establish a clear campaign voice and use the related regular family for product information. Strong weight contrast can do the work of extra decoration.",
+      "cautions": [
+        "Archivo Black looks heavy but its normal CSS weight is 400 in the common Google release; verify the catalog and do not request 900 by appearance.",
+        "Keep the Black face to brief headlines; for a leaner payload, compare using Archivo's heavy variable weights alone."
+      ],
+      "specimen": {
+        "heading": "Built for the long way home",
+        "body": "Explore practical layers made for changing weather and repeated wear. Compare materials, fit, and repair options before you choose.",
+        "lang": "en",
+        "dir": "ltr"
+      },
+      "evidence": "Archivo was created for highlights and headlines and references nineteenth-century American grotesques; its current variable family includes width and weight axes.",
+      "sources": [
+        "https://raw.githubusercontent.com/google/fonts/main/ofl/archivo/DESCRIPTION.en_us.html",
+        "https://raw.githubusercontent.com/google/fonts/main/ofl/archivoblack/DESCRIPTION.en_us.html"
+      ],
+      "google_specimens": [
+        {
+          "family": "Archivo Black",
+          "url": "https://fonts.google.com/specimen/Archivo+Black"
+        },
+        {
+          "family": "Archivo",
+          "url": "https://fonts.google.com/specimen/Archivo"
+        }
+      ]
+    },
+    {
+      "id": "bitter-commerce",
+      "name": "Substantial headings, clear product decisions",
+      "contexts": [
+        "ecommerce",
+        "home goods",
+        "product guides",
+        "membership"
+      ],
+      "roles": {
+        "display": {
+          "family": "Bitter",
+          "weight": 600
+        },
+        "body": {
+          "family": "Figtree",
+          "weight": 400
+        },
+        "ui": {
+          "family": "Figtree",
+          "weight": 600
+        }
+      },
+      "rationale": "Bitter's sturdy slab forms give categories and buying guides substance; Figtree keeps descriptions and actions lighter in texture. Compare their apparent sizes instead of matching their CSS numbers blindly.",
+      "cautions": [
+        "Bitter can create a dark paragraph texture; if it is used for long copy, retune size and leading.",
+        "Check actual price glyphs and tabular features in Figtree before relying on numeric alignment."
+      ],
+      "specimen": {
+        "heading": "Choose well, use it every day",
+        "body": "Compare the details that make a useful object last. Our guides explain materials, maintenance, and the tradeoffs between each option.",
+        "lang": "en",
+        "dir": "ltr"
+      },
+      "evidence": "Bitter is a slab-serif text design with a large x-height and relatively low stroke contrast; Figtree's designer describes it as a friendly geometric sans.",
+      "sources": [
+        "https://raw.githubusercontent.com/google/fonts/main/ofl/bitter/DESCRIPTION.en_us.html",
+        "https://github.com/erikdkennedy/figtree"
+      ],
+      "google_specimens": [
+        {
+          "family": "Bitter",
+          "url": "https://fonts.google.com/specimen/Bitter"
+        },
+        {
+          "family": "Figtree",
+          "url": "https://fonts.google.com/specimen/Figtree"
+        }
+      ]
+    },
+    {
+      "id": "lora-care",
+      "name": "A human voice for reflective content",
+      "contexts": [
+        "wellbeing",
+        "community",
+        "coaching",
+        "personal publishing"
+      ],
+      "roles": {
+        "display": {
+          "family": "Lora",
+          "weight": 600
+        },
+        "body": {
+          "family": "Lora",
+          "weight": 400
+        },
+        "ui": {
+          "family": "Nunito Sans",
+          "weight": 600
+        }
+      },
+      "rationale": "Lora's calligraphic details can carry a calm reading experience while the non-rounded sans makes practical guidance and navigation distinct. Use comfortable spacing and direct language to avoid a sentimental tone.",
+      "cautions": [
+        "Do not assume a serif makes information trustworthy; accuracy, organization, and accessible presentation still carry that burden.",
+        "For task-heavy forms, use Nunito Sans for explanatory paragraphs as well as controls."
+      ],
+      "specimen": {
+        "heading": "Small steps toward a steadier day",
+        "body": "Make space for a short pause and notice what needs your attention. These guides offer practical ways to begin, without asking you to change everything at once.",
+        "lang": "en",
+        "dir": "ltr"
+      },
+      "evidence": "Lora is a moderate-contrast serif with calligraphic roots intended for body text. Nunito Sans is the non-rounded-terminal companion to Nunito.",
+      "sources": [
+        "https://raw.githubusercontent.com/google/fonts/main/ofl/lora/DESCRIPTION.en_us.html",
+        "https://raw.githubusercontent.com/google/fonts/main/ofl/nunitosans/DESCRIPTION.en_us.html"
+      ],
+      "google_specimens": [
+        {
+          "family": "Lora",
+          "url": "https://fonts.google.com/specimen/Lora"
+        },
+        {
+          "family": "Nunito Sans",
+          "url": "https://fonts.google.com/specimen/Nunito+Sans"
+        }
+      ]
+    },
+    {
+      "id": "atkinson-service",
+      "name": "A service designed around character distinction",
+      "contexts": [
+        "public services",
+        "education",
+        "care services",
+        "accessible products"
+      ],
+      "roles": {
+        "display": {
+          "family": "Atkinson Hyperlegible Next",
+          "weight": 700
+        },
+        "body": {
+          "family": "Atkinson Hyperlegible Next",
+          "weight": 400
+        },
+        "ui": {
+          "family": "Atkinson Hyperlegible Next",
+          "weight": 600
+        }
+      },
+      "rationale": "Use one family and straightforward hierarchy when distinguishing characters is particularly valuable. Keep labels explicit and layouts spacious so the font's distinctive shapes support the task.",
+      "cautions": [
+        "The family's low-vision design intent does not guarantee accessibility or make it a universal dyslexia solution.",
+        "Still test with users, zoom, spacing overrides, contrast, and the actual device; typography includes more than letter shapes."
+      ],
+      "specimen": {
+        "heading": "Find the help you need",
+        "body": "Browse services by topic or search for a specific question. Each page explains who the service is for and how to get started.",
+        "lang": "en",
+        "dir": "ltr"
+      },
+      "evidence": "Braille Institute describes Atkinson Hyperlegible Next as a 2025 expansion designed around distinctive letters and numbers for readers with low vision, with additional weights and language coverage.",
+      "sources": [
+        "https://www.brailleinstitute.org/freefont/"
+      ],
+      "google_specimens": [
+        {
+          "family": "Atkinson Hyperlegible Next",
+          "url": "https://fonts.google.com/specimen/Atkinson+Hyperlegible+Next"
+        }
+      ]
+    },
+    {
+      "id": "fredoka-learning",
+      "name": "Playful introductions, steady instructions",
+      "contexts": [
+        "children's learning",
+        "family activities",
+        "playful products"
+      ],
+      "roles": {
+        "display": {
+          "family": "Fredoka",
+          "weight": 600
+        },
+        "body": {
+          "family": "Nunito",
+          "weight": 400
+        },
+        "ui": {
+          "family": "Nunito",
+          "weight": 700
+        }
+      },
+      "rationale": "Use Fredoka's full, rounded forms for activity names and Nunito's lighter texture for instructions. Shared roundness creates kinship while a firm scale and weight difference keeps roles separate.",
+      "cautions": [
+        "A playful font is not proof of suitability for early literacy; test letterforms against the curriculum and age group.",
+        "Keep directions and feedback in the support face. Limit animated or distorted display text while a child is reading."
+      ],
+      "specimen": {
+        "heading": "Big questions start with little experiments",
+        "body": "Build a paper bridge and see how much it can hold. Try one change, make a prediction, and discover what happens next.",
+        "lang": "en",
+        "dir": "ltr"
+      },
+      "evidence": "Fredoka is designed for rounded, playful headlines and large text; Nunito began as a rounded-terminal sans and was expanded to a broader family.",
+      "sources": [
+        "https://raw.githubusercontent.com/google/fonts/main/ofl/fredoka/DESCRIPTION.en_us.html",
+        "https://raw.githubusercontent.com/google/fonts/main/ofl/nunito/DESCRIPTION.en_us.html"
+      ],
+      "google_specimens": [
+        {
+          "family": "Fredoka",
+          "url": "https://fonts.google.com/specimen/Fredoka"
+        },
+        {
+          "family": "Nunito",
+          "url": "https://fonts.google.com/specimen/Nunito"
+        }
+      ]
+    },
+    {
+      "id": "space-exhibition",
+      "name": "A coded voice for an arts or data exhibition",
+      "contexts": [
+        "arts",
+        "data exhibition",
+        "experimental portfolio",
+        "creative technology"
+      ],
+      "roles": {
+        "display": {
+          "family": "Space Mono",
+          "weight": 700
+        },
+        "body": {
+          "family": "Work Sans",
+          "weight": 400
+        },
+        "ui": {
+          "family": "Work Sans",
+          "weight": 500
+        }
+      },
+      "rationale": "Use fixed-width headings as a deliberate curatorial voice and the proportional sans for interpretation and visitor details. The width contrast makes the two roles apparent even in a restrained palette.",
+      "cautions": [
+        "Space Mono consumes horizontal space quickly; test actual titles on mobile.",
+        "A monospaced display face is not automatically the best choice for dense source code or financial tables."
+      ],
+      "specimen": {
+        "heading": "Signals from an ordinary day",
+        "body": "Every journey leaves a pattern of pauses, turns, and small decisions. This exhibition turns those traces into a different way of seeing the city.",
+        "lang": "en",
+        "dir": "ltr"
+      },
+      "evidence": "Space Mono is the fixed-width family identified as Space Grotesk's source; Work Sans's middle weights target on-screen text.",
+      "sources": [
+        "https://raw.githubusercontent.com/google/fonts/main/ofl/spacegrotesk/DESCRIPTION.en_us.html",
+        "https://raw.githubusercontent.com/google/fonts/main/ofl/worksans/DESCRIPTION.en_us.html"
+      ],
+      "google_specimens": [
+        {
+          "family": "Space Mono",
+          "url": "https://fonts.google.com/specimen/Space+Mono"
+        },
+        {
+          "family": "Work Sans",
+          "url": "https://fonts.google.com/specimen/Work+Sans"
+        }
+      ]
+    },
+    {
+      "id": "inria-science",
+      "name": "Research with a coherent serif and sans",
+      "contexts": [
+        "science",
+        "research institute",
+        "university lab",
+        "technical publishing"
+      ],
+      "roles": {
+        "display": {
+          "family": "Inria Sans",
+          "weight": 700
+        },
+        "body": {
+          "family": "Inria Serif",
+          "weight": 400
+        },
+        "ui": {
+          "family": "Inria Sans",
+          "weight": 700
+        }
+      },
+      "rationale": "Let the sans state the research topic clearly and the serif carry the explanation. Their shared design origins connect a technical interface to longer editorial material without treating science as a futuristic costume.",
+      "cautions": [
+        "Check the weights in the Google release; the foundry's current family may contain styles not distributed there.",
+        "For mathematics, use a tested math typesetting system and its required fonts; a research-oriented text family does not establish mathematical coverage."
+      ],
+      "specimen": {
+        "heading": "Understanding systems, improving lives",
+        "body": "Our group studies how people and technology respond to change. Read the latest work, explore the methods, or meet the researchers behind it.",
+        "lang": "en",
+        "dir": "ltr"
+      },
+      "evidence": "Black Foundry designed Inria Sans and Inria Serif as related styles for the research institute, with both intended for body text and display.",
+      "sources": [
+        "https://black-foundry.com/case-studies/inria-identity-font/"
+      ],
+      "google_specimens": [
+        {
+          "family": "Inria Sans",
+          "url": "https://fonts.google.com/specimen/Inria+Sans"
+        },
+        {
+          "family": "Inria Serif",
+          "url": "https://fonts.google.com/specimen/Inria+Serif"
+        }
+      ]
+    },
+    {
+      "id": "noto-multilingual",
+      "name": "A foundation for Latin, Greek, and Cyrillic",
+      "contexts": [
+        "multilingual publishing",
+        "civic",
+        "education",
+        "international organizations"
+      ],
+      "roles": {
+        "display": {
+          "family": "Noto Serif",
+          "weight": 600
+        },
+        "body": {
+          "family": "Noto Serif",
+          "weight": 400
+        },
+        "ui": {
+          "family": "Noto Sans",
+          "weight": 600
+        }
+      },
+      "rationale": "Use the serif for extended reading and the sans for navigation while maintaining a coordinated language foundation. Additional scripts should be designed as explicit extensions to these roles.",
+      "cautions": [
+        "Noto Sans and Noto Serif alone do not cover all scripts. Add the appropriate script-specific Noto families and language-aware stacks.",
+        "Test real names, accents, punctuation, and locale-specific forms with fluent readers; a subset label is not full language QA."
+      ],
+      "specimen": {
+        "heading": "Many languages, one shared conversation",
+        "body": "Read ideas from communities whose experiences rarely appear side by side. Names, places, and original terms are preserved with the care they deserve.",
+        "lang": "en",
+        "dir": "ltr"
+      },
+      "evidence": "The primary Noto Sans and Noto Serif families cover Latin, Cyrillic, and Greek, and are intended to complement script-specific Noto families.",
+      "sources": [
+        "https://raw.githubusercontent.com/google/fonts/main/ofl/notoserif/DESCRIPTION.en_us.html",
+        "https://raw.githubusercontent.com/google/fonts/main/ofl/notosans/DESCRIPTION.en_us.html"
+      ],
+      "google_specimens": [
+        {
+          "family": "Noto Serif",
+          "url": "https://fonts.google.com/specimen/Noto+Serif"
+        },
+        {
+          "family": "Noto Sans",
+          "url": "https://fonts.google.com/specimen/Noto+Sans"
+        }
+      ]
+    },
+    {
+      "id": "noto-japanese",
+      "name": "A Japanese reading and navigation system",
+      "contexts": [
+        "Japanese",
+        "multilingual",
+        "editorial",
+        "cultural publishing"
+      ],
+      "roles": {
+        "display": {
+          "family": "Noto Serif JP",
+          "weight": 600
+        },
+        "body": {
+          "family": "Noto Serif JP",
+          "weight": 400
+        },
+        "ui": {
+          "family": "Noto Sans JP",
+          "weight": 500
+        }
+      },
+      "rationale": "Use the modulated Japanese face for editorial reading and the unmodulated face for interface roles. Judge kana, kanji, Latin text, and punctuation together in the real layout.",
+      "cautions": [
+        "Use the JP family for Japanese rather than substituting SC, TC, or KR merely because characters render.",
+        "Avoid importing Latin tracking or line-length rules unchanged. Check Japanese line breaking, punctuation, and mixed-script sizing with a fluent reviewer."
+      ],
+      "specimen": {
+        "heading": "暮らしの中に、小さな発見。",
+        "body": "身近な道具と、それを作る人を紹介します。週末に読みたい物語を、ひとつずつお届けします。",
+        "lang": "ja",
+        "dir": "ltr"
+      },
+      "evidence": "Noto Serif JP and Noto Sans JP are designed for Japanese and cover hiragana, katakana, and kanji, with Latin and other supporting glyphs.",
+      "sources": [
+        "https://raw.githubusercontent.com/google/fonts/main/ofl/notoserifjp/DESCRIPTION.en_us.html",
+        "https://raw.githubusercontent.com/google/fonts/main/ofl/notosansjp/DESCRIPTION.en_us.html"
+      ],
+      "google_specimens": [
+        {
+          "family": "Noto Serif JP",
+          "url": "https://fonts.google.com/specimen/Noto+Serif+JP"
+        },
+        {
+          "family": "Noto Sans JP",
+          "url": "https://fonts.google.com/specimen/Noto+Sans+JP"
+        }
+      ]
+    },
+    {
+      "id": "noto-arabic",
+      "name": "An Arabic reading system with distinct UI roles",
+      "contexts": [
+        "Arabic",
+        "multilingual",
+        "editorial",
+        "education"
+      ],
+      "roles": {
+        "display": {
+          "family": "Noto Naskh Arabic",
+          "weight": 600
+        },
+        "body": {
+          "family": "Noto Naskh Arabic",
+          "weight": 400
+        },
+        "ui": {
+          "family": "Noto Sans Arabic",
+          "weight": 500
+        }
+      },
+      "rationale": "Use Naskh forms for article titles and reading, with the less modulated sans for controls. Give both enough vertical room and treat right-to-left structure as part of the component design.",
+      "cautions": [
+        "Apply the correct lang and direction, use logical CSS properties, and inspect mixed Arabic and Latin strings.",
+        "Avoid letter-spacing that breaks the intended appearance of connected text. Do not treat Naskh as a universal substitute for every language's preferred Arabic-script style."
+      ],
+      "specimen": {
+        "heading": "معرفة أقرب إلى الجميع",
+        "body": "نشارك قصصًا وأفكارًا تساعد على فهم العالم من حولنا. اكتشف مقالات جديدة واقرأها بالوتيرة التي تناسبك.",
+        "lang": "ar",
+        "dir": "rtl"
+      },
+      "evidence": "Noto documents Naskh Arabic as a modulated design suitable for longer texts and Sans Arabic as an unmodulated design. Its guidance calls for adequate shaping support and vertical space.",
+      "sources": [
+        "https://notofonts.github.io/noto-docs/specimen/NotoNaskhArabic/",
+        "https://notofonts.github.io/noto-docs/specimen/NotoSansArabic/",
+        "https://notofonts.github.io/noto-docs/website/use/"
+      ],
+      "google_specimens": [
+        {
+          "family": "Noto Naskh Arabic",
+          "url": "https://fonts.google.com/specimen/Noto+Naskh+Arabic"
+        },
+        {
+          "family": "Noto Sans Arabic",
+          "url": "https://fonts.google.com/specimen/Noto+Sans+Arabic"
+        }
+      ]
+    },
+    {
+      "id": "noto-devanagari",
+      "name": "A Devanagari reading and learning system",
+      "contexts": [
+        "Devanagari",
+        "Hindi",
+        "multilingual",
+        "education"
+      ],
+      "roles": {
+        "display": {
+          "family": "Noto Serif Devanagari",
+          "weight": 600
+        },
+        "body": {
+          "family": "Noto Serif Devanagari",
+          "weight": 400
+        },
+        "ui": {
+          "family": "Noto Sans Devanagari",
+          "weight": 600
+        }
+      },
+      "rationale": "Separate reading from controls through modulation and weight while preserving script-appropriate forms. Start with generous vertical room and inspect conjuncts, vowel marks, and mixed Latin notation.",
+      "cautions": [
+        "Use Hindi specimens only to test Hindi; confirm coverage and conventions for each other Devanagari language.",
+        "Do not force Latin line heights, tracking, or faux italics onto the script. Test shaping and mark clipping in inputs as well as paragraphs."
+      ],
+      "specimen": {
+        "heading": "सीखने की एक नई शुरुआत",
+        "body": "हर पाठ किसी बड़े विचार को छोटे और स्पष्ट कदमों में समझाता है। अपनी गति से पढ़ें और जब चाहें अभ्यास दोहराएँ।",
+        "lang": "hi",
+        "dir": "ltr"
+      },
+      "evidence": "Noto Serif Devanagari is the modulated design and Noto Sans Devanagari the unmodulated design for the script; Noto's usage guidance explains the need for complex shaping and adequate line height.",
+      "sources": [
+        "https://raw.githubusercontent.com/google/fonts/main/ofl/notoserifdevanagari/DESCRIPTION.en_us.html",
+        "https://raw.githubusercontent.com/google/fonts/main/ofl/notosansdevanagari/DESCRIPTION.en_us.html",
+        "https://notofonts.github.io/noto-docs/website/use/"
+      ],
+      "google_specimens": [
+        {
+          "family": "Noto Serif Devanagari",
+          "url": "https://fonts.google.com/specimen/Noto+Serif+Devanagari"
+        },
+        {
+          "family": "Noto Sans Devanagari",
+          "url": "https://fonts.google.com/specimen/Noto+Sans+Devanagari"
+        }
+      ]
+    },
+    {
+      "id": "plex-finance-editorial",
+      "name": "Financial insight connected to a working interface",
+      "contexts": [
+        "finance",
+        "data journalism",
+        "professional services",
+        "annual reports"
+      ],
+      "roles": {
+        "display": {
+          "family": "IBM Plex Serif",
+          "weight": 600
+        },
+        "body": {
+          "family": "IBM Plex Sans",
+          "weight": 400
+        },
+        "ui": {
+          "family": "IBM Plex Sans",
+          "weight": 500
+        }
+      },
+      "rationale": "Use the serif to frame an analysis or report and the sans for explanations, filters, and figures. The related construction helps an editorial introduction lead naturally into a functional data view.",
+      "cautions": [
+        "Confirm lining/tabular numerals and currency symbols in the delivered sans, then right-align comparable numeric values.",
+        "Do not set every KPI in the serif just to make it feel prestigious; prioritize rapid comparison and stable alignment."
+      ],
+      "specimen": {
+        "heading": "The story behind the quarter",
+        "body": "Revenue grew across two of our three markets while delivery costs remained steady. Explore the figures and the decisions that shaped them.",
+        "lang": "en",
+        "dir": "ltr"
+      },
+      "evidence": "IBM Plex Serif, Sans, Mono, and Condensed were designed as a coordinated family; IBM documents currency symbols and OpenType features across the system.",
+      "sources": [
+        "https://www.ibm.com/design/language/typography/typeface/"
+      ],
+      "google_specimens": [
+        {
+          "family": "IBM Plex Serif",
+          "url": "https://fonts.google.com/specimen/IBM+Plex+Serif"
+        },
+        {
+          "family": "IBM Plex Sans",
+          "url": "https://fonts.google.com/specimen/IBM+Plex+Sans"
+        }
+      ]
+    }
+  ]
+}

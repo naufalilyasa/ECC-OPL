@@ -1,0 +1,4 @@
+interface:
+  display_name: "Typography System"
+  short_description: "Distinctive, readable typography with Google Fonts"
+  default_prompt: "Use $typography-system to audit and improve this site's typography with a coherent hierarchy and context-appropriate Google Fonts."
