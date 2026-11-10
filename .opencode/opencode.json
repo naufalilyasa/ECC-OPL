@@ -485,6 +485,10 @@
       "description": "Build a frontend section by section with an interactive canvas review loop: material, taste deal, frozen contract, per-section approve, purpose-driven assets, scaffold, and anti-slop gate",
       "template": "{file:commands/design-build.md}\n\n$ARGUMENTS"
     },
+    "typography": {
+      "description": "Design, systematize, and polish typography across brand selection (ux-typography), token scaling (typography-system), and craft rendering (better-typography)",
+      "template": "{file:commands/typography.md}\n\n$ARGUMENTS"
+    },
     "tdd": {
       "description": "Enforce TDD workflow with 80%+ test coverage",
       "template": "{file:commands/tdd.md}\n\n$ARGUMENTS"

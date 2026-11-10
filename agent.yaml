@@ -285,6 +285,7 @@ commands:
   - skill-host-compat
   - test-coverage
   - token-card
+  - typography
   - update-codemaps
   - update-docs
   - vue-review
