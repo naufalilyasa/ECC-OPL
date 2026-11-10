@@ -41,10 +41,11 @@ Do not use it for a one-shot component edit or a review of an existing page.
 
 ```
 0 Brief → 0.5 Escalate → 1 Material → 2 Taste → 3 Prerequisites → 4 Freeze
-       → 5 Scaffold shell → 6 Section loop → 7 Assemble → 8 Gate → 9 Harden
+       → 5 Scaffold shell → 6 Section loop (Preview → Approval → Port → Parity Gate)
+       → 7 Assemble → 8 Gate → 9 Harden
 ```
 
-Two orderings are deliberate and must not be reverted:
+Three orderings are deliberate and must not be reverted:
 
 - **Prerequisites before Freeze.** A contract must not promise a photograph or
   render that does not exist yet. Resolve it, or record an approved placeholder,
@@ -52,6 +53,10 @@ Two orderings are deliberate and must not be reverted:
 - **Scaffold before the section loop.** Approving a standalone file that later
   gets re-integrated invalidates the approval. Build the shared shell first, then
   review sections against it.
+- **Parity verification inside each section loop iteration.** Approving a section
+  in canvas only validates the standalone HTML preview. Porting that markup into a
+  framework component is lossy unless verified 1:1 against the served application
+  before advancing to the next section.
 
 ## One Design Authority
 
@@ -76,21 +81,54 @@ Hero → Value → Features → Proof → CTA → Footer is a fallback for a sim
 marketing page, not a template. Record the chosen order in `BUILD-STATE.md`;
 never reorder later without recording why.
 
-## Approval Protocol
+## Section Loop & Live Parity Protocol (Step 6)
 
-An approval exists only as a canvas verdict item:
+For each section in the chosen order (or the single section specified by `--section`):
 
-```json
-{ "kind": "verdict", "verdict": "approve" }
-```
-
-- Accept only an item whose `kind` is `verdict` and whose `verdict` is `approve`.
-  Chat text, a bare status update, or a terminal "ok" is not approval.
-- Delegate chat replies, change requests, owner-ended sessions, and transport
-  recovery to `plan-canvas`; do not invent a substitute loop.
-- Never batch-approve. Never skip a section.
-- If feedback contradicts the frozen contract, revise the contract first, then
-  the section, and invalidate approvals the change affects.
+1. **Preview & Annotation (Canvas):**
+   - Write or update `docs/design/sections/<NN>-<slug>.html`.
+   - Open and await feedback via `plan-canvas`. Apply annotations to preview HTML.
+2. **Approval Verdict:**
+   - An approval exists only as a canvas verdict item:
+     ```json
+     { "kind": "verdict", "verdict": "approve" }
+     ```
+   - Accept only an item whose `kind` is `verdict` and whose `verdict` is `approve`.
+     Chat text, a bare status update, or a terminal "ok" is not approval.
+   - Delegate chat replies, change requests, owner-ended sessions, and transport
+     recovery to `plan-canvas`; do not invent a substitute loop.
+   - Never batch-approve. Never skip a section.
+   - If feedback contradicts the frozen contract, revise the contract first, then
+     the section, and invalidate approvals the change affects.
+3. **Framework Porting & Scoping:**
+   - Immediately upon verdict approval, integrate the approved markup into target component(s).
+   - **Compiler Scoping & Dynamic DOM:**
+     - For elements created dynamically at runtime by client JS (`document.createElement`,
+       rotating log rows, dynamic badge chips, modal inserts), ensure styles survive compiler scoping.
+     - In frameworks with scoped `<style>` (Astro, Svelte, Vue), use narrowly anchored scoped
+       selectors (e.g. `.dashboard-table :global(.log-new-row)` in Astro, `:deep(.log-new-row)` in Vue)
+       or utility classes (Tailwind) rather than unanchored global CSS pollution.
+     - Sub-component wrappers (glass overlays, floating navbars, card borders) must explicitly declare
+       or inherit border-radius (`border-radius: inherit`) so enabling `overflow: visible` for dropdowns
+       does not render square 90-degree corners.
+   - **Asset & URL Mapping:**
+     - Remap canvas-relative paths (`./assets/...`) to framework asset roots (`public/images/`,
+       `public/assets/`, or module imports). Verify no asset returns HTTP 404 in the live app.
+4. **Live Parity Verification (Dev Server vs Canvas Preview):**
+   - **Server Readiness & Discovery:** Discover the running dev server port (e.g. `localhost:4321`).
+     If offline, make one startup attempt with a 10s readiness timeout. If unreachable, record
+     `status: blocked (dev server offline)` in `BUILD-STATE.md` and stop — never pass parity blindly.
+   - **Visual & Geometry Parity:** Inspect live route at matching viewport, locale, and theme.
+     Verify headings, CTA text, translation dictionaries (e.g. `ui.ts`), container widths,
+     pill shapes, and annotation arrow offsets match the approved preview 1:1.
+   - **Runtime & Hydration Parity:** Inspect browser console for hydration mismatches,
+     unhandled exceptions, or failed script requests. Trigger dynamic interactions to verify
+     client scripts execute without errors.
+   - **Bounded Auto-fix (Max 2 Cycles):** Allow up to 2 fix-and-recheck cycles per approved
+     revision. If discrepancies persist after 2 cycles, stop, log the diffs in `BUILD-STATE.md`,
+     and escalate to the owner with concrete visual evidence before proceeding.
+5. **Checkpoint:**
+   - Record parity status and SHA-256 hashes in `BUILD-STATE.md` before advancing to the next section.
 
 ## Resume Protocol
 
@@ -103,6 +141,7 @@ An approval exists only as a canvas verdict item:
 | contract hash, preview revision or hash | detect divergence |
 | feedback ids received and applied | no double-applying a comment |
 | approval evidence (verdict id or timestamp) | prove the approval is current |
+| parity status (served route, port, verified at) | prove live framework rendering matches canvas |
 | blocked reason | why the run stopped |
 
 Write the checkpoint **before** ending a canvas session. On resume, revalidate
@@ -172,5 +211,8 @@ it in the plan; if it is not, an animated diagram is the correct fallback.
 - Letting scaffold or contract defaults override the dealt tokens.
 - Treating `deal` output as the final system.
 - Treating chat text or a terminal "ok" as approval.
+- Porting approved canvas HTML to framework components without verifying live parity on the dev server.
+- Writing scoped CSS for dynamic client-rendered elements without `:global(...)`.
+- Leaving translation dictionary copy stale while updating only component markup.
 - Gating a stale revision, or reporting success while the gate is OFF.
 - Promising a deliverable that is really a demonstration.

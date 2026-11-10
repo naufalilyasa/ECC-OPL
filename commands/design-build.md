@@ -34,7 +34,8 @@ improvise the policy here.
 
 ```
 0 Brief → 0.5 Escalate → 1 Material → 2 Taste → 3 Prerequisites → 4 Freeze
-       → 5 Scaffold shell → 6 Section loop → 7 Assemble → 8 Gate → 9 Harden
+       → 5 Scaffold shell → 6 Section loop (Preview → Approval → Port → Parity Gate)
+       → 7 Assemble → 8 Gate → 9 Harden
 ```
 
 Prerequisites precede Freeze, and Scaffold precedes the section loop. Both
@@ -55,6 +56,24 @@ node ~/ECC/scripts/plan-canvas.js end <file>
 
 `await` blocks: run it as a background task. Accept only an item shaped
 `{"kind":"verdict","verdict":"approve"}`. Server: `127.0.0.1:4517`.
+
+### A1.5 — Live Parity & Scoping Gate (inside Section Loop)
+
+Canvas approval validates only the standalone HTML preview. Immediately after
+porting approved markup into target framework components (`.astro`, `.tsx`, `.vue`):
+
+1. **Compiler Scoping & DOM**: Ensure client-generated dynamic elements use narrowly
+   anchored scoped selectors (`:global(.dynamic-class)` in Astro, `:deep()` in Vue)
+   or utility classes so styles persist. Ensure wrappers declare or inherit border-radius.
+2. **Asset URL Mapping**: Remap canvas-relative `./assets` to framework `public/images/`
+   or module imports. Check for 404s.
+3. **Live Dev Server Parity**: Inspect the running app (`http://localhost:<port>/`) against
+   `docs/design/sections/<NN>-<slug>.html`:
+   - Discover active port; if offline, make one 10s startup attempt. If unreachable, mark
+     blocked in `BUILD-STATE.md` and stop — never pass parity blindly.
+   - Verify copy, i18n dictionaries (`ui.ts`), pill capsules, and arrow offsets match 1:1.
+   - Verify browser console has zero hydration errors or failed scripts.
+   - Max 2 auto-fix cycles: if discrepancies persist, log diffs and escalate to owner.
 
 ### A2 — Material (candidates only)
 
