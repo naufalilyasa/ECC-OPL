@@ -129,7 +129,8 @@
         "mysql-patterns",
         "postgres-patterns",
         "prisma-patterns",
-        "redis-patterns"
+        "redis-patterns",
+        "schema"
       ],
       "path": "commands/database-review.md"
     },
