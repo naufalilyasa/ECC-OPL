@@ -509,6 +509,10 @@
       "description": "Generate and run E2E tests with Playwright",
       "template": "{file:commands/e2e.md}\n\n$ARGUMENTS"
     },
+    "e2e-map": {
+      "description": "Map routes and flows to TEST-ID registry entries, then hand a checklist to /e2e",
+      "template": "{file:commands/e2e-map.md}\n\n$ARGUMENTS"
+    },
     "refactor-clean": {
       "description": "Remove dead code and consolidate duplicates",
       "template": "{file:commands/refactor-clean.md}\n\n$ARGUMENTS"
