@@ -58,6 +58,33 @@ Three orderings are deliberate and must not be reverted:
   framework component is lossy unless verified 1:1 against the served application
   before advancing to the next section.
 
+## Workflow State (required)
+
+Write `.opencode/workflows/active.json` at the start and rewrite it at every
+phase change, so the section order and the approval gate survive
+dcp-compress, `/aside`, and long sessions:
+
+```json
+{
+  "workflow": "design-build",
+  "phase": "section-loop",
+  "steps": ["hero", "value", "features", "proof", "cta", "footer"],
+  "current": 0,
+  "gates": { "sectionApproved": false }
+}
+```
+
+- `steps` is the approved section order, `current` the zero-based index being
+  built, `phase` one of `brief | taste | freeze | scaffold | section-loop | gate | done`.
+- Set `sectionApproved: true` only when a `kind:"verdict", verdict:"approve"`
+  arrives for `current`, then advance: reset the flag to `false`, increment
+  `current`, and rewrite the file before starting the next section.
+- While `phase` is `section-loop` and `sectionApproved` is false, the
+  `workflow-gate` plugin denies writes to any `docs/design/sections/NN-*.html`
+  with `NN > current + 1`.
+
+Schema and rules: `workflow-state` skill.
+
 ## One Design Authority
 
 The taste engine is the single source for palette, type, radius, motion, and

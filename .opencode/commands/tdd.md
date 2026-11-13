@@ -11,6 +11,28 @@ You are the Lead Orchestrator handling the `/tdd` command. Your job is to gather
 
 ## Orchestration Workflow
 
+### 0. Arm the Workflow State (required, do this first)
+Write `.opencode/workflows/active.json` before anything else, so the RED gate
+survives context compression and `/aside`:
+
+```json
+{ "workflow": "tdd", "phase": "red", "steps": ["context", "RED", "implement", "GREEN", "refactor", "report"], "current": 1, "gates": { "redVerified": false } }
+```
+
+```bash
+mkdir -p .opencode/workflows
+cat > .opencode/workflows/active.json <<'EOF'
+{ "workflow": "tdd", "phase": "red", "steps": ["context", "RED", "implement", "GREEN", "refactor", "report"], "current": 1, "gates": { "redVerified": false } }
+EOF
+```
+
+The `workflow-gate` plugin reads this file and denies writes to production code
+while `phase` is `red` and `redVerified` is false. It flips `redVerified`
+automatically when a test command fails. Update `phase` to `green` once the
+implementation passes, then `done` at the end.
+
+Schema and rules: `workflow-state` skill.
+
 ### 1. Context Synthesis
 Gather the target specification from the active session:
 - **Target Feature/Function**: If `$ARGUMENTS` is provided, that is your target. If `$ARGUMENTS` is empty, extract the function, component, or bug just discussed in this session.
@@ -47,3 +69,6 @@ Required tests from the plan's Acceptance + QA:
 
 ### 3. Report to User
 Present the test results, created test files, implementation summary, and coverage stats in the main conversation.
+
+### 4. Close the Workflow State
+Rewrite `.opencode/workflows/active.json` with `"phase": "done"` before reporting completion. A stale `red` phase keeps denying production edits in later unrelated work.

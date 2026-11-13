@@ -123,3 +123,16 @@ After approval:
 - One rule per invocation. Do not bundle unrelated rules.
 - Never weaken an existing rule to make a new one fit. Resolve the conflict explicitly.
 - Run `/rules-map` after writing to confirm the inventory is still clean.
+
+## Workflow State
+
+Write `.opencode/workflows/active.json` once the draft exists, so the approval
+gate survives compression:
+
+```json
+{ "workflow": "rules-add", "phase": "awaiting-approval", "steps": ["draft", "approval", "write"], "current": 1, "gates": { "approved": false } }
+```
+
+Set `"gates": { "approved": true }, "phase": "write"` only after the owner
+approves, and `"phase": "done"` after the write lands. Schema: `workflow-state`
+skill.

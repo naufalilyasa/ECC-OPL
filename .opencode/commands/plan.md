@@ -11,6 +11,20 @@ You are the Lead Orchestrator handling the `/plan` command. Your job is to bridg
 
 ## Orchestration Workflow
 
+### 0. Arm the Workflow State (required, do this first)
+Write `.opencode/workflows/active.json` so the approval gate survives context
+compression and `/aside`:
+
+```bash
+mkdir -p .opencode/workflows
+cat > .opencode/workflows/active.json <<'EOF'
+{ "workflow": "plan", "phase": "awaiting-approval", "steps": ["context", "plan", "review", "approval"], "current": 1, "gates": { "approved": false } }
+EOF
+```
+
+While `phase` is `awaiting-approval`, the `workflow-gate` plugin denies writes to
+non-markdown files. Schema and rules: `workflow-state` skill.
+
 ### 1. Context Synthesis
 Gather the working context from the active session:
 - **Core Subject**: If `$ARGUMENTS` is provided, that is your primary target. If `$ARGUMENTS` is empty, extract the active topic, feature, or bug being discussed in this session.
@@ -46,3 +60,4 @@ Once the `planner` subagent returns:
 2. Direct the user to verify the plan with `plan-reviewer` (Momus) if desired.
 3. Prompt for user confirmation: "Proceed with this plan? (yes/no/modify)".
 4. Do NOT start implementation until the user explicitly confirms.
+5. On explicit confirmation, rewrite `.opencode/workflows/active.json` with `"phase": "approved", "gates": { "approved": true }`. On decline or abandonment, set `"phase": "done"`. Never leave `awaiting-approval` armed after the user has answered — it blocks every non-markdown write.

@@ -100,3 +100,14 @@ subagent(agent="doc-updater", description="Update docs at <CURRENT_REF>")
    - Updated documents list.
    - Stamped reference (`<CURRENT_REF>`).
    - Summary of codebase changes documented.
+
+## Workflow State
+
+Arm `.opencode/workflows/active.json` before editing documents:
+
+```json
+{ "workflow": "update-docs", "phase": "sync", "steps": ["baseline", "edit docs", "marker"], "current": 0, "gates": { "markerWritten": false } }
+```
+
+Set `"markerWritten": true, "phase": "done"` after `.opencode/markers/docs-sync.md`
+is written. Schema: `workflow-state` skill.
