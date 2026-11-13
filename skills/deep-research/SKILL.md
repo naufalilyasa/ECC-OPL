@@ -50,13 +50,17 @@ Before querying external search engines or documentation, understand how the res
 - Use the codebase findings to establish baseline technical boundaries (e.g. Node version, framework, bundle size, existing dependencies).
 - If the research topic is purely external (e.g. macroeconomics, non-code topics), note that the codebase is agnostic and proceed.
 
-### Step 1: Understand the Goal
+### Step 1: Understand the Goal (adaptive, max 2 questions)
 
-Ask 1-2 quick clarifying questions:
-- "What's your goal — learning, making a decision, or writing something?"
-- "Any specific angle or depth you want?"
+Ask **only** when the query is genuinely ambiguous:
 
-If the user says "just research it" — skip ahead with reasonable defaults.
+- The subject is unnamed — which library, version, market, or competitor.
+- No deliverable is implied — learning, deciding, or writing need different research.
+- Scope spans unrelated domains, or two stated constraints conflict.
+
+At most 2 questions, each with a recommended default. If the user does not answer, proceed with the default and record it under **Asumsi** in the report. If the user says "just research it" — skip the gate entirely.
+
+Do not ask about aesthetic preference, or about anything the codebase grounding in Step 0 already answered.
 
 ### Step 2: Plan the Research
 
@@ -105,13 +109,26 @@ crawling_exa(url: "<url>", tokensNum: 5000)
 
 Read 3-5 key sources in full for depth. Do not rely only on search snippets.
 
+### Step 4.5: Gap Register and Second Round (max 2 rounds)
+
+After Round 1, classify every sub-question:
+
+| Status | Meaning | Action |
+|---|---|---|
+| `ANSWERED` | 3+ independent sources agree | Stop |
+| `PARTIAL` | Evidence exists but one dimension is missing | Round 2 target |
+| `UNANSWERED` | No credible source found | Round 2 target |
+| `CONFLICT` | Sources disagree on a load-bearing fact | Round 2 target, seek the primary source |
+
+If anything is not `ANSWERED` and this was Round 1, run targeted queries for those gaps only, then stop. Two rounds is the hard ceiling. Never re-run a query that already succeeded, and never fill a gap with plausible inference — unresolved gaps go into the report's unverified section.
+
 ### Step 5: Synthesize and Write Report
 
 Structure the report:
 
 ```markdown
 # [Topic]: Research Report
-*Generated: [date] | Sources: [N] | Confidence: [High/Medium/Low]*
+*Generated: [date] | Sources: [N] | Rounds: [1-2] | Confidence: [High/Medium/Low]*
 
 ## Executive Summary
 [3-5 sentence overview of key findings]
@@ -132,14 +149,37 @@ Structure the report:
 - [Actionable insight 2]
 - [Actionable insight 3]
 
+## Not Verified
+### Single-source claims
+### Conflicting sources
+### Sub-questions with insufficient data
+
 ## Sources
 1. [Title](url) — [one-line summary]
 2. ...
 
 ## Methodology
-Searched [N] queries across web and news. Analyzed [M] sources.
+### Assumptions
+### Gap register
+### Queries run and sources read
+Searched [N] queries across web and news. Analyzed [M] sources in [R] rounds.
 Sub-questions investigated: [list]
 ```
+
+### Prose Quality
+
+The report must read like a person wrote it while staying technically exact.
+
+1. Write in the user's language. Keep **identifiers, API names, CLI commands, flags, paths, config keys, error strings, protocol names, and version numbers** exactly as written. Never translate or paraphrase them.
+2. Do not soften a precise sentence into a friendlier one. If it is already plain and accurate, leave it.
+3. Remove AI tells from your own prose only: "not X but Y" contrasts, triads for rhythm, one-line dramatic closers, staged openers, filler intensifiers, and vague hedging that hides a missing source.
+4. Lint before delivery:
+   ```
+   node ~/.config/opencode/skills/humanizer-lint/scripts/analyze.mjs --stdin --lang auto --json
+   ```
+   On `status: FAIL`, read `failedGates`, revise only the flagged prose, rerun. Maximum 3 rounds, then report the remaining findings.
+5. **Never rewrite while humanizing**: inline code, fenced blocks, identifiers, URLs, citation lines, source entries, tables, and verbatim quotes.
+6. A sentence that quotes a source is exempt — quotation is not your prose.
 
 ### Step 6: Deliver
 
@@ -174,6 +214,8 @@ Each agent searches, reads sources, and returns findings. The main session synth
 5. **Acknowledge gaps.** If you couldn't find good info on a sub-question, say so.
 6. **No hallucination.** If you don't know, say "insufficient data found."
 7. **Separate fact from inference.** Label estimates, projections, and opinions clearly.
+8. **Complete, never truncated.** The saved file holds the entire report. Every sub-question gets a section or an explicit "insufficient data" line — no silent omissions.
+9. **Numbers carry units and dates.** "Up 40%" without a baseline and period is not a finding.
 
 ## Examples
 

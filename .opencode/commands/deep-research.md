@@ -1,5 +1,5 @@
 ---
-description: Run disciplined deep research combining parallel codebase exploration with external multi-source verification and triangulation
+description: Run disciplined deep research combining parallel codebase exploration with external multi-source verification, gap-driven iteration, and a humanized cited report
 argument-hint: "<research-topic or question>"
 ---
 
@@ -39,13 +39,40 @@ Before querying external search engines or documentation, understand what alread
 
 ---
 
-### Phase 1: Reframe & Sub-Questions
-1. Formulate 2-4 falsifiable sub-questions or technical hypotheses grounded in the codebase findings.
-2. Formulate **opposition queries** (e.g., "why NOT use X", "X breaking changes", "X security vulnerabilities").
+### Phase 0.5: Adaptive Clarify Gate (max 2 questions)
+
+Decide first whether the query is specific enough to start. Ask **only** when one of these is true:
+
+- The subject is unnamed or ambiguous — which library, which version, which market, which competitor.
+- No deliverable is implied — learning, deciding, or writing produce different research.
+- Scope spans several unrelated domains.
+- Two stated constraints contradict each other.
+
+Do not ask when the query already names the subject, the decision, and the boundary. Aesthetic preference is never a valid question here, and neither is anything Phase 0 already answered from the codebase.
+
+Rules:
+
+- At most **2 questions**, each with a `(Recommended)` default.
+- Never ask a question whose answer would not change the research plan.
+- If the user does not answer, proceed with the recommended default and list it under **Asumsi** in the report.
 
 ---
 
-### Phase 2: External Parallel Multi-Source Search
+### Phase 1: Research Plan
+
+Build the plan before spending search budget:
+
+1. **3-5 sub-questions**, each falsifiable and answerable from sources.
+2. For each sub-question: which source types would settle it (official docs, RFC/spec, issue tracker, benchmark, filing, primary dataset).
+3. **Opposition queries** ("why NOT use X", "X breaking changes", "X security advisories", "X failure post-mortem").
+4. One line: **what evidence would change the recommendation**.
+
+If Phase 0.5 asked questions, present this plan compactly and wait for approval or edits before searching. If it did not, print the plan as one block and continue without blocking.
+
+---
+
+### Phase 2: Round 1 — Parallel Multi-Source Search
+
 Execute rigorous research using available search capabilities:
 
 1. **Exa MCP / Web Search**:
@@ -60,7 +87,29 @@ Execute rigorous research using available search capabilities:
 
 ---
 
-### Phase 3: Adversarial Pass & Codebase Fit
+### Phase 3: Gap Register and Optional Round 2 (max 2 rounds total)
+
+After Round 1, classify every sub-question into exactly one bucket:
+
+| Status | Meaning | Action |
+|---|---|---|
+| `ANSWERED` | 3+ independent sources agree | Stop |
+| `PARTIAL` | Evidence exists but one dimension is missing | Round 2 target |
+| `UNANSWERED` | No credible source found | Round 2 target |
+| `CONFLICT` | Sources disagree on a load-bearing fact | Round 2 target, seek the primary source |
+
+If anything is `PARTIAL`, `UNANSWERED`, or `CONFLICT` and this was Round 1:
+
+- Design **targeted queries only for those gaps**. Do not re-run queries that already succeeded.
+- Run Round 2, then stop. Two rounds is the hard ceiling regardless of remaining gaps.
+- Everything still open after Round 2 goes into the report's unverified section. Never fill a gap with plausible inference.
+
+State the round count and the gap register in the report's methodology.
+
+---
+
+### Phase 4: Adversarial Pass & Codebase Fit
+
 1. **Steel-man the counter-arguments**:
    - What are the major failure modes or operational trade-offs?
    - How does this interact with the project's existing dependencies discovered in Phase 0?
@@ -70,11 +119,75 @@ Execute rigorous research using available search capabilities:
 
 ---
 
-### Phase 4: Synthesize & Deliver
-1. Format report following the disciplined structure:
-   - **Executive Summary**: 3-5 sentence bottom-line answer.
-   - **Codebase Context & Compatibility**: How findings map to our specific files and stack.
-   - **Key Findings**: Triangulated points with verbatim citation quotes (`[Source](url)`).
-   - **Adversarial Trade-offs**: Opposing views and pitfalls.
-   - **Actionable Recommendation**: Concrete next steps (ready for `/plan` or implementation).
-2. If output is extensive, save to `docs/research/<topic-slug>.md` and provide a concise summary in the thread.
+### Phase 5: Synthesize & Deliver
+
+Write the report in the user's language. Technical terms keep their original form (see 5.2).
+
+#### 5.1 Structure
+
+```markdown
+# <Topik>: Laporan Riset
+
+*Dibuat: <tanggal> | Sumber: <N> | Putaran: <1-2> | Keyakinan: Tinggi/Sedang/Rendah*
+
+## Ringkasan Eksekutif
+3-6 kalimat. Jawaban langsung dulu, lalu satu kalimat soal batasannya.
+
+## Konteks Codebase & Kompatibilitas
+Bagaimana temuan menempel ke file, versi, dan dependensi yang benar-benar ada di proyek ini.
+
+## Temuan
+### <Sub-pertanyaan 1>
+Isi dengan kutipan verbatim untuk klaim yang menopang rekomendasi, angka lengkap dengan satuan dan tanggal, dan satu kalimat "implikasinya apa".
+
+### <Sub-pertanyaan 2>
+...
+
+## Trade-off & Sisi Berlawanan
+Argumen terkuat yang melawan rekomendasi, plus kondisi di mana argumen itu menang.
+
+## Yang Belum Terverifikasi
+### Klaim sumber tunggal
+### Sumber yang saling bertentangan
+### Sub-pertanyaan tanpa data cukup
+
+## Rekomendasi
+Langkah konkret, plus estimasi effort dan risiko migrasi.
+
+## Sumber
+1. [Judul](url) — jenis sumber, tanggal terbit, satu baris isi
+2. ...
+
+## Metodologi
+### Asumsi
+### Register gap
+### Query dan sumber yang dibaca
+```
+
+#### 5.2 Prose quality (mandatory)
+
+The report must read like a person wrote it and still be technically exact.
+
+1. Draft in the user's language. Keep **identifiers, API names, CLI commands, flags, paths, config keys, error strings, protocol names, and version numbers** exactly as written. Never translate or paraphrase them into Indonesian.
+2. Do not soften a precise sentence into a friendlier one. If a sentence is already plain and accurate, leave it alone.
+3. Remove AI tells in your own prose only: "bukan X, tapi Y" contrasts, triads for rhythm, one-line dramatic closers, staged openers ("Di era digital..."), filler intensifiers, and vague hedging that hides a missing source.
+4. Run the linter on the prose before delivery:
+   ```
+   node ~/.config/opencode/skills/humanizer-lint/scripts/analyze.mjs --stdin --lang auto --json
+   ```
+   Feed the report body through stdin. On `status: FAIL`, read `failedGates`, revise only the flagged prose, and rerun. Maximum 3 rounds, then report the remaining findings instead of looping.
+5. **Never rewrite any of these while humanizing**: inline code, fenced code blocks, identifiers, URLs, citation lines, source list entries, tables, and verbatim quotes from sources.
+6. If the linter flags a sentence that is quoting a source, leave it and note nothing — quotation is exempt by definition.
+
+#### 5.3 Completeness
+
+- Every sub-question from Phase 1 gets a section or an explicit "tidak ditemukan data yang cukup" line. No silent omissions.
+- Numbers carry units and dates. "Meningkat 40%" without a baseline and period is not a finding.
+- Load-bearing claims quote the source verbatim, not a paraphrase.
+- The saved file is the complete report. Never truncate it.
+
+#### 5.4 Delivery
+
+- Save the full report to `docs/research/<topic-slug>.md`.
+- In chat, show the executive summary, the recommendation, and the unverified section, plus the file path.
+- If the run stopped at the 2-round ceiling with open gaps, say so in the first paragraph of the chat summary.
