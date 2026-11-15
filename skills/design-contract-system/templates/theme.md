@@ -13,7 +13,7 @@
 
 ---
 
-## 2. 33 Semantic Tokens: Light & Dark Pairing
+## 2. 19 Semantic Tokens: Light & Dark Pairing
 
 Every token MUST have defined hex values for both Light and Dark modes.
 
@@ -59,6 +59,7 @@ Every token MUST have defined hex values for both Light and Dark modes.
 | `warning` | `#FEF3C7` / `#92400E` | `#451A03` / `#FDE68A` | Pending status, threshold warning |
 | `danger` | `#FEE2E2` / `#991B1B` | `#450A0A` / `#FCA5A5` | Critical alert, overdue item, failed state |
 | `info` | `#E0F2FE` / `#075985` | `#082F49` / `#7DD3FC` | Neutral notice, system informative tag |
+| `neutral` | `#F1F5F9` / `#475569` | `#1E293B` / `#94A3B8` | Unknown value, administrative or inactive state; never an error |
 
 ---
 

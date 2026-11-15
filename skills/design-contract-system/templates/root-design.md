@@ -15,6 +15,7 @@
 | **Fonts, sizes, weights, numbers** | [`docs/design/TYPOGRAPHY-MAP.md`](docs/design/TYPOGRAPHY-MAP.md) | Font pairings, tabular-nums rule for business metrics vs monospace for codes. |
 | **Brand identity, logo, visual atmosphere** | [`docs/design/BRAND.md`](docs/design/BRAND.md) | Core aesthetics, brand voice, visual personality, and anti-slop rules. |
 | **Empty, loading, error, offline states** | [`docs/design/STATES-MATRIX.md`](docs/design/STATES-MATRIX.md) | Standard implementation patterns for all 10 mandatory system states. |
+| **Charts, KPI visualizations, series colors** | [`docs/design/DATA-VIZ.md`](docs/design/DATA-VIZ.md) | Categorical vs severity namespaces, neutral structure, required chart states. Optional — read only when the product renders charts. |
 | **Implementing a specific page/screen** | [`docs/design/contracts/[PAGE]-CONTRACT.md`](docs/design/contracts/) | Component layout, state handling, and data binding contract for that page. |
 
 ---

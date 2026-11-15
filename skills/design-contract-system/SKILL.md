@@ -82,7 +82,10 @@ Generate the core design architecture using bundled templates in `templates/`:
 5. `<project-root>/docs/design/TOKEN-MAP.md` from `templates/token-map.md`: Developer quick-reference table for semantic classes.
 6. `<project-root>/docs/design/TYPOGRAPHY-MAP.md` from `templates/typography-map.md`: Font pairings and the Sans vs Mono number rule.
 7. `<project-root>/docs/design/STATES-MATRIX.md` from `templates/states-matrix.md`: Standard implementation specs for all 10 system states.
-8. Update `globals.css` with CSS custom properties defining Light and Dark values for all semantic tokens.
+8. *(Optional)* `<project-root>/docs/design/DATA-VIZ.md` from `templates/data-viz.md`: Chart namespace, structural tokens, and required chart states. Generate only when the product actually renders charts or KPI visualizations.
+9. Update `globals.css` with CSS custom properties defining Light and Dark values for all semantic tokens.
+
+Whenever the product has business statuses, apply `references/status-semantics.md` and record the enum-to-role mapping in `TOKEN-MAP.md` or the page contract.
 
 ### Phase 3: Scaffold Feature & Page Contracts
 
@@ -97,20 +100,36 @@ Before writing UI components for any new view or screen:
 
 ### Phase 4: Audit & Verification Gate
 
-Run this verification before approving any UI implementation:
+Run this verification before approving any UI implementation.
+
+**Automatable checks** — grep the changed files. Use `git diff HEAD` when changes are unstaged; in a non-git project pass the explicit file list instead:
 
 ```bash
 # 1. Check for forbidden hardcoded hex values in classes
-git diff --staged | grep -E "bg-\[#|text-\[#|border-\[#|fill-\[#" && echo "VIOLATION: Hardcoded hex found!"
+git diff HEAD | grep -E "bg-\[#|text-\[#|border-\[#|fill-\[#" && { echo "VIOLATION: Hardcoded hex found!"; exit 1; }
 
 # 2. Check for unauthorized radius classes
-git diff --staged | grep -E "rounded-sm|rounded-md|rounded-3xl|rounded-\[" && echo "VIOLATION: Invalid radius tier!"
+git diff HEAD | grep -E "rounded-sm|rounded-md|rounded-3xl|rounded-\[" && { echo "VIOLATION: Invalid radius tier!"; exit 1; }
 
 # 3. Check for fractional spacing
-git diff --staged | grep -E "gap-1\.5|gap-2\.5|p-3\.5|m-\[" && echo "VIOLATION: Non-4px spacing found!"
+git diff HEAD | grep -E "gap-1\.5|gap-2\.5|p-3\.5|m-\[" && { echo "VIOLATION: Non-4px spacing found!"; exit 1; }
 ```
 
-Verify that all 10 states from `docs/design/STATES-MATRIX.md` are handled in the component.
+**Verification checklist** — confirm on the rendered result, in both light and dark:
+
+- [ ] All shared components consume semantic or component tokens; no new hardcoded color in page components without a documented reason.
+- [ ] Business statuses resolve through one resolver to fixed roles; `unknown` renders neutral and never falls back to success (`references/status-semantics.md`).
+- [ ] Empty, zero, and failed are visually and textually distinct.
+- [ ] Administrative states (draft, archived, paused, inactive, closed) are not presented as errors.
+- [ ] Badges carry a text label and stay distinguishable in grayscale and in red-green color vision deficiency.
+- [ ] All 10 states from `docs/design/STATES-MATRIX.md` are handled in the component.
+- [ ] Hover, focus, selected, pressed, disabled, loading, error, and empty were checked on canvas, card, table, and dialog surfaces.
+- [ ] Normal text meets 4.5:1, large text 3:1, and meaningful non-text graphics 3:1 against adjacent colors.
+- [ ] Keyboard focus is visible and never clipped; every interaction works without a mouse.
+- [ ] Charts use the chart namespace, keep grid and axis neutral, never rely on hue alone, and define loading, empty, and zero states (`templates/data-viz.md`).
+- [ ] No unauthorized change to business logic, permissions, data contracts, or frontend architecture.
+
+Report per module: files changed, token mapping, statuses needing clarification, contrast results, and before/after screenshots.
 
 ## Code Examples
 
