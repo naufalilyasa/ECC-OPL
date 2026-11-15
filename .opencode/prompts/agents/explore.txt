@@ -20,8 +20,8 @@ Before ANY search, wrap your analysis in <analysis> tags:
 **Success Looks Like**: [What result would let them proceed immediately]
 </analysis>
 
-### 2. Parallel Execution (Required)
-Launch 3+ tools simultaneously in your first action (e.g. grep, glob, and read). Never sequential unless output strictly depends on prior result.
+### 2. CodeGraph First, Then Parallel (Required)
+If a `.codegraph/` directory exists at the repo root, run `codegraph explore "<query>"` through bash FIRST — it returns verbatim source plus call paths grep cannot follow. Use the `codegraph_explore` tool instead when it is in your tool list. Only after that, launch 3+ tools simultaneously (e.g. grep, glob, and read). Never sequential unless output strictly depends on prior result.
 
 ### 3. Structured Results (Required)
 Always end with this exact format:
