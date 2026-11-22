@@ -1,0 +1,44 @@
+{
+  "mode": "MODULE",
+  "generated_at": "2026-11-21T19:53:30.467Z",
+  "node": "v24.21.0",
+  "baseline": {
+    "status": "GREEN",
+    "tests": 1,
+    "assertions": 1,
+    "snapshot_fingerprint": "836ef7e97dc1844fce614186320c05d4fbaee2a70405b02cb68fcaadb777a2fb",
+    "plan_digest": "688e4afa46ff87af85ce77cdf4dda7fe41588431c81884756ea9d9c934bfb8a2"
+  },
+  "apply": {
+    "status": "APPLIED",
+    "edits": 1,
+    "before_sha256": "2c203f6485834a495d840594bdaf2a44744c584e84ac466e0aa1e7b0c00490a6",
+    "after_sha256": "e1fdf16dcbd5316d6c302881a359d06fa7aa867ae79303b4d18eda4478875480",
+    "snapshot_fingerprint": "c713c3624834dfe904ab8e31f287e5ccf7d3dd8ab2a5102c212ebe1b84c8ccdc"
+  },
+  "post_tests": {
+    "status": "GREEN",
+    "assertions": 1,
+    "snapshot_fingerprint": "c713c3624834dfe904ab8e31f287e5ccf7d3dd8ab2a5102c212ebe1b84c8ccdc",
+    "after_fingerprint": "c713c3624834dfe904ab8e31f287e5ccf7d3dd8ab2a5102c212ebe1b84c8ccdc"
+  },
+  "pass": {
+    "status": "PASS_COMPLETE",
+    "edits": 1,
+    "run_id": "module-smoke",
+    "stage": "post-A",
+    "snapshot_fingerprint": "c713c3624834dfe904ab8e31f287e5ccf7d3dd8ab2a5102c212ebe1b84c8ccdc",
+    "plan_digest": "688e4afa46ff87af85ce77cdf4dda7fe41588431c81884756ea9d9c934bfb8a2"
+  },
+  "apply_module_operation": {
+    "invocation": "node evidence.cjs apply-module <request.json>",
+    "exit": 0,
+    "status": "APPLIED",
+    "mode": "MODULE_INVOCATION",
+    "edits": 1,
+    "supported": true
+  },
+  "helper_sha256": "f8f71bda4f3f75be29e9ffd1a626930e7e0399d7728740843a62b07661997ade",
+  "supported_channel": "MODULE_APPLY",
+  "status": "PASS"
+}

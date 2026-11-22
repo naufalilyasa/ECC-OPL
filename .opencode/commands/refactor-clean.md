@@ -1,107 +1,42 @@
 ---
-description: Orchestrate dead code removal and duplicate consolidation using compiler analysis, parallel explore scouts, and code-simplifier with remove-deadcode skill
-argument-hint: "[target path or module]"
+description: Git-safe, two-pass behavior-preserving cleanup via existing code-simplifier workers with a plan-bound guarded write channel
+argument-hint: "[explicit target path or module]"
 ---
 
-# Refactor Clean Orchestration Command
+# Refactor Clean Orchestration (V1.1.4)
 
-You are the Lead Orchestrator handling the `/refactor-clean` command. Your job is to systematically detect dead code, verify zero false positives using compiler and reference checks, and delegate cleanups and duplicate consolidations to specialized subagents under the guidance of the `remove-deadcode` and `remove-ai-slops` skills.
+You are the Main Orchestrator. You are read-only for application source: inspect, dispatch, verify and report. Never hand-edit source.
 
-**User Arguments**: $ARGUMENTS
+**User scope (the only authorization that counts):** $ARGUMENTS
 
-## Off-Limits & Safety Guards
-NEVER remove:
-- Package entry points (`index.ts`, `src/index.ts`, `src/cli/**`, `packages/**`)
-- Public API exports declared in `package.json`
-- Symbols referenced in test files (tests are valid consumers)
-- Symbols annotated with `@public` or `@api` JSDoc tags
-- Framework hook/tool factories, agent definitions, or command templates
+## Non-negotiable boundaries
 
----
+- Guardian Angel owns `.git` / `.guardian-angel`: never read or write them, and never bypass policy. `git_mode=NOT_INSPECTED`, `index_provenance=UNKNOWN`; no Git write, commit, stash, reset, checkout or deployment.
+- The installed ECC-managed `refactor-clean-evidence.cjs` is the single guarded write channel. Supported invocation: `node <installed helper> apply-module <private-scratch/request.json>`. Raw CLI `apply` stays deliberately blocked. No inline interpreter, no unscoped native edit/write/shell, no caller-supplied authorization boolean.
+- `makePlan()` freezes one immutable plan (schema `v1.3`): canonical root, explicit scope, immutable guard roster including every selected test, exact test roster, adapter, runner identity/args, cwd, profile and timeout. Run/stage/fingerprint are per-execution bindings, never plan fields. Any changed test file, guard, runner or root is `VERIFICATION_PLAN_MISMATCH` with `spawned:false` — a matching digest alone is never proof of execution.
+- Optimistic revalidation hashes content and checks `mtimeMs`/`ctimeMs` on every inventory row (`OPTIMISTIC_NOT_ISOLATED`, `CONCURRENT_WRITER_NOT_GUARANTEED`). Guard files are read-only; missing, linked, special, unsafe-owned or scope-overlapping guards are rejected. Hashes and receipts are accounting, not owner consent or a sandbox (`TOOL_LAYER_SCOPE_ENFORCEMENT=NOT_VERIFIED`).
+- PHP/Laravel execution is **deferred**: without an independently proven isolated profile, `runPhpTests`, CLI `tests` and `apply-module` return `NOT_SUPPORTED / PHP_ISOLATION_NOT_VERIFIED` before any config evaluation, DB creation, boot or spawn. Never treat `APP_ENV=testing`, `:memory:`, a directory name, a caller flag or a parser fixture as isolation. No fallback to Node.
 
-## Orchestration Workflow
+## 1. Freeze plan and baseline (read-only)
 
-### 1. Scope & Detection Setup
-- Target scope: Use `$ARGUMENTS` if provided (e.g. `src/components/`, `lib/`), otherwise default to `src/` or the primary codebase directory.
-- Run primary compiler strict analysis:
-  ```bash
-  # TypeScript / JavaScript
-  bunx tsc --noEmit --noUnusedLocals --noUnusedParameters 2>&1 | head -50
-  # Or Knip if available
-  npx knip --no-exit-code 2>&1 | head -50
-  ```
+1. Require explicit scope from `$ARGUMENTS`; otherwise `ANALYSIS_ONLY`. Build the plan once with `makePlan({ root, scope, tests, guard })`. Every selected test is an immutable full-content guard and must be disjoint from editable scope; an overlap is `VERIFICATION_TEST_SCOPE_OVERLAP` and stops before spawn/edit. Discovery/globs resolve to explicit files once; a later roster change requires a new run and new baseline.
+2. Capture S0 with `capture({ root, scope: plan.scope, guard: plan.guard })`. Run the baseline with `runNodeTests({ root, tests: plan.tests, scope: plan.scope, guard: plan.guard, plan, stage:'baseline', run_id, expectedFingerprint: S0.fingerprint })`. Require GREEN, positive tests/assertions, `spawned:true`, and actual `roster_executed` equal to `plan.tests`. Legacy/no-plan runs are `diagnostic:true` and ineligible for writes or completion.
+3. Allocate one run identity for the whole workflow. Stages are `baseline → apply-A → post-A → apply-B → post-B → final`. Missing, foreign or reused stage/run evidence never advances the workflow.
 
-### 2. Dispatch Parallel Explore Scouts
-Call the `explore` subagents in parallel to scout orphaned files, unreferenced exports, and duplicate logic patterns:
+## 2. Skill preflight
 
-```
-subagent(agent="explore", description="Explore: orphaned files in <scope>")
-"Find files in <scope> that are NOT imported or required by any other file.
-1. Check import/require statements across the codebase.
-2. Exclude entry points, test files, configs, and documentation.
-Format output:
-<analysis> Orphaned file scan </analysis>
-<results>
-<files>
-- list of unimported file paths
-</files>
-<answer>
-Summary of orphaned files ready for deletion.
-</answer>
-</results>"
-```
+Resolve the ECC-managed safe skills actually loaded by the runtime: pass A `ecc-remove-deadcode-safe`, pass B `ecc-remove-ai-slops-safe`. Record id, path, source SHA and text SHA. Never load the global originals into a writable context. A missing safe skill is `SKILL_UNSAFE_OR_UNAVAILABLE`, never `NO_CANDIDATES`.
 
-```
-subagent(agent="explore", description="Explore: unreferenced exports & duplicates in <scope>")
-"Find unreferenced exports and copy-pasted duplicate logic blocks across <scope>:
-1. Exported functions, constants, or types that only appear in their defining file.
-2. Identical or near-identical helper functions and logic blocks across different modules.
-Format output:
-<analysis> Export & duplicate scan </analysis>
-<results>
-<files>
-- list of files containing candidates
-</files>
-<answer>
-Summary of unused exports and concrete duplicate consolidation targets.
-</answer>
-</results>"
-```
+## 3. Pass A — remove-deadcode
 
-### 3. Verification Gate (Zero False Positives)
-Review all candidate items against references:
-- Search for symbol usage across the repository (grep / grep_app).
-- Verify candidate references are truly 0 before approving removal.
-- Compile a confirmed action list:
-  1. Remove unused imports
-  2. Remove unused private helpers
-  3. Remove unreferenced exported functions/types
-  4. Consolidate duplicate blocks into a shared utility
-  5. Delete confirmed orphaned files
+Dispatch exactly one existing `code-simplifier` child; it loads the safe skill with the native `skill` tool before analysis or edit. The child writes a request JSON in private scratch containing the plan, S0, the executed baseline, its loaded-skill result, `stage:'apply-A'`, the same run id, and exact unique hunks with `authorizedPaths` inside the frozen scope; then calls file-based `apply-module`. KEEP/DEFER is mandatory for public contracts, dynamic lookup, framework registration, test consumers, security/validation/logging, migrations and external payloads. Empty genuine analysis is `NO_CANDIDATES`, not a forced edit.
 
-### 4. Dispatch Code-Simplifier Subagent (Execution)
-Delegate the confirmed cleanups to the `code-simplifier` subagent:
+A genuine zero-candidate pass is a completed disposition, not a failure: return a `NO_CANDIDATES` receipt with completed analysis, candidate dispositions, zero hunks/changed paths and the unchanged snapshot fingerprint. Do not call `apply-module` or manufacture an edit. The parent validates it with `evaluateNoOp(...)` and a fresh full-roster post-A run; only `PASS_COMPLETE` with `completion_kind: NO_CANDIDATES` advances. Parent corroborates the child with raw fetched session events (the helper verifier consumes caller-supplied structures and is explicitly non-live), rechecks guard bytes, and runs post-A with the SAME plan/roster on S1. `REGRESSION_DETECTED`, `STALE_SCOPE`, invalid/incomplete receipt or any unprotected write stops the workflow — B never starts.
 
-```
-subagent(agent="code-simplifier", description="Refactor clean: apply removals & consolidations")
-"Apply safe dead code removal and duplicate consolidation adhering to skill remove-deadcode:
+## 4. Pass B — remove-ai-slops
 
-## Confirmed Target Actions
-<insert verified list of unused symbols, files, and duplicate consolidation targets>
+Only after post-A is a verified `PASS_COMPLETE` — edited **or** genuine no-op — on S1. Dispatch a fresh child, load the pass-B skill before work, and either call `apply-module` with `stage:'apply-B'`, `pass:'B'`, `priorPass` carrying the verified post-A completion, or return a verified `NO_CANDIDATES` receipt evaluated with `evaluateNoOp(..., stage:'post-B', priorPass)`. A missing/foreign/contradictory prior completion never advances B. S1 may equal S0 for a no-op. Mechanical equivalence only; preserve behavior, errors, validation, security and logging. Run post-B on S2, then final verification.
 
-## Execution Directives
-1. Remove unused items in strict safe order: imports -> private functions -> unreferenced exports -> orphaned files.
-2. Consolidate duplicates into a shared utility without introducing unnecessary abstractions.
-3. Remove AI slop patterns: delete tautological tests, empty mocks, or artificial wrapper layers.
-4. Preserve all existing runtime behavior and public API contracts.
-5. Keep changes minimal and maintainable."
-```
+## 5. Final
 
-### 5. Verification & Report
-1. Verify no breakage:
-   - Run project build / typecheck: `npm run build` or `bun run build`.
-   - Run test suite: `npm test` or `bun test`.
-2. Present a clean summary to the user:
-   - **Removed**: Count of unused imports, dead functions, and deleted files.
-   - **Consolidated**: Duplicate functions unified into shared helpers.
-   - **Verification Status**: Build and test status.
+Run the full frozen roster against S2 and call `evaluatePass({ applied, postTests, plan, stage, run_id })` only with an actual executed runner result. Bare GREEN, foreign run/stage, a reduced roster or a stale fingerprint yields `APPLIED_PENDING_TESTS`, never `PASS_COMPLETE`. Preserve `REGRESSION_DETECTED` / `PARTIAL_CONFLICT` / `ANALYSIS_ONLY` and exact applied paths. Write report, structured JSON, raw sanitized events, true unified diff and SHA-256 manifest to the approved artifact directory. `PASS_COMPLETE` is coverage accounting, not merge approval. Stop for external review.
