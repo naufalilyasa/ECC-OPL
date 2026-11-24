@@ -65,15 +65,23 @@ Copy the token architecture from `docs/design/THEME.md` into the project's
 `globals.css` verbatim (both `html[data-theme="light"]` and `[data-theme="dark"]`
 blocks). Rules:
 - CSS custom properties are the only source of color values; components reference `var(--color-*)` or semantic Tailwind classes (`bg-surface`, `text-text-strong`)
-- Exactly 3 radius tiers: `rounded-lg` (8px controls), `rounded-xl` (12px cards), `rounded-2xl` (16px modals); `rounded-full` only for badges/avatars/progress
-- 4px spacing grid only (`p-1`…`p-12`); no `p-[13px]`, no `gap-1.5`
-- Metrics and money: `font-sans tabular-nums` — never `font-mono`
-- A token missing from the contract is a contract gap, not a license to invent — flag it and stop
+- **Contract-driven geometry, not global regex.** Read the exact radius/spacing
+  declarations from `docs/design/TOKEN-MAP.md` + the page contract. A declared
+  `rounded-md -> 6px` mapping or an approved `gap-6px` is valid even if a
+  global class-name regex would flag it; an undeclared value is still rejected.
+- Spacing/radius is whatever the contract declares (e.g. a declared 6px gap or
+  a custom tier); do not assume a 4px-only grid or a fixed 3-tier radius set.
+- Metrics and money: follow the contract's typography declaration; never invent
+  a `font-mono` override if the contract says `tabular-nums`.
+- A token missing from the contract is a contract gap, not a license to invent —
+  flag it and stop. Frontend-scaffold **consumes** design decisions; it must not
+  emit competing visual defaults of its own.
 
 ### Phase 3 — Generate Page Shells
 
 For each row of the contract's component table, generate one component file.
-For each in-scope state in the contract's state matrix, generate its component.
+For each state the page contract marks applicable to this view, generate its component.
+States marked not-applicable are omitted, not forced onto every view.
 Canonical 10 states (names match `page-contract.md`):
 
 1. `Loading Skeleton` — aspect-ratio-matched skeleton grid
@@ -132,32 +140,46 @@ test framework; the rules below are the contract):
 ```js
 // Contract-owned: rules mirror docs/design/STANDARDS.md + the page contract.
 // Weakening these rules to make output pass is itself a contract violation.
-const RADIUS_RE = /rounded-(sm|md|3xl|\[)/;
-const SPACING_HALF_RE = /(?:gap|p|px|py|pt|pb|pl|pr|m|mx|my|mt|mb|ml|mr|space-x|space-y)-[0-9]+\.5/;
-const GEOMETRY_ARBITRARY_RE = /(?:gap|p|px|py|pt|pb|pl|pr|m|mx|my|mt|mb|ml|mr|w|h|min-h|max-h|min-w|max-w|size|inset|top|right|bottom|left)-\[/;
+// Contract-owned: parse declared values from TOKEN-MAP.md / page contract.
+// A declared 6px gap or approved rounded-md mapping MUST pass; undeclared
+// arbitrary geometry MUST fail. No hardcoded tier/shape list.
+const CONTRACT = loadContract(); // { declaredSpacing:[...], declaredRadius:[...], states:[...] }
+const declaredSpacing = (v) => CONTRACT.declaredSpacing.includes(v);
+const declaredRadius = (v) => CONTRACT.declaredRadius.includes(v);
+const rawGeometry = (cls) => /(?:gap|p|px|py|pt|pb|pl|pr|m|mx|my|mt|mb|ml|mr)-\[([^\]]+)\]/.exec(cls)?.[1];
+const rawRadius = (cls) => /rounded-\[([^\]]+)\]/.exec(cls)?.[1];
 
 it('audit rules must stay canonical (self-check)', () => {
-  assert.ok(RADIUS_RE.test('rounded-md'), 'radius audit must flag rounded-md');
-  assert.ok(SPACING_HALF_RE.test('gap-1.5'), 'spacing audit must flag .5 fractions');
-  assert.ok(GEOMETRY_ARBITRARY_RE.test('h-['), 'geometry audit must flag arbitrary brackets');
+  assert.ok(!declaredSpacing('7px') && !declaredRadius('7px'), 'undeclared geometry must be rejected');
+  assert.ok(rawGeometry('gap-[7px]') === '7px', 'arbitrary parser must extract value');
 });
 
-it('zero arbitrary hex in class attributes', () => { /* /(bg|text|border|ring)-\[#[0-9a-fA-F]{3,6}\]/ */ });
-it('3 radius tiers only (rounded-lg/xl/2xl; rounded-full for pills/badges/avatars)', () => { /* RADIUS_RE */ });
-it('4px spacing grid, no .5 fractions, no arbitrary geometry', () => {
-  // Strip the contract-approved arbitrary values FIRST (project-specific
-  // whitelist from the plan, e.g. min-h-[640px] hero, h-[380px] cards,
-  // outline-[3px] focus ring), then apply SPACING_HALF_RE + GEOMETRY_ARBITRARY_RE.
+// Immutable project fixture: 6px is ALREADY declared in the approved TOKEN-MAP.
+// Never insert candidate values into the contract to manufacture a pass.
+const APPROVED = loadContractFixture('docs/design/TOKEN-MAP.md'); // 6px already declared
+assert.ok(APPROVED.declaredSpacing.includes('6px'), 'fixture must contain approved 6px');
+const UNDECLARED = loadContractFixture('docs/design/TOKEN-MAP.md'); // 7px not declared
+assert.ok(!UNDECLARED.declaredSpacing.includes('7px'), '7px undeclared in THIS project');
+
+// EXAMPLE only (not an executed assertion): it('zero arbitrary hex', () => assertNoRawHex());
+it('radius matches the Contract Section 3 declared tiers/values', () => {
+  // Parse declared radius from the contract (e.g. 6px rounded-md, or taste
+  // 4/6/8, 8/12/16, 8/12/20). Only undeclared arbitrary values are violations.
+});
+it('spacing matches the Contract Section 3 declared grid', () => {
+  // Parse the declared spacing grid from the contract. Declared 6px gaps or
+  // other non-4px values are valid; arbitrary undeclared geometry is not.
 });
 ```
 
 Rules for this file:
 
 1. **Whitelist explicitly, by exact value** — every arbitrary geometry value the
-   page contract approves (hero heights, card heights, focus-ring width) is
-   stripped before the arbitrary-value check. Never whitelist by prefix
-   (`min-h-[` would excuse `min-h-[1px]`), and never whitelist a whole utility
-   class (`rounded-md` is not whitelistable — pills use `rounded-full`).
+   page contract approves (hero heights, card heights, focus-ring width, and any
+   declared radius such as `rounded-md -> 6px`) is stripped before the
+   arbitrary-value check. Never whitelist by prefix (`min-h-[` would excuse
+   `min-h-[1px]`). When the resolved `rounded-md` value is explicitly approved in
+   the contract, it is valid — do not prohibit the class by name.
 2. **The self-check test is mandatory** — it crashes the suite if any rule is
    weakened, which is what makes the audit tamper-evident.
 3. **Fixing means changing the code, not the rules** — if the audit flags

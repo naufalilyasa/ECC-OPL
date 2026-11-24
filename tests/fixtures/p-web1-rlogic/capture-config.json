@@ -1,0 +1,11 @@
+{
+  "$comment": "SYNTHETIC stand-in capture profile for P-WEB1 — disposable test fixture, not private data.",
+  "viewports": [
+    { "name": "mobile-390", "width": 390, "height": 844 },
+    { "name": "mobile-360", "width": 360, "height": 800 }
+  ],
+  "theme": "dark",
+  "deviceScaleFactor": 1,
+  "reducedMotion": "reduce",
+  "fontReady": true
+}

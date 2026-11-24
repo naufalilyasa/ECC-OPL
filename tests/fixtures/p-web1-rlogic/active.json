@@ -1,0 +1,10 @@
+{
+  "$comment": "SYNTHETIC stand-in workflow checkpoint for P-WEB1 \u2014 disposable test fixture.",
+  "pilot": "P-WEB1",
+  "current": 1,
+  "state": "SECTION_COMPLETE",
+  "sections": [],
+  "repairCycles": 0,
+  "approvedBundleSha256": "b1200df091974e05d13e2623f5c67767a02e444deb9d5604b1303e879446c591",
+  "enforcement": "COOPERATIVE_NOT_MANDATORY"
+}

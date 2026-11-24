@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 2,
+  "sectionId": "00-topbar",
+  "revision": "r1",
+  "approvedBundleSha256": "b1200df091974e05d13e2623f5c67767a02e444deb9d5604b1303e879446c591",
+  "candidateFileHashes": {
+    "AppLayout.tsx": "195d3fc8b89b30409e828d8702d945538fdd32fc7528f535f841f0476c397892"
+  },
+  "gateResults": {
+    "G0_preflight": "PASS",
+    "G1_contract": "PASS",
+    "G2_rendered_fidelity": "PASS",
+    "G3_state_interaction": "PASS"
+  },
+  "measurements": [
+    {
+      "landmark": "topbar-container",
+      "property": "paddingTop",
+      "expected": "16px",
+      "actual": "16px",
+      "verdict": "PASS",
+      "profile": "mobile-390",
+      "state": "default"
+    },
+    {
+      "landmark": "warehouse-badge",
+      "property": "visibility",
+      "expected": true,
+      "actual": true,
+      "verdict": "PASS",
+      "profile": "mobile-360",
+      "state": "default"
+    }
+  ],
+  "screenshots": {
+    "approved": "5e2a7440930b8f0dffb900459d34bd4aff6e7d9d504eaf94ac36b47e5823c12a",
+    "candidate": "5e2a7440930b8f0dffb900459d34bd4aff6e7d9d504eaf94ac36b47e5823c12a"
+  },
+  "renderedEvidence": {
+    "approvedSha256": "5e2a7440930b8f0dffb900459d34bd4aff6e7d9d504eaf94ac36b47e5823c12a",
+    "candidateSha256": "5e2a7440930b8f0dffb900459d34bd4aff6e7d9d504eaf94ac36b47e5823c12a",
+    "source": "chromium-playwright",
+    "verified": true
+  },
+  "captureProfile": {
+    "viewports": [
+      {
+        "name": "mobile-390",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "name": "mobile-360",
+        "width": 360,
+        "height": 800
+      }
+    ],
+    "dpr": 1,
+    "theme": "dark",
+    "locale": "en-US",
+    "reducedMotion": "reduce"
+  },
+  "overallVerdict": "PARITY_PASS",
+  "repairAttempts": 1,
+  "timestamp": "2026-11-24T00:00:00.000Z",
+  "interactionEvidence": {
+    "source": "chromium-playwright-react-production-bundle",
+    "checks": [
+      {
+        "name": "sidebar-nav-item-visible",
+        "observed": true
+      },
+      {
+        "name": "header-sticky",
+        "observed": true
+      },
+      {
+        "name": "h1-rendered",
+        "observed": true
+      }
+    ],
+    "note": "Derived from the real React pilot run (db2-react-pilot). G3 PASS requires recorded interaction evidence."
+  },
+  "viewportScreenshots": {
+    "mobile-390": "5e2a7440930b8f0dffb900459d34bd4aff6e7d9d504eaf94ac36b47e5823c12a",
+    "mobile-360": "5e2a7440930b8f0dffb900459d34bd4aff6e7d9d504eaf94ac36b47e5823c12a"
+  }
+}

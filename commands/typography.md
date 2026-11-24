@@ -12,14 +12,34 @@ Orchestrates complete web and product typography in three sequential stages:
 
 **User Arguments**: $ARGUMENTS
 
-## Pipeline Stages
+## Lifecycle Modes (V2.0)
+
+Resolve the mode explicitly; do not silently re-decide fonts after design freeze:
+
+- **DESIGN** — pre-freeze pairing and scale selection (Stages 1–3 below). Permitted only while the contract is unfrozen.
+- **VERIFY** — default once the design contract is frozen. Read-only: compare live computed `font-family`, weight, line-height, wrap, and tabular figures against the contract; report `TYPOGRAPHY_MISMATCH` on drift without editing any file.
+- **AMEND** — formal contract amendment that invalidates dependent approvals; requires the same exact-diff approval as any contract change.
+
+Post-freeze, a DESIGN/redesign request is refused with `MUTATION_BLOCKED: contract is frozen`. Do not re-select typefaces mid-port.
+
+## Pipeline Stages (DB-DEC02 ordering)
+
+The taste engine proposes **visual direction** before freeze. Typography DESIGN
+owns font selection and role mapping. After the owner freezes the design contract,
+the approved `TYPOGRAPHY-MAP` and design contract are authoritative. Porting uses
+VERIFY only; AMEND requires explicit owner approval. The taste engine never
+overrides approved typography.
 
 ```
-Stage 1: Brand & Pairing (ux-typography)
+Stage 0: Taste engine proposes visual direction (pre-freeze proposal only)
        ↓
-Stage 2: Tokens & Responsive Scale (typography-system)
+Stage 1: Brand & Pairing (ux-typography) — DESIGN owns font selection / role mapping
+       ↓
+Stage 2: Tokens & Responsive Scale (typography-system) -> frozen TYPOGRAPHY-MAP.md
        ↓
 Stage 3: Rendering Craft & Polish (better-typography)
+       ↓
+Post-freeze: VERIFY against TYPOGRAPHY-MAP (default). No redesign. AMEND = approved exact diff.
 ```
 
 ### Stage 1: Brand Discovery & Typeface Pairing (`ux-typography`)

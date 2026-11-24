@@ -1,0 +1,348 @@
+{
+  "source": "chromium-playwright",
+  "profile": {
+    "width": 390,
+    "height": 844,
+    "deviceScaleFactor": 1,
+    "theme": "dark",
+    "locale": "en-US",
+    "reducedMotion": "reduce",
+    "fontReady": true
+  },
+  "generated_utc": "2026-11-24T14:15:02.424Z",
+  "approved": {
+    "screenshotSha256": "5e2a7440930b8f0dffb900459d34bd4aff6e7d9d504eaf94ac36b47e5823c12a",
+    "landmarks": {
+      "topbar-container": {
+        "present": true,
+        "styles": {
+          "paddingTop": "16px",
+          "display": "flex",
+          "minHeight": "56px",
+          "gap": "12px"
+        },
+        "box": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 59.59375
+        },
+        "visible": true
+      },
+      "warehouse-badge": {
+        "present": true,
+        "styles": {
+          "display": "flex",
+          "visibility": "visible",
+          "borderRadius": "999px",
+          "fontVariantNumeric": "tabular-nums"
+        },
+        "box": {
+          "x": 16,
+          "y": 16,
+          "width": 83.328125,
+          "height": 27.59375
+        },
+        "visible": true
+      },
+      "brand": {
+        "present": true,
+        "styles": {
+          "fontWeight": "600",
+          "fontSize": "14px",
+          "fontFamily": "system-ui, sans-serif"
+        },
+        "box": {
+          "x": 111.328125,
+          "y": 20,
+          "width": 84.03125,
+          "height": 19.59375
+        },
+        "visible": true
+      }
+    }
+  },
+  "cases": {
+    "repaired": {
+      "screenshotSha256": "5e2a7440930b8f0dffb900459d34bd4aff6e7d9d504eaf94ac36b47e5823c12a",
+      "screenshotFile": "00-topbar-repaired.png",
+      "landmarks": {
+        "topbar-container": {
+          "present": true,
+          "styles": {
+            "paddingTop": "16px",
+            "display": "flex",
+            "minHeight": "56px",
+            "gap": "12px"
+          },
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 59.59375
+          },
+          "visible": true
+        },
+        "warehouse-badge": {
+          "present": true,
+          "styles": {
+            "display": "flex",
+            "visibility": "visible",
+            "borderRadius": "999px",
+            "fontVariantNumeric": "tabular-nums"
+          },
+          "box": {
+            "x": 16,
+            "y": 16,
+            "width": 83.328125,
+            "height": 27.59375
+          },
+          "visible": true
+        },
+        "brand": {
+          "present": true,
+          "styles": {
+            "fontWeight": "600",
+            "fontSize": "14px",
+            "fontFamily": "system-ui, sans-serif"
+          },
+          "box": {
+            "x": 111.328125,
+            "y": 20,
+            "width": 84.03125,
+            "height": 19.59375
+          },
+          "visible": true
+        }
+      },
+      "verdict": "PARITY_PASS",
+      "diffs": [],
+      "paddingDelta": 0,
+      "renderedEvidence": {
+        "approvedSha256": "5e2a7440930b8f0dffb900459d34bd4aff6e7d9d504eaf94ac36b47e5823c12a",
+        "candidateSha256": "5e2a7440930b8f0dffb900459d34bd4aff6e7d9d504eaf94ac36b47e5823c12a",
+        "source": "chromium-playwright",
+        "verified": true
+      }
+    },
+    "hideParent": {
+      "screenshotSha256": "1b10f84b146cff2b4cd5b8157e6c9b8016bf99b2ff8849ed5b4de34bacf2ac39",
+      "screenshotFile": "00-topbar-hideParent.png",
+      "landmarks": {
+        "topbar-container": {
+          "present": true,
+          "styles": {
+            "paddingTop": "16px",
+            "display": "flex",
+            "minHeight": "56px",
+            "gap": "12px"
+          },
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          },
+          "visible": false
+        },
+        "warehouse-badge": {
+          "present": true,
+          "styles": {
+            "display": "flex",
+            "visibility": "visible",
+            "borderRadius": "999px",
+            "fontVariantNumeric": "tabular-nums"
+          },
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          },
+          "visible": false
+        },
+        "brand": {
+          "present": true,
+          "styles": {
+            "fontWeight": "600",
+            "fontSize": "14px",
+            "fontFamily": "system-ui, sans-serif"
+          },
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          },
+          "visible": false
+        }
+      },
+      "verdict": "PARITY_FAIL",
+      "diffs": [
+        {
+          "landmark": "topbar-container",
+          "property": "visibility",
+          "expected": true,
+          "actual": false,
+          "verdict": "FAIL"
+        },
+        {
+          "landmark": "topbar-container",
+          "property": "box.width",
+          "expected": 390,
+          "actual": 0,
+          "delta": 390,
+          "unit": "px",
+          "verdict": "FAIL"
+        },
+        {
+          "landmark": "topbar-container",
+          "property": "box.height",
+          "expected": 59.59375,
+          "actual": 0,
+          "delta": 59.59375,
+          "unit": "px",
+          "verdict": "FAIL"
+        },
+        {
+          "landmark": "warehouse-badge",
+          "property": "visibility",
+          "expected": true,
+          "actual": false,
+          "verdict": "FAIL"
+        },
+        {
+          "landmark": "warehouse-badge",
+          "property": "box.width",
+          "expected": 83.328125,
+          "actual": 0,
+          "delta": 83.328125,
+          "unit": "px",
+          "verdict": "FAIL"
+        },
+        {
+          "landmark": "warehouse-badge",
+          "property": "box.height",
+          "expected": 27.59375,
+          "actual": 0,
+          "delta": 27.59375,
+          "unit": "px",
+          "verdict": "FAIL"
+        },
+        {
+          "landmark": "brand",
+          "property": "visibility",
+          "expected": true,
+          "actual": false,
+          "verdict": "FAIL"
+        },
+        {
+          "landmark": "brand",
+          "property": "box.width",
+          "expected": 84.03125,
+          "actual": 0,
+          "delta": 84.03125,
+          "unit": "px",
+          "verdict": "FAIL"
+        },
+        {
+          "landmark": "brand",
+          "property": "box.height",
+          "expected": 19.59375,
+          "actual": 0,
+          "delta": 19.59375,
+          "unit": "px",
+          "verdict": "FAIL"
+        }
+      ],
+      "paddingDelta": 0,
+      "renderedEvidence": {
+        "approvedSha256": "5e2a7440930b8f0dffb900459d34bd4aff6e7d9d504eaf94ac36b47e5823c12a",
+        "candidateSha256": "1b10f84b146cff2b4cd5b8157e6c9b8016bf99b2ff8849ed5b4de34bacf2ac39",
+        "source": "chromium-playwright",
+        "verified": true
+      }
+    },
+    "inlinePt32": {
+      "screenshotSha256": "b48ac851cbc66d3eff91861eb35fd7bc94ac809b32e4d7191487c5cc7c21f097",
+      "screenshotFile": "00-topbar-inlinePt32.png",
+      "landmarks": {
+        "topbar-container": {
+          "present": true,
+          "styles": {
+            "paddingTop": "32px",
+            "display": "flex",
+            "minHeight": "56px",
+            "gap": "12px"
+          },
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 75.59375
+          },
+          "visible": true
+        },
+        "warehouse-badge": {
+          "present": true,
+          "styles": {
+            "display": "flex",
+            "visibility": "visible",
+            "borderRadius": "999px",
+            "fontVariantNumeric": "tabular-nums"
+          },
+          "box": {
+            "x": 16,
+            "y": 32,
+            "width": 83.328125,
+            "height": 27.59375
+          },
+          "visible": true
+        },
+        "brand": {
+          "present": true,
+          "styles": {
+            "fontWeight": "600",
+            "fontSize": "14px",
+            "fontFamily": "system-ui, sans-serif"
+          },
+          "box": {
+            "x": 111.328125,
+            "y": 36,
+            "width": 84.03125,
+            "height": 19.59375
+          },
+          "visible": true
+        }
+      },
+      "verdict": "PARITY_FAIL",
+      "diffs": [
+        {
+          "landmark": "topbar-container",
+          "property": "paddingTop",
+          "expected": "16px",
+          "actual": "32px",
+          "delta": 16,
+          "unit": "px",
+          "verdict": "FAIL"
+        },
+        {
+          "landmark": "topbar-container",
+          "property": "box.height",
+          "expected": 59.59375,
+          "actual": 75.59375,
+          "delta": 16,
+          "unit": "px",
+          "verdict": "FAIL"
+        }
+      ],
+      "paddingDelta": 16,
+      "renderedEvidence": {
+        "approvedSha256": "5e2a7440930b8f0dffb900459d34bd4aff6e7d9d504eaf94ac36b47e5823c12a",
+        "candidateSha256": "b48ac851cbc66d3eff91861eb35fd7bc94ac809b32e4d7191487c5cc7c21f097",
+        "source": "chromium-playwright",
+        "verified": true
+      }
+    }
+  }
+}

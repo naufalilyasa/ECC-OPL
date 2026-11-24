@@ -24,6 +24,21 @@ does not carry).
   to build the whole page in one run, which keeps the contract and dealt tokens
   loaded across sections.
 
+## Framework detection (conditional skill load)
+
+Detect the target from project manifests before loading framework pattern skills:
+
+- `package.json` → React/Inertia, Vue, Svelte, or Astro (inspect dependencies).
+- `pubspec.yaml` → Flutter.
+- `build.gradle.kts` → Kotlin Jetpack Compose.
+
+Load **only the relevant** framework pattern skill (e.g. `react-patterns`,
+`vue-patterns`, `dart-flutter-patterns`, `compose-multiplatform-patterns`) plus
+its matching `skills/design-build/references/adapter-*.md`. Do not load mobile
+skills for a web target (or vice versa). If a needed skill is absent, continue
+with the core rules and report the gap — never halt solely for a missing
+optional pattern skill.
+
 ## Load the skill
 
 Read and follow `design-build` (installed skill) or its canonical copy at
@@ -74,6 +89,27 @@ porting approved markup into target framework components (`.astro`, `.tsx`, `.vu
    - Verify copy, i18n dictionaries (`ui.ts`), pill capsules, and arrow offsets match 1:1.
    - Verify browser console has zero hydration errors or failed scripts.
    - Max 2 auto-fix cycles: if discrepancies persist, log diffs and escalate to owner.
+
+### A1.6 — Section completion gate (production modules)
+
+Section completion is NOT a helper test. Use the portable entrypoint
+`section-gate.mjs` (resolves modules relative to itself; resolves from global install
+or repository path, no hardcoded developer paths):
+
+```bash
+GATE="${OPENCODE_CONFIG_DIR:-$HOME/.config/opencode}/scripts/design-build-v2/section-gate.mjs"
+[ -f "$GATE" ] || GATE="./scripts/design-build-v2/section-gate.mjs"
+node "$GATE" <request.json>
+```
+
+`request.json` supplies authoritative `identity`/`active`/`canvasApproval` from
+the current workflow state, project-relative candidate and screenshot FILE paths,
+`frameworkCompleteEvidence`, `contractChecks`, `profileDimensions`,
+`requiredViewports`, per-viewport PNG pairs + measurements, real interaction
+checks, and the receipt. Omitting context is a rejection. The entrypoint runs
+`verifyReceipt`, `verifyRenderedParity` (G2) and `advanceCheckpoint`; `current`
+increments once only on verified completion. Capture the command/session evidence
+in `docs/design/evidence/`.
 
 ### A2 — Material (candidates only)
 

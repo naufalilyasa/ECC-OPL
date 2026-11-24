@@ -1,0 +1,635 @@
+{
+  "generated": "2026-11-24T14:36:24.744Z",
+  "bundle": {
+    "entry": "assets/app-Bf7snb_q.js",
+    "css": "assets/app-_7P0h5zY.css",
+    "sha256": "0421ba99bceaf971d0bd32a196edeed3f8e04059646261accfe386008058d94e"
+  },
+  "url": "/master/items",
+  "component": "Master/Items/Index",
+  "worktree": "/private/var/folders/xq/22yplbd15tz0jj4hnsr1m11c0000gp/T/opencode/db2-react-pilot",
+  "approved": {
+    "source": "chromium-playwright-react-production-bundle",
+    "drift": false,
+    "appChildren": 1,
+    "consoleErrors": [],
+    "viewports": [
+      {
+        "name": "1440x900",
+        "width": 1440,
+        "height": 900,
+        "dpr": 1,
+        "screenshot": "react-approved-1440x900.png",
+        "screenshotSha256": "9a1207260d4bb75df580229769109f71f976412f272981d44428e4dbdb381652",
+        "styles": [
+          {
+            "sel": "#app header",
+            "present": true,
+            "display": "flex",
+            "visibility": "visible",
+            "height": 64,
+            "paddingTop": "0px",
+            "color": "rgb(0, 0, 0)",
+            "fontFamily": "\"Instrument Sans\""
+          },
+          {
+            "sel": "#app-sidebar",
+            "present": true,
+            "display": "flex",
+            "visibility": "visible",
+            "height": 900,
+            "paddingTop": "0px",
+            "color": "rgb(0, 0, 0)",
+            "fontFamily": "\"Instrument Sans\""
+          },
+          {
+            "sel": "#app h1",
+            "present": true,
+            "display": "block",
+            "visibility": "visible",
+            "height": 33.59,
+            "paddingTop": "0px",
+            "color": "rgb(27, 42, 65)",
+            "fontFamily": "\"Instrument Sans\""
+          },
+          {
+            "sel": "#app .text-mono",
+            "present": true,
+            "display": "inline",
+            "visibility": "visible",
+            "height": 16,
+            "paddingTop": "0px",
+            "color": "rgb(27, 42, 65)",
+            "fontFamily": "\"JetBrains Mono\""
+          }
+        ]
+      },
+      {
+        "name": "768x1024",
+        "width": 768,
+        "height": 1024,
+        "dpr": 1,
+        "screenshot": "react-approved-768x1024.png",
+        "screenshotSha256": "9528f07ca26f3762faa2a71ec266a24adc8a63067bde4ffbc313b17dbe225d94",
+        "styles": [
+          {
+            "sel": "#app header",
+            "present": true,
+            "display": "flex",
+            "visibility": "visible",
+            "height": 64,
+            "paddingTop": "0px",
+            "color": "rgb(0, 0, 0)",
+            "fontFamily": "\"Instrument Sans\""
+          },
+          {
+            "sel": "#app-sidebar",
+            "present": true,
+            "display": "none",
+            "visibility": "visible",
+            "height": 0,
+            "paddingTop": "0px",
+            "color": "rgb(0, 0, 0)",
+            "fontFamily": "\"Instrument Sans\""
+          },
+          {
+            "sel": "#app h1",
+            "present": true,
+            "display": "block",
+            "visibility": "visible",
+            "height": 33.59,
+            "paddingTop": "0px",
+            "color": "rgb(27, 42, 65)",
+            "fontFamily": "\"Instrument Sans\""
+          },
+          {
+            "sel": "#app .text-mono",
+            "present": true,
+            "display": "inline",
+            "visibility": "visible",
+            "height": 36.59,
+            "paddingTop": "0px",
+            "color": "rgb(27, 42, 65)",
+            "fontFamily": "\"JetBrains Mono\""
+          }
+        ]
+      },
+      {
+        "name": "390x844",
+        "width": 390,
+        "height": 844,
+        "dpr": 1,
+        "screenshot": "react-approved-390x844.png",
+        "screenshotSha256": "e9191d1fb041fa4d5cc74a48c5f994c138d8e2207654f35399976c0a8c5e67ec",
+        "styles": [
+          {
+            "sel": "#app header",
+            "present": true,
+            "display": "flex",
+            "visibility": "visible",
+            "height": 56,
+            "paddingTop": "0px",
+            "color": "rgb(0, 0, 0)",
+            "fontFamily": "\"Instrument Sans\""
+          },
+          {
+            "sel": "#app-sidebar",
+            "present": true,
+            "display": "none",
+            "visibility": "visible",
+            "height": 0,
+            "paddingTop": "0px",
+            "color": "rgb(0, 0, 0)",
+            "fontFamily": "\"Instrument Sans\""
+          },
+          {
+            "sel": "#app h1",
+            "present": true,
+            "display": "block",
+            "visibility": "visible",
+            "height": 33.59,
+            "paddingTop": "0px",
+            "color": "rgb(27, 42, 65)",
+            "fontFamily": "\"Instrument Sans\""
+          },
+          {
+            "sel": "#app .text-mono",
+            "present": true,
+            "display": "inline",
+            "visibility": "visible",
+            "height": 0,
+            "paddingTop": "0px",
+            "color": "rgb(27, 42, 65)",
+            "fontFamily": "\"JetBrains Mono\""
+          }
+        ]
+      },
+      {
+        "name": "360x800",
+        "width": 360,
+        "height": 800,
+        "dpr": 1,
+        "screenshot": "react-approved-360x800.png",
+        "screenshotSha256": "bce7d0dbbfb305f5a9d4fe4d87763a79d9337f172b13d226db3dbec6975e0cd4",
+        "styles": [
+          {
+            "sel": "#app header",
+            "present": true,
+            "display": "flex",
+            "visibility": "visible",
+            "height": 56,
+            "paddingTop": "0px",
+            "color": "rgb(0, 0, 0)",
+            "fontFamily": "\"Instrument Sans\""
+          },
+          {
+            "sel": "#app-sidebar",
+            "present": true,
+            "display": "none",
+            "visibility": "visible",
+            "height": 0,
+            "paddingTop": "0px",
+            "color": "rgb(0, 0, 0)",
+            "fontFamily": "\"Instrument Sans\""
+          },
+          {
+            "sel": "#app h1",
+            "present": true,
+            "display": "block",
+            "visibility": "visible",
+            "height": 29.64,
+            "paddingTop": "0px",
+            "color": "rgb(27, 42, 65)",
+            "fontFamily": "\"Instrument Sans\""
+          },
+          {
+            "sel": "#app .text-mono",
+            "present": true,
+            "display": "inline",
+            "visibility": "visible",
+            "height": 0,
+            "paddingTop": "0px",
+            "color": "rgb(27, 42, 65)",
+            "fontFamily": "\"JetBrains Mono\""
+          }
+        ]
+      }
+    ]
+  },
+  "drift": {
+    "source": "chromium-playwright-react-production-bundle",
+    "drift": true,
+    "appChildren": 1,
+    "consoleErrors": [],
+    "viewports": [
+      {
+        "name": "1440x900",
+        "width": 1440,
+        "height": 900,
+        "dpr": 1,
+        "screenshot": "react-drift-1440x900.png",
+        "screenshotSha256": "9a1207260d4bb75df580229769109f71f976412f272981d44428e4dbdb381652",
+        "styles": [
+          {
+            "sel": "#app header",
+            "present": true,
+            "display": "flex",
+            "visibility": "visible",
+            "height": 64,
+            "paddingTop": "0px",
+            "color": "rgb(0, 0, 0)",
+            "fontFamily": "\"Instrument Sans\""
+          },
+          {
+            "sel": "#app-sidebar",
+            "present": true,
+            "display": "flex",
+            "visibility": "visible",
+            "height": 900,
+            "paddingTop": "0px",
+            "color": "rgb(0, 0, 0)",
+            "fontFamily": "\"Instrument Sans\""
+          },
+          {
+            "sel": "#app h1",
+            "present": true,
+            "display": "block",
+            "visibility": "visible",
+            "height": 33.59,
+            "paddingTop": "0px",
+            "color": "rgb(27, 42, 65)",
+            "fontFamily": "\"Instrument Sans\""
+          },
+          {
+            "sel": "#app .text-mono",
+            "present": true,
+            "display": "inline",
+            "visibility": "visible",
+            "height": 16,
+            "paddingTop": "0px",
+            "color": "rgb(27, 42, 65)",
+            "fontFamily": "\"JetBrains Mono\""
+          }
+        ]
+      },
+      {
+        "name": "768x1024",
+        "width": 768,
+        "height": 1024,
+        "dpr": 1,
+        "screenshot": "react-drift-768x1024.png",
+        "screenshotSha256": "de20f1d925a7f350c7446227cd4d7210e715dc736a03e61a1da079c679433293",
+        "styles": [
+          {
+            "sel": "#app header",
+            "present": true,
+            "display": "flex",
+            "visibility": "visible",
+            "height": 80,
+            "paddingTop": "32px",
+            "color": "rgb(0, 0, 0)",
+            "fontFamily": "\"Instrument Sans\""
+          },
+          {
+            "sel": "#app-sidebar",
+            "present": true,
+            "display": "none",
+            "visibility": "hidden",
+            "height": 0,
+            "paddingTop": "0px",
+            "color": "rgb(0, 0, 0)",
+            "fontFamily": "\"Instrument Sans\""
+          },
+          {
+            "sel": "#app h1",
+            "present": true,
+            "display": "block",
+            "visibility": "visible",
+            "height": 33.59,
+            "paddingTop": "0px",
+            "color": "rgb(27, 42, 65)",
+            "fontFamily": "\"Instrument Sans\""
+          },
+          {
+            "sel": "#app .text-mono",
+            "present": true,
+            "display": "inline",
+            "visibility": "visible",
+            "height": 36.59,
+            "paddingTop": "0px",
+            "color": "rgb(27, 42, 65)",
+            "fontFamily": "\"JetBrains Mono\""
+          }
+        ]
+      },
+      {
+        "name": "390x844",
+        "width": 390,
+        "height": 844,
+        "dpr": 1,
+        "screenshot": "react-drift-390x844.png",
+        "screenshotSha256": "71950cc05dea0c9a0da53c3eb8785eef399a71f79d8c8e60525317df1ce083a1",
+        "styles": [
+          {
+            "sel": "#app header",
+            "present": true,
+            "display": "flex",
+            "visibility": "visible",
+            "height": 80,
+            "paddingTop": "32px",
+            "color": "rgb(0, 0, 0)",
+            "fontFamily": "\"Instrument Sans\""
+          },
+          {
+            "sel": "#app-sidebar",
+            "present": true,
+            "display": "none",
+            "visibility": "hidden",
+            "height": 0,
+            "paddingTop": "0px",
+            "color": "rgb(0, 0, 0)",
+            "fontFamily": "\"Instrument Sans\""
+          },
+          {
+            "sel": "#app h1",
+            "present": true,
+            "display": "block",
+            "visibility": "visible",
+            "height": 33.59,
+            "paddingTop": "0px",
+            "color": "rgb(27, 42, 65)",
+            "fontFamily": "\"Instrument Sans\""
+          },
+          {
+            "sel": "#app .text-mono",
+            "present": true,
+            "display": "inline",
+            "visibility": "visible",
+            "height": 0,
+            "paddingTop": "0px",
+            "color": "rgb(27, 42, 65)",
+            "fontFamily": "\"JetBrains Mono\""
+          }
+        ]
+      },
+      {
+        "name": "360x800",
+        "width": 360,
+        "height": 800,
+        "dpr": 1,
+        "screenshot": "react-drift-360x800.png",
+        "screenshotSha256": "7371e145e79bcaeaafbc9fad18995663b154ead5bb41b870c179a205a081de03",
+        "styles": [
+          {
+            "sel": "#app header",
+            "present": true,
+            "display": "flex",
+            "visibility": "visible",
+            "height": 80,
+            "paddingTop": "32px",
+            "color": "rgb(0, 0, 0)",
+            "fontFamily": "\"Instrument Sans\""
+          },
+          {
+            "sel": "#app-sidebar",
+            "present": true,
+            "display": "none",
+            "visibility": "hidden",
+            "height": 0,
+            "paddingTop": "0px",
+            "color": "rgb(0, 0, 0)",
+            "fontFamily": "\"Instrument Sans\""
+          },
+          {
+            "sel": "#app h1",
+            "present": true,
+            "display": "block",
+            "visibility": "visible",
+            "height": 29.64,
+            "paddingTop": "0px",
+            "color": "rgb(27, 42, 65)",
+            "fontFamily": "\"Instrument Sans\""
+          },
+          {
+            "sel": "#app .text-mono",
+            "present": true,
+            "display": "inline",
+            "visibility": "visible",
+            "height": 0,
+            "paddingTop": "0px",
+            "color": "rgb(27, 42, 65)",
+            "fontFamily": "\"JetBrains Mono\""
+          }
+        ]
+      }
+    ]
+  },
+  "repaired": {
+    "source": "chromium-playwright-react-production-bundle",
+    "drift": false,
+    "appChildren": 1,
+    "consoleErrors": [],
+    "viewports": [
+      {
+        "name": "1440x900",
+        "width": 1440,
+        "height": 900,
+        "dpr": 1,
+        "screenshot": "react-repaired-1440x900.png",
+        "screenshotSha256": "9a1207260d4bb75df580229769109f71f976412f272981d44428e4dbdb381652",
+        "styles": [
+          {
+            "sel": "#app header",
+            "present": true,
+            "display": "flex",
+            "visibility": "visible",
+            "height": 64,
+            "paddingTop": "0px",
+            "color": "rgb(0, 0, 0)",
+            "fontFamily": "\"Instrument Sans\""
+          },
+          {
+            "sel": "#app-sidebar",
+            "present": true,
+            "display": "flex",
+            "visibility": "visible",
+            "height": 900,
+            "paddingTop": "0px",
+            "color": "rgb(0, 0, 0)",
+            "fontFamily": "\"Instrument Sans\""
+          },
+          {
+            "sel": "#app h1",
+            "present": true,
+            "display": "block",
+            "visibility": "visible",
+            "height": 33.59,
+            "paddingTop": "0px",
+            "color": "rgb(27, 42, 65)",
+            "fontFamily": "\"Instrument Sans\""
+          },
+          {
+            "sel": "#app .text-mono",
+            "present": true,
+            "display": "inline",
+            "visibility": "visible",
+            "height": 16,
+            "paddingTop": "0px",
+            "color": "rgb(27, 42, 65)",
+            "fontFamily": "\"JetBrains Mono\""
+          }
+        ]
+      },
+      {
+        "name": "768x1024",
+        "width": 768,
+        "height": 1024,
+        "dpr": 1,
+        "screenshot": "react-repaired-768x1024.png",
+        "screenshotSha256": "9528f07ca26f3762faa2a71ec266a24adc8a63067bde4ffbc313b17dbe225d94",
+        "styles": [
+          {
+            "sel": "#app header",
+            "present": true,
+            "display": "flex",
+            "visibility": "visible",
+            "height": 64,
+            "paddingTop": "0px",
+            "color": "rgb(0, 0, 0)",
+            "fontFamily": "\"Instrument Sans\""
+          },
+          {
+            "sel": "#app-sidebar",
+            "present": true,
+            "display": "none",
+            "visibility": "visible",
+            "height": 0,
+            "paddingTop": "0px",
+            "color": "rgb(0, 0, 0)",
+            "fontFamily": "\"Instrument Sans\""
+          },
+          {
+            "sel": "#app h1",
+            "present": true,
+            "display": "block",
+            "visibility": "visible",
+            "height": 33.59,
+            "paddingTop": "0px",
+            "color": "rgb(27, 42, 65)",
+            "fontFamily": "\"Instrument Sans\""
+          },
+          {
+            "sel": "#app .text-mono",
+            "present": true,
+            "display": "inline",
+            "visibility": "visible",
+            "height": 36.59,
+            "paddingTop": "0px",
+            "color": "rgb(27, 42, 65)",
+            "fontFamily": "\"JetBrains Mono\""
+          }
+        ]
+      },
+      {
+        "name": "390x844",
+        "width": 390,
+        "height": 844,
+        "dpr": 1,
+        "screenshot": "react-repaired-390x844.png",
+        "screenshotSha256": "e9191d1fb041fa4d5cc74a48c5f994c138d8e2207654f35399976c0a8c5e67ec",
+        "styles": [
+          {
+            "sel": "#app header",
+            "present": true,
+            "display": "flex",
+            "visibility": "visible",
+            "height": 56,
+            "paddingTop": "0px",
+            "color": "rgb(0, 0, 0)",
+            "fontFamily": "\"Instrument Sans\""
+          },
+          {
+            "sel": "#app-sidebar",
+            "present": true,
+            "display": "none",
+            "visibility": "visible",
+            "height": 0,
+            "paddingTop": "0px",
+            "color": "rgb(0, 0, 0)",
+            "fontFamily": "\"Instrument Sans\""
+          },
+          {
+            "sel": "#app h1",
+            "present": true,
+            "display": "block",
+            "visibility": "visible",
+            "height": 33.59,
+            "paddingTop": "0px",
+            "color": "rgb(27, 42, 65)",
+            "fontFamily": "\"Instrument Sans\""
+          },
+          {
+            "sel": "#app .text-mono",
+            "present": true,
+            "display": "inline",
+            "visibility": "visible",
+            "height": 0,
+            "paddingTop": "0px",
+            "color": "rgb(27, 42, 65)",
+            "fontFamily": "\"JetBrains Mono\""
+          }
+        ]
+      },
+      {
+        "name": "360x800",
+        "width": 360,
+        "height": 800,
+        "dpr": 1,
+        "screenshot": "react-repaired-360x800.png",
+        "screenshotSha256": "bce7d0dbbfb305f5a9d4fe4d87763a79d9337f172b13d226db3dbec6975e0cd4",
+        "styles": [
+          {
+            "sel": "#app header",
+            "present": true,
+            "display": "flex",
+            "visibility": "visible",
+            "height": 56,
+            "paddingTop": "0px",
+            "color": "rgb(0, 0, 0)",
+            "fontFamily": "\"Instrument Sans\""
+          },
+          {
+            "sel": "#app-sidebar",
+            "present": true,
+            "display": "none",
+            "visibility": "visible",
+            "height": 0,
+            "paddingTop": "0px",
+            "color": "rgb(0, 0, 0)",
+            "fontFamily": "\"Instrument Sans\""
+          },
+          {
+            "sel": "#app h1",
+            "present": true,
+            "display": "block",
+            "visibility": "visible",
+            "height": 29.64,
+            "paddingTop": "0px",
+            "color": "rgb(27, 42, 65)",
+            "fontFamily": "\"Instrument Sans\""
+          },
+          {
+            "sel": "#app .text-mono",
+            "present": true,
+            "display": "inline",
+            "visibility": "visible",
+            "height": 0,
+            "paddingTop": "0px",
+            "color": "rgb(27, 42, 65)",
+            "fontFamily": "\"JetBrains Mono\""
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -26,7 +26,7 @@ Extract, modularize, and enforce production-grade frontend design contracts from
    - `rounded-xl` (12px): Containers and panels (cards, tables, nested wells, popovers).
    - `rounded-2xl` (16px): Large overlays and dialogs (modals, sheets).
    - *Capsule exception*: `rounded-full` is reserved for status badges, avatar chips, and progress bars.
-3. **Strict 4px Spacing Grid**: All spacing values must be multiples of 4px (`p-1` through `p-12`). Arbitrary numbers like `p-[13px]` are banned.
+3. **Project-Declared Spacing Grid**: A 4px spacing grid and `8/12/16` radius tiers are **defaults** for projects without an established brand system, not mandatory global law. Taste sharp (`4/6/8`) and soft (`8/12/20`) scales, and custom declared gaps (e.g. 6px), are first-class when written into `docs/design/TOKEN-MAP.md`. Undeclared arbitrary values like `p-[13px]` remain banned.
 4. **Mandatory 10 System States**: Every dynamic view must implement: (1) Initial Loading Skeleton, (2) Empty State, (3) No Search Result, (4) Error State, (5) No Internet / Offline, (6) Slow Network, (7) Permission Denied, (8) Session Expired, (9) Form Validation, and (10) Success Feedback.
 5. **Progressive Disclosure**: Root `DESIGN.md` serves as a lightweight routing index. Detailed specifications live in `docs/design/` so agents load only relevant documentation into context.
 
@@ -77,7 +77,7 @@ Generate the core design architecture using bundled templates in `templates/`:
 
 1. `<project-root>/DESIGN.md` from `templates/root-design.md`: Routing index for agents.
 2. `<project-root>/docs/design/BRAND.md` from `templates/brand.md`: Brand identity, visual atmosphere, and aesthetics.
-3. `<project-root>/docs/design/STANDARDS.md` from `templates/standards.md`: The 3-tier radius rule, 4px grid, z-index ladder, and touch targets.
+3. `<project-root>/docs/design/STANDARDS.md` from `templates/standards.md`: The radius tiers / spacing grid declared in the project contract (defaults when absent), z-index ladder, and touch targets.
 4. `<project-root>/docs/design/THEME.md` from `templates/theme.md`: Dual-mode token pairings (`data-theme="light|dark"`) and contrast guarantees.
 5. `<project-root>/docs/design/TOKEN-MAP.md` from `templates/token-map.md`: Developer quick-reference table for semantic classes.
 6. `<project-root>/docs/design/TYPOGRAPHY-MAP.md` from `templates/typography-map.md`: Font pairings and the Sans vs Mono number rule.
@@ -108,11 +108,13 @@ Run this verification before approving any UI implementation.
 # 1. Check for forbidden hardcoded hex values in classes
 git diff HEAD | grep -E "bg-\[#|text-\[#|border-\[#|fill-\[#" && { echo "VIOLATION: Hardcoded hex found!"; exit 1; }
 
-# 2. Check for unauthorized radius classes
-git diff HEAD | grep -E "rounded-sm|rounded-md|rounded-3xl|rounded-\[" && { echo "VIOLATION: Invalid radius tier!"; exit 1; }
+# 2. Check radius against the project's declared TOKEN-MAP (default tiers shown).
+#    A declared rounded-md -> 6px or taste 4/6/8 / 8/12/20 scale is valid; only
+#    values NOT declared in docs/design/TOKEN-MAP.md are violations.
+#    git diff HEAD | grep -E "rounded-sm|rounded-md|rounded-3xl|rounded-\[" ...
 
-# 3. Check for fractional spacing
-git diff HEAD | grep -E "gap-1\.5|gap-2\.5|p-3\.5|m-\[" && { echo "VIOLATION: Non-4px spacing found!"; exit 1; }
+# 3. Check spacing against the declared grid (default 4px; declared 6px valid).
+#    git diff HEAD | grep -E "gap-1\.5|gap-2\.5|p-3\.5|m-\[" ...
 ```
 
 **Verification checklist** — confirm on the rendered result, in both light and dark:
@@ -170,7 +172,7 @@ html[data-theme="dark"] {
 ### Example 2: Strict Component Consumption
 
 ```tsx
-// PASS: Role-based tokens, 4px grid, exactly 3 radius tiers
+// PASS: Role-based tokens, contract-declared spacing grid and radius tiers
 export function StatCard({ title, value, change }: StatCardProps) {
   return (
     <div className="bg-surface border border-border-subtle rounded-xl p-5 shadow-sm">
@@ -212,7 +214,7 @@ export function BadStatCard({ title, value }: StatCardProps) {
 - Always run `multimodal-looker` on reference screenshots to extract visual proportions before writing code.
 - Treat `globals.css` as the ultimate source of truth for values; treat `docs/design/` as the governance authority.
 - When adding a new view, draft its page contract first; code review checks the implementation against that contract.
-- Keep the number of radius tiers strictly at 3 (`8px`, `12px`, `16px`) plus capsule badges (`rounded-full`).
+- Keep radius tiers at 3 by default (`8px`, `12px`, `16px`) plus capsule badges; when the project declares taste sharp (`4/6/8`) or soft (`8/12/20`), those declared tiers prevail. Validate against the project contract, never a hardcoded universal value.
 - Re-verify dark mode contrast whenever an accent or surface token is tweaked.
 - Name the consuming skill in implementation plans: write "execute under `frontend-scaffold`" when the plan implements a frozen contract. A skill cannot force the harness to load it — an agent working from the plan alone skips the consumer's audit gate (observed failure: 14 contract violations shipped under a green suite).
 

@@ -1,0 +1,48 @@
+{
+  "algorithm": "sha256",
+  "canonical_root": "skills/",
+  "runtime_resolution": "STATIC_VERIFIED",
+  "enforcement": "COOPERATIVE_NOT_MANDATORY",
+  "files": [
+    {
+      "path": "skills/design-build/SKILL.md",
+      "sha256": "91784a52d500656af407c8bfb9f9a793b7ade93d5550b018893746b79457f399",
+      "bytes": 13141
+    },
+    {
+      "path": "commands/design-build.md",
+      "sha256": "392bd2edffb28e36ffe7babb2a60ecd03ad58cfeb32a2525332ab0566df548c2",
+      "bytes": 7898
+    },
+    {
+      "path": ".opencode/commands/design-build.md",
+      "sha256": "392bd2edffb28e36ffe7babb2a60ecd03ad58cfeb32a2525332ab0566df548c2",
+      "bytes": 7898
+    },
+    {
+      "path": "commands/typography.md",
+      "sha256": "9da53faa33bc1bf5ab089f8290f3fef9afec2b2da50a0543784780d9c38f3a89",
+      "bytes": 5047
+    },
+    {
+      "path": ".opencode/commands/typography.md",
+      "sha256": "9da53faa33bc1bf5ab089f8290f3fef9afec2b2da50a0543784780d9c38f3a89",
+      "bytes": 5047
+    },
+    {
+      "path": "skills/design-contract-system/SKILL.md",
+      "sha256": "e9ebf32b59d0123c2de2ac931f1b300db5bbea4f0f048f9bba41e28eae50dcb7",
+      "bytes": 13357
+    },
+    {
+      "path": "skills/frontend-scaffold/SKILL.md",
+      "sha256": "254eb0c9315ac83986b19f9a17c86a29b8c2257134c48b2bbe2846dc95c3679b",
+      "bytes": 12296
+    },
+    {
+      "path": "skills/workflow-state/SKILL.md",
+      "sha256": "af29e2a3292f049f546adbedecb72467319989c340060ac6ed566ced005a5f47",
+      "bytes": 5368
+    }
+  ]
+}

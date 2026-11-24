@@ -1,0 +1,1083 @@
+{
+  "scope": {
+    "sectionId": "REF-01-app-shell",
+    "candidateRoute": "/master/items",
+    "profiles": [
+      "desktop-1440",
+      "tablet-768",
+      "mobile-390",
+      "mobile-360"
+    ],
+    "regions": {
+      "brand": {
+        "html": ".brand",
+        "react": "#app-sidebar .text-h4",
+        "properties": [
+          "text",
+          "fontFamily",
+          "fontWeight",
+          "fontSize",
+          "color"
+        ]
+      },
+      "sidebar": {
+        "html": ".sidebar",
+        "react": "#app-sidebar",
+        "properties": [
+          "display",
+          "width",
+          "backgroundColor"
+        ]
+      },
+      "navSelected": {
+        "html": ".nav-item.active",
+        "react": "#app-sidebar a[href=\"/master/items\"]",
+        "properties": [
+          "text",
+          "color",
+          "backgroundColor",
+          "height"
+        ]
+      },
+      "topbar": {
+        "html": ".topbar",
+        "react": "#app header",
+        "properties": [
+          "display",
+          "height",
+          "paddingLeft",
+          "backgroundColor"
+        ]
+      },
+      "warehouse": {
+        "html": ".warehouse .code",
+        "react": "#app header span.font-mono",
+        "properties": [
+          "text",
+          "fontFamily",
+          "color"
+        ]
+      },
+      "userRole": {
+        "html": ".who .role",
+        "react": "#app header span.rounded-full",
+        "properties": [
+          "text",
+          "color",
+          "borderRadius",
+          "fontSize"
+        ]
+      },
+      "h1": {
+        "html": "h1",
+        "react": "#app h1",
+        "properties": [
+          "text",
+          "fontSize",
+          "fontWeight",
+          "color",
+          "lineHeight"
+        ]
+      }
+    },
+    "exclusions": [
+      {
+        "region": "master-items-table-and-filters",
+        "reason": "functional page content not specified by shell placeholder",
+        "verification": "own approved section contract / G4"
+      }
+    ],
+    "note": "Wrapper geometry (H1 container width, brand wrapper) is NOT an acceptance criterion; measure actual text/style."
+  },
+  "html": [
+    {
+      "viewport": "desktop-1440",
+      "screenshot": "html-desktop-1440.png",
+      "sha256": "3848a1c8be69d3a263ad15f07d6f215b2fa24797827a9b4ab9685e5409713a22",
+      "regions": {
+        "brand": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "600",
+          "fontSize": "18px",
+          "color": "rgb(27, 42, 65)",
+          "display": "flex",
+          "width": "255px",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "height": "64px",
+          "paddingLeft": "24px",
+          "borderRadius": "0px",
+          "lineHeight": "27px",
+          "present": true,
+          "text": "Nexvora Atlas"
+        },
+        "sidebar": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "400",
+          "fontSize": "16px",
+          "color": "rgb(27, 42, 65)",
+          "display": "flex",
+          "width": "256px",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "height": "900px",
+          "paddingLeft": "0px",
+          "borderRadius": "0px",
+          "lineHeight": "24px",
+          "present": true,
+          "text": "Nexvora Atlas\n    \n      \n        Data Master\n        Item\n        Gudang\n      "
+        },
+        "navSelected": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "500",
+          "fontSize": "14px",
+          "color": "rgb(27, 42, 65)",
+          "display": "flex",
+          "width": "239px",
+          "backgroundColor": "rgb(244, 246, 245)",
+          "height": "44px",
+          "paddingLeft": "12px",
+          "borderRadius": "8px",
+          "lineHeight": "21px",
+          "present": true,
+          "text": "Item"
+        },
+        "topbar": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "400",
+          "fontSize": "16px",
+          "color": "rgb(27, 42, 65)",
+          "display": "flex",
+          "width": "1184px",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "height": "64px",
+          "paddingLeft": "24px",
+          "borderRadius": "0px",
+          "lineHeight": "24px",
+          "present": true,
+          "text": "▦WH-01Gudang Pusat\n      \n      \n        Admin UtamaAdmin\n        Profil"
+        },
+        "warehouse": {
+          "fontFamily": "JetBrains Mono",
+          "fontWeight": "400",
+          "fontSize": "14px",
+          "color": "rgb(27, 42, 65)",
+          "display": "block",
+          "width": "42.1562px",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "height": "21px",
+          "paddingLeft": "0px",
+          "borderRadius": "0px",
+          "lineHeight": "21px",
+          "present": true,
+          "text": "WH-01"
+        },
+        "userRole": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "400",
+          "fontSize": "12px",
+          "color": "rgb(94, 107, 122)",
+          "display": "block",
+          "width": "68.4219px",
+          "backgroundColor": "rgb(244, 246, 245)",
+          "height": "28px",
+          "paddingLeft": "12px",
+          "borderRadius": "capsule",
+          "lineHeight": "18px",
+          "present": true,
+          "text": "Admin"
+        },
+        "h1": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "700",
+          "fontSize": "28px",
+          "color": "rgb(27, 42, 65)",
+          "display": "block",
+          "width": "1136px",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "height": "33.5938px",
+          "paddingLeft": "0px",
+          "borderRadius": "0px",
+          "lineHeight": "33.6px",
+          "present": true,
+          "text": "Item"
+        }
+      }
+    },
+    {
+      "viewport": "tablet-768",
+      "screenshot": "html-tablet-768.png",
+      "sha256": "86441449366cb08edcf591f663b9db3a7b26359e8af30bb7ae0973721d350439",
+      "regions": {
+        "brand": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "600",
+          "fontSize": "18px",
+          "color": "rgb(27, 42, 65)",
+          "display": "flex",
+          "width": "auto",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "height": "64px",
+          "paddingLeft": "24px",
+          "borderRadius": "0px",
+          "lineHeight": "27px",
+          "present": true,
+          "text": "Nexvora Atlas"
+        },
+        "sidebar": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "400",
+          "fontSize": "16px",
+          "color": "rgb(27, 42, 65)",
+          "display": "none",
+          "width": "256px",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "height": "auto",
+          "paddingLeft": "0px",
+          "borderRadius": "0px",
+          "lineHeight": "24px",
+          "present": true,
+          "text": "Nexvora Atlas\n    \n      \n        Data Master\n        Item\n        Gudang\n      "
+        },
+        "navSelected": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "500",
+          "fontSize": "14px",
+          "color": "rgb(27, 42, 65)",
+          "display": "flex",
+          "width": "auto",
+          "backgroundColor": "rgb(244, 246, 245)",
+          "height": "44px",
+          "paddingLeft": "12px",
+          "borderRadius": "8px",
+          "lineHeight": "21px",
+          "present": true,
+          "text": "Item"
+        },
+        "topbar": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "400",
+          "fontSize": "16px",
+          "color": "rgb(27, 42, 65)",
+          "display": "flex",
+          "width": "768px",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "height": "56px",
+          "paddingLeft": "16px",
+          "borderRadius": "0px",
+          "lineHeight": "24px",
+          "present": true,
+          "text": "▦WH-01Gudang Pusat\n      \n      \n        Admin UtamaAdmin\n        Profil"
+        },
+        "warehouse": {
+          "fontFamily": "JetBrains Mono",
+          "fontWeight": "400",
+          "fontSize": "14px",
+          "color": "rgb(27, 42, 65)",
+          "display": "block",
+          "width": "42.1562px",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "height": "21px",
+          "paddingLeft": "0px",
+          "borderRadius": "0px",
+          "lineHeight": "21px",
+          "present": true,
+          "text": "WH-01"
+        },
+        "userRole": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "400",
+          "fontSize": "12px",
+          "color": "rgb(94, 107, 122)",
+          "display": "block",
+          "width": "68.4219px",
+          "backgroundColor": "rgb(244, 246, 245)",
+          "height": "28px",
+          "paddingLeft": "12px",
+          "borderRadius": "capsule",
+          "lineHeight": "18px",
+          "present": true,
+          "text": "Admin"
+        },
+        "h1": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "700",
+          "fontSize": "24px",
+          "color": "rgb(27, 42, 65)",
+          "display": "block",
+          "width": "736px",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "height": "28.7969px",
+          "paddingLeft": "0px",
+          "borderRadius": "0px",
+          "lineHeight": "28.8px",
+          "present": true,
+          "text": "Item"
+        }
+      }
+    },
+    {
+      "viewport": "mobile-390",
+      "screenshot": "html-mobile-390.png",
+      "sha256": "472ab5f66611e5e87e288d543dea87f9340396e646082f0cb3ca5fb0a8ae3952",
+      "regions": {
+        "brand": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "600",
+          "fontSize": "18px",
+          "color": "rgb(27, 42, 65)",
+          "display": "flex",
+          "width": "auto",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "height": "64px",
+          "paddingLeft": "24px",
+          "borderRadius": "0px",
+          "lineHeight": "27px",
+          "present": true,
+          "text": "Nexvora Atlas"
+        },
+        "sidebar": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "400",
+          "fontSize": "16px",
+          "color": "rgb(27, 42, 65)",
+          "display": "none",
+          "width": "256px",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "height": "auto",
+          "paddingLeft": "0px",
+          "borderRadius": "0px",
+          "lineHeight": "24px",
+          "present": true,
+          "text": "Nexvora Atlas\n    \n      \n        Data Master\n        Item\n        Gudang\n      "
+        },
+        "navSelected": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "500",
+          "fontSize": "14px",
+          "color": "rgb(27, 42, 65)",
+          "display": "flex",
+          "width": "auto",
+          "backgroundColor": "rgb(244, 246, 245)",
+          "height": "44px",
+          "paddingLeft": "12px",
+          "borderRadius": "8px",
+          "lineHeight": "21px",
+          "present": true,
+          "text": "Item"
+        },
+        "topbar": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "400",
+          "fontSize": "16px",
+          "color": "rgb(27, 42, 65)",
+          "display": "flex",
+          "width": "390px",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "height": "56px",
+          "paddingLeft": "16px",
+          "borderRadius": "0px",
+          "lineHeight": "24px",
+          "present": true,
+          "text": "▦WH-01Gudang Pusat\n      \n      \n        Admin UtamaAdmin\n        Profil"
+        },
+        "warehouse": {
+          "fontFamily": "JetBrains Mono",
+          "fontWeight": "400",
+          "fontSize": "14px",
+          "color": "rgb(27, 42, 65)",
+          "display": "block",
+          "width": "42.1562px",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "height": "21px",
+          "paddingLeft": "0px",
+          "borderRadius": "0px",
+          "lineHeight": "21px",
+          "present": true,
+          "text": "WH-01"
+        },
+        "userRole": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "400",
+          "fontSize": "12px",
+          "color": "rgb(94, 107, 122)",
+          "display": "block",
+          "width": "68.4219px",
+          "backgroundColor": "rgb(244, 246, 245)",
+          "height": "28px",
+          "paddingLeft": "12px",
+          "borderRadius": "capsule",
+          "lineHeight": "18px",
+          "present": true,
+          "text": "Admin"
+        },
+        "h1": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "700",
+          "fontSize": "24px",
+          "color": "rgb(27, 42, 65)",
+          "display": "block",
+          "width": "358px",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "height": "28.7969px",
+          "paddingLeft": "0px",
+          "borderRadius": "0px",
+          "lineHeight": "28.8px",
+          "present": true,
+          "text": "Item"
+        }
+      }
+    },
+    {
+      "viewport": "mobile-360",
+      "screenshot": "html-mobile-360.png",
+      "sha256": "c5a550e3c36a7fd9d9845d14b9d1de6ae80fa81dd3275a0cbedcc94502c136e6",
+      "regions": {
+        "brand": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "600",
+          "fontSize": "18px",
+          "color": "rgb(27, 42, 65)",
+          "display": "flex",
+          "width": "auto",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "height": "64px",
+          "paddingLeft": "24px",
+          "borderRadius": "0px",
+          "lineHeight": "27px",
+          "present": true,
+          "text": "Nexvora Atlas"
+        },
+        "sidebar": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "400",
+          "fontSize": "16px",
+          "color": "rgb(27, 42, 65)",
+          "display": "none",
+          "width": "256px",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "height": "auto",
+          "paddingLeft": "0px",
+          "borderRadius": "0px",
+          "lineHeight": "24px",
+          "present": true,
+          "text": "Nexvora Atlas\n    \n      \n        Data Master\n        Item\n        Gudang\n      "
+        },
+        "navSelected": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "500",
+          "fontSize": "14px",
+          "color": "rgb(27, 42, 65)",
+          "display": "flex",
+          "width": "auto",
+          "backgroundColor": "rgb(244, 246, 245)",
+          "height": "44px",
+          "paddingLeft": "12px",
+          "borderRadius": "8px",
+          "lineHeight": "21px",
+          "present": true,
+          "text": "Item"
+        },
+        "topbar": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "400",
+          "fontSize": "16px",
+          "color": "rgb(27, 42, 65)",
+          "display": "flex",
+          "width": "360px",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "height": "56px",
+          "paddingLeft": "16px",
+          "borderRadius": "0px",
+          "lineHeight": "24px",
+          "present": true,
+          "text": "▦WH-01Gudang Pusat\n      \n      \n        Admin UtamaAdmin\n        Profil"
+        },
+        "warehouse": {
+          "fontFamily": "JetBrains Mono",
+          "fontWeight": "400",
+          "fontSize": "14px",
+          "color": "rgb(27, 42, 65)",
+          "display": "block",
+          "width": "42.1562px",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "height": "21px",
+          "paddingLeft": "0px",
+          "borderRadius": "0px",
+          "lineHeight": "21px",
+          "present": true,
+          "text": "WH-01"
+        },
+        "userRole": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "400",
+          "fontSize": "12px",
+          "color": "rgb(94, 107, 122)",
+          "display": "block",
+          "width": "68.4219px",
+          "backgroundColor": "rgb(244, 246, 245)",
+          "height": "28px",
+          "paddingLeft": "12px",
+          "borderRadius": "capsule",
+          "lineHeight": "18px",
+          "present": true,
+          "text": "Admin"
+        },
+        "h1": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "700",
+          "fontSize": "24px",
+          "color": "rgb(27, 42, 65)",
+          "display": "block",
+          "width": "328px",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "height": "28.7969px",
+          "paddingLeft": "0px",
+          "borderRadius": "0px",
+          "lineHeight": "28.8px",
+          "present": true,
+          "text": "Item"
+        }
+      }
+    }
+  ],
+  "react": [
+    {
+      "viewport": "desktop-1440",
+      "screenshot": "react-desktop-1440.png",
+      "sha256": "d719aa69dde45a75ec112d9dee19fc33771f08b3bf1d6f43339259f7aef991d1",
+      "regions": {
+        "brand": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "600",
+          "fontSize": "18px",
+          "color": "rgb(27, 42, 65)",
+          "display": "block",
+          "width": "113.656px",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "height": "21.5938px",
+          "paddingLeft": "0px",
+          "borderRadius": "0px",
+          "lineHeight": "21.6px",
+          "present": true,
+          "text": "Nexvora Atlas"
+        },
+        "sidebar": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "400",
+          "fontSize": "16px",
+          "color": "rgb(27, 42, 65)",
+          "display": "flex",
+          "width": "256px",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "height": "900px",
+          "paddingLeft": "0px",
+          "borderRadius": "0px",
+          "lineHeight": "24px",
+          "present": true,
+          "text": "Nexvora AtlasData MasterItemGudangPemasokPola SerialRegistri SerialOperasionalPe"
+        },
+        "navSelected": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "400",
+          "fontSize": "14px",
+          "color": "rgb(58, 74, 96)",
+          "display": "flex",
+          "width": "239px",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "height": "44px",
+          "paddingLeft": "12px",
+          "borderRadius": "8px",
+          "lineHeight": "21px",
+          "present": true,
+          "text": "Item"
+        },
+        "topbar": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "400",
+          "fontSize": "16px",
+          "color": "rgb(27, 42, 65)",
+          "display": "flex",
+          "width": "1184px",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "height": "64px",
+          "paddingLeft": "24px",
+          "borderRadius": "0px",
+          "lineHeight": "24px",
+          "present": true,
+          "text": "‹▦WH-01 · Gudang PusatWH-01NotificationsAdmin UtamaAdminProfil"
+        },
+        "warehouse": {
+          "fontFamily": "JetBrains Mono",
+          "fontWeight": "400",
+          "fontSize": "14px",
+          "color": "rgb(27, 42, 65)",
+          "display": "none",
+          "width": "auto",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "height": "auto",
+          "paddingLeft": "0px",
+          "borderRadius": "0px",
+          "lineHeight": "21px",
+          "present": true,
+          "text": "WH-01"
+        },
+        "userRole": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "400",
+          "fontSize": "12px",
+          "color": "rgb(94, 107, 122)",
+          "display": "block",
+          "width": "64.5156px",
+          "backgroundColor": "rgb(244, 246, 245)",
+          "height": "28px",
+          "paddingLeft": "12px",
+          "borderRadius": "capsule",
+          "lineHeight": "18px",
+          "present": true,
+          "text": "Admin"
+        },
+        "h1": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "700",
+          "fontSize": "28px",
+          "color": "rgb(27, 42, 65)",
+          "display": "block",
+          "width": "271.109px",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "height": "33.5938px",
+          "paddingLeft": "0px",
+          "borderRadius": "0px",
+          "lineHeight": "33.6px",
+          "present": true,
+          "text": "Item"
+        }
+      }
+    },
+    {
+      "viewport": "tablet-768",
+      "screenshot": "react-tablet-768.png",
+      "sha256": "1f00c53a283cf83150c3299a6ed3b520d15eb59b347e685e2336fb55ec20eb91",
+      "regions": {
+        "brand": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "600",
+          "fontSize": "18px",
+          "color": "rgb(27, 42, 65)",
+          "display": "block",
+          "width": "auto",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "height": "auto",
+          "paddingLeft": "0px",
+          "borderRadius": "0px",
+          "lineHeight": "21.6px",
+          "present": true,
+          "text": "Nexvora Atlas"
+        },
+        "sidebar": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "400",
+          "fontSize": "16px",
+          "color": "rgb(27, 42, 65)",
+          "display": "none",
+          "width": "256px",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "height": "auto",
+          "paddingLeft": "0px",
+          "borderRadius": "0px",
+          "lineHeight": "24px",
+          "present": true,
+          "text": "Nexvora AtlasData MasterItemGudangPemasokPola SerialRegistri SerialOperasionalPe"
+        },
+        "navSelected": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "400",
+          "fontSize": "14px",
+          "color": "rgb(58, 74, 96)",
+          "display": "flex",
+          "width": "auto",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "height": "44px",
+          "paddingLeft": "12px",
+          "borderRadius": "8px",
+          "lineHeight": "21px",
+          "present": true,
+          "text": "Item"
+        },
+        "topbar": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "400",
+          "fontSize": "16px",
+          "color": "rgb(27, 42, 65)",
+          "display": "flex",
+          "width": "768px",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "height": "56px",
+          "paddingLeft": "16px",
+          "borderRadius": "0px",
+          "lineHeight": "24px",
+          "present": true,
+          "text": "‹▦WH-01 · Gudang PusatWH-01NotificationsAdmin UtamaAdminProfil"
+        },
+        "warehouse": {
+          "fontFamily": "JetBrains Mono",
+          "fontWeight": "400",
+          "fontSize": "14px",
+          "color": "rgb(27, 42, 65)",
+          "display": "block",
+          "width": "42.1562px",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "height": "21px",
+          "paddingLeft": "0px",
+          "borderRadius": "0px",
+          "lineHeight": "21px",
+          "present": true,
+          "text": "WH-01"
+        },
+        "userRole": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "400",
+          "fontSize": "12px",
+          "color": "rgb(94, 107, 122)",
+          "display": "block",
+          "width": "64.5156px",
+          "backgroundColor": "rgb(244, 246, 245)",
+          "height": "28px",
+          "paddingLeft": "12px",
+          "borderRadius": "capsule",
+          "lineHeight": "18px",
+          "present": true,
+          "text": "Admin"
+        },
+        "h1": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "700",
+          "fontSize": "24px",
+          "color": "rgb(27, 42, 65)",
+          "display": "block",
+          "width": "271.109px",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "height": "28.7969px",
+          "paddingLeft": "0px",
+          "borderRadius": "0px",
+          "lineHeight": "28.8px",
+          "present": true,
+          "text": "Item"
+        }
+      }
+    },
+    {
+      "viewport": "mobile-390",
+      "screenshot": "react-mobile-390.png",
+      "sha256": "599429a92eb4ed9719e20a59bef289447858d278f804d26874966ae866cb52f2",
+      "regions": {
+        "brand": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "600",
+          "fontSize": "18px",
+          "color": "rgb(27, 42, 65)",
+          "display": "block",
+          "width": "auto",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "height": "auto",
+          "paddingLeft": "0px",
+          "borderRadius": "0px",
+          "lineHeight": "21.6px",
+          "present": true,
+          "text": "Nexvora Atlas"
+        },
+        "sidebar": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "400",
+          "fontSize": "16px",
+          "color": "rgb(27, 42, 65)",
+          "display": "none",
+          "width": "256px",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "height": "auto",
+          "paddingLeft": "0px",
+          "borderRadius": "0px",
+          "lineHeight": "24px",
+          "present": true,
+          "text": "Nexvora AtlasData MasterItemGudangPemasokPola SerialRegistri SerialOperasionalPe"
+        },
+        "navSelected": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "400",
+          "fontSize": "14px",
+          "color": "rgb(58, 74, 96)",
+          "display": "flex",
+          "width": "auto",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "height": "44px",
+          "paddingLeft": "12px",
+          "borderRadius": "8px",
+          "lineHeight": "21px",
+          "present": true,
+          "text": "Item"
+        },
+        "topbar": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "400",
+          "fontSize": "16px",
+          "color": "rgb(27, 42, 65)",
+          "display": "flex",
+          "width": "390px",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "height": "56px",
+          "paddingLeft": "16px",
+          "borderRadius": "0px",
+          "lineHeight": "24px",
+          "present": true,
+          "text": "‹▦WH-01 · Gudang PusatWH-01NotificationsAdmin UtamaAdminProfil"
+        },
+        "warehouse": {
+          "fontFamily": "JetBrains Mono",
+          "fontWeight": "400",
+          "fontSize": "14px",
+          "color": "rgb(27, 42, 65)",
+          "display": "block",
+          "width": "42.1562px",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "height": "21px",
+          "paddingLeft": "0px",
+          "borderRadius": "0px",
+          "lineHeight": "21px",
+          "present": true,
+          "text": "WH-01"
+        },
+        "userRole": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "400",
+          "fontSize": "12px",
+          "color": "rgb(94, 107, 122)",
+          "display": "block",
+          "width": "64.5156px",
+          "backgroundColor": "rgb(244, 246, 245)",
+          "height": "28px",
+          "paddingLeft": "12px",
+          "borderRadius": "capsule",
+          "lineHeight": "18px",
+          "present": true,
+          "text": "Admin"
+        },
+        "h1": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "700",
+          "fontSize": "24px",
+          "color": "rgb(27, 42, 65)",
+          "display": "block",
+          "width": "271.109px",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "height": "28.7969px",
+          "paddingLeft": "0px",
+          "borderRadius": "0px",
+          "lineHeight": "28.8px",
+          "present": true,
+          "text": "Item"
+        }
+      }
+    },
+    {
+      "viewport": "mobile-360",
+      "screenshot": "react-mobile-360.png",
+      "sha256": "7b172445fad2cab25e2fa8a31e447c1cc707e15f8a3125e7044bf3b472933224",
+      "regions": {
+        "brand": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "600",
+          "fontSize": "18px",
+          "color": "rgb(27, 42, 65)",
+          "display": "block",
+          "width": "auto",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "height": "auto",
+          "paddingLeft": "0px",
+          "borderRadius": "0px",
+          "lineHeight": "21.6px",
+          "present": true,
+          "text": "Nexvora Atlas"
+        },
+        "sidebar": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "400",
+          "fontSize": "16px",
+          "color": "rgb(27, 42, 65)",
+          "display": "none",
+          "width": "256px",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "height": "auto",
+          "paddingLeft": "0px",
+          "borderRadius": "0px",
+          "lineHeight": "24px",
+          "present": true,
+          "text": "Nexvora AtlasData MasterItemGudangPemasokPola SerialRegistri SerialOperasionalPe"
+        },
+        "navSelected": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "400",
+          "fontSize": "14px",
+          "color": "rgb(58, 74, 96)",
+          "display": "flex",
+          "width": "auto",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "height": "44px",
+          "paddingLeft": "12px",
+          "borderRadius": "8px",
+          "lineHeight": "21px",
+          "present": true,
+          "text": "Item"
+        },
+        "topbar": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "400",
+          "fontSize": "16px",
+          "color": "rgb(27, 42, 65)",
+          "display": "flex",
+          "width": "360px",
+          "backgroundColor": "rgb(255, 255, 255)",
+          "height": "56px",
+          "paddingLeft": "16px",
+          "borderRadius": "0px",
+          "lineHeight": "24px",
+          "present": true,
+          "text": "‹▦WH-01 · Gudang PusatWH-01NotificationsAdmin UtamaAdminProfil"
+        },
+        "warehouse": {
+          "fontFamily": "JetBrains Mono",
+          "fontWeight": "400",
+          "fontSize": "14px",
+          "color": "rgb(27, 42, 65)",
+          "display": "block",
+          "width": "42.1562px",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "height": "21px",
+          "paddingLeft": "0px",
+          "borderRadius": "0px",
+          "lineHeight": "21px",
+          "present": true,
+          "text": "WH-01"
+        },
+        "userRole": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "400",
+          "fontSize": "12px",
+          "color": "rgb(94, 107, 122)",
+          "display": "block",
+          "width": "64.5156px",
+          "backgroundColor": "rgb(244, 246, 245)",
+          "height": "28px",
+          "paddingLeft": "12px",
+          "borderRadius": "capsule",
+          "lineHeight": "18px",
+          "present": true,
+          "text": "Admin"
+        },
+        "h1": {
+          "fontFamily": "Instrument Sans",
+          "fontWeight": "700",
+          "fontSize": "24px",
+          "color": "rgb(27, 42, 65)",
+          "display": "block",
+          "width": "271.109px",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "height": "28.7969px",
+          "paddingLeft": "0px",
+          "borderRadius": "0px",
+          "lineHeight": "28.8px",
+          "present": true,
+          "text": "Item"
+        }
+      }
+    }
+  ],
+  "comparison": [
+    {
+      "viewport": "desktop-1440",
+      "htmlScreenshot": "html-desktop-1440.png",
+      "reactScreenshot": "react-desktop-1440.png",
+      "diffCount": 2,
+      "diffs": [
+        {
+          "viewport": "desktop-1440",
+          "region": "navSelected",
+          "property": "color",
+          "html": "rgb(27, 42, 65)",
+          "react": "rgb(58, 74, 96)"
+        },
+        {
+          "viewport": "desktop-1440",
+          "region": "navSelected",
+          "property": "backgroundColor",
+          "html": "rgb(244, 246, 245)",
+          "react": "rgba(0, 0, 0, 0)"
+        }
+      ]
+    },
+    {
+      "viewport": "tablet-768",
+      "htmlScreenshot": "html-tablet-768.png",
+      "reactScreenshot": "react-tablet-768.png",
+      "diffCount": 2,
+      "diffs": [
+        {
+          "viewport": "tablet-768",
+          "region": "navSelected",
+          "property": "color",
+          "html": "rgb(27, 42, 65)",
+          "react": "rgb(58, 74, 96)"
+        },
+        {
+          "viewport": "tablet-768",
+          "region": "navSelected",
+          "property": "backgroundColor",
+          "html": "rgb(244, 246, 245)",
+          "react": "rgba(0, 0, 0, 0)"
+        }
+      ]
+    },
+    {
+      "viewport": "mobile-390",
+      "htmlScreenshot": "html-mobile-390.png",
+      "reactScreenshot": "react-mobile-390.png",
+      "diffCount": 2,
+      "diffs": [
+        {
+          "viewport": "mobile-390",
+          "region": "navSelected",
+          "property": "color",
+          "html": "rgb(27, 42, 65)",
+          "react": "rgb(58, 74, 96)"
+        },
+        {
+          "viewport": "mobile-390",
+          "region": "navSelected",
+          "property": "backgroundColor",
+          "html": "rgb(244, 246, 245)",
+          "react": "rgba(0, 0, 0, 0)"
+        }
+      ]
+    },
+    {
+      "viewport": "mobile-360",
+      "htmlScreenshot": "html-mobile-360.png",
+      "reactScreenshot": "react-mobile-360.png",
+      "diffCount": 2,
+      "diffs": [
+        {
+          "viewport": "mobile-360",
+          "region": "navSelected",
+          "property": "color",
+          "html": "rgb(27, 42, 65)",
+          "react": "rgb(58, 74, 96)"
+        },
+        {
+          "viewport": "mobile-360",
+          "region": "navSelected",
+          "property": "backgroundColor",
+          "html": "rgb(244, 246, 245)",
+          "react": "rgba(0, 0, 0, 0)"
+        }
+      ]
+    }
+  ],
+  "totalDiffs": 8
+}

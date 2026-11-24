@@ -70,36 +70,67 @@ dcp-compress, `/aside`, and long sessions:
   "phase": "section-loop",
   "steps": ["hero", "value", "features", "proof", "cta", "footer"],
   "current": 0,
-  "gates": { "sectionApproved": false }
+  "state": "CANVAS_APPROVED",
+  "approvedBundleSha256": "<64-hex full-bundle digest>"
 }
 ```
 
 - `steps` is the approved section order, `current` the zero-based index being
   built, `phase` one of `brief | taste | freeze | scaffold | section-loop | gate | done`.
-- Set `sectionApproved: true` only when a `kind:"verdict", verdict:"approve"`
-  arrives for `current`, then advance: reset the flag to `false`, increment
-  `current`, and rewrite the file before starting the next section.
-- While `phase` is `section-loop` and `sectionApproved` is false, the
-  `workflow-gate` plugin denies writes to any `docs/design/sections/NN-*.html`
-  with `NN > current + 1`.
+- **One canonical section lifecycle.** States: `PREVIEW_DRAFT → AWAITING_APPROVAL →
+  CANVAS_APPROVED → PORT_IN_PROGRESS → PARITY_PENDING → PARITY_PASS → SECTION_COMPLETE`
+  (see plan §5). `CANVAS_APPROVED` records consent to the exact sealed bundle and
+  NEVER advances `current`. `PREVIEW_DRAFT` must never advance directly to
+  `SECTION_COMPLETE`; `PARITY_PENDING` is a valid state. `current` increments once,
+  only after verified completion. Transition and receipt checks are the PRODUCTION
+  modules `scripts/design-build-v2/state-machine.mjs` (`advanceCheckpoint`,
+  `verifyReceipt` with MANDATORY context) and `scripts/design-build-v2/rendered-authority.mjs`
+  (`verifyRenderedParity` with actual screenshot bytes + per-viewport measurements).
+- A source-level verdict (`kind:"verdict", verdict:"approve"`) is not rendered evidence;
+  it cannot advance the checkpoint. G2 authority is the browser measurement artifact
+  (`docs/design/evidence/p-web1/rendered-parity.json` for P-WEB1).
+- Enforcement is cooperative (`COOPERATIVE_NOT_MANDATORY`); the `workflow-gate`
+  plugin is not assumed active under OpenCode. The runner enforces the lifecycle.
 
 Schema and rules: `workflow-state` skill.
 
-## One Design Authority
+## Typography lifecycle (design-build integration)
 
-The taste engine is the single source for palette, type, radius, motion, and
-spacing. Everything downstream maps it, never re-derives it.
+Typography is decided once, before freeze:
+- If no approved typography contract exists (`docs/design/TYPOGRAPHY-MAP.md` absent),
+  run `/typography` in `DESIGN` mode before freezing the canvas.
+- If an approved contract exists, reuse it verbatim — do not reselect fonts.
+- During port and parity, typography is **VERIFY only**: no font reselection, no
+  wrapping/line-height changes, no redesign. A font fallback or wrap drift fails G2
+  as a rendered measurement (`fontFamily`/`fontSize`/bounding box).
+- `AMEND` requires explicit owner approval and invalidates the affected baseline
+  bundle + parity receipt; it is `MUTATION_BLOCKED` post-freeze without that approval.
+- Typography DESIGN owns font selection and role mapping before freeze. After
+  freeze, the approved `TYPOGRAPHY-MAP.md` and design contract are authoritative;
+  the taste engine never overrides them. Porting uses VERIFY only; AMEND needs
+  explicit owner approval.
 
-- `deal` prints **candidates**. It is not the design. Emit the real system with
-  `start.mjs css` (or `start.mjs brand` for client colours) before Freeze.
-- The contract records the emitted values verbatim in `TOKEN-MAP.md` and
-  `THEME.md`. Where a downstream skill's default scale differs (for example the
-  taste scale `4/6/8` and `8/12/20` versus a contract/scaffold default of
-  `8/12/16`), the taste value wins and the mapping is written down.
-- `frontend-scaffold` consumes `TOKEN-MAP.md`. It must not fall back to its own
-  defaults for any token the map defines.
-- When `ui-ux-pro-max` and the taste engine disagree, taste wins (its LILA RULE
-  bans the violet accents the database returns for fintech).
+## One Design Authority (phase-scoped)
+
+Authority is bound to lifecycle phase, not to a single skill:
+
+- **Before Freeze:** the taste engine proposes/emits visual direction (palette,
+  type pairing, radius, motion, spacing) and `deal` prints **candidates** — not
+  the design. Typography DESIGN owns font selection, pairing, roles and
+  hierarchy. Emit the real system with `start.mjs css` (or `start.mjs brand`
+  for client colours) before Freeze.
+- **At Freeze:** the approved design contract, `TOKEN-MAP.md`, `THEME.md` and
+  `TYPOGRAPHY-MAP.md` record the emitted values verbatim and become the sole
+  authority. Where a downstream default differs, the APPROVED contract value
+  wins (not the taste scale). The approved section canvas specifies composition
+  and behaviour within that contract.
+- **During Port:** downstream skills (`frontend-scaffold`, adapters) consume and
+  map approved tokens; they never re-derive or substitute defaults. Typography
+  is VERIFY only. If approved contract and canvas conflict, STOP and reconcile
+  via owner amendment — never pick whichever makes the port easier.
+- **After Freeze:** a taste/evaluator suggestion cannot override approved type,
+  tokens or composition. AMEND requires exact owner approval and invalidates the
+  affected baseline + parity.
 
 ## Section Order
 
@@ -174,6 +205,13 @@ For each section in the chosen order (or the single section specified by `--sect
 Write the checkpoint **before** ending a canvas session. On resume, revalidate
 the files on disk: a missing or changed contract, preview, or asset invalidates
 the approval that referenced it.
+
+**State machine (V2.0):** `CANVAS_APPROVED` records consent to the exact sealed
+canvas only — it must never increment the `current` section index. `current`
+advances on a verified parity receipt (`PARITY_PASS`) after bounded repair, and
+a failed resume preserves the prior failure count (max 2 cycles per revision).
+On resume, recompute every disk hash of HTML/CSS/assets/contract against
+`active.json`; any mismatch returns `BUNDLE_INVALIDATED: canvas hash mismatch`.
 
 ## Asset Policy
 

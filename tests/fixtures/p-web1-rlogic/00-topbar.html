@@ -1,0 +1,20 @@
+<!doctype html>
+<!-- SYNTHETIC disposable stand-in for the historical rlogic WMS topbar. No private code. -->
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>P-WEB1 topbar reference (synthetic)</title>
+<style>
+  :root { --bg:#0b1220; --fg:#e6edf7; --accent:#3b82f6; --radius-2xl:20px; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:14px/1.4 system-ui,sans-serif; }
+  .topbar { display:flex; align-items:center; gap:12px; padding:16px 16px; min-height:56px; }
+  .warehouse-badge { display:inline-flex; align-items:center; gap:6px; border-radius:999px;
+    padding:4px 10px; background:#13213a; font-variant-numeric:tabular-nums; }
+  .brand { font-weight:600; }
+</style></head>
+<body>
+<header class="topbar" role="banner">
+  <span class="warehouse-badge" aria-label="Warehouse 01">▦ WH-01</span>
+  <span class="brand">WMS Mobile</span>
+</header>
+</body></html>
