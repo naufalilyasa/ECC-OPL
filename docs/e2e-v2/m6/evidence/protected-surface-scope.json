@@ -13,8 +13,8 @@
       "reason": "restricted metadata not accessed"
     }
   },
-  "before_sha256": "16f0bf6711473f6678581b1d9e4dd3d29fcc46f9056f5e5cb96a37af90ea8ab2",
-  "after_sha256": "16f0bf6711473f6678581b1d9e4dd3d29fcc46f9056f5e5cb96a37af90ea8ab2",
+  "before_sha256": "6421da94dac309b5a845a15907f3591198b7408a8894f113784ec47e272848df",
+  "after_sha256": "6421da94dac309b5a845a15907f3591198b7408a8894f113784ec47e272848df",
   "verified_files": [
     "docs/e2e-v2/m6/tests/acceptance-ledger.mjs",
     "docs/e2e-v2/m6/tests/fixtures.mjs",

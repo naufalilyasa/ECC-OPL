@@ -57,6 +57,40 @@ action: none
 **No mode has a browser default** — `Browser` is `never` unless a target was explicitly approved.
 Only `map`, `run` and `full` may ever propose a registry change, and only inside their own boundary.
 
+## 2a. Deterministic registry operations (authoritative)
+
+All registry work in this command goes through the repository-local tool
+`.opencode/scripts/e2e-registry.mjs`, invoked with a request JSON file in private scratch (never an
+inline interpreter). It reuses the validated M3/M5/M6 logic; it does not duplicate a state enum,
+field validator or path checker.
+
+| Operation | Responsibility | Invocation |
+|---|---|---|
+| `inspect` | parse + validate existing registry, read-only | `node .opencode/scripts/e2e-registry.mjs inspect <scratch>/req.json` |
+| `propose` | generate exact field-scoped diff, no write | `... propose <req.json>` |
+| `apply` | apply owner-approved diff with base-hash recheck, atomic temp+rename | `... apply <req.json>` |
+| `reconcile` | map verified runner outcome to permitted fields and apply | `... reconcile <req.json>` |
+| `validate` | full resulting-registry validation | `... validate <req.json>` |
+| `map` | resolve internal mapper resource (no legacy command read) | `... map <req.json>` |
+| `release` | compute authoritative gate decision | `... release <req.json>` |
+
+The tool validates the **full** registry before mutation: exact TEST-ID matching, duplicate TEST-ID
+and duplicate-field rejection, permitted fields only, canonical `State` values (`missing`,
+`in progress`, `unverified`, `covered`, `not applicable`), structural-injection rejection, base
+SHA-256 binding, approved-diff binding, stale-approval rejection, concurrent-change detection,
+path traversal/symlink-ancestor/nonexistent-destination containment, and a full post-write
+validation. `stale` is an assessment only, never a State value.
+
+`e2e-runner` must never perform an independent registry mutation — it returns execution evidence to
+this orchestrator, which reconciles through the controlled writer above.
+
+**Limitation (do not overclaim):** direct `write`/`edit`/`bash` tools remain available in the host
+runtime, so this is a controlled cooperative boundary, **not** mandatory host-level enforcement.
+A denied operation is never bypassed by another tool or path. `TOCTOU_NOT_FULLY_PROVEN`: the tool
+uses anchored, no-follow, exclusive temp creation plus hash recheck and atomic rename, but does not
+claim race-safe authorization against a hostile concurrent writer. Unsafe or uncertain paths fail
+closed.
+
 ## 3. `run` — resolve, preflight, dispatch, reconcile
 
 ### 3.1 Resolve the target (E2E-FR-004)
@@ -72,7 +106,7 @@ mapping is valid and inside the repository (§8). Match the target in this order
 - **More than one candidate** → ask one question listing the candidates in the order above with a
   single `(Recommended)` default. Never pick silently.
 - **Zero matches** → emit `REGISTRY_REQUIRED` with the line
-  `flow belum terdaftar — jalankan /e2e-map` — no dispatch, no browser, no registry write.
+  `flow belum terdaftar — jalankan /e2e map` — no dispatch, no browser, no registry write.
   Do not fall back to "proceed as before"; that legacy path is retired.
 
 Spec location: the block's `Test file` when it holds a real path; otherwise `Test location` from
@@ -114,8 +148,8 @@ and `State: covered`; exit 0 with a weak or tautological assertion → `PASS_UNV
 stays or becomes `unverified`; non-zero exit or a failed assertion → `FAIL`; skipped/zero tests →
 `NOT_EXECUTED`/`UNVERIFIED` and no coverage credit.
 
-Update **only the matched block**, and only these fields: `State`, `Test file`, `Test node`,
-`Command`, `Evidence`. `Purpose`, `Source`, `Representative input`, `Observable expectation`,
+Update **only the matched block**, and only these fields, through the §2a `reconcile` operation:
+`State`, `Test file`, `Test node`, `Command`, `Evidence`. `Purpose`, `Source`, `Representative input`, `Observable expectation`,
 `Level`, `Execution group` and `Boundary` are never rewritten, and no other block, ID or ordering
 moves. If the run FAILed and `State` was `covered`, downgrade it to `unverified` and record the
 failure in `Evidence`.
@@ -129,9 +163,10 @@ target is refused as `BLOCKED` under DEC-07, regardless of what the ad-hoc reque
 
 ## 5. `map` — discovery and proposal only
 
-Run the detector procedure in `.opencode/commands/e2e-map.md` (Steps 1–3, `e2e-map.md:31–64`)
-**as the single source of detector truth** — do not duplicate its globs here — and then apply the
-V2 correction overlay:
+Run the detector procedure in the **internal reusable resource**
+`.opencode/resources/e2e-journey-mapper.md` (Steps 1–3) — this is the single source of detector
+truth, independent of any legacy public command. Do not read `.opencode/commands/e2e-map.md` at
+runtime; that file is a compatibility wrapper only. Then apply the V2 correction overlay:
 
 - **D1 locale dedup** — one journey per behaviour boundary; locale variants do not become separate
   journeys.

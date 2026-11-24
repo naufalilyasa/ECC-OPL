@@ -13,13 +13,13 @@
       "todo": 0
     },
     "log": "evidence/red-green/V611-11-suite.log",
-    "log_sha256": "8a2b613849c2bbd7e43b2dd808553ff72f6d179411acca36720632ef3ada4e2d",
+    "log_sha256": "7e3711806f6905fe08881b2f3c8f77948e1c4c72e1182ab4ec3e854c9a69de15",
     "command": "node --test docs/e2e-v2/m6/tests/r1-correctness.test.mjs",
     "complete": true
   },
   "status": "PASS",
   "evidence_level": "DETERMINISTIC_REFERENCE",
   "source_file": "docs/e2e-v2/m6/tests/acceptance-ledger.mjs",
-  "source_sha256": "1dd92f7b9a8a84c33414f6f690970292649f21998e038be254dc9ad994821b6f",
-  "created_at": "2026-11-24T05:28:48.162Z"
+  "source_sha256": "9e5604489c24afebd0d86eeb44745801813be745415fb3b20ac9b9b3bcd6f904",
+  "created_at": "2026-11-24T06:48:05.524Z"
 }

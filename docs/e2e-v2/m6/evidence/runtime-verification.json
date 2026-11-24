@@ -1,0 +1,51 @@
+{
+  "generated_at": "2026-11-24T00:00:00Z",
+  "environment": {
+    "opencode": "v2.3.2",
+    "node": "v24.21.0",
+    "project_root": "$ECC_ROOT",
+    "target_label": "E2E_NONPROD_LOCAL_FIXTURE"
+  },
+  "P1_effective_command_resolution": {
+    "status": "PARTIAL_STATIC_VERIFIED",
+    "project_command_file": ".opencode/commands/e2e.md",
+    "project_command_sha256": "4a7c91f23a31afe4a42787dbaf38a07a12c246a37e729d97956dd0930ab0c40c",
+    "global_and_project_maps_agree": true,
+    "map_template": "{file:commands/e2e.md}\n\n$ARGUMENTS",
+    "registry_tool": {
+      "path": ".opencode/scripts/e2e-registry.mjs",
+      "exists": true,
+      "operations": ["inspect", "propose", "apply", "reconcile", "validate", "map", "release"]
+    },
+    "internal_mapper": "docs/e2e-v2/m6/resources/e2e-journey-mapper.md",
+    "e2e_runner_agent": "agents/e2e-runner.md",
+    "permission_behavior": "builder tools include bash/read/write/edit; cooperative boundary, not mandatory host enforcement",
+    "live_prompt_expansion_verified": false,
+    "reason": "No model-invoking session authorized in this scope; static resolution and tool availability verified read-only."
+  },
+  "A08_live_orchestration": {
+    "status": "NOT_RUN",
+    "reason": "Requires P1 live prompt expansion and a scoped model/browser operation authorization; P5 is NOT_GIVEN.",
+    "reproducible_fixture": {
+      "root": "$E2E_SCRATCH_ROOT/a08-fixture",
+      "commands": [
+        "node .opencode/scripts/e2e-registry.mjs inspect <scratch>/inspect.json",
+        "node .opencode/scripts/e2e-registry.mjs propose <scratch>/propose.json",
+        "node .opencode/scripts/e2e-registry.mjs apply <scratch>/apply.json",
+        "node .opencode/scripts/e2e-registry.mjs reconcile <scratch>/reconcile.json",
+        "node .opencode/scripts/e2e-registry.mjs validate <scratch>/validate.json"
+      ],
+      "gates": "map -> approve exact diff -> apply -> e2e-runner -> reconcile -> validate"
+    },
+    "exact_invocation_instructions": "Create a disposable non-production fixture under $E2E_SCRATCH_ROOT with a root TESTS.md containing a ### TEST-E2E-001 block. Write each request JSON in private scratch, never inline. Pass E2E_SCRATCH_ROOT and E2E_REPO_ROOT. Do not use a production registry or real credentials."
+  },
+  "call_chain_evidence": {
+    "source": "tests invoked the actual .opencode/scripts/e2e-registry.mjs via node child_process",
+    "operations_exercised": ["inspect", "propose", "apply", "reconcile", "validate", "map", "release"],
+    "result": "RT01-RT12 PASS (12/12)",
+    "target_artifact": "TESTS.md",
+    "controlled_writer": "applyFieldScopedUpdate + atomic temp/rename + base-hash recheck",
+    "mandatory_host_enforcement": false,
+    "race_safety": "TOCTOU_NOT_FULLY_PROVEN"
+  }
+}

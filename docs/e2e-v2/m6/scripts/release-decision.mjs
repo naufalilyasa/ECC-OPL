@@ -19,19 +19,20 @@ export function buildActualReleaseDecision({
   try { trace = JSON.parse(readFileSync(tracePath, 'utf8')) } catch (e) { readError = String(e.message ?? e) }
 
   const classification = trace?.product_boundary_class ?? 'NOT_VERIFIED'
-  const findings = [
+  const actual = classification === 'ACTUAL_PRODUCT_BOUNDARY'
+    && trace?.product_writer_validation === 'PRODUCT_WRITER_VALIDATED_PASS'
+  const findings = actual ? [] : [
     'S01/S02 M5 reference helpers remediated; no verifiable actual /e2e registry writer',
     'No deterministic production registry writer found in inspected source',
   ]
-  const blockingLimitations = [
-    trace?.limitation ?? 'product boundary trace unavailable',
-    trace?.toctou ?? 'TOCTOU_NOT_FULLY_PROVEN',
-  ]
+  const blockingLimitations = actual
+    ? [trace?.limitation ?? 'COOPERATIVE_NOT_MANDATORY', trace?.toctou ?? 'TOCTOU_NOT_FULLY_PROVEN']
+    : [trace?.limitation ?? 'product boundary trace unavailable', trace?.toctou ?? 'TOCTOU_NOT_FULLY_PROVEN']
   const productBoundary = {
-    status: readError ? 'NOT_VERIFIED' : 'FAIL',
-    blocker: true,
+    status: readError ? 'NOT_VERIFIED' : (actual ? 'PASS' : 'FAIL'),
+    blocker: !actual,
     classification,
-    boundaryEvidence: { S01: { verified: false }, S02: { verified: false } },
+    boundaryEvidence: { S01: { verified: actual }, S02: { verified: actual } },
     findings,
     blockingLimitations,
     product_writer_validation: trace?.product_writer_validation ?? 'PRODUCT_WRITER_NOT_VERIFIED',

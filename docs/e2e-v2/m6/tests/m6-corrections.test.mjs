@@ -246,5 +246,5 @@ test('CORR-13: M5 frozen tree records amendment without erasing historical diges
   const m5 = v.trees.find((t) => t.name === 'm5')
   assert.equal(m5.historical_expected_sha256, '267c3b8bce980c97cadfc54b815fb79190d9a8f9f6951cb29ae92839dbf7b014')
   assert.equal(m5.match, true)
-  assert.equal(m5.amendment?.after_sha256, '524a975360ae6f244bc3e20908fafaa8fd17937231ada2388e74f9aca737b189')
+  assert.equal(m5.amendment?.after_sha256, '341c555e67a69064e22aefe6669553f282e9c6a374b11f7457fe6eab977c0a1b')
 })

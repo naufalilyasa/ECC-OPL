@@ -7,10 +7,10 @@
     "status": "PASS",
     "evidence_level": "DETERMINISTIC_REFERENCE",
     "source_file": "docs/e2e-v2/m6/tests/acceptance-ledger.mjs",
-    "source_sha256": "1dd92f7b9a8a84c33414f6f690970292649f21998e038be254dc9ad994821b6f",
-    "created_at": "2026-11-24T05:28:48.160Z",
+    "source_sha256": "9e5604489c24afebd0d86eeb44745801813be745415fb3b20ac9b9b3bcd6f904",
+    "created_at": "2026-11-24T06:48:05.523Z",
     "evidence_file": "evidence/scenario-receipts/V611-01.json",
-    "evidence_sha256": "6d7ac78bd8329358d8350e88a28baae6c376d326e62560d04f5bb0c7103ae267",
+    "evidence_sha256": "b87afdf958e786df11f6b49cd3032204e8e36a5b1bef6212062f42bbd6b8fe20",
     "evidence_bytes": 349
   },
   {
@@ -21,10 +21,10 @@
     "status": "PASS",
     "evidence_level": "DETERMINISTIC_REFERENCE",
     "source_file": "docs/e2e-v2/m6/tests/acceptance-ledger.mjs",
-    "source_sha256": "1dd92f7b9a8a84c33414f6f690970292649f21998e038be254dc9ad994821b6f",
-    "created_at": "2026-11-24T05:28:48.160Z",
+    "source_sha256": "9e5604489c24afebd0d86eeb44745801813be745415fb3b20ac9b9b3bcd6f904",
+    "created_at": "2026-11-24T06:48:05.523Z",
     "evidence_file": "evidence/scenario-receipts/V611-02.json",
-    "evidence_sha256": "9eb3ed748b636f20a58b903fdfafc76c7ec665794be46b6c7ef6d6044ab9272a",
+    "evidence_sha256": "d233a16bd140d00934042df5652a85e3994b0398ee42065c0f32554b85aa39e0",
     "evidence_bytes": 349
   },
   {
@@ -35,10 +35,10 @@
     "status": "PASS",
     "evidence_level": "DETERMINISTIC_REFERENCE",
     "source_file": "docs/e2e-v2/m6/tests/acceptance-ledger.mjs",
-    "source_sha256": "1dd92f7b9a8a84c33414f6f690970292649f21998e038be254dc9ad994821b6f",
-    "created_at": "2026-11-24T05:28:48.160Z",
+    "source_sha256": "9e5604489c24afebd0d86eeb44745801813be745415fb3b20ac9b9b3bcd6f904",
+    "created_at": "2026-11-24T06:48:05.523Z",
     "evidence_file": "evidence/scenario-receipts/V611-03.json",
-    "evidence_sha256": "9ba4ccf474ad1b4055fb186dfcd9e2284f22dc50a1d5f56f0a27c497350d4c9f",
+    "evidence_sha256": "64d536553d38f72f6c2cdcf0a8d652fd5791380390fc34250174a364da176b01",
     "evidence_bytes": 349
   },
   {
@@ -49,10 +49,10 @@
     "status": "PASS",
     "evidence_level": "DETERMINISTIC_REFERENCE",
     "source_file": "docs/e2e-v2/m6/tests/acceptance-ledger.mjs",
-    "source_sha256": "1dd92f7b9a8a84c33414f6f690970292649f21998e038be254dc9ad994821b6f",
-    "created_at": "2026-11-24T05:28:48.161Z",
+    "source_sha256": "9e5604489c24afebd0d86eeb44745801813be745415fb3b20ac9b9b3bcd6f904",
+    "created_at": "2026-11-24T06:48:05.524Z",
     "evidence_file": "evidence/scenario-receipts/V611-04.json",
-    "evidence_sha256": "54c15d0e338bc6156d6c3f6b02e8676b3d3d43bfd5027cba161b9d1e3ff4021a",
+    "evidence_sha256": "91b31f26a3576760eff4753379e0261211f0cf3132141cd703ee6e3d0e5177ac",
     "evidence_bytes": 349
   },
   {
@@ -63,10 +63,10 @@
     "status": "PASS",
     "evidence_level": "DETERMINISTIC_REFERENCE",
     "source_file": "docs/e2e-v2/m6/tests/acceptance-ledger.mjs",
-    "source_sha256": "1dd92f7b9a8a84c33414f6f690970292649f21998e038be254dc9ad994821b6f",
-    "created_at": "2026-11-24T05:28:48.161Z",
+    "source_sha256": "9e5604489c24afebd0d86eeb44745801813be745415fb3b20ac9b9b3bcd6f904",
+    "created_at": "2026-11-24T06:48:05.524Z",
     "evidence_file": "evidence/scenario-receipts/V611-05.json",
-    "evidence_sha256": "1a674a31b5578bf255db031c3695fd248ffafa24b8411c3ced53d21ee192f689",
+    "evidence_sha256": "63714bf26187668cefb9fa03ed5880b6c68f0d3c58df708cd3b53981705b9eef",
     "evidence_bytes": 349
   },
   {
@@ -77,10 +77,10 @@
     "status": "PASS",
     "evidence_level": "DETERMINISTIC_REFERENCE",
     "source_file": "docs/e2e-v2/m6/tests/acceptance-ledger.mjs",
-    "source_sha256": "1dd92f7b9a8a84c33414f6f690970292649f21998e038be254dc9ad994821b6f",
-    "created_at": "2026-11-24T05:28:48.161Z",
+    "source_sha256": "9e5604489c24afebd0d86eeb44745801813be745415fb3b20ac9b9b3bcd6f904",
+    "created_at": "2026-11-24T06:48:05.524Z",
     "evidence_file": "evidence/scenario-receipts/V611-06.json",
-    "evidence_sha256": "1d98f7604626cf97b3726c9324d943607d374dd846971a59749670c7f9597c1e",
+    "evidence_sha256": "c3d587b1d353c56ed6aa5c67b45101364c3bfc8c149a93e481cc957e78f59eb9",
     "evidence_bytes": 349
   },
   {
@@ -91,10 +91,10 @@
     "status": "PASS",
     "evidence_level": "DETERMINISTIC_REFERENCE",
     "source_file": "docs/e2e-v2/m6/tests/acceptance-ledger.mjs",
-    "source_sha256": "1dd92f7b9a8a84c33414f6f690970292649f21998e038be254dc9ad994821b6f",
-    "created_at": "2026-11-24T05:28:48.161Z",
+    "source_sha256": "9e5604489c24afebd0d86eeb44745801813be745415fb3b20ac9b9b3bcd6f904",
+    "created_at": "2026-11-24T06:48:05.524Z",
     "evidence_file": "evidence/scenario-receipts/V611-07.json",
-    "evidence_sha256": "3c41eef6e5c00c488055b1c851b954c3936a315dc17a2a408416dcd78d0135b1",
+    "evidence_sha256": "72cf2285b097c029bbe12885ef95a7de9af146b3af43fa10b327f1da6ddce12d",
     "evidence_bytes": 349
   },
   {
@@ -105,10 +105,10 @@
     "status": "PASS",
     "evidence_level": "DETERMINISTIC_REFERENCE",
     "source_file": "docs/e2e-v2/m6/tests/acceptance-ledger.mjs",
-    "source_sha256": "1dd92f7b9a8a84c33414f6f690970292649f21998e038be254dc9ad994821b6f",
-    "created_at": "2026-11-24T05:28:48.162Z",
+    "source_sha256": "9e5604489c24afebd0d86eeb44745801813be745415fb3b20ac9b9b3bcd6f904",
+    "created_at": "2026-11-24T06:48:05.524Z",
     "evidence_file": "evidence/scenario-receipts/V611-08.json",
-    "evidence_sha256": "5d59d976714323cefcba24423b9406a45078b19f20f231a7834ba0a638b2c942",
+    "evidence_sha256": "7e58ea42324338d10bd79abb9bb534d57a27893dd1d4ba543f4e1c711592e379",
     "evidence_bytes": 349
   },
   {
@@ -119,10 +119,10 @@
     "status": "PASS",
     "evidence_level": "DETERMINISTIC_REFERENCE",
     "source_file": "docs/e2e-v2/m6/tests/acceptance-ledger.mjs",
-    "source_sha256": "1dd92f7b9a8a84c33414f6f690970292649f21998e038be254dc9ad994821b6f",
-    "created_at": "2026-11-24T05:28:48.162Z",
+    "source_sha256": "9e5604489c24afebd0d86eeb44745801813be745415fb3b20ac9b9b3bcd6f904",
+    "created_at": "2026-11-24T06:48:05.524Z",
     "evidence_file": "evidence/scenario-receipts/V611-09.json",
-    "evidence_sha256": "a9db3f395b5a3b8584e218a1b6fb09ca9266c5c8044dd5434c602b8b5527b7cb",
+    "evidence_sha256": "e147b7765954f6e6d6037fdd262f8ae1378c6b23b5b5695c56b94e23d96950b7",
     "evidence_bytes": 349
   },
   {
@@ -133,10 +133,10 @@
     "status": "PASS",
     "evidence_level": "DETERMINISTIC_REFERENCE",
     "source_file": "docs/e2e-v2/m6/tests/acceptance-ledger.mjs",
-    "source_sha256": "1dd92f7b9a8a84c33414f6f690970292649f21998e038be254dc9ad994821b6f",
-    "created_at": "2026-11-24T05:28:48.162Z",
+    "source_sha256": "9e5604489c24afebd0d86eeb44745801813be745415fb3b20ac9b9b3bcd6f904",
+    "created_at": "2026-11-24T06:48:05.524Z",
     "evidence_file": "evidence/scenario-receipts/V611-10.json",
-    "evidence_sha256": "d35a1090cf28184d98107fedeefa1debf6d16f78f43f38c44bbafd7743c1e872",
+    "evidence_sha256": "0ed0312228e28368f1c512bfddafe6c7ad35e294842749c6a07a3b50cfd8f437",
     "evidence_bytes": 349
   },
   {
@@ -154,17 +154,17 @@
         "todo": 0
       },
       "log": "evidence/red-green/V611-11-suite.log",
-      "log_sha256": "8a2b613849c2bbd7e43b2dd808553ff72f6d179411acca36720632ef3ada4e2d",
+      "log_sha256": "7e3711806f6905fe08881b2f3c8f77948e1c4c72e1182ab4ec3e854c9a69de15",
       "command": "node --test docs/e2e-v2/m6/tests/r1-correctness.test.mjs",
       "complete": true
     },
     "status": "PASS",
     "evidence_level": "DETERMINISTIC_REFERENCE",
     "source_file": "docs/e2e-v2/m6/tests/acceptance-ledger.mjs",
-    "source_sha256": "1dd92f7b9a8a84c33414f6f690970292649f21998e038be254dc9ad994821b6f",
-    "created_at": "2026-11-24T05:28:48.162Z",
+    "source_sha256": "9e5604489c24afebd0d86eeb44745801813be745415fb3b20ac9b9b3bcd6f904",
+    "created_at": "2026-11-24T06:48:05.524Z",
     "evidence_file": "evidence/scenario-receipts/V611-11.json",
-    "evidence_sha256": "6638556fd5d1899a560754a16015dc06cefbec3df1fd4dd1a9a372f88c210f8c",
+    "evidence_sha256": "9f3144a039d0e6d135d5dff9b9d80d9dead7763ea607e683b978f97a74417bd5",
     "evidence_bytes": 772
   },
   {
@@ -175,10 +175,10 @@
     "status": "PASS",
     "evidence_level": "DETERMINISTIC_REFERENCE",
     "source_file": "docs/e2e-v2/m6/tests/acceptance-ledger.mjs",
-    "source_sha256": "1dd92f7b9a8a84c33414f6f690970292649f21998e038be254dc9ad994821b6f",
-    "created_at": "2026-11-24T05:28:48.162Z",
+    "source_sha256": "9e5604489c24afebd0d86eeb44745801813be745415fb3b20ac9b9b3bcd6f904",
+    "created_at": "2026-11-24T06:48:05.525Z",
     "evidence_file": "evidence/scenario-receipts/V611-12.json",
-    "evidence_sha256": "afbaf60fda41eddd4cef0fea6192117daf4ab85200e06416a74ee90f87607985",
+    "evidence_sha256": "b895528cf6795dde6e58474c5b6f5c8420fe60d91e19cf475f5b493b6bd0272d",
     "evidence_bytes": 349
   }
 ]

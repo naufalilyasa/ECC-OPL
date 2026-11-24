@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-24T05:29:01.540Z",
+  "generated_at": "2026-11-24T09:58:55.619Z",
   "milestone": "M6",
   "registry_writes": 0,
   "applied": false,
@@ -18,15 +18,15 @@
     {
       "name": "command_e2e",
       "path": "./.opencode/commands/e2e.md",
-      "expected_sha256": "c562e0a2a2707c49362431b04ac1895f02c091e3d7ae193837ab6bf35b9d8436",
-      "observed_sha256": "c562e0a2a2707c49362431b04ac1895f02c091e3d7ae193837ab6bf35b9d8436",
+      "expected_sha256": "45d44a9efe6bad11d8c4bb83a1f551f71488c5990ae8fe62e4a4965982e5c5c1",
+      "observed_sha256": "45d44a9efe6bad11d8c4bb83a1f551f71488c5990ae8fe62e4a4965982e5c5c1",
       "match": true
     },
     {
       "name": "command_e2e_map",
       "path": "./.opencode/commands/e2e-map.md",
-      "expected_sha256": "76b3d4037a0144df2d40dc0eca01777690762a7cccc5d9562b0330333dfdb142",
-      "observed_sha256": "76b3d4037a0144df2d40dc0eca01777690762a7cccc5d9562b0330333dfdb142",
+      "expected_sha256": "3dfc0639443cedaefd95b2aa7f629e333aee4d4901e99cdddb91218b506beb38",
+      "observed_sha256": "3dfc0639443cedaefd95b2aa7f629e333aee4d4901e99cdddb91218b506beb38",
       "match": true
     }
   ],
@@ -40,7 +40,7 @@
   "owner_config_drift": {
     "path": "$HOME/.config/opencode/opencode.jsonc",
     "observed_sha256": "b194d4b4343e7d20fdb82ba6f12387bd739e553bbf7f4cfb4501d67d3c49f719",
-    "observed_at": "2026-11-24T05:29:01.540Z",
+    "observed_at": "2026-11-24T09:58:55.619Z",
     "owner_authorized": true,
     "affects_pass_fail": false,
     "compared_to_constant": false,

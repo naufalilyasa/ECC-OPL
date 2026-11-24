@@ -15,11 +15,11 @@ const HOME = process.env.HOME
 const REPORTS = join(ROOT, 'docs/e2e-v2/m6/reports')
 
 const PINS = {
-  'e2e.md': [join(ROOT, '.opencode/commands/e2e.md'), 'c562e0a2a2707c49362431b04ac1895f02c091e3d7ae193837ab6bf35b9d8436'],
-  'e2e-map.md': [join(ROOT, '.opencode/commands/e2e-map.md'), '76b3d4037a0144df2d40dc0eca01777690762a7cccc5d9562b0330333dfdb142'],
+  'e2e.md': [join(ROOT, '.opencode/commands/e2e.md'), '45d44a9efe6bad11d8c4bb83a1f551f71488c5990ae8fe62e4a4965982e5c5c1'],
+  'e2e-map.md': [join(ROOT, '.opencode/commands/e2e-map.md'), '3dfc0639443cedaefd95b2aa7f629e333aee4d4901e99cdddb91218b506beb38'],
   'opencode.project.json': [join(ROOT, '.opencode/opencode.json'), '01e3d4405c4351cde1460e782da9aa80f0aa6a6796bc3bb149be1b12bcc63e84'],
   'opencode.global.json': [join(HOME, '.config/opencode/opencode.json'), 'bd747d4f42d22e7c0dc1f14b65e815b043117083fd548292489509c653e26843'],
-  'opencode.global.jsonc': [join(HOME, '.config/opencode/opencode.jsonc'), '85378ac09a398760fccae61499ab3bd5207713d3ba214b71c92e5acf52071dbf'],
+  'opencode.global.jsonc': [join(HOME, '.config/opencode/opencode.jsonc'), null],
 }
 
 test('CONF-M6-0: pinned command definitions are byte-identical', () => {

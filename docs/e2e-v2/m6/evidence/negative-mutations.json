@@ -7,10 +7,10 @@
     "status": "PASS",
     "evidence_level": "DETERMINISTIC_REFERENCE",
     "source_file": "docs/e2e-v2/m6/tests/acceptance-ledger.mjs",
-    "source_sha256": "1dd92f7b9a8a84c33414f6f690970292649f21998e038be254dc9ad994821b6f",
-    "created_at": "2026-11-24T05:28:48.156Z",
+    "source_sha256": "9e5604489c24afebd0d86eeb44745801813be745415fb3b20ac9b9b3bcd6f904",
+    "created_at": "2026-11-24T06:48:05.519Z",
     "evidence_file": "evidence/scenario-receipts/N611-01.json",
-    "evidence_sha256": "04adbb79b413eedc68adf1a4058762a1fe97b90a5fe6fbbc14413b9d874c8e0c",
+    "evidence_sha256": "898cff565192a446a997befe7a4eb8bafb78dfcb3a1fd301bfac416057d4fe4a",
     "evidence_bytes": 349
   },
   {
@@ -21,10 +21,10 @@
     "status": "PASS",
     "evidence_level": "DETERMINISTIC_REFERENCE",
     "source_file": "docs/e2e-v2/m6/tests/acceptance-ledger.mjs",
-    "source_sha256": "1dd92f7b9a8a84c33414f6f690970292649f21998e038be254dc9ad994821b6f",
-    "created_at": "2026-11-24T05:28:48.156Z",
+    "source_sha256": "9e5604489c24afebd0d86eeb44745801813be745415fb3b20ac9b9b3bcd6f904",
+    "created_at": "2026-11-24T06:48:05.519Z",
     "evidence_file": "evidence/scenario-receipts/N611-02.json",
-    "evidence_sha256": "7247b0f347f08ff7eacae6659041a865e1146d317bdc6f71ea6e1caf324316bc",
+    "evidence_sha256": "57dc72b67df0aa7f5567172f62eb600fd0a1c398ef9eae107a2d080457e8aa0a",
     "evidence_bytes": 349
   },
   {
@@ -35,10 +35,10 @@
     "status": "PASS",
     "evidence_level": "DETERMINISTIC_REFERENCE",
     "source_file": "docs/e2e-v2/m6/tests/acceptance-ledger.mjs",
-    "source_sha256": "1dd92f7b9a8a84c33414f6f690970292649f21998e038be254dc9ad994821b6f",
-    "created_at": "2026-11-24T05:28:48.156Z",
+    "source_sha256": "9e5604489c24afebd0d86eeb44745801813be745415fb3b20ac9b9b3bcd6f904",
+    "created_at": "2026-11-24T06:48:05.519Z",
     "evidence_file": "evidence/scenario-receipts/N611-03.json",
-    "evidence_sha256": "84fabf171bc7a7ab751977f614d86009f74ca5d856cd422dbf2259229c1409e6",
+    "evidence_sha256": "a36808fc4b72110e455c18676a5cb77a3e73a2efc8974dbb2c8caf27d7bd5193",
     "evidence_bytes": 349
   },
   {
@@ -49,10 +49,10 @@
     "status": "PASS",
     "evidence_level": "DETERMINISTIC_REFERENCE",
     "source_file": "docs/e2e-v2/m6/tests/acceptance-ledger.mjs",
-    "source_sha256": "1dd92f7b9a8a84c33414f6f690970292649f21998e038be254dc9ad994821b6f",
-    "created_at": "2026-11-24T05:28:48.156Z",
+    "source_sha256": "9e5604489c24afebd0d86eeb44745801813be745415fb3b20ac9b9b3bcd6f904",
+    "created_at": "2026-11-24T06:48:05.520Z",
     "evidence_file": "evidence/scenario-receipts/N611-04.json",
-    "evidence_sha256": "7961830d2492c44c161f9c19440eb7f71810906a0146a6aad1082ece3da70a8f",
+    "evidence_sha256": "5fa0d6daad28a25f8141956e0a5b08e606c3edf21f2c17dafe8bff7e354aaf90",
     "evidence_bytes": 349
   },
   {
@@ -63,10 +63,10 @@
     "status": "PASS",
     "evidence_level": "DETERMINISTIC_REFERENCE",
     "source_file": "docs/e2e-v2/m6/tests/acceptance-ledger.mjs",
-    "source_sha256": "1dd92f7b9a8a84c33414f6f690970292649f21998e038be254dc9ad994821b6f",
-    "created_at": "2026-11-24T05:28:48.156Z",
+    "source_sha256": "9e5604489c24afebd0d86eeb44745801813be745415fb3b20ac9b9b3bcd6f904",
+    "created_at": "2026-11-24T06:48:05.520Z",
     "evidence_file": "evidence/scenario-receipts/N611-05.json",
-    "evidence_sha256": "cb023aab410e84065d384f456624e76d8b67c59d8a372fd07129325cb71dce49",
+    "evidence_sha256": "6563cae26e5ec9c275db0478654852b0dbfcd4e229e9707a31a4804df5d202c6",
     "evidence_bytes": 349
   },
   {
@@ -77,10 +77,10 @@
     "status": "PASS",
     "evidence_level": "DETERMINISTIC_REFERENCE",
     "source_file": "docs/e2e-v2/m6/tests/acceptance-ledger.mjs",
-    "source_sha256": "1dd92f7b9a8a84c33414f6f690970292649f21998e038be254dc9ad994821b6f",
-    "created_at": "2026-11-24T05:28:48.156Z",
+    "source_sha256": "9e5604489c24afebd0d86eeb44745801813be745415fb3b20ac9b9b3bcd6f904",
+    "created_at": "2026-11-24T06:48:05.520Z",
     "evidence_file": "evidence/scenario-receipts/N611-06.json",
-    "evidence_sha256": "9c2f1dc8d257d4064ce19619a7d806a2e9e138227039ec38faed9c83b043f133",
+    "evidence_sha256": "eab9b5fa3022e6f4e019c9cdb45b3bca35fd043190e1851750be0a909daa006e",
     "evidence_bytes": 349
   },
   {
@@ -91,10 +91,10 @@
     "status": "PASS",
     "evidence_level": "DETERMINISTIC_REFERENCE",
     "source_file": "docs/e2e-v2/m6/tests/acceptance-ledger.mjs",
-    "source_sha256": "1dd92f7b9a8a84c33414f6f690970292649f21998e038be254dc9ad994821b6f",
-    "created_at": "2026-11-24T05:28:48.157Z",
+    "source_sha256": "9e5604489c24afebd0d86eeb44745801813be745415fb3b20ac9b9b3bcd6f904",
+    "created_at": "2026-11-24T06:48:05.520Z",
     "evidence_file": "evidence/scenario-receipts/N611-07.json",
-    "evidence_sha256": "dbd8e39a2eca8c9d2162d6dd3e151e98006b94847d302dc6983e58191767aacf",
+    "evidence_sha256": "af0fbd6f6dfbff2ca02b33e282467732a29b7bb05d8f703f10fc2836c6e71190",
     "evidence_bytes": 349
   },
   {
@@ -105,10 +105,10 @@
     "status": "PASS",
     "evidence_level": "DETERMINISTIC_REFERENCE",
     "source_file": "docs/e2e-v2/m6/tests/acceptance-ledger.mjs",
-    "source_sha256": "1dd92f7b9a8a84c33414f6f690970292649f21998e038be254dc9ad994821b6f",
-    "created_at": "2026-11-24T05:28:48.157Z",
+    "source_sha256": "9e5604489c24afebd0d86eeb44745801813be745415fb3b20ac9b9b3bcd6f904",
+    "created_at": "2026-11-24T06:48:05.520Z",
     "evidence_file": "evidence/scenario-receipts/N611-08.json",
-    "evidence_sha256": "92fb2f29fee0e0331d6c1760b0bcb07dd3cfe63bc43df6edab28bd8d88dd19b9",
+    "evidence_sha256": "3797f802f575b78fc2e6da077f7855f39d2dea6ad526cde5c8c827594dcf8442",
     "evidence_bytes": 349
   },
   {
@@ -119,10 +119,10 @@
     "status": "PASS",
     "evidence_level": "DETERMINISTIC_REFERENCE",
     "source_file": "docs/e2e-v2/m6/tests/acceptance-ledger.mjs",
-    "source_sha256": "1dd92f7b9a8a84c33414f6f690970292649f21998e038be254dc9ad994821b6f",
-    "created_at": "2026-11-24T05:28:48.157Z",
+    "source_sha256": "9e5604489c24afebd0d86eeb44745801813be745415fb3b20ac9b9b3bcd6f904",
+    "created_at": "2026-11-24T06:48:05.521Z",
     "evidence_file": "evidence/scenario-receipts/N611-09.json",
-    "evidence_sha256": "5fe745ec0f5cf463dd59a274ac1ab32ca304e7b925538449a9e5fa66e3caf833",
+    "evidence_sha256": "9ab2b3b502a5e84bfa6f3e9dff0d6e3829d74ac2498dad87aece860d1b127762",
     "evidence_bytes": 349
   },
   {
@@ -133,10 +133,10 @@
     "status": "PASS",
     "evidence_level": "DETERMINISTIC_REFERENCE",
     "source_file": "docs/e2e-v2/m6/tests/acceptance-ledger.mjs",
-    "source_sha256": "1dd92f7b9a8a84c33414f6f690970292649f21998e038be254dc9ad994821b6f",
-    "created_at": "2026-11-24T05:28:48.157Z",
+    "source_sha256": "9e5604489c24afebd0d86eeb44745801813be745415fb3b20ac9b9b3bcd6f904",
+    "created_at": "2026-11-24T06:48:05.521Z",
     "evidence_file": "evidence/scenario-receipts/N611-10.json",
-    "evidence_sha256": "39438f317995c38aad378ba6df69e0a1ac584d0fb8ce386362e031f01870d24b",
+    "evidence_sha256": "016c0e0fddae366fe616f3e9d482b420be1435d235762fe5530462611ec773fd",
     "evidence_bytes": 349
   },
   {
@@ -147,10 +147,10 @@
     "status": "PASS",
     "evidence_level": "DETERMINISTIC_REFERENCE",
     "source_file": "docs/e2e-v2/m6/tests/acceptance-ledger.mjs",
-    "source_sha256": "1dd92f7b9a8a84c33414f6f690970292649f21998e038be254dc9ad994821b6f",
-    "created_at": "2026-11-24T05:28:48.158Z",
+    "source_sha256": "9e5604489c24afebd0d86eeb44745801813be745415fb3b20ac9b9b3bcd6f904",
+    "created_at": "2026-11-24T06:48:05.521Z",
     "evidence_file": "evidence/scenario-receipts/N611-11.json",
-    "evidence_sha256": "6a7dd19ac5bd7bc4dd1bc71967bdda992424d0da4ca54960390376d7e727c631",
+    "evidence_sha256": "3451633ca09e2a7c6be12622e119f72e4ef015beddc29e11a174e1d94a391b20",
     "evidence_bytes": 349
   },
   {
@@ -161,10 +161,10 @@
     "status": "PASS",
     "evidence_level": "DETERMINISTIC_REFERENCE",
     "source_file": "docs/e2e-v2/m6/tests/acceptance-ledger.mjs",
-    "source_sha256": "1dd92f7b9a8a84c33414f6f690970292649f21998e038be254dc9ad994821b6f",
-    "created_at": "2026-11-24T05:28:48.158Z",
+    "source_sha256": "9e5604489c24afebd0d86eeb44745801813be745415fb3b20ac9b9b3bcd6f904",
+    "created_at": "2026-11-24T06:48:05.522Z",
     "evidence_file": "evidence/scenario-receipts/N611-12.json",
-    "evidence_sha256": "901a0dc1109f67d9cc37a79ae836475a773b6c3eee2edd0a27a5567ac012d6fe",
+    "evidence_sha256": "04fdd68e99f74b9f770a96f595b4254ac92b9b8e4fd4acea7c09b104d908c8c2",
     "evidence_bytes": 349
   },
   {
@@ -175,10 +175,10 @@
     "status": "PASS",
     "evidence_level": "DETERMINISTIC_REFERENCE",
     "source_file": "docs/e2e-v2/m6/tests/acceptance-ledger.mjs",
-    "source_sha256": "1dd92f7b9a8a84c33414f6f690970292649f21998e038be254dc9ad994821b6f",
-    "created_at": "2026-11-24T05:28:48.158Z",
+    "source_sha256": "9e5604489c24afebd0d86eeb44745801813be745415fb3b20ac9b9b3bcd6f904",
+    "created_at": "2026-11-24T06:48:05.522Z",
     "evidence_file": "evidence/scenario-receipts/N611-13.json",
-    "evidence_sha256": "8486517d71d3ea0148da279a683467812c7adff5e60735acf5b2b851fbd9a6c1",
+    "evidence_sha256": "9bfe26f51c10b4e2ac8ef6968e6798faa1cd23e21c34dbdc96210f8f36d46483",
     "evidence_bytes": 349
   },
   {
@@ -189,10 +189,10 @@
     "status": "PASS",
     "evidence_level": "DETERMINISTIC_REFERENCE",
     "source_file": "docs/e2e-v2/m6/tests/acceptance-ledger.mjs",
-    "source_sha256": "1dd92f7b9a8a84c33414f6f690970292649f21998e038be254dc9ad994821b6f",
-    "created_at": "2026-11-24T05:28:48.159Z",
+    "source_sha256": "9e5604489c24afebd0d86eeb44745801813be745415fb3b20ac9b9b3bcd6f904",
+    "created_at": "2026-11-24T06:48:05.522Z",
     "evidence_file": "evidence/scenario-receipts/N611-14.json",
-    "evidence_sha256": "2871eb8a8af09e9f2a6ab853b64db27a54e81cb52502719ddb552dec4923479b",
+    "evidence_sha256": "97e21e49ffd8e46962e54143d31bd128c6701a5b5919cac69271a2578d4d4fff",
     "evidence_bytes": 349
   },
   {
@@ -203,10 +203,10 @@
     "status": "PASS",
     "evidence_level": "DETERMINISTIC_REFERENCE",
     "source_file": "docs/e2e-v2/m6/tests/acceptance-ledger.mjs",
-    "source_sha256": "1dd92f7b9a8a84c33414f6f690970292649f21998e038be254dc9ad994821b6f",
-    "created_at": "2026-11-24T05:28:48.159Z",
+    "source_sha256": "9e5604489c24afebd0d86eeb44745801813be745415fb3b20ac9b9b3bcd6f904",
+    "created_at": "2026-11-24T06:48:05.522Z",
     "evidence_file": "evidence/scenario-receipts/N611-15.json",
-    "evidence_sha256": "e63f1ab0629a694bbf5af48ec848977143bfb5a59acc9ed3d00d768ef330965d",
+    "evidence_sha256": "769587daaa936f6451f7dc5ea2b99a7407ec7ffc51852de0398d3fe964eb03ab",
     "evidence_bytes": 349
   },
   {
@@ -217,10 +217,10 @@
     "status": "PASS",
     "evidence_level": "DETERMINISTIC_REFERENCE",
     "source_file": "docs/e2e-v2/m6/tests/acceptance-ledger.mjs",
-    "source_sha256": "1dd92f7b9a8a84c33414f6f690970292649f21998e038be254dc9ad994821b6f",
-    "created_at": "2026-11-24T05:28:48.159Z",
+    "source_sha256": "9e5604489c24afebd0d86eeb44745801813be745415fb3b20ac9b9b3bcd6f904",
+    "created_at": "2026-11-24T06:48:05.522Z",
     "evidence_file": "evidence/scenario-receipts/N611-16.json",
-    "evidence_sha256": "091a98c9a9d10375cbeff9fcf42e18482361360296abfbf74a45f458c59f767f",
+    "evidence_sha256": "6236f65c612e4e44a4b3f46830493dbd4ba993581f90f404dcd9bb13fdbdbbce",
     "evidence_bytes": 349
   },
   {
@@ -231,10 +231,10 @@
     "status": "PASS",
     "evidence_level": "DETERMINISTIC_REFERENCE",
     "source_file": "docs/e2e-v2/m6/tests/acceptance-ledger.mjs",
-    "source_sha256": "1dd92f7b9a8a84c33414f6f690970292649f21998e038be254dc9ad994821b6f",
-    "created_at": "2026-11-24T05:28:48.160Z",
+    "source_sha256": "9e5604489c24afebd0d86eeb44745801813be745415fb3b20ac9b9b3bcd6f904",
+    "created_at": "2026-11-24T06:48:05.522Z",
     "evidence_file": "evidence/scenario-receipts/N611-17.json",
-    "evidence_sha256": "36ed402b80980ae6b091c69d00318d8c08c22753d57fb6f455212307281f7c88",
+    "evidence_sha256": "21b282ee9ff8e0f5f2669e9d804c8c108499dd1024f5d3cab165b285916d1900",
     "evidence_bytes": 350
   },
   {
@@ -245,10 +245,10 @@
     "status": "PASS",
     "evidence_level": "DETERMINISTIC_REFERENCE",
     "source_file": "docs/e2e-v2/m6/tests/acceptance-ledger.mjs",
-    "source_sha256": "1dd92f7b9a8a84c33414f6f690970292649f21998e038be254dc9ad994821b6f",
-    "created_at": "2026-11-24T05:28:48.160Z",
+    "source_sha256": "9e5604489c24afebd0d86eeb44745801813be745415fb3b20ac9b9b3bcd6f904",
+    "created_at": "2026-11-24T06:48:05.523Z",
     "evidence_file": "evidence/scenario-receipts/N611-18.json",
-    "evidence_sha256": "01d544e3a9b9ba94892507281348e200e1229fc7c31e9eae3a5025632e8dbe26",
+    "evidence_sha256": "45c3d836d19cbcf086855032a25091d4c90245af007ba571ab19d40e6738f61c",
     "evidence_bytes": 349
   },
   {
@@ -259,10 +259,10 @@
     "status": "PASS",
     "evidence_level": "DETERMINISTIC_REFERENCE",
     "source_file": "docs/e2e-v2/m6/tests/acceptance-ledger.mjs",
-    "source_sha256": "1dd92f7b9a8a84c33414f6f690970292649f21998e038be254dc9ad994821b6f",
-    "created_at": "2026-11-24T05:28:48.160Z",
+    "source_sha256": "9e5604489c24afebd0d86eeb44745801813be745415fb3b20ac9b9b3bcd6f904",
+    "created_at": "2026-11-24T06:48:05.523Z",
     "evidence_file": "evidence/scenario-receipts/N611-19.json",
-    "evidence_sha256": "a288e53378cbdf9a3e1832ccee34671775fd5502a7576daa3c85dd295e19cca9",
+    "evidence_sha256": "668753491b7200060f7e66974d705942fe1dc06611670cecedf6ff15affd39b5",
     "evidence_bytes": 349
   },
   {
@@ -273,10 +273,10 @@
     "status": "PASS",
     "evidence_level": "DETERMINISTIC_REFERENCE",
     "source_file": "docs/e2e-v2/m6/tests/acceptance-ledger.mjs",
-    "source_sha256": "1dd92f7b9a8a84c33414f6f690970292649f21998e038be254dc9ad994821b6f",
-    "created_at": "2026-11-24T05:28:48.160Z",
+    "source_sha256": "9e5604489c24afebd0d86eeb44745801813be745415fb3b20ac9b9b3bcd6f904",
+    "created_at": "2026-11-24T06:48:05.523Z",
     "evidence_file": "evidence/scenario-receipts/N611-20.json",
-    "evidence_sha256": "214b825376c326bd7acd2f1880b78e4bca63d89da533e155f7dbc8fe62f2c3c5",
+    "evidence_sha256": "25442d9b67c3c6631cdaa506031e6adb137115a83856a256e11e1f53969bbf66",
     "evidence_bytes": 349
   }
 ]

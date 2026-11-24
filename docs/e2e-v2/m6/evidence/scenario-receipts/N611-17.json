@@ -6,6 +6,6 @@
   "status": "PASS",
   "evidence_level": "DETERMINISTIC_REFERENCE",
   "source_file": "docs/e2e-v2/m6/tests/acceptance-ledger.mjs",
-  "source_sha256": "1dd92f7b9a8a84c33414f6f690970292649f21998e038be254dc9ad994821b6f",
-  "created_at": "2026-11-24T05:28:48.160Z"
+  "source_sha256": "9e5604489c24afebd0d86eeb44745801813be745415fb3b20ac9b9b3bcd6f904",
+  "created_at": "2026-11-24T06:48:05.522Z"
 }

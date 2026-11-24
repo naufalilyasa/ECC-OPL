@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-24T05:29:01.540Z",
+  "generated_at": "2026-11-24T09:58:55.619Z",
   "milestone": "M6",
   "registry_writes": 0,
   "applied": false,
@@ -27,8 +27,8 @@
       "kind": "happy",
       "status": "PASS",
       "exitCode": 0,
-      "durationMs": 628,
-      "nodeId": "chromium@1.65.1@worker-61671",
+      "durationMs": 349,
+      "nodeId": "chromium@1.65.1@worker-52498",
       "assertionKind": "behavioral",
       "testCount": 1,
       "skipped": false,
@@ -48,13 +48,13 @@
         },
         {
           "path": "scratch/happy/trace.zip",
-          "bytes": 16959,
-          "sha256": "3f7135758354ef194855391f545392ab627a7f5927ba331e380e797e9e20fc41"
+          "bytes": 16702,
+          "sha256": "84f3ac6ec558d1522627efe7e733880d81681af79a503fb14f522ef06060df80"
         }
       ],
       "redactionsCount": 0,
-      "startedAt": "2026-11-24T05:29:01.665Z",
-      "endedAt": "2026-11-24T05:29:02.170Z"
+      "startedAt": "2026-11-24T09:58:55.744Z",
+      "endedAt": "2026-11-24T09:58:55.970Z"
     },
     "weak": {
       "executionMethod": "real_playwright_scratch",
@@ -62,8 +62,8 @@
       "kind": "weak",
       "status": "PASS",
       "exitCode": 0,
-      "durationMs": 266,
-      "nodeId": "chromium@1.65.1@worker-61677",
+      "durationMs": 281,
+      "nodeId": "chromium@1.65.1@worker-52504",
       "assertionKind": "visibility-only",
       "testCount": 1,
       "skipped": false,
@@ -83,13 +83,13 @@
         },
         {
           "path": "scratch/weak/trace.zip",
-          "bytes": 7643,
-          "sha256": "3aa92e04f6f9da1c6a5915a386131c2cf643c2d01b076734cdeb0f710ac9bc81"
+          "bytes": 7654,
+          "sha256": "3d71edb16e1abbfc2189d83c7ec8775d3333096f864e16888e71ab9d2098d9db"
         }
       ],
       "redactionsCount": 0,
-      "startedAt": "2026-11-24T05:29:02.286Z",
-      "endedAt": "2026-11-24T05:29:02.437Z"
+      "startedAt": "2026-11-24T09:58:56.091Z",
+      "endedAt": "2026-11-24T09:58:56.252Z"
     },
     "broken": {
       "executionMethod": "real_playwright_scratch",
@@ -97,8 +97,8 @@
       "kind": "broken",
       "status": "FAIL",
       "exitCode": 1,
-      "durationMs": 266,
-      "nodeId": "chromium@1.65.1@worker-61683",
+      "durationMs": 263,
+      "nodeId": "chromium@1.65.1@worker-52510",
       "assertionKind": "behavioral",
       "testCount": 1,
       "skipped": false,
@@ -113,8 +113,8 @@
         }
       ],
       "redactionsCount": 0,
-      "startedAt": "2026-11-24T05:29:02.555Z",
-      "endedAt": "2026-11-24T05:29:02.703Z"
+      "startedAt": "2026-11-24T09:58:56.371Z",
+      "endedAt": "2026-11-24T09:58:56.515Z"
     },
     "skipped": {
       "executionMethod": "real_playwright_scratch",
@@ -122,8 +122,8 @@
       "kind": "skipped",
       "status": "PASS",
       "exitCode": 0,
-      "durationMs": 277,
-      "nodeId": "chromium@1.65.1@worker-61689",
+      "durationMs": 294,
+      "nodeId": "chromium@1.65.1@worker-52516",
       "assertionKind": "none",
       "testCount": 0,
       "skipped": true,
@@ -143,13 +143,13 @@
         },
         {
           "path": "scratch/skipped/trace.zip",
-          "bytes": 2140,
-          "sha256": "5266cf5c3ee61f12990f546155bfa5834b5cb8a975e228c1a4eb2873304ecee3"
+          "bytes": 1713,
+          "sha256": "c596970c4d451cc12279326f8e6ca8f711d5c779a066dc50c77614c5ed5061cf"
         }
       ],
       "redactionsCount": 0,
-      "startedAt": "2026-11-24T05:29:02.818Z",
-      "endedAt": "2026-11-24T05:29:02.981Z"
+      "startedAt": "2026-11-24T09:58:56.634Z",
+      "endedAt": "2026-11-24T09:58:56.809Z"
     },
     "cred": {
       "executionMethod": "real_playwright_scratch",
@@ -157,8 +157,8 @@
       "kind": "cred",
       "status": "PASS",
       "exitCode": 0,
-      "durationMs": 276,
-      "nodeId": "chromium@1.65.1@worker-61694",
+      "durationMs": 284,
+      "nodeId": "chromium@1.65.1@worker-52521",
       "assertionKind": "behavioral",
       "testCount": 1,
       "skipped": false,
@@ -178,13 +178,13 @@
         },
         {
           "path": "scratch/cred/trace.zip",
-          "bytes": 9881,
-          "sha256": "aed78a29075a4928e0039f81b770d145a065473077e6a4c378e10bb7c8cf64ae"
+          "bytes": 9871,
+          "sha256": "46e3e3723d648765ee0abf5141e49d0597ee2edc89f760380b7156940e980650"
         }
       ],
       "redactionsCount": 2,
-      "startedAt": "2026-11-24T05:29:03.098Z",
-      "endedAt": "2026-11-24T05:29:03.257Z"
+      "startedAt": "2026-11-24T09:58:56.932Z",
+      "endedAt": "2026-11-24T09:58:57.093Z"
     }
   },
   "verdicts": {

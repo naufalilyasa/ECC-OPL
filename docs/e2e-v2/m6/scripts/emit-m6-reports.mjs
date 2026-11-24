@@ -36,8 +36,8 @@ const PIN_DEFS = Object.freeze([
   ['milestone_gates', join(ROOT, 'docs/e2e-v2/decisions/MILESTONE-GATES.json'), '00c6b4550a130fcec4e20abda25919b9a08fe4b493b9439687865d70d017c8e5'],
   ['acceptance_matrix', F.MATRIX_PATH, '400d3fcc22c48fb75f85ee22aeb0de23d0d0bbcf9dd776ae33aeb2ec88789caf'],
   ['env_authorization_proposal', join(F.SCRATCH, 'm3m5m6-proposals/M6-ENV-AUTHORIZATION-PROPOSAL.md'), 'bc7b6afae7aa3178df78b109f31fe69e6ca222be5208fe70dabd31d601989cf4'],
-  ['command_e2e', join(ROOT, '.opencode/commands/e2e.md'), 'c562e0a2a2707c49362431b04ac1895f02c091e3d7ae193837ab6bf35b9d8436'],
-  ['command_e2e_map', join(ROOT, '.opencode/commands/e2e-map.md'), '76b3d4037a0144df2d40dc0eca01777690762a7cccc5d9562b0330333dfdb142'],
+  ['command_e2e', join(ROOT, '.opencode/commands/e2e.md'), '45d44a9efe6bad11d8c4bb83a1f551f71488c5990ae8fe62e4a4965982e5c5c1'],
+  ['command_e2e_map', join(ROOT, '.opencode/commands/e2e-map.md'), '3dfc0639443cedaefd95b2aa7f629e333aee4d4901e99cdddb91218b506beb38'],
   ['project_config', join(ROOT, '.opencode/opencode.json'), '01e3d4405c4351cde1460e782da9aa80f0aa6a6796bc3bb149be1b12bcc63e84'],
   ['plan_r4', join(ROOT, 'docs/plans/e2e-v2-0-m6-acceptance-release.plan.md'), 'b00e7f10bdf28b05cbcd4680bf810b7535c0262f9ed28166823038d8a6815370'],
 ])
