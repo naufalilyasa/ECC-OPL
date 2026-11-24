@@ -1,0 +1,121 @@
+{
+  "generated_at": "2026-11-23T00:00:00Z",
+  "milestone": "M2",
+  "method": "reference-implementation harness (node --test): docs/e2e-v2/m2/tests/detector.mjs over docs/e2e-v2/m2/tests/fixtures.mjs",
+  "status": "EXECUTED",
+  "live_prompt_verification": "DEFERRED_TO_M6 (48-scenario acceptance)",
+  "writes_performed": false,
+  "fixture_id": "F01",
+  "scenario_id": "B01",
+  "name": "Next.js App Router",
+  "expected_output": "3 journeys | 0 API-as-UI | confidence confirmed/partial",
+  "spec_of_record": "docs/e2e-v2/m1/reports/F01-F06-map-output-expected.json + docs/e2e-v2/m1/detector-characterization.md §1",
+  "contract_checks": [
+    {
+      "contract": "must_output: UI pages under app/(grp)/[locale]/dashboard/page.tsx mapped",
+      "observed": [
+        "app/(grp)/[locale]/dashboard/page.tsx",
+        "app/(grp)/[locale]/orders/[id]/page.tsx",
+        "app/(grp)/[locale]/page.tsx",
+        "app/(grp)/en/dashboard/page.tsx",
+        "app/(grp)/id/dashboard/page.tsx"
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "contract": "must_output: locale variants collapsed into one parameterized flow",
+      "observed": 1,
+      "verdict": "PASS"
+    },
+    {
+      "contract": "must_output: layout guard detected as authenticated",
+      "observed": "authenticated",
+      "verdict": "PASS"
+    },
+    {
+      "contract": "must_not: route.ts (API) mapped as a UI page",
+      "observed": "route.ts is an API handler, not a UI page",
+      "verdict": "PASS"
+    },
+    {
+      "contract": "must_not: the same page listed once per locale",
+      "observed": 1,
+      "verdict": "PASS"
+    },
+    {
+      "contract": "must_not: a dynamic segment reported as confidence=confirmed",
+      "observed": "partial",
+      "verdict": "PASS"
+    },
+    {
+      "contract": "expected_output: 3 journeys",
+      "observed": 3,
+      "verdict": "PASS"
+    }
+  ],
+  "contract_passed": true,
+  "observed": {
+    "stacks": {
+      "next-app": 5
+    },
+    "route_count": 5,
+    "ui_route_count": 5,
+    "exclusions": [
+      {
+        "file": "app/api/orders/route.ts",
+        "reason": "route.ts is an API handler, not a UI page"
+      }
+    ],
+    "journeys": [
+      {
+        "journey_key": "next-app:dashboard:authenticated",
+        "name": "dashboard",
+        "actor": "authenticated",
+        "risk": "critical",
+        "confidence": "partial",
+        "routes": [
+          "/[locale]/dashboard",
+          "/en/dashboard",
+          "/id/dashboard"
+        ],
+        "alternate_paths": [
+          "/en/dashboard",
+          "/id/dashboard"
+        ],
+        "sources": [
+          "app/(grp)/[locale]/dashboard/page.tsx:1",
+          "app/(grp)/en/dashboard/page.tsx:1",
+          "app/(grp)/id/dashboard/page.tsx:1"
+        ]
+      },
+      {
+        "journey_key": "next-app:orders:authenticated",
+        "name": "orders",
+        "actor": "authenticated",
+        "risk": "critical",
+        "confidence": "partial",
+        "routes": [
+          "/[locale]/orders/[id]"
+        ],
+        "alternate_paths": [],
+        "sources": [
+          "app/(grp)/[locale]/orders/[id]/page.tsx:1"
+        ]
+      },
+      {
+        "journey_key": "next-app:root:authenticated",
+        "name": "root",
+        "actor": "authenticated",
+        "risk": "critical",
+        "confidence": "partial",
+        "routes": [
+          "/[locale]"
+        ],
+        "alternate_paths": [],
+        "sources": [
+          "app/(grp)/[locale]/page.tsx:1"
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "generated_at": "2026-11-24T05:20:28.141Z",
+  "node": "v24.21.0",
+  "files": [
+    {
+      "path": "docs/e2e-v2/m6/tests/acceptance-ledger.mjs",
+      "bytes": 39147,
+      "sha256": "1dd92f7b9a8a84c33414f6f690970292649f21998e038be254dc9ad994821b6f"
+    },
+    {
+      "path": "docs/e2e-v2/m6/tests/fixtures.mjs",
+      "bytes": 11862,
+      "sha256": "3c7284fbf76978f821e72305f81c058ffbe2e580e31b68ef45ae0aab7b5ad7a0"
+    },
+    {
+      "path": "docs/e2e-v2/m6/tests/mutation-suite.mjs",
+      "bytes": 9680,
+      "sha256": "7452326b5f5b5fca8ef06c8e614749235142cbb0621cfb99c6c41dbc6413945e"
+    },
+    {
+      "path": "docs/e2e-v2/m6/tests/m6.test.mjs",
+      "bytes": 22926,
+      "sha256": "5b514c74f6dc44c2e9f0a10fa753da6d049392e9b5e524963d92c234d0740e97"
+    },
+    {
+      "path": "docs/e2e-v2/m6/tests/conformance.test.mjs",
+      "bytes": 4411,
+      "sha256": "f0e19c2a9c2295524a8a13ea47fea0cbce1ba71634370a2a147bcf2672c0f298"
+    },
+    {
+      "path": "docs/e2e-v2/m6/tests/registry-state.mjs",
+      "bytes": 458,
+      "sha256": "08f0cf25e3e17a50416e74485d2ce10e9364d87c25911c1a565fda71fa1b3876"
+    },
+    {
+      "path": "docs/e2e-v2/m6/tests/m6-corrections.test.mjs",
+      "bytes": 11125,
+      "sha256": "95d9b9a9917b2522e14d43d208175550b76d67063cfabaa6cab5acf4daeac9da"
+    },
+    {
+      "path": "docs/e2e-v2/m6/scripts/emit-m6-reports.mjs",
+      "bytes": 17113,
+      "sha256": "2816007aefb656702607ba11844a9bb646618631135a8f381b0470ed5bc17f10"
+    },
+    {
+      "path": "docs/e2e-v2/m6/scripts/emit-r1-evidence.mjs",
+      "bytes": 23744,
+      "sha256": "9bbad39ccd19459f88062e00bb4ee4dbec405496c1b7d22b16aaeb0cc89431d4"
+    },
+    {
+      "path": "docs/e2e-v2/m6/scripts/emit-r11-evidence.mjs",
+      "bytes": 24760,
+      "sha256": "2957b815740f3f453d09637bc32d63fce7f2a40da1e705c845e0c7bb3d1d2f2e"
+    },
+    {
+      "path": "docs/e2e-v2/m6/scripts/release-decision.mjs",
+      "bytes": 2155,
+      "sha256": "ce4ff9e3722cae575d887de9afe53a750edb81081a2e1571c54184ffce665524"
+    },
+    {
+      "path": "docs/e2e-v2/m6/scripts/verify-package.mjs",
+      "bytes": 1750,
+      "sha256": "7dc76442cdf94c202c24cc19a88b698a4207247dea7884a5b2f51eb3fa87bbf5"
+    }
+  ]
+}

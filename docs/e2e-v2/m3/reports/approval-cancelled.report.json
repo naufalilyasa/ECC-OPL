@@ -1,0 +1,38 @@
+{
+  "generated_at": "2026-11-23T00:00:00Z",
+  "milestone": "M3",
+  "method": "reference-implementation harness (node --test): docs/e2e-v2/m3/tests/registry.mjs",
+  "status": "EXECUTED",
+  "live_prompt_verification": "DEFERRED_TO_M6 (48-scenario acceptance)",
+  "scenario_id": "CANCELLED",
+  "acceptance": [
+    "AC-006 (approval-write flow)",
+    "DEC-06"
+  ],
+  "cases": [
+    {
+      "case_id": "CANCELLED",
+      "input": "denied",
+      "result": {
+        "caseId": "CANCELLED",
+        "outcome": "CANCELLED",
+        "reason": "denied",
+        "action": "none",
+        "writePermitted": false,
+        "registryChanged": false
+      }
+    },
+    {
+      "case_id": "CANCELLED",
+      "input": "aborted",
+      "result": {
+        "caseId": "CANCELLED",
+        "outcome": "CANCELLED",
+        "reason": "aborted",
+        "action": "none",
+        "writePermitted": false,
+        "registryChanged": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-11-23T00:00:00Z",
+  "milestone": "M4",
+  "method": "reference-implementation harness (node --test): docs/e2e-v2/m4/tests/runner.mjs",
+  "status": "EXECUTED",
+  "fixture_provenance": "SYNTHETIC_REFERENCE",
+  "live_prompt_verification": "DEFERRED_TO_M6",
+  "live_playwright_execution": "DEFERRED_TO_M6",
+  "registry_writes": 0,
+  "applied": false,
+  "note": "Fixture observations only. No real Playwright run, owner consent, registry mutation or CLI execution. A record Command string is data, never an executed command.",
+  "scenario_id": "C08",
+  "acceptance": [
+    "AC-011",
+    "E2E-FR-011"
+  ],
+  "fixture": "F10",
+  "dependency_input": "MISSING (synthetic injected value)",
+  "outcome": "BLOCKED_DEPENDENCY",
+  "dispatch_spy_calls": 0,
+  "install_attempts": 0,
+  "playwright_probes": 0
+}

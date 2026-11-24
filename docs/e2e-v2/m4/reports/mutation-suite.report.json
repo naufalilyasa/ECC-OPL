@@ -1,0 +1,30 @@
+{
+  "generated_at": "2026-11-23T00:00:00Z",
+  "milestone": "M4",
+  "method": "reference-implementation harness (node --test): docs/e2e-v2/m4/tests/runner.mjs",
+  "status": "EXECUTED",
+  "fixture_provenance": "SYNTHETIC_REFERENCE",
+  "live_prompt_verification": "DEFERRED_TO_M6",
+  "live_playwright_execution": "DEFERRED_TO_M6",
+  "registry_writes": 0,
+  "applied": false,
+  "note": "Fixture observations only. No real Playwright run, owner consent, registry mutation or CLI execution. A record Command string is data, never an executed command.",
+  "scenario_id": "MUT",
+  "acceptance": [
+    "AC-011",
+    "AC-012"
+  ],
+  "mutations": {
+    "10": {
+      "detected": true,
+      "oracle_reason": "assertion kind \"visibility-only\" is weak; expected equals observed (tautology)",
+      "expected_credit_eligible": false
+    },
+    "12": {
+      "detected": true,
+      "oracle_reason": "D02 violation: unsafe target reached a dispatch callback",
+      "observed_dispatch": 1,
+      "expected_dispatch": 0
+    }
+  }
+}

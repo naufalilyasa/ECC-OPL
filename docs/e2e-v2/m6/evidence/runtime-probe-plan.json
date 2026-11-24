@@ -1,0 +1,40 @@
+{
+  "change_request": "E2E-V2-M5-SAFETY-REMEDIATION-01",
+  "wp4_status": "BLOCKED_PENDING_SCOPED_AUTHORIZATION",
+  "P1": {
+    "gate": "P1_EFFECTIVE_COMMAND_WINNER",
+    "status": "NOT_VERIFIED",
+    "reason": "Brief §11.1 requires isolated HOME/XDG/config probe with documented supported loader only after verifying startup safety; owner authorization for the exact isolated operations is not granted by this change request (Appendix A explicitly excludes P1/A08).",
+    "procedure": [
+      "Record installed OpenCode version and executable provenance",
+      "Construct disposable HOME/XDG_CONFIG_HOME/XDG_DATA_HOME/OPENCODE_CONFIG_DIR with sanitized config copies (no credentials/hooks/plugins)",
+      "Probe same-name /e2e and /e2e-map definitions, project vs global order, .json/.jsonc precedence, $ARGUMENTS forwarding",
+      "Capture actual winner path/hash from diagnostic output; do not infer from filename",
+      "Report scoped result only for tested context; retain pre-deployment winner check for active context"
+    ],
+    "authorization_needed": "Exact isolated fixture root, diagnostic command, and confirmation that no unapproved code/hook execution occurs"
+  },
+  "A08": {
+    "gate": "A08",
+    "status": "NOT_RUN",
+    "reason": "Brief §11.2 requires owner permission for model dispatch, local browser operations, exact fixture root, registry diffs and allowed actions. Not granted by this change request.",
+    "procedure": [
+      "Disposable project + loopback test service with fake credentials/resettable data",
+      "Actual unified /e2e full <fixture journey> via supported session command expansion",
+      "Verify distinct discovery/mapping phase, stable journey/TEST-ID, exact diff gate before registry mutation, delegated runner, persisted Playwright spec",
+      "Record model/tool events, counts, approved diff hash, runner result, file hashes",
+      "Test read-only map/status/no-args and denied gate with zero writes/dispatch"
+    ],
+    "authorization_needed": "Exact model/provider, fixture root, loopback service, browser operations, and registry diff scope"
+  },
+  "P5": {
+    "status": "NOT_GIVEN",
+    "note": "Deployment authorization is separate from architecture DEC-10; no installation/disablement under this brief."
+  },
+  "production_targets": "BLOCKED",
+  "e2e_map_disable_default": "BLOCKED_DEPLOYMENT_GATED",
+  "active_runtime_modified": false,
+  "guardian_angel_modified": false,
+  "real_project_registry_modified": false,
+  "deployment_applied": false
+}

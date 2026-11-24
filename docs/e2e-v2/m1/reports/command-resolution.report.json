@@ -1,0 +1,108 @@
+{
+  "generated_at": "2026-11-22T19:30:00Z",
+  "scenario_id": "ASM-01",
+  "assumption": "ASM-01",
+  "topic": "OpenCode /e2e invocation and resolution semantics",
+  "subassertions": {
+    "ASM-01/ARGS": {
+      "topic": "$ARGUMENTS parsing and subcommand/flag passing semantics to /e2e",
+      "status": "VALIDATION_REQUIRED",
+      "probe": "DEFERRED_TO_M2"
+    },
+    "ASM-01/PRECEDENCE": {
+      "topic": "Project-level .opencode/opencode.json vs dual-global (opencode.json vs opencode.jsonc) effective command winner resolution",
+      "status": "VALIDATION_REQUIRED",
+      "probe": "DEFERRED_TO_M2"
+    }
+  },
+  "status": "NOT_VERIFIED",
+  "precedence": {
+    "status": "NOT_VERIFIED",
+    "rationale": "OpenCode v2.3.2 precedence between the two active global files (opencode.json, opencode.jsonc) and a project override is undocumented in available material. Read-only inspection cannot prove a runtime winner; both mapping surfaces reference byte-identical templates, so observed output could not distinguish them either.",
+    "evidence_gap": "Proving precedence requires command discovery in an isolated sandbox (ASM-01), which is runtime activity outside M1 scope."
+  },
+  "surfaces": [
+    {
+      "id": "S1",
+      "scope": "project",
+      "path": "/Users/ctp-itdev2/ECC/.opencode/opencode.json",
+      "sha256": "01e3d4405c4351cde1460e782da9aa80f0aa6a6796bc3bb149be1b12bcc63e84",
+      "readable": true,
+      "has_command_map": true,
+      "commands": {
+        "e2e": {
+          "description": "Generate and run E2E tests with Playwright",
+          "template": "{file:commands/e2e.md}\n\n$ARGUMENTS"
+        },
+        "e2e-map": {
+          "description": "Map routes and flows to TEST-ID registry entries, then hand a checklist to /e2e",
+          "template": "{file:commands/e2e-map.md}\n\n$ARGUMENTS"
+        }
+      }
+    },
+    {
+      "id": "S2",
+      "scope": "global",
+      "path": "/Users/ctp-itdev2/.config/opencode/opencode.json",
+      "sha256": "bd747d4f42d22e7c0dc1f14b65e815b043117083fd548292489509c653e26843",
+      "readable": true,
+      "has_command_map": true,
+      "commands": {
+        "e2e": {
+          "description": "Generate and run E2E tests with Playwright",
+          "template": "{file:commands/e2e.md}\n\n$ARGUMENTS"
+        },
+        "e2e-map": {
+          "description": "Map routes and flows to TEST-ID registry entries, then hand a checklist to /e2e",
+          "template": "{file:commands/e2e-map.md}\n\n$ARGUMENTS"
+        }
+      }
+    },
+    {
+      "id": "S3",
+      "scope": "global",
+      "path": "/Users/ctp-itdev2/.config/opencode/opencode.jsonc",
+      "sha256": "9263d862ba18d99054bbb932b974fbf423312e282059ff11add59e8ee7c1e551",
+      "readable": true,
+      "has_command_map": false,
+      "commands": null,
+      "top_level_keys": [
+        "$schema",
+        "experimental",
+        "plugin",
+        "lsp",
+        "permission",
+        "mcp",
+        "providers",
+        "agent"
+      ],
+      "plugin_count": 7,
+      "note": "No command key at all, so this surface cannot win the e2e mapping under any precedence model."
+    }
+  ],
+  "identical_templates": true,
+  "probe": {
+    "status": "DEFERRED_TO_M2",
+    "id": "ASM-01",
+    "sandbox": "repo-external session temp dir: <session-temp>/opencode/m2-probe/{home,project}",
+    "steps": [
+      "Create sandbox <temp>/opencode/m2-probe with home/ and project/; never touch the real $HOME.",
+      "Config A (project only): project/.opencode/opencode.json maps e2e to sentinel-A; no global config.",
+      "Config B (global json only): home/.config/opencode/opencode.json maps e2e to sentinel-B; no project config.",
+      "Config C (dual global): both home configs declare e2e with distinct sentinels; no project config.",
+      "Config D (all three): project + both globals, each sentinel distinct.",
+      "For each config, invoke /e2e help with HOME redirected into the sandbox and record which sentinel the output echoes.",
+      "Record the winner per config, or INCONCLUSIVE with the observed output. Never assume the project wins.",
+      "Delete the sandbox by literal path and re-hash the real global configs against SOURCE-BASELINE-FROZEN.md."
+    ],
+    "cleanup": "Delete the sandbox tree with a literal-path delete, then verify the real $HOME config hashes are unchanged.",
+    "guardrails": [
+      "no config writes outside the sandbox",
+      "no installs",
+      "no network",
+      "no production target",
+      "real global config byte-identical after"
+    ]
+  },
+  "writes_performed": false
+}

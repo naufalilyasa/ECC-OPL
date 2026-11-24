@@ -1,0 +1,1560 @@
+{
+  "generated_at": "2026-11-24T05:29:01.540Z",
+  "milestone": "M6",
+  "registry_writes": 0,
+  "applied": false,
+  "fixture_provenance": "SCRATCH_PLAYWRIGHT_LOOPBACK + DETERMINISTIC_REFERENCE",
+  "scenario_id": "ACCEPTANCE_LEDGER",
+  "status": "PASS",
+  "acceptance": [
+    "AC-018",
+    "AC-021"
+  ],
+  "total": 48,
+  "counts": {
+    "REFERENCE_VERIFIED": 34,
+    "NOT_RUN": 1,
+    "PASS": 13
+  },
+  "status_honesty": {
+    "ok": true,
+    "ledger_consistent": true,
+    "acceptance_satisfied": true,
+    "trust": {
+      "status": "TRUSTED",
+      "reasons": []
+    },
+    "unearned": [],
+    "misplaced": [],
+    "countsOk": true,
+    "totalOk": true,
+    "derived_counts": {
+      "REFERENCE_VERIFIED": 34,
+      "NOT_RUN": 1,
+      "PASS": 13
+    }
+  },
+  "decision_class": "ACTUAL",
+  "acceptance_provenance": {
+    "ok": true,
+    "source": "LEDGER_HONESTY_RECOMPUTE"
+  },
+  "scenarios": [
+    "A01",
+    "A02",
+    "A03",
+    "A04",
+    "A05",
+    "A06",
+    "A07",
+    "A08",
+    "B01",
+    "B02",
+    "B03",
+    "B04",
+    "B05",
+    "B06",
+    "B07",
+    "B08",
+    "B09",
+    "B10",
+    "B11",
+    "B12",
+    "C01",
+    "C02",
+    "C03",
+    "C04",
+    "C05",
+    "C06",
+    "C07",
+    "C08",
+    "C09",
+    "C10",
+    "C11",
+    "C12",
+    "D01",
+    "D02",
+    "D03",
+    "D04",
+    "D05",
+    "D06",
+    "D07",
+    "D08",
+    "D09",
+    "D10",
+    "E01",
+    "E02",
+    "E03",
+    "E04",
+    "E05",
+    "E06"
+  ],
+  "entries": [
+    {
+      "scenario_id": "A01",
+      "group": "Interface",
+      "stimulus": "/e2e help",
+      "expected": "semua mode terdaftar, tanpa default berbahaya",
+      "status": "REFERENCE_VERIFIED",
+      "execution_method": "deterministic_harness",
+      "fixture_ids": [
+        "F13"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/prompt-conformance.report.json",
+      "evidence_sha256": "66d07586c75efcb2588c3d9bfcb7d6ab1080a1bba3be7933f75c8ddb5a44b8b4",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "DETERMINISTIC_REFERENCE",
+      "scenario_predicate_id": null,
+      "scenario_assertion_result": "NOT_EVALUATED",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-FR-001",
+        "E2E-NFR-005"
+      ],
+      "prd_ac": "AC-001",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "A02",
+      "group": "Interface",
+      "stimulus": "/e2e map scope",
+      "expected": "discovery + proposal; runner tidak dispatch",
+      "status": "REFERENCE_VERIFIED",
+      "execution_method": "deterministic_harness",
+      "fixture_ids": [
+        "F01",
+        "F02",
+        "F05"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/prompt-conformance.report.json",
+      "evidence_sha256": "66d07586c75efcb2588c3d9bfcb7d6ab1080a1bba3be7933f75c8ddb5a44b8b4",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "DETERMINISTIC_REFERENCE",
+      "scenario_predicate_id": null,
+      "scenario_assertion_result": "NOT_EVALUATED",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-FR-002",
+        "E2E-FR-003",
+        "E2E-FR-019"
+      ],
+      "prd_ac": "AC-002",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "A03",
+      "group": "Interface",
+      "stimulus": "/e2e status",
+      "expected": "tanpa write/browser/install",
+      "status": "REFERENCE_VERIFIED",
+      "execution_method": "deterministic_harness",
+      "fixture_ids": [
+        "F09"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/prompt-conformance.report.json",
+      "evidence_sha256": "66d07586c75efcb2588c3d9bfcb7d6ab1080a1bba3be7933f75c8ddb5a44b8b4",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "DETERMINISTIC_REFERENCE",
+      "scenario_predicate_id": null,
+      "scenario_assertion_result": "NOT_EVALUATED",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-FR-003",
+        "E2E-NFR-004"
+      ],
+      "prd_ac": "AC-003",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "A04",
+      "group": "Interface",
+      "stimulus": "bare /e2e",
+      "expected": "preview/next step, tanpa eksekusi",
+      "status": "REFERENCE_VERIFIED",
+      "execution_method": "deterministic_harness",
+      "fixture_ids": [
+        "F07"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/prompt-conformance.report.json",
+      "evidence_sha256": "66d07586c75efcb2588c3d9bfcb7d6ab1080a1bba3be7933f75c8ddb5a44b8b4",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "DETERMINISTIC_REFERENCE",
+      "scenario_predicate_id": null,
+      "scenario_assertion_result": "NOT_EVALUATED",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-FR-003"
+      ],
+      "prd_ac": "AC-004",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "A05",
+      "group": "Interface",
+      "stimulus": "run TEST-E2E-003",
+      "expected": "ID eksak menang atas fuzzy",
+      "status": "REFERENCE_VERIFIED",
+      "execution_method": "deterministic_harness",
+      "fixture_ids": [
+        "F07"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/prompt-conformance.report.json",
+      "evidence_sha256": "66d07586c75efcb2588c3d9bfcb7d6ab1080a1bba3be7933f75c8ddb5a44b8b4",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "DETERMINISTIC_REFERENCE",
+      "scenario_predicate_id": null,
+      "scenario_assertion_result": "NOT_EVALUATED",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-FR-004"
+      ],
+      "prd_ac": "AC-005",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "A06",
+      "group": "Interface",
+      "stimulus": "ambiguous title",
+      "expected": "kandidat ditampilkan, tidak arbitrary pick",
+      "status": "REFERENCE_VERIFIED",
+      "execution_method": "deterministic_harness",
+      "fixture_ids": [
+        "F07"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/prompt-conformance.report.json",
+      "evidence_sha256": "66d07586c75efcb2588c3d9bfcb7d6ab1080a1bba3be7933f75c8ddb5a44b8b4",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "DETERMINISTIC_REFERENCE",
+      "scenario_predicate_id": null,
+      "scenario_assertion_result": "NOT_EVALUATED",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-FR-004"
+      ],
+      "prd_ac": "AC-005",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "A07",
+      "group": "Interface",
+      "stimulus": "unknown/conflicting/injection args",
+      "expected": "fail closed + usage message",
+      "status": "REFERENCE_VERIFIED",
+      "execution_method": "deterministic_harness",
+      "fixture_ids": [
+        "F09"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/prompt-conformance.report.json",
+      "evidence_sha256": "66d07586c75efcb2588c3d9bfcb7d6ab1080a1bba3be7933f75c8ddb5a44b8b4",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "DETERMINISTIC_REFERENCE",
+      "scenario_predicate_id": null,
+      "scenario_assertion_result": "NOT_EVALUATED",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-FR-001",
+        "E2E-FR-020",
+        "E2E-NFR-002"
+      ],
+      "prd_ac": "AC-001",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "A08",
+      "group": "Interface",
+      "stimulus": "/e2e full target",
+      "expected": "discovery→review→registry→generate→run→evidence tanpa skip",
+      "status": "NOT_RUN",
+      "execution_method": "deferred_live_session",
+      "fixture_ids": [
+        "F12"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/prompt-conformance.report.json",
+      "evidence_sha256": "66d07586c75efcb2588c3d9bfcb7d6ab1080a1bba3be7933f75c8ddb5a44b8b4",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "NOT_EXECUTED",
+      "scenario_predicate_id": null,
+      "scenario_assertion_result": "NOT_EVALUATED",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-FR-007"
+      ],
+      "prd_ac": "AC-008",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "B01",
+      "group": "Mapping",
+      "stimulus": "Next.js App Router",
+      "expected": "UI pages, API route.ts bukan UI page",
+      "status": "REFERENCE_VERIFIED",
+      "execution_method": "deterministic_harness",
+      "fixture_ids": [
+        "F01"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/parity-audit.report.json",
+      "evidence_sha256": "791c02d904d0d3a3c16249dbfd02c311b023d3cb1080cd5addcd23c5162015bb",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "DETERMINISTIC_REFERENCE",
+      "scenario_predicate_id": null,
+      "scenario_assertion_result": "NOT_EVALUATED",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-FR-019"
+      ],
+      "prd_ac": "AC-019",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "B02",
+      "group": "Mapping",
+      "stimulus": "Next.js Pages Router",
+      "expected": "_app/_document/API dikecualikan",
+      "status": "REFERENCE_VERIFIED",
+      "execution_method": "deterministic_harness",
+      "fixture_ids": [
+        "F02"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/parity-audit.report.json",
+      "evidence_sha256": "791c02d904d0d3a3c16249dbfd02c311b023d3cb1080cd5addcd23c5162015bb",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "DETERMINISTIC_REFERENCE",
+      "scenario_predicate_id": null,
+      "scenario_assertion_result": "NOT_EVALUATED",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-FR-019"
+      ],
+      "prd_ac": "AC-019",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "B03",
+      "group": "Mapping",
+      "stimulus": "Laravel + Inertia",
+      "expected": "journey lintas backend/frontend + auth role",
+      "status": "REFERENCE_VERIFIED",
+      "execution_method": "deterministic_harness",
+      "fixture_ids": [
+        "F03"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/parity-audit.report.json",
+      "evidence_sha256": "791c02d904d0d3a3c16249dbfd02c311b023d3cb1080cd5addcd23c5162015bb",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "DETERMINISTIC_REFERENCE",
+      "scenario_predicate_id": null,
+      "scenario_assertion_result": "NOT_EVALUATED",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-FR-019"
+      ],
+      "prd_ac": "AC-019",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "B04",
+      "group": "Mapping",
+      "stimulus": "React/Vue router + file-based F05/F06",
+      "expected": "guarded/dynamic paths; F05 SvelteKit/Astro/Nuxt terdeteksi sesuai detector; F06 server routes dibedakan browser vs API",
+      "status": "REFERENCE_VERIFIED",
+      "execution_method": "deterministic_harness",
+      "fixture_ids": [
+        "F04",
+        "F05",
+        "F06"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/parity-audit.report.json",
+      "evidence_sha256": "791c02d904d0d3a3c16249dbfd02c311b023d3cb1080cd5addcd23c5162015bb",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "DETERMINISTIC_REFERENCE",
+      "scenario_predicate_id": null,
+      "scenario_assertion_result": "NOT_EVALUATED",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-FR-019"
+      ],
+      "prd_ac": "AC-019",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "B05",
+      "group": "Mapping",
+      "stimulus": "locale variants + journeys",
+      "expected": "satu parameterized flow; beberapa rute jadi satu journey",
+      "status": "REFERENCE_VERIFIED",
+      "execution_method": "deterministic_harness",
+      "fixture_ids": [
+        "F01",
+        "F04",
+        "F05"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/parity-audit.report.json",
+      "evidence_sha256": "791c02d904d0d3a3c16249dbfd02c311b023d3cb1080cd5addcd23c5162015bb",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "DETERMINISTIC_REFERENCE",
+      "scenario_predicate_id": null,
+      "scenario_assertion_result": "NOT_EVALUATED",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-FR-019"
+      ],
+      "prd_ac": "AC-019",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "B06",
+      "group": "Mapping",
+      "stimulus": "multi-route grouping",
+      "expected": "satu journey, bukan satu test per URL",
+      "status": "REFERENCE_VERIFIED",
+      "execution_method": "deterministic_harness",
+      "fixture_ids": [
+        "F03",
+        "F06"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/parity-audit.report.json",
+      "evidence_sha256": "791c02d904d0d3a3c16249dbfd02c311b023d3cb1080cd5addcd23c5162015bb",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "DETERMINISTIC_REFERENCE",
+      "scenario_predicate_id": null,
+      "scenario_assertion_result": "NOT_EVALUATED",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-FR-008",
+        "E2E-FR-019"
+      ],
+      "prd_ac": "AC-009",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "B07",
+      "group": "Mapping",
+      "stimulus": "TESTS.md absent",
+      "expected": "proposal bootstrap; tidak ada write tanpa approval",
+      "status": "REFERENCE_VERIFIED",
+      "execution_method": "deterministic_harness",
+      "fixture_ids": [
+        "F08"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/parity-audit.report.json",
+      "evidence_sha256": "791c02d904d0d3a3c16249dbfd02c311b023d3cb1080cd5addcd23c5162015bb",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "DETERMINISTIC_REFERENCE",
+      "scenario_predicate_id": null,
+      "scenario_assertion_result": "NOT_EVALUATED",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-FR-002",
+        "E2E-FR-008"
+      ],
+      "prd_ac": "AC-002",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "B08",
+      "group": "Mapping",
+      "stimulus": "existing TESTS.md",
+      "expected": "ID/field/block lain dipertahankan",
+      "status": "REFERENCE_VERIFIED",
+      "execution_method": "deterministic_harness",
+      "fixture_ids": [
+        "F07"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/parity-audit.report.json",
+      "evidence_sha256": "791c02d904d0d3a3c16249dbfd02c311b023d3cb1080cd5addcd23c5162015bb",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "DETERMINISTIC_REFERENCE",
+      "scenario_predicate_id": null,
+      "scenario_assertion_result": "NOT_EVALUATED",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-FR-008",
+        "E2E-FR-009"
+      ],
+      "prd_ac": "AC-009",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "B09",
+      "group": "Mapping",
+      "stimulus": "repeat mapping",
+      "expected": "idempotent; ID baru hanya untuk flow benar-benar baru",
+      "status": "REFERENCE_VERIFIED",
+      "execution_method": "deterministic_harness",
+      "fixture_ids": [
+        "F07"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/parity-audit.report.json",
+      "evidence_sha256": "791c02d904d0d3a3c16249dbfd02c311b023d3cb1080cd5addcd23c5162015bb",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "DETERMINISTIC_REFERENCE",
+      "scenario_predicate_id": null,
+      "scenario_assertion_result": "NOT_EVALUATED",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-FR-009"
+      ],
+      "prd_ac": "AC-009",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "B10",
+      "group": "Mapping",
+      "stimulus": "State: stale",
+      "expected": "schema mismatch; assessment stale dipisah",
+      "status": "REFERENCE_VERIFIED",
+      "execution_method": "deterministic_harness",
+      "fixture_ids": [
+        "F09"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/parity-audit.report.json",
+      "evidence_sha256": "791c02d904d0d3a3c16249dbfd02c311b023d3cb1080cd5addcd23c5162015bb",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "DETERMINISTIC_REFERENCE",
+      "scenario_predicate_id": null,
+      "scenario_assertion_result": "NOT_EVALUATED",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-FR-010"
+      ],
+      "prd_ac": "AC-010",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "B11",
+      "group": "Mapping",
+      "stimulus": "registry ../../ atau symlink escape",
+      "expected": "rejected sebelum write",
+      "status": "REFERENCE_VERIFIED",
+      "execution_method": "deterministic_harness",
+      "fixture_ids": [
+        "F09"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/parity-audit.report.json",
+      "evidence_sha256": "791c02d904d0d3a3c16249dbfd02c311b023d3cb1080cd5addcd23c5162015bb",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "DETERMINISTIC_REFERENCE",
+      "scenario_predicate_id": null,
+      "scenario_assertion_result": "NOT_EVALUATED",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-FR-015",
+        "E2E-NFR-003"
+      ],
+      "prd_ac": "AC-016",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "B12",
+      "group": "Mapping",
+      "stimulus": "concurrent registry change",
+      "expected": "WRITE_CONFLICT, rebase, tanpa clobber",
+      "status": "REFERENCE_VERIFIED",
+      "execution_method": "deterministic_harness",
+      "fixture_ids": [
+        "F11"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/parity-audit.report.json",
+      "evidence_sha256": "791c02d904d0d3a3c16249dbfd02c311b023d3cb1080cd5addcd23c5162015bb",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "DETERMINISTIC_REFERENCE",
+      "scenario_predicate_id": null,
+      "scenario_assertion_result": "NOT_EVALUATED",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-FR-015"
+      ],
+      "prd_ac": "AC-016",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "C01",
+      "group": "Execution",
+      "stimulus": "registered TEST-ID",
+      "expected": "spec path + expectation eksak",
+      "status": "REFERENCE_VERIFIED",
+      "execution_method": "deterministic_harness",
+      "fixture_ids": [
+        "F07",
+        "F10"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/env-boundary.report.json",
+      "evidence_sha256": "cad476b7cf9af6ecbe5eb890823f8b13df5c7869032be8529095a82a1829f064",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "DETERMINISTIC_REFERENCE",
+      "scenario_predicate_id": null,
+      "scenario_assertion_result": "NOT_EVALUATED",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-FR-013"
+      ],
+      "prd_ac": "AC-014",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "C02",
+      "group": "Execution",
+      "stimulus": "unregistered run",
+      "expected": "REGISTRY_REQUIRED tanpa runner invocation",
+      "status": "REFERENCE_VERIFIED",
+      "execution_method": "deterministic_harness",
+      "fixture_ids": [
+        "F10"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/env-boundary.report.json",
+      "evidence_sha256": "cad476b7cf9af6ecbe5eb890823f8b13df5c7869032be8529095a82a1829f064",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "DETERMINISTIC_REFERENCE",
+      "scenario_predicate_id": null,
+      "scenario_assertion_result": "NOT_EVALUATED",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-FR-005"
+      ],
+      "prd_ac": "AC-006",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "C03",
+      "group": "Execution",
+      "stimulus": "ad-hoc PASS",
+      "expected": "PASS_AD_HOC_UNREGISTERED; registry tetap",
+      "status": "REFERENCE_VERIFIED",
+      "execution_method": "deterministic_harness",
+      "fixture_ids": [
+        "F10"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/env-boundary.report.json",
+      "evidence_sha256": "cad476b7cf9af6ecbe5eb890823f8b13df5c7869032be8529095a82a1829f064",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "DETERMINISTIC_REFERENCE",
+      "scenario_predicate_id": null,
+      "scenario_assertion_result": "NOT_EVALUATED",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-FR-006"
+      ],
+      "prd_ac": "AC-007",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "C04",
+      "group": "Execution",
+      "stimulus": "approved safe happy path",
+      "expected": "actual CLI/title/exit/evidence tercatat",
+      "status": "PASS",
+      "execution_method": "scratch_playwright_local",
+      "fixture_ids": [
+        "F10"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/playwright-execution.report.json",
+      "evidence_sha256": "d5d3e4e8acdcdf7f175fc357036ce55da218178435fa2384241ab4260aca00c2",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "ACTUAL_EXECUTION",
+      "scenario_predicate_id": "HAPPY_BEHAVIOR_OBSERVED@r1",
+      "scenario_assertion_result": "MATCH",
+      "normalized_run_verdict": "PASS_VERIFIED",
+      "coverage_credit": false,
+      "observed_run": {
+        "kind": "happy",
+        "exit_code": 0,
+        "status": "PASS",
+        "assertion_kind": "behavioral",
+        "test_count": 1,
+        "skipped": false,
+        "redactions_count": 0,
+        "target_label": "E2E_NONPROD_LOCAL_FIXTURE"
+      },
+      "requirement_ids": [
+        "E2E-FR-012",
+        "E2E-FR-013"
+      ],
+      "prd_ac": "AC-014",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": {
+        "kind": "happy",
+        "exit_code": 0,
+        "run_status": "PASS",
+        "assertion_kind": "behavioral",
+        "redactions_count": 0,
+        "target_label": "E2E_NONPROD_LOCAL_FIXTURE",
+        "test_count": 1,
+        "skipped": false
+      },
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "C05",
+      "group": "Execution",
+      "stimulus": "exit 0 + weak assertion",
+      "expected": "PASS_UNVERIFIED, bukan covered",
+      "status": "PASS",
+      "execution_method": "scratch_playwright_local",
+      "fixture_ids": [
+        "F10"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/playwright-execution.report.json",
+      "evidence_sha256": "d5d3e4e8acdcdf7f175fc357036ce55da218178435fa2384241ab4260aca00c2",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "ACTUAL_EXECUTION",
+      "scenario_predicate_id": "WEAK_ASSERTION_DENIED@r1",
+      "scenario_assertion_result": "MATCH",
+      "normalized_run_verdict": "PASS_UNVERIFIED",
+      "coverage_credit": false,
+      "observed_run": {
+        "kind": "weak",
+        "exit_code": 0,
+        "status": "PASS",
+        "assertion_kind": "visibility-only",
+        "test_count": 1,
+        "skipped": false,
+        "redactions_count": 0,
+        "target_label": "E2E_NONPROD_LOCAL_FIXTURE"
+      },
+      "requirement_ids": [
+        "E2E-FR-012"
+      ],
+      "prd_ac": "AC-012",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": {
+        "kind": "weak",
+        "exit_code": 0,
+        "run_status": "PASS",
+        "assertion_kind": "visibility-only",
+        "redactions_count": 0,
+        "target_label": "E2E_NONPROD_LOCAL_FIXTURE",
+        "test_count": 1,
+        "skipped": false
+      },
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "C06",
+      "group": "Execution",
+      "stimulus": "exit nonzero",
+      "expected": "FAIL; covered lama → unverified",
+      "status": "PASS",
+      "execution_method": "scratch_playwright_local",
+      "fixture_ids": [
+        "F10"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/playwright-execution.report.json",
+      "evidence_sha256": "d5d3e4e8acdcdf7f175fc357036ce55da218178435fa2384241ab4260aca00c2",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "ACTUAL_EXECUTION",
+      "scenario_predicate_id": "BROKEN_BEHAVIOR_REJECTED@r1",
+      "scenario_assertion_result": "MATCH",
+      "normalized_run_verdict": "FAIL",
+      "coverage_credit": false,
+      "observed_run": {
+        "kind": "broken",
+        "exit_code": 1,
+        "status": "FAIL",
+        "assertion_kind": "behavioral",
+        "test_count": 1,
+        "skipped": false,
+        "redactions_count": 0,
+        "target_label": "E2E_NONPROD_LOCAL_FIXTURE"
+      },
+      "requirement_ids": [
+        "E2E-FR-012"
+      ],
+      "prd_ac": "AC-013",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": {
+        "kind": "broken",
+        "exit_code": 1,
+        "run_status": "FAIL",
+        "assertion_kind": "behavioral",
+        "redactions_count": 0,
+        "target_label": "E2E_NONPROD_LOCAL_FIXTURE",
+        "test_count": 1,
+        "skipped": false
+      },
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "C07",
+      "group": "Execution",
+      "stimulus": "skipped/zero/fixme",
+      "expected": "NOT_EXECUTED/UNVERIFIED, bukan covered",
+      "status": "PASS",
+      "execution_method": "scratch_playwright_local",
+      "fixture_ids": [
+        "F10"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/playwright-execution.report.json",
+      "evidence_sha256": "d5d3e4e8acdcdf7f175fc357036ce55da218178435fa2384241ab4260aca00c2",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "ACTUAL_EXECUTION",
+      "scenario_predicate_id": "ZERO_SKIPPED_DENIED@r1",
+      "scenario_assertion_result": "MATCH",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": {
+        "kind": "skipped",
+        "exit_code": 0,
+        "status": "PASS",
+        "assertion_kind": "none",
+        "test_count": 0,
+        "skipped": true,
+        "redactions_count": 0,
+        "target_label": "E2E_NONPROD_LOCAL_FIXTURE"
+      },
+      "requirement_ids": [
+        "E2E-FR-012",
+        "E2E-NFR-007"
+      ],
+      "prd_ac": "AC-012",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": {
+        "kind": "skipped",
+        "exit_code": 0,
+        "run_status": "PASS",
+        "assertion_kind": "none",
+        "redactions_count": 0,
+        "target_label": "E2E_NONPROD_LOCAL_FIXTURE",
+        "test_count": 0,
+        "skipped": true
+      },
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "C08",
+      "group": "Execution",
+      "stimulus": "dependency/browser missing",
+      "expected": "BLOCKED_DEPENDENCY; tidak auto-install",
+      "status": "REFERENCE_VERIFIED",
+      "execution_method": "deterministic_harness",
+      "fixture_ids": [
+        "F10"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/env-boundary.report.json",
+      "evidence_sha256": "cad476b7cf9af6ecbe5eb890823f8b13df5c7869032be8529095a82a1829f064",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "DETERMINISTIC_REFERENCE",
+      "scenario_predicate_id": null,
+      "scenario_assertion_result": "NOT_EVALUATED",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-FR-011",
+        "E2E-NFR-002"
+      ],
+      "prd_ac": "AC-011",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "C09",
+      "group": "Execution",
+      "stimulus": "flaky retry",
+      "expected": "dilaporkan terpisah, bukan PASS disembunyikan",
+      "status": "REFERENCE_VERIFIED",
+      "execution_method": "deterministic_harness",
+      "fixture_ids": [
+        "F10"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/env-boundary.report.json",
+      "evidence_sha256": "cad476b7cf9af6ecbe5eb890823f8b13df5c7869032be8529095a82a1829f064",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "DETERMINISTIC_REFERENCE",
+      "scenario_predicate_id": null,
+      "scenario_assertion_result": "NOT_EVALUATED",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-FR-018"
+      ],
+      "prd_ac": "AC-018",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "C10",
+      "group": "Execution",
+      "stimulus": "artifacts",
+      "expected": "path ada, scoped, credential teredaksi",
+      "status": "PASS",
+      "execution_method": "scratch_playwright_local",
+      "fixture_ids": [
+        "F10"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/playwright-execution.report.json",
+      "evidence_sha256": "d5d3e4e8acdcdf7f175fc357036ce55da218178435fa2384241ab4260aca00c2",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "ACTUAL_EXECUTION",
+      "scenario_predicate_id": "REDACTION_PROVEN@r1",
+      "scenario_assertion_result": "MATCH",
+      "normalized_run_verdict": "PASS_VERIFIED",
+      "coverage_credit": false,
+      "observed_run": {
+        "kind": "cred",
+        "exit_code": 0,
+        "status": "PASS",
+        "assertion_kind": "behavioral",
+        "test_count": 1,
+        "skipped": false,
+        "redactions_count": 2,
+        "target_label": "E2E_NONPROD_LOCAL_FIXTURE"
+      },
+      "requirement_ids": [
+        "E2E-FR-013",
+        "E2E-NFR-003"
+      ],
+      "prd_ac": "AC-014",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": {
+        "kind": "cred",
+        "exit_code": 0,
+        "run_status": "PASS",
+        "assertion_kind": "behavioral",
+        "redactions_count": 2,
+        "target_label": "E2E_NONPROD_LOCAL_FIXTURE",
+        "test_count": 1,
+        "skipped": false
+      },
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "C11",
+      "group": "Execution",
+      "stimulus": "Command field berisi shell",
+      "expected": "tidak dieksekusi; invocation dibangun terpisah",
+      "status": "REFERENCE_VERIFIED",
+      "execution_method": "deterministic_harness",
+      "fixture_ids": [
+        "F09"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/env-boundary.report.json",
+      "evidence_sha256": "cad476b7cf9af6ecbe5eb890823f8b13df5c7869032be8529095a82a1829f064",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "DETERMINISTIC_REFERENCE",
+      "scenario_predicate_id": null,
+      "scenario_assertion_result": "NOT_EVALUATED",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-FR-020"
+      ],
+      "prd_ac": "AC-020",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "C12",
+      "group": "Execution",
+      "stimulus": "passed registered run",
+      "expected": "hanya 5 field blok cocok berubah",
+      "status": "REFERENCE_VERIFIED",
+      "execution_method": "deterministic_harness",
+      "fixture_ids": [
+        "F07"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/env-boundary.report.json",
+      "evidence_sha256": "cad476b7cf9af6ecbe5eb890823f8b13df5c7869032be8529095a82a1829f064",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "DETERMINISTIC_REFERENCE",
+      "scenario_predicate_id": null,
+      "scenario_assertion_result": "NOT_EVALUATED",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-FR-014"
+      ],
+      "prd_ac": "AC-015",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "D01",
+      "group": "Security",
+      "stimulus": "map/status dengan embedded instructions",
+      "expected": "tidak ada network/browser/test action",
+      "status": "REFERENCE_VERIFIED",
+      "execution_method": "deterministic_harness",
+      "fixture_ids": [
+        "F09"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/parity-audit.report.json",
+      "evidence_sha256": "791c02d904d0d3a3c16249dbfd02c311b023d3cb1080cd5addcd23c5162015bb",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "DETERMINISTIC_REFERENCE",
+      "scenario_predicate_id": null,
+      "scenario_assertion_result": "NOT_EVALUATED",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-FR-020",
+        "E2E-NFR-004"
+      ],
+      "prd_ac": "AC-020",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "D02",
+      "group": "Security",
+      "stimulus": "production/unknown target",
+      "expected": "BLOCKED sebelum spawn",
+      "status": "PASS",
+      "execution_method": "deterministic_executed",
+      "fixture_ids": [
+        "F12"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/env-boundary.report.json",
+      "evidence_sha256": "cad476b7cf9af6ecbe5eb890823f8b13df5c7869032be8529095a82a1829f064",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "ACTUAL_EXECUTION",
+      "scenario_predicate_id": "DETERMINISTIC_REPORT_VERIFIED@r1",
+      "scenario_assertion_result": "MATCH",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-FR-011",
+        "E2E-NFR-001"
+      ],
+      "prd_ac": "AC-011",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "D03",
+      "group": "Security",
+      "stimulus": "high-risk stock/payment/approval",
+      "expected": "operation-scoped approval atau block",
+      "status": "REFERENCE_VERIFIED",
+      "execution_method": "deterministic_harness",
+      "fixture_ids": [
+        "F12"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/parity-audit.report.json",
+      "evidence_sha256": "791c02d904d0d3a3c16249dbfd02c311b023d3cb1080cd5addcd23c5162015bb",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "DETERMINISTIC_REFERENCE",
+      "scenario_predicate_id": null,
+      "scenario_assertion_result": "NOT_EVALUATED",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-FR-011"
+      ],
+      "prd_ac": "AC-011",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "D04",
+      "group": "Security",
+      "stimulus": "spec/artifact symlink escape",
+      "expected": "fail closed",
+      "status": "REFERENCE_VERIFIED",
+      "execution_method": "deterministic_harness",
+      "fixture_ids": [
+        "F09"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/parity-audit.report.json",
+      "evidence_sha256": "791c02d904d0d3a3c16249dbfd02c311b023d3cb1080cd5addcd23c5162015bb",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "DETERMINISTIC_REFERENCE",
+      "scenario_predicate_id": null,
+      "scenario_assertion_result": "NOT_EVALUATED",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-FR-015"
+      ],
+      "prd_ac": "AC-016",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "D05",
+      "group": "Security",
+      "stimulus": "frozen workflows + Guardian",
+      "expected": "byte-identik; tidak ada bypass",
+      "status": "PASS",
+      "execution_method": "deterministic_executed",
+      "fixture_ids": [
+        "F13"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/m6-preflight.report.json",
+      "evidence_sha256": "6534b8d40e54c279be3b52ee1a6bccd3b14efc31d23ceba9011f0d2aa1881e89",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "ACTUAL_EXECUTION",
+      "scenario_predicate_id": "DETERMINISTIC_REPORT_VERIFIED@r1",
+      "scenario_assertion_result": "MATCH",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-FR-018",
+        "E2E-NFR-005"
+      ],
+      "prd_ac": "AC-018",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "D06",
+      "group": "Migration",
+      "stimulus": "old /e2e-map vs /e2e map parity",
+      "expected": "journey + registry proposal ekuivalen",
+      "status": "REFERENCE_VERIFIED",
+      "execution_method": "deterministic_harness",
+      "fixture_ids": [
+        "F14"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/parity-audit.report.json",
+      "evidence_sha256": "791c02d904d0d3a3c16249dbfd02c311b023d3cb1080cd5addcd23c5162015bb",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "DETERMINISTIC_REFERENCE",
+      "scenario_predicate_id": null,
+      "scenario_assertion_result": "NOT_EVALUATED",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-FR-017"
+      ],
+      "prd_ac": "AC-017",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "D07",
+      "group": "Migration",
+      "stimulus": "compat alias",
+      "expected": "tidak invoke runner / mark covered",
+      "status": "REFERENCE_VERIFIED",
+      "execution_method": "deterministic_harness",
+      "fixture_ids": [
+        "F13"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/parity-audit.report.json",
+      "evidence_sha256": "791c02d904d0d3a3c16249dbfd02c311b023d3cb1080cd5addcd23c5162015bb",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "DETERMINISTIC_REFERENCE",
+      "scenario_predicate_id": null,
+      "scenario_assertion_result": "NOT_EVALUATED",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-FR-016",
+        "E2E-FR-017"
+      ],
+      "prd_ac": "AC-017",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "D08",
+      "group": "Migration",
+      "stimulus": "post-migration discovery",
+      "expected": "satu default /e2e, tanpa /e2e-map default",
+      "status": "REFERENCE_VERIFIED",
+      "execution_method": "deterministic_harness",
+      "fixture_ids": [
+        "F13"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/parity-audit.report.json",
+      "evidence_sha256": "791c02d904d0d3a3c16249dbfd02c311b023d3cb1080cd5addcd23c5162015bb",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "DETERMINISTIC_REFERENCE",
+      "scenario_predicate_id": null,
+      "scenario_assertion_result": "NOT_EVALUATED",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-FR-017"
+      ],
+      "prd_ac": "AC-017",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "D09",
+      "group": "Migration",
+      "stimulus": "legacy TEST-ID format",
+      "expected": "tetap readable",
+      "status": "REFERENCE_VERIFIED",
+      "execution_method": "deterministic_harness",
+      "fixture_ids": [
+        "F07"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/parity-audit.report.json",
+      "evidence_sha256": "791c02d904d0d3a3c16249dbfd02c311b023d3cb1080cd5addcd23c5162015bb",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "DETERMINISTIC_REFERENCE",
+      "scenario_predicate_id": null,
+      "scenario_assertion_result": "NOT_EVALUATED",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-FR-008"
+      ],
+      "prd_ac": "AC-009",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "D10",
+      "group": "Migration",
+      "stimulus": "rollback",
+      "expected": "restore command discovery tanpa registry loss",
+      "status": "REFERENCE_VERIFIED",
+      "execution_method": "deterministic_harness",
+      "fixture_ids": [
+        "F14"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/parity-audit.report.json",
+      "evidence_sha256": "791c02d904d0d3a3c16249dbfd02c311b023d3cb1080cd5addcd23c5162015bb",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "DETERMINISTIC_REFERENCE",
+      "scenario_predicate_id": null,
+      "scenario_assertion_result": "NOT_EVALUATED",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-FR-017",
+        "E2E-NFR-006"
+      ],
+      "prd_ac": "AC-017",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "E01",
+      "group": "Release",
+      "stimulus": "IDs A01–E06",
+      "expected": "hadir sekali, deskripsi + evidence path",
+      "status": "PASS",
+      "execution_method": "deterministic_executed",
+      "fixture_ids": [
+        "static"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/scope-check.report.json",
+      "evidence_sha256": "dcf563596f2c4f44ad923b9e8b58317c9a672931e4bdfc28f1475eaf13e74d1d",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "ACTUAL_EXECUTION",
+      "scenario_predicate_id": "DETERMINISTIC_REPORT_VERIFIED@r1",
+      "scenario_assertion_result": "MATCH",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-FR-001"
+      ],
+      "prd_ac": "AC-001",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "E02",
+      "group": "Release",
+      "stimulus": "14 negative mutations",
+      "expected": "behavioral; gagal di validator yang sama",
+      "status": "PASS",
+      "execution_method": "deterministic_executed",
+      "fixture_ids": [
+        "F09",
+        "F10",
+        "F11",
+        "F12"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/mutation-suite.report.json",
+      "evidence_sha256": "6f9041e8f62a8804177a9bdd8ded80cf2844a1d1b977a43b3bbf96d4d9c26893",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "ACTUAL_EXECUTION",
+      "scenario_predicate_id": "DETERMINISTIC_REPORT_VERIFIED@r1",
+      "scenario_assertion_result": "MATCH",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-NFR-005"
+      ],
+      "prd_ac": "AC-016",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "E03",
+      "group": "Release",
+      "stimulus": "state machine/parser/journey mapping",
+      "expected": "focused tests hadir",
+      "status": "PASS",
+      "execution_method": "deterministic_executed",
+      "fixture_ids": [
+        "F09"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/coverage.report.json",
+      "evidence_sha256": "37252fad5693dbfbeed08221f71fa362df18eec9f9ea1fd260400a5bd5ccd519",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "ACTUAL_EXECUTION",
+      "scenario_predicate_id": "DETERMINISTIC_REPORT_VERIFIED@r1",
+      "scenario_assertion_result": "MATCH",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-FR-010",
+        "E2E-FR-013"
+      ],
+      "prd_ac": "AC-010,AC-014",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "E04",
+      "group": "Release",
+      "stimulus": "inventory check",
+      "expected": "bounded ke E2E components",
+      "status": "PASS",
+      "execution_method": "deterministic_executed",
+      "fixture_ids": [
+        "static"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/scope-check.report.json",
+      "evidence_sha256": "dcf563596f2c4f44ad923b9e8b58317c9a672931e4bdfc28f1475eaf13e74d1d",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "ACTUAL_EXECUTION",
+      "scenario_predicate_id": "DETERMINISTIC_REPORT_VERIFIED@r1",
+      "scenario_assertion_result": "MATCH",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-NFR-005"
+      ],
+      "prd_ac": "AC-001",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "E05",
+      "group": "Release",
+      "stimulus": "changed artifacts",
+      "expected": "before/after SHA-256 + rollback",
+      "status": "PASS",
+      "execution_method": "deterministic_executed",
+      "fixture_ids": [
+        "F14"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/scope-check.report.json",
+      "evidence_sha256": "dcf563596f2c4f44ad923b9e8b58317c9a672931e4bdfc28f1475eaf13e74d1d",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "ACTUAL_EXECUTION",
+      "scenario_predicate_id": "DETERMINISTIC_REPORT_VERIFIED@r1",
+      "scenario_assertion_result": "MATCH",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-NFR-006"
+      ],
+      "prd_ac": "AC-015",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    },
+    {
+      "scenario_id": "E06",
+      "group": "Release",
+      "stimulus": "IMPLEMENTATION_READY",
+      "expected": "hanya dengan approval target + evidence",
+      "status": "PASS",
+      "execution_method": "deterministic_executed",
+      "fixture_ids": [
+        "F12",
+        "F13"
+      ],
+      "evidence_artifact": "docs/e2e-v2/m6/reports/m6-decision-packet.json",
+      "evidence_sha256": "c8edde8192ec2a4feede3524889ecdbc4ea9c292c9ad2feacc23b987322ad6b2",
+      "evidence_verification": "REPORT_BYTES_HASH_VERIFIED",
+      "raw_trace_verification": "RAW_ARTIFACT_NOT_BUNDLED",
+      "evidence_level": "ACTUAL_EXECUTION",
+      "scenario_predicate_id": "DETERMINISTIC_REPORT_VERIFIED@r1",
+      "scenario_assertion_result": "MATCH",
+      "normalized_run_verdict": "NOT_EXECUTED",
+      "coverage_credit": false,
+      "observed_run": null,
+      "requirement_ids": [
+        "E2E-FR-018"
+      ],
+      "prd_ac": "AC-018",
+      "matrix_status": "NOT_VERIFIED",
+      "executed_evidence": null,
+      "simulated_receipt_labeled_pass": false
+    }
+  ]
+}

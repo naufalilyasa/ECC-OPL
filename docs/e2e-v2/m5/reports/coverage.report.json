@@ -1,0 +1,40 @@
+{
+  "generated_at": "2026-11-23T00:00:00Z",
+  "milestone": "M5",
+  "status": "EXECUTED",
+  "fixture_provenance": "SYNTHETIC_REFERENCE",
+  "live_prompt_verification": "DEFERRED_TO_M6",
+  "live_playwright_execution": "DEFERRED_TO_M6",
+  "registry_writes": 0,
+  "applied": false,
+  "scenario_id": "COVERAGE",
+  "acceptance": [
+    "AC-015",
+    "AC-016",
+    "AC-017",
+    "AC-018"
+  ],
+  "runner": "node --test --experimental-test-coverage (Node v24.21.0)",
+  "modules": {
+    "docs/e2e-v2/m5/tests/migration.mjs": {
+      "command": "node --experimental-test-coverage --test-coverage-include=docs/e2e-v2/m5/tests/migration.mjs --test-coverage-lines=80 --test-coverage-branches=80 --test-coverage-functions=80 --test docs/e2e-v2/m5/tests/m5.test.mjs",
+      "exit_code": 0,
+      "threshold": 80,
+      "lines": 100,
+      "branches": 81.42,
+      "functions": 100,
+      "passes": true
+    },
+    "docs/e2e-v2/m5/scripts/emit-m5-reports.mjs": {
+      "command": "node --experimental-test-coverage --test-coverage-include=docs/e2e-v2/m5/scripts/emit-m5-reports.mjs --test-coverage-lines=80 --test-coverage-branches=80 --test-coverage-functions=80 --test docs/e2e-v2/m5/tests/m5.test.mjs",
+      "exit_code": 0,
+      "threshold": 80,
+      "lines": 99.24,
+      "branches": 87.1,
+      "functions": 100,
+      "passes": true
+    }
+  },
+  "all_modules_pass": true,
+  "note": "Module-level coverage only; no project-wide claim. Thresholds 80/80/80 per plan r3."
+}

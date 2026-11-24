@@ -1,0 +1,56 @@
+{
+  "generated_at": "2026-11-24T05:29:01.540Z",
+  "milestone": "M6",
+  "registry_writes": 0,
+  "applied": false,
+  "fixture_provenance": "SCRATCH_PLAYWRIGHT_LOOPBACK + DETERMINISTIC_REFERENCE",
+  "status": "PASS",
+  "tool": "node --experimental-test-coverage (Node v24.21.0)",
+  "thresholds": {
+    "lines": 80,
+    "branches": 80,
+    "functions": 80
+  },
+  "scope": "module-level only; project-wide coverage NOT_MEASURED (no project coverage tool configured for standalone reference modules)",
+  "modules": [
+    {
+      "module": "docs/e2e-v2/m6/tests/acceptance-ledger.mjs",
+      "lines": 100,
+      "branches": 80.59,
+      "functions": 100,
+      "exit": 0
+    },
+    {
+      "module": "docs/e2e-v2/m6/tests/mutation-suite.mjs",
+      "lines": 100,
+      "branches": 100,
+      "functions": 100,
+      "exit": 0
+    },
+    {
+      "module": "docs/e2e-v2/m6/tests/scratch-runner.mjs",
+      "lines": 98.71,
+      "branches": 83.58,
+      "functions": 82.35,
+      "exit": 0
+    },
+    {
+      "module": "docs/e2e-v2/m6/scripts/emit-m6-reports.mjs",
+      "lines": 97.87,
+      "branches": 86.15,
+      "functions": 93.33,
+      "exit": 0
+    }
+  ],
+  "all_thresholds_met": true,
+  "evidence": "m6-covfinal-*.out in authorized scratch; 34/34 tests pass in each coverage run",
+  "scenario_id": "COVERAGE",
+  "acceptance": [
+    "AC-014",
+    "E03"
+  ],
+  "measurement_basis": "RECORDED_PRIOR_RUN_MODULE_COVERAGE",
+  "scenarios": [
+    "E03"
+  ]
+}

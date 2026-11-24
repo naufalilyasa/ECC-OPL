@@ -1,0 +1,111 @@
+{
+  "generated_at": "2026-11-22T16:05:00Z",
+  "scenario_ids": ["B01", "B02", "B03", "B04"],
+  "method": "static detector characterization -> expected-output contract",
+  "status": "NOT_RUN",
+  "deferred_to": "M2",
+  "deferred_reason": "Fixture execution is ASM-02 validation, scheduled for M2. M1 records what a conforming detector MUST output; it ran no detector and discovered no route.",
+  "spec_of_record": "docs/e2e-v2/m1/detector-characterization.md",
+  "artifact_name_note": "ACCEPTANCE-MATRIX.csv names per-fixture artifacts (F01-map-output.json ... F04-F06-map-output.json). M1 keeps one contract file for F01-F06 so a reviewer diffs a single frozen reference; per-fixture artifacts are produced at execution time in M2 under their CSV names.",
+  "fixtures": [
+    {
+      "fixture_id": "F01",
+      "scenario_id": "B01",
+      "name": "Next.js App Router",
+      "matrices_artifact": "F01-map-output.json",
+      "status": "NOT_RUN",
+      "expected_output": "3 journeys | 0 API-as-UI | confidence confirmed/partial",
+      "must_output": [
+        "UI pages under app/(grp)/[locale]/dashboard/page.tsx mapped",
+        "locale variants collapsed into one parameterized flow",
+        "layout guard detected as authenticated"
+      ],
+      "must_not": [
+        "route.ts (API) mapped as a UI page",
+        "the same page listed once per locale",
+        "a dynamic segment reported as confidence=confirmed"
+      ]
+    },
+    {
+      "fixture_id": "F02",
+      "scenario_id": "B02",
+      "name": "Next.js Pages Router",
+      "matrices_artifact": "F02-map-output.json",
+      "status": "NOT_RUN",
+      "expected_output": "1 journey | 3 exclusions tercatat",
+      "must_output": ["pages/index.tsx mapped", "3 exclusions recorded explicitly"],
+      "must_not": ["_app or _document mapped as UI pages", "pages/api/* mapped as UI pages"]
+    },
+    {
+      "fixture_id": "F03",
+      "scenario_id": "B03",
+      "name": "Laravel + Inertia React",
+      "matrices_artifact": "F03-map-output.json",
+      "status": "NOT_RUN",
+      "expected_output": "2 journeys | role labels | critical path flag",
+      "must_output": [
+        "login -> dashboard -> edit journey spanning routes/web.php and resources/js/Pages",
+        "auth role boundary labelled in actors",
+        "critical path flagged for the auth-gated flow"
+      ],
+      "must_not": [
+        "role-dependent paths merged without an actor label",
+        "routes/api.php mapped as a browser journey"
+      ]
+    },
+    {
+      "fixture_id": "F04",
+      "scenario_id": "B04",
+      "name": "React Router",
+      "matrices_artifact": "F04-F06-map-output.json",
+      "status": "NOT_RUN",
+      "expected_output": "2 journeys | dynamic path PARTIAL",
+      "must_output": ["nested routes flattened to full paths", "guard wrapper correlated to its route children"],
+      "must_not": ["a guarded route reported as public", "a dynamic route reported as confirmed"]
+    },
+    {
+      "fixture_id": "F05",
+      "scenario_id": "B04",
+      "name": "SvelteKit / Astro / Nuxt",
+      "matrices_artifact": "F04-F06-map-output.json",
+      "status": "NOT_RUN",
+      "expected_output": "3 stack reports | 0 invented path | PARTIAL untuk dynamic",
+      "must_output": [
+        "src/routes/**/+page.svelte matched only by the SvelteKit detector",
+        "src/pages/**/*.astro matched only by the Astro detector",
+        "pages/**/*.vue matched only by the Nuxt detector"
+      ],
+      "must_not": [
+        "a route invented by a detector whose stack did not match",
+        "locale mirrors listed twice",
+        "a dynamic route reported as confidence=confirmed"
+      ]
+    },
+    {
+      "fixture_id": "F06",
+      "scenario_id": "B04",
+      "name": "Yii2 / Express / Fastify / Hono",
+      "matrices_artifact": "F04-F06-map-output.json",
+      "status": "NOT_RUN",
+      "expected_output": "4 route groups | API flagged | PARTIAL untuk conditional",
+      "must_output": [
+        "urlManager rules and controller actions grouped",
+        "app.get/post registrations flagged as API, not browser",
+        "confidence stated explicitly per group"
+      ],
+      "must_not": ["a server route presented as a browser journey", "a conditional route reported as confirmed"]
+    }
+  ],
+  "matrix_rows": [
+    { "scenario_id": "B01", "fixture_ids": ["F01"], "expected": "UI pages terpetakan; route.ts tidak; locale dedup; guard terdeteksi" },
+    { "scenario_id": "B02", "fixture_ids": ["F02"], "expected": "special pages + API dikecualikan" },
+    { "scenario_id": "B03", "fixture_ids": ["F03"], "expected": "journey lintas backend/frontend + auth role" },
+    { "scenario_id": "B04", "fixture_ids": ["F04", "F05", "F06"], "expected": "guarded/dynamic paths; F05 tiga stack; F06 browser vs API" }
+  ],
+  "related_contracts": {
+    "B05": "locale-dedup.report.json",
+    "B06": "journey-grouping.report.json"
+  },
+  "detectors_run": 0,
+  "routes_discovered": 0
+}

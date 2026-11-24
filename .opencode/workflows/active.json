@@ -1,0 +1,105 @@
+{
+  "workflow": "tdd",
+  "phase": "done",
+  "timestamp": "2026-11-23T15:45:00Z",
+  "plan_ref": {
+    "path": "docs/plans/e2e-v2-0-m6-acceptance-release.plan.md",
+    "revision": "r4",
+    "sha256": "b00e7f10bdf28b05cbcd4680bf810b7535c0262f9ed28166823038d8a6815370",
+    "scope": "M6 — acceptance release: 48 scenarios + 14 negative mutations",
+    "readiness": "READY_FOR_EXECUTION",
+    "upstream": {
+      "prd": ".claude/prds/e2e-v2-0-unified-journey-mapping.prd.md",
+      "prd_approved_digest": "047918df0835bc7ea52f0d0dc7714f0b29394cce32ad8c2580b2973dfce1d211",
+      "prd_worktree_sha256": "bbe563be553147e4ff348622e54a75689db209bd798e85f85a97d739895191a9",
+      "milestone": "M6 — Acceptance release",
+      "prior_milestone_snapshot": "/private/var/folders/xq/22yplbd15tz0jj4hnsr1m11c0000gp/T/opencode/m3m5m6-proposals/m5-final-state-snapshot.json"
+    },
+    "prerequisites": [],
+    "review": {
+      "verdict": "APPROVE",
+      "reviewed_plan_sha256": "b00e7f10bdf28b05cbcd4680bf810b7535c0262f9ed28166823038d8a6815370",
+      "blockers_open": 0,
+      "evidence_ref": "docs/plans/e2e-v2-0-m6-plan-review-r4.md"
+    },
+    "approval": {
+      "status": "APPROVED",
+      "record_type": "IMPLEMENTATION_PLAN",
+      "approved_plan_sha256": "b00e7f10bdf28b05cbcd4680bf810b7535c0262f9ed28166823038d8a6815370",
+      "approved_by": "Owner",
+      "approved_at": "2026-11-23T15:00:52Z",
+      "evidence_ref": "docs/plans/e2e-v2-0-m6-plan-approval-r4.md"
+    },
+    "redVerified": false
+  },
+  "gates": {
+    "planApproved": true,
+    "redVerified": true
+  },
+  "current_task": "M6",
+  "mode": "FEATURE_OR_BUG",
+  "test_runner": {
+    "command": "node --test docs/e2e-v2/m6/tests/m6.test.mjs",
+    "detected_from": "plan Testing Strategy",
+    "coverage_tool": "node --test --experimental-test-coverage"
+  },
+  "ac_status": {
+    "AC-019": "VERIFIED",
+    "AC-020": "VERIFIED",
+    "AC-021": "VERIFIED",
+    "AC-022": "VERIFIED"
+  },
+  "pending_tasks": [],
+  "coverage": {
+    "status": "MEASURED",
+    "scope": "m6 modules only",
+    "acceptance-ledger": "100/80.59/100",
+    "mutation-suite": "100/100/100",
+    "scratch-runner": "98.71/83.58/82.35",
+    "emit-m6-reports": "97.87/86.15/93.33",
+    "project_wide": "NOT_MEASURED"
+  },
+  "ac_notes": {
+    "A08": "NOT_RUN: live multi-phase model orchestration not executed (budget/honesty constraint)",
+    "P1": "NOT_VERIFIED: effective command winner unresolved (ASM-01 inconclusive)",
+    "P5": "NOT_GIVEN: owner deployment authorization absent",
+    "disable_default": "BLOCKED_DEPLOYMENT_GATED",
+    "production": "BLOCKED",
+    "playwright": "scratch-only install 1.65.1/Chromium 1255; not in repo deps",
+    "registry_writes": 0,
+    "authorized_delta": "none"
+  },
+  "red_evidence": {
+    "outcome": "RED_VALID",
+    "task_id": "M6",
+    "command": "HOME=<fixture> PLAYWRIGHT_BROWSERS_PATH=<scratch> node --test docs/e2e-v2/m6/tests/m6.test.mjs",
+    "results": "exit 1; tests 1 / pass 0 / fail 1; ERR_MODULE_NOT_FOUND acceptance-ledger.mjs",
+    "red_verified": true
+  },
+  "green_evidence": {
+    "outcome": "PASS",
+    "task_id": "M6",
+    "command": "HOME=<fixture> PLAYWRIGHT_BROWSERS_PATH=<scratch> node --test docs/e2e-v2/m6/tests/m6.test.mjs docs/e2e-v2/m6/tests/conformance.test.mjs",
+    "results": "41 pass / 0 fail / 0 skipped (m6 34 + conformance 7)",
+    "test_sha256": "0ec9613f4437f411043c6f73577f5fc4536bd374f4182f4bdb9551d3b472ff40",
+    "conformance_sha256": "fba4c096d35c390a1236ffcf80c22a8a876eeaad35d9c02a1369c93834a49c06",
+    "tap_sha256": "9b28568e7c243261106efd2591539ce3715ba7a715a8c87f1b4fbe9231b2c3fd",
+    "tap_path": "/private/var/folders/xq/22yplbd15tz0jj4hnsr1m11c0000gp/T/opencode/m6-final/m6-final.tap"
+  },
+  "completed_tasks": [
+    "M1",
+    "M2",
+    "M3",
+    "M4",
+    "M5",
+    "M6"
+  ],
+  "classification": {
+    "PASS": 13,
+    "REFERENCE_VERIFIED": 34,
+    "NOT_RUN": 1,
+    "total": 48,
+    "mutations_detected": 14,
+    "mutations_total": 14
+  }
+}

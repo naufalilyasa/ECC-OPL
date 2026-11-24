@@ -1,0 +1,214 @@
+{
+  "generated_at": "2026-11-24T05:29:01.540Z",
+  "milestone": "M6",
+  "registry_writes": 0,
+  "applied": false,
+  "fixture_provenance": "SCRATCH_PLAYWRIGHT_LOOPBACK + DETERMINISTIC_REFERENCE",
+  "scenario_id": "PREFLIGHT",
+  "status": "PASS",
+  "acceptance": [
+    "PRECONDITION",
+    "D05"
+  ],
+  "pins": [
+    {
+      "name": "prd_approved_r1",
+      "path": "$E2E_MATRIX_ROOT/PRD-CANDIDATE.md",
+      "expected_sha256": "047918df0835bc7ea52f0d0dc7714f0b29394cce32ad8c2580b2973dfce1d211",
+      "observed_sha256": "047918df0835bc7ea52f0d0dc7714f0b29394cce32ad8c2580b2973dfce1d211",
+      "match": true
+    },
+    {
+      "name": "prd_worktree",
+      "path": "./.claude/prds/e2e-v2-0-unified-journey-mapping.prd.md",
+      "expected_sha256": "bbe563be553147e4ff348622e54a75689db209bd798e85f85a97d739895191a9",
+      "observed_sha256": "bbe563be553147e4ff348622e54a75689db209bd798e85f85a97d739895191a9",
+      "match": true
+    },
+    {
+      "name": "decision_register",
+      "path": "./docs/e2e-v2/decisions/DECISION-REGISTER.md",
+      "expected_sha256": "cd848701e25fddf6ab33c5853a2bd93a791e0786b225dc8534be912c4c03d223",
+      "observed_sha256": "cd848701e25fddf6ab33c5853a2bd93a791e0786b225dc8534be912c4c03d223",
+      "match": true
+    },
+    {
+      "name": "milestone_gates",
+      "path": "./docs/e2e-v2/decisions/MILESTONE-GATES.json",
+      "expected_sha256": "00c6b4550a130fcec4e20abda25919b9a08fe4b493b9439687865d70d017c8e5",
+      "observed_sha256": "00c6b4550a130fcec4e20abda25919b9a08fe4b493b9439687865d70d017c8e5",
+      "match": true
+    },
+    {
+      "name": "acceptance_matrix",
+      "path": "$E2E_MATRIX_ROOT/ACCEPTANCE-MATRIX.csv",
+      "expected_sha256": "400d3fcc22c48fb75f85ee22aeb0de23d0d0bbcf9dd776ae33aeb2ec88789caf",
+      "observed_sha256": "400d3fcc22c48fb75f85ee22aeb0de23d0d0bbcf9dd776ae33aeb2ec88789caf",
+      "match": true
+    },
+    {
+      "name": "env_authorization_proposal",
+      "path": "M6-ENV-AUTHORIZATION-PROPOSAL.md",
+      "expected_sha256": "bc7b6afae7aa3178df78b109f31fe69e6ca222be5208fe70dabd31d601989cf4",
+      "observed_sha256": "bc7b6afae7aa3178df78b109f31fe69e6ca222be5208fe70dabd31d601989cf4",
+      "match": true
+    },
+    {
+      "name": "command_e2e",
+      "path": "./.opencode/commands/e2e.md",
+      "expected_sha256": "c562e0a2a2707c49362431b04ac1895f02c091e3d7ae193837ab6bf35b9d8436",
+      "observed_sha256": "c562e0a2a2707c49362431b04ac1895f02c091e3d7ae193837ab6bf35b9d8436",
+      "match": true
+    },
+    {
+      "name": "command_e2e_map",
+      "path": "./.opencode/commands/e2e-map.md",
+      "expected_sha256": "76b3d4037a0144df2d40dc0eca01777690762a7cccc5d9562b0330333dfdb142",
+      "observed_sha256": "76b3d4037a0144df2d40dc0eca01777690762a7cccc5d9562b0330333dfdb142",
+      "match": true
+    },
+    {
+      "name": "project_config",
+      "path": "./.opencode/opencode.json",
+      "expected_sha256": "01e3d4405c4351cde1460e782da9aa80f0aa6a6796bc3bb149be1b12bcc63e84",
+      "observed_sha256": "01e3d4405c4351cde1460e782da9aa80f0aa6a6796bc3bb149be1b12bcc63e84",
+      "match": true
+    },
+    {
+      "name": "plan_r4",
+      "path": "./docs/plans/e2e-v2-0-m6-acceptance-release.plan.md",
+      "expected_sha256": "b00e7f10bdf28b05cbcd4680bf810b7535c0262f9ed28166823038d8a6815370",
+      "observed_sha256": "b00e7f10bdf28b05cbcd4680bf810b7535c0262f9ed28166823038d8a6815370",
+      "match": true
+    }
+  ],
+  "pins_all_match": true,
+  "isolated_home_fixture": {
+    "root": "$E2E_HOME_FIXTURE",
+    "files": [
+      {
+        "name": "opencode.json",
+        "path": "$E2E_HOME_FIXTURE/.config/opencode/opencode.json",
+        "expected_sha256": "bd747d4f42d22e7c0dc1f14b65e815b043117083fd548292489509c653e26843",
+        "observed_sha256": "bd747d4f42d22e7c0dc1f14b65e815b043117083fd548292489509c653e26843",
+        "match": true
+      },
+      {
+        "name": "opencode.jsonc",
+        "path": "$E2E_HOME_FIXTURE/.config/opencode/opencode.jsonc",
+        "expected_sha256": "85378ac09a398760fccae61499ab3bd5207713d3ba214b71c92e5acf52071dbf",
+        "observed_sha256": "85378ac09a398760fccae61499ab3bd5207713d3ba214b71c92e5acf52071dbf",
+        "match": true
+      }
+    ],
+    "all_match": true
+  },
+  "frozen": {
+    "trees": [
+      {
+        "name": "m1",
+        "expectedFiles": 16,
+        "observedFiles": 16,
+        "expectedSha256": "8416c0671af8ae60850d9d72f249968976c907cf4aa62b605d663bd5eb1625ca",
+        "observedSha256": "8416c0671af8ae60850d9d72f249968976c907cf4aa62b605d663bd5eb1625ca",
+        "encoding": "sorted repo-relative path<TAB>sha256<LF>",
+        "historical_expected_sha256": "8416c0671af8ae60850d9d72f249968976c907cf4aa62b605d663bd5eb1625ca",
+        "historical_match": true,
+        "match_basis": "HISTORICAL_BASELINE",
+        "match": true
+      },
+      {
+        "name": "m2",
+        "expectedFiles": 27,
+        "observedFiles": 27,
+        "expectedSha256": "2f81da73f2068357f4265a3cfbaf6a9435a3e502d52dcd32d33b3b445fc97588",
+        "observedSha256": "2f81da73f2068357f4265a3cfbaf6a9435a3e502d52dcd32d33b3b445fc97588",
+        "encoding": "sorted repo-relative path<TAB>sha256<LF>",
+        "historical_expected_sha256": "2f81da73f2068357f4265a3cfbaf6a9435a3e502d52dcd32d33b3b445fc97588",
+        "historical_match": true,
+        "match_basis": "HISTORICAL_BASELINE",
+        "match": true
+      },
+      {
+        "name": "m3",
+        "expectedFiles": 17,
+        "observedFiles": 17,
+        "expectedSha256": "2e8c7cf63a44b3d073185be0a4fe59de87fd9583ffc79abc6066b151066e23c7",
+        "observedSha256": "2e8c7cf63a44b3d073185be0a4fe59de87fd9583ffc79abc6066b151066e23c7",
+        "encoding": "sorted repo-relative path<TAB>sha256<LF>",
+        "historical_expected_sha256": "2e8c7cf63a44b3d073185be0a4fe59de87fd9583ffc79abc6066b151066e23c7",
+        "historical_match": true,
+        "match_basis": "HISTORICAL_BASELINE",
+        "match": true
+      },
+      {
+        "name": "m4",
+        "expectedFiles": 20,
+        "observedFiles": 20,
+        "expectedSha256": "88c50d13760dd24dd47b9e5f2a2d8aa707b0f008abcf19b06fa7370641bc7807",
+        "observedSha256": "88c50d13760dd24dd47b9e5f2a2d8aa707b0f008abcf19b06fa7370641bc7807",
+        "encoding": "sorted repo-relative path<TAB>sha256<LF>",
+        "historical_expected_sha256": "88c50d13760dd24dd47b9e5f2a2d8aa707b0f008abcf19b06fa7370641bc7807",
+        "historical_match": true,
+        "match_basis": "HISTORICAL_BASELINE",
+        "match": true
+      },
+      {
+        "name": "m5",
+        "expectedFiles": 23,
+        "observedFiles": 29,
+        "expectedSha256": "267c3b8bce980c97cadfc54b815fb79190d9a8f9f6951cb29ae92839dbf7b014",
+        "observedSha256": "524a975360ae6f244bc3e20908fafaa8fd17937231ada2388e74f9aca737b189",
+        "encoding": "sorted repo-relative path<TAB>sha256<LF>",
+        "historical_expected_sha256": "267c3b8bce980c97cadfc54b815fb79190d9a8f9f6951cb29ae92839dbf7b014",
+        "historical_match": false,
+        "amendment": {
+          "after_sha256": "524a975360ae6f244bc3e20908fafaa8fd17937231ada2388e74f9aca737b189",
+          "change_request": "E2E-V2-M5-SAFETY-REMEDIATION-01",
+          "helper_before": "146c8cfd51e8f01679d08784077c0bd7e565747efa508ce392417e94de781f11",
+          "helper_after": "b5bb301655b713e484e449cb2e2549794b56a8307d0fec727a1ca96ac26cff80",
+          "scope": "REFERENCE_ONLY (docs/e2e-v2/m5/tests/migration.mjs helpers only)"
+        },
+        "match_basis": "APPROVED_AMENDMENT",
+        "match": true
+      },
+      {
+        "name": "contracts",
+        "expectedFiles": 3,
+        "observedFiles": 3,
+        "expectedSha256": "a550f29ea751c7635cdc5d73bbc2e6a0a29d7cdf7153e43f23e429a4f4e05e8c",
+        "observedSha256": "a550f29ea751c7635cdc5d73bbc2e6a0a29d7cdf7153e43f23e429a4f4e05e8c",
+        "encoding": "sorted repo-relative path<TAB>sha256<LF>",
+        "historical_expected_sha256": "a550f29ea751c7635cdc5d73bbc2e6a0a29d7cdf7153e43f23e429a4f4e05e8c",
+        "historical_match": true,
+        "match_basis": "HISTORICAL_BASELINE",
+        "match": true
+      }
+    ],
+    "allMatch": true
+  },
+  "registry_absent": {
+    "TESTS.md": true,
+    ".governance/docs-map.json": true
+  },
+  "scratch_playwright": {
+    "module": "$E2E_PLAYWRIGHT_DIR/node_modules/playwright",
+    "module_exists": true,
+    "version": "1.65.1",
+    "browsers_path": "$E2E_PLAYWRIGHT_DIR/pw-browsers",
+    "chromium_1255": true
+  },
+  "owner_config_drift": {
+    "path": "$HOME/.config/opencode/opencode.jsonc",
+    "observed_sha256": "b194d4b4343e7d20fdb82ba6f12387bd739e553bbf7f4cfb4501d67d3c49f719",
+    "observed_at": "2026-11-24T05:29:01.540Z",
+    "owner_authorized": true,
+    "affects_pass_fail": false,
+    "compared_to_constant": false,
+    "modification_or_restoration_performed": false,
+    "note": "Computed from the active file during this run; observational only."
+  },
+  "scenarios": [
+    "D05"
+  ]
+}

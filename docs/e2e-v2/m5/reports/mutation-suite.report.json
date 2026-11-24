@@ -1,0 +1,29 @@
+{
+  "generated_at": "2026-11-23T00:00:00Z",
+  "milestone": "M5",
+  "method": "reference-implementation harness (node --test): docs/e2e-v2/m5/tests/migration.mjs",
+  "status": "EXECUTED",
+  "fixture_provenance": "SYNTHETIC_REFERENCE",
+  "live_prompt_verification": "DEFERRED_TO_M6",
+  "live_playwright_execution": "DEFERRED_TO_M6",
+  "registry_writes": 0,
+  "applied": false,
+  "note": "Fixture observations only. No real browser, runner spawn, registry mutation, config change or CLI execution. Recorded commands are data, never executed.",
+  "scenario_id": "MUT",
+  "acceptance": [
+    "AC-016",
+    "AC-017",
+    "E02"
+  ],
+  "fixture": "MUT13/MUT14",
+  "mutations": {
+    "13": {
+      "detected": true,
+      "oracle_reason": "Writer B overwrote writer A by bypassing hash-before-write"
+    },
+    "14": {
+      "detected": true,
+      "oracle_reason": "premature disable-default attempted with P1/P2/P5 unsatisfied"
+    }
+  }
+}

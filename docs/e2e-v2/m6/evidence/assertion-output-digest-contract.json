@@ -1,0 +1,8 @@
+{
+  "applies": false,
+  "affected_ids": [
+    "M611-C02"
+  ],
+  "reason": "No canonical assertion-output serialization is defined by the M6-R1.1 contract; asserting a hash here would be fictional. The file digest remains evidence_sha256.",
+  "created_at": "2026-11-24T05:28:47.886Z"
+}

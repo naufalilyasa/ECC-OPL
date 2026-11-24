@@ -1,0 +1,48 @@
+{
+  "change_request": "M6-H01..H03 / G01..G02 / T01..T03 fail-closed corrections",
+  "node": "v24.21.0",
+  "test_file": "docs/e2e-v2/m6/tests/m6-corrections.test.mjs",
+  "cwd": "$E2E_REPO_ROOT",
+  "RED": {
+    "command": "node --test docs/e2e-v2/m6/tests/m6-corrections.test.mjs",
+    "cwd": "$E2E_REPO_ROOT",
+    "exit_code": 1,
+    "tap": { "tests": 13, "pass": 1, "fail": 12, "cancelled": 0, "skipped": 0 },
+    "assertion_excerpts": [
+      "CORR-01: acceptance_satisfied undefined !== false (no trusted inputs)",
+      "CORR-02: forged C04 PASS with covered omitted accepted (true !== false)",
+      "CORR-03: observed_run target_label/kind and executed run_status not compared",
+      "CORR-04: symlink evidence path accepted (unearned=[])",
+      "CORR-05: circular self-hash accepted (unearned=[])",
+      "CORR-06: A08 REFERENCE_VERIFIED promotion accepted",
+      "CORR-08: REFERENCE_ONLY productBoundary unlocked P3/disable-default",
+      "CORR-09: blocked decision emitted empty remainingRequirements/blockers",
+      "CORR-10: remainingRequirements missing P2/P3/P4/A08/findings/ACCEPTANCE/AUTH/ROLLBACK",
+      "CORR-11: emitter source still contains ()=>true / return true / digest-shape fallback",
+      "CORR-12: hardcoded personal absolute paths present in M6 code",
+      "CORR-13: M5 amended frozen tree not recognised"
+    ],
+    "log": "evidence/red-green/m6-corrections-RED.log",
+    "log_sha256": "9ab0846aaeb7d75a30f9026e79506d664ac13860dcad3df492f8e95faa387287",
+    "log_sanitized": "personal machine paths in raw assertion output replaced with env placeholders"
+  },
+  "GREEN": {
+    "command": "node --test docs/e2e-v2/m6/tests/m6-corrections.test.mjs",
+    "cwd": "$E2E_REPO_ROOT",
+    "exit_code": 0,
+    "tap": { "tests": 13, "pass": 13, "fail": 0, "cancelled": 0, "skipped": 0 },
+    "result": "13/13 focused correction tests pass after the fail-closed implementation",
+    "log": "evidence/red-green/m6-corrections-GREEN.log"
+  },
+  "FULL_SUITE": {
+    "command": "node --test docs/e2e-v2/m6/tests/m6.test.mjs docs/e2e-v2/m6/tests/conformance.test.mjs docs/e2e-v2/m6/tests/r1-correctness.test.mjs docs/e2e-v2/m6/tests/r1-1-correctness.test.mjs docs/e2e-v2/m6/tests/m6-corrections.test.mjs",
+    "cwd": "$E2E_REPO_ROOT",
+    "exit_code": 0,
+    "tap": { "tests": 70, "pass": 70, "fail": 0, "cancelled": 0, "skipped": 0 },
+    "log": "evidence/red-green/m6-full-suite-GREEN.log"
+  },
+  "ENV": {
+    "required": ["E2E_REPO_ROOT", "E2E_SCRATCH_ROOT", "E2E_MATRIX_ROOT", "E2E_M6_R1_ROOT", "E2E_M6_R1_ZIP"],
+    "note": "All paths are validated env inputs; no personal path is emitted into reports or receipts."
+  }
+}

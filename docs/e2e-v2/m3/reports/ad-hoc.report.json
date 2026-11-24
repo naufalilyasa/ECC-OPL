@@ -1,0 +1,45 @@
+{
+  "generated_at": "2026-11-23T00:00:00Z",
+  "milestone": "M3",
+  "method": "reference-implementation harness (node --test): docs/e2e-v2/m3/tests/registry.mjs",
+  "status": "EXECUTED",
+  "live_prompt_verification": "DEFERRED_TO_M6 (48-scenario acceptance)",
+  "scenario_id": "C03",
+  "acceptance": [
+    "AC-007",
+    "E2E-FR-006"
+  ],
+  "fixture": "F07 (temp copy) + mock runner outcome",
+  "cases": [
+    {
+      "case_id": "C03",
+      "input": "run --ad-hoc \"refund flow\" (non-production, mock PASS)",
+      "result": {
+        "caseId": "C03",
+        "registryAfter": "# E2E Test Registry (ECC-OPL)\n\n## Section 2 — Journey index\n| ID | Journey | Source | Level | Execution group | State |\n|---|---|---|---|---|---|\n| TEST-E2E-001 | checkout | /checkout | ui | g1 | covered |\n| TEST-E2E-002 | login | /login | ui | g1 | missing |\n\n## Section 4 — Test blocks\n<!-- Writable by a verified run: State, Test file, Test node, Command, Evidence only. -->\n\n### TEST-E2E-001 — checkout to confirmation\n- Purpose: verify checkout completes\n- Source: /checkout\n- Representative input: /checkout, /cart\n- Observable expectation: order confirmation rendered\n- Level: ui\n- Execution group: g1\n- Boundary: fixtures/checkout\n- State: unverified\n- Test file: tests/e2e/checkout.spec.ts\n- Test node: checkout to confirmation\n- Command: npx playwright test tests/e2e/checkout.spec.ts\n- Evidence: evidence/checkout.json\n\n### TEST-E2E-002 — login with email\n- Purpose: verify login\n- Source: /login\n- Representative input: /login\n- Observable expectation: session cookie set\n- Level: ui\n- Execution group: g1\n- Boundary: fixtures/login\n- State: missing\n- Test file:\n- Test node:\n- Command:\n- Evidence:\n",
+        "registryChanged": false,
+        "coverageCredit": false,
+        "outcome": "PASS_AD_HOC_UNREGISTERED",
+        "dispatched": true,
+        "runnerInvocations": 1
+      }
+    },
+    {
+      "case_id": "C03",
+      "input": "run --ad-hoc \"refund flow\" (production)",
+      "result": {
+        "caseId": "C03",
+        "outcome": "BLOCKED",
+        "dispatched": false,
+        "runnerInvocations": 0,
+        "registryChanged": false,
+        "reason": "ad-hoc execution refused for production target (DEC-07)"
+      }
+    }
+  ],
+  "registry_sha256_before": "fbdf3d5d56c6d673a3258d238ceec9d34a18535f03ffeed606b5da59cfa322bb",
+  "registry_sha256_after": "fbdf3d5d56c6d673a3258d238ceec9d34a18535f03ffeed606b5da59cfa322bb",
+  "registry_unchanged": true,
+  "coverage_credit": false,
+  "live_execution": "DEFERRED_TO_M4/M6 (DEC-07 sandbox machinery not exercised)"
+}

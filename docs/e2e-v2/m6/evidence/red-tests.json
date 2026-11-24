@@ -1,0 +1,24 @@
+[
+  {
+    "id": "RED-1",
+    "defect": "false PASS from ID allowlist",
+    "command": "node --test r1-correctness.test.mjs",
+    "exit_code": 1,
+    "result": "9/9 failed before fix"
+  },
+  {
+    "id": "RED-2",
+    "defect": "invalid State accepted",
+    "evidence": "S03,S04 failed before fix"
+  },
+  {
+    "id": "RED-3",
+    "defect": "symlink ancestor escape",
+    "evidence": "P02 failed before fix"
+  },
+  {
+    "id": "RED-4",
+    "defect": "forged PASS accepted",
+    "evidence": "L08 failed before fix"
+  }
+]

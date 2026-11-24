@@ -1,0 +1,59 @@
+{
+  "generated_at": "2026-11-23T00:00:00Z",
+  "milestone": "M5",
+  "method": "reference-implementation harness (node --test): docs/e2e-v2/m5/tests/migration.mjs",
+  "status": "EXECUTED",
+  "fixture_provenance": "SYNTHETIC_REFERENCE",
+  "live_prompt_verification": "DEFERRED_TO_M6",
+  "live_playwright_execution": "DEFERRED_TO_M6",
+  "registry_writes": 0,
+  "applied": false,
+  "note": "Fixture observations only. No real browser, runner spawn, registry mutation, config change or CLI execution. Recorded commands are data, never executed.",
+  "scenario_id": "B12",
+  "acceptance": [
+    "AC-016",
+    "E2E-FR-016"
+  ],
+  "fixture": "F11",
+  "two_writer_race": {
+    "caseId": "B12",
+    "writerA": {
+      "applied": true,
+      "changes": [
+        {
+          "id": "TEST-E2E-001",
+          "field": "State",
+          "from": "unverified",
+          "to": "covered"
+        },
+        {
+          "id": "TEST-E2E-001",
+          "field": "Evidence",
+          "from": "(none)",
+          "to": "writer-A verified"
+        }
+      ],
+      "hashAfter": "47bafb207f0255a622b054ed9e0ab056db6b8ebc86b8612a55bca670803bc929"
+    },
+    "writerB": {
+      "applied": false,
+      "outcome": "WRITE_CONFLICT",
+      "conflict": true,
+      "rebase": {
+        "recomputeFrom": "registry@47bafb207f0255a622b054ed9e0ab056db6b8ebc86b8612a55bca670803bc929",
+        "requiresApproval": true,
+        "previousDiff": "- State: unverified\n+ State: covered\n- Evidence: (none)\n+ Evidence: writer-B verified"
+      }
+    },
+    "conflictDetected": true,
+    "nonClobber": true,
+    "finalText": "# E2E Test Registry (ECC-OPL) — SYNTHETIC FIXTURE\n\n## Section 2 — Journey index\n| ID | Journey | State |\n|---|---|---|\n| TEST-E2E-001 | checkout | unverified |\n| TEST-E2E-002 | login | unverified |\n\n## Section 4 — Test blocks\n### TEST-E2E-001 — checkout completion\n- Purpose: verify checkout reaches confirmation\n- Source: flow/checkout\n- Representative input: valid cart\n- Observable expectation: confirmation rendered with order id\n- Level: journey\n- Execution group: checkout\n- Boundary: non-production\n- State: covered\n- Test file: (none)\n- Test node: (none)\n- Command: (none)\n- Evidence: writer-A verified\n\n### TEST-E2E-002 — login completion\n- Purpose: verify login reaches dashboard\n- Source: flow/login\n- Representative input: valid credentials\n- Observable expectation: dashboard rendered\n- Level: journey\n- Execution group: auth\n- Boundary: non-production\n- State: unverified\n- Test file: (none)\n- Test node: (none)\n- Command: (none)\n- Evidence: (none)\n"
+  },
+  "no_conflict_baseline": {
+    "caseId": "B12",
+    "outcome": "WRITE_OK",
+    "conflict": false,
+    "writePermitted": true,
+    "applied": false
+  }
+}

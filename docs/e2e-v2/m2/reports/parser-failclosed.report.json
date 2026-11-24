@@ -1,0 +1,72 @@
+{
+  "generated_at": "2026-11-23T00:00:00Z",
+  "milestone": "M2",
+  "method": "reference-implementation harness (node --test): docs/e2e-v2/m2/tests/{parser,validators}.mjs",
+  "status": "EXECUTED",
+  "live_prompt_verification": "DEFERRED_TO_M6 (48-scenario acceptance)",
+  "scenario_id": "A07",
+  "spec_of_record": "docs/e2e-v2/contracts/validator-specs.md §1",
+  "cases": [
+    {
+      "id": "PS-01",
+      "input": "frobnicate src/",
+      "observed": {
+        "ok": false,
+        "failClosed": true,
+        "action": "none",
+        "reason": "unknown mode: \"frobnicate\""
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "PS-02",
+      "input": "map run TEST-E2E-001",
+      "observed": {
+        "ok": false,
+        "failClosed": true,
+        "action": "none",
+        "reason": "one mode per invocation"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "PS-03",
+      "input": "run --ad-hoc --ad-hoc TEST-E2E-001",
+      "observed": {
+        "ok": false,
+        "failClosed": true,
+        "action": "none",
+        "reason": "duplicate flag: --ad-hoc may appear at most once"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "PS-04",
+      "input": "run   ",
+      "observed": {
+        "ok": true,
+        "mode": "no-args",
+        "failClosed": false
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "PS-08",
+      "input": "run TEST-E2E-001\nrun --ad-hoc other",
+      "observed": {
+        "ok": false,
+        "failClosed": true,
+        "action": "none",
+        "reason": "embedded newline rejected: one mode per invocation"
+      },
+      "verdict": "PASS"
+    }
+  ],
+  "requirement_ids": [
+    "E2E-FR-001",
+    "E2E-FR-020",
+    "E2E-NFR-002"
+  ],
+  "prd_ac": "AC-001",
+  "writes_performed": false
+}

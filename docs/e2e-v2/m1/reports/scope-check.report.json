@@ -1,0 +1,164 @@
+{
+  "generated_at": "2026-11-22T19:30:00Z",
+  "scenario_id": "E04",
+  "status": "PASS",
+  "scope": "E2E components only; repo-external session temp scratch excluded",
+  "allowed_write_roots": [
+    "docs/e2e-v2/",
+    "docs/plans/"
+  ],
+  "baseline_artifact_count": 19,
+  "corrected_artifact_count": 20,
+  "written_files": [
+    "docs/e2e-v2/SOURCE-BASELINE-FROZEN.md",
+    "docs/e2e-v2/contracts/command-contract.md",
+    "docs/e2e-v2/contracts/journey-contract-freeze.md",
+    "docs/e2e-v2/contracts/validator-specs.md",
+    "docs/e2e-v2/m1/command-resolution-evidence.md",
+    "docs/e2e-v2/m1/detector-characterization.md",
+    "docs/e2e-v2/m1/errata/workflow-active-d05.md",
+    "docs/e2e-v2/m1/reports/F01-F06-map-output-expected.json",
+    "docs/e2e-v2/m1/reports/bundle-validator.report.json",
+    "docs/e2e-v2/m1/reports/command-resolution.report.json",
+    "docs/e2e-v2/m1/reports/frozen-hashes.report.json",
+    "docs/e2e-v2/m1/reports/journey-grouping.report.json",
+    "docs/e2e-v2/m1/reports/locale-dedup.report.json",
+    "docs/e2e-v2/m1/reports/mode-parser.report.json",
+    "docs/e2e-v2/m1/reports/parser-failclosed.report.json",
+    "docs/e2e-v2/m1/reports/registry-path.reject.json",
+    "docs/e2e-v2/m1/reports/scope-check.report.json",
+    "docs/e2e-v2/m1/reports/symlink-escape.reject.json",
+    "docs/e2e-v2/m1/tests/m1.test.mjs",
+    "docs/e2e-v2/m1/traceability-m1.md"
+  ],
+  "written_file_count": 20,
+  "violations": [],
+  "violation_count": 0,
+  "protected_paths": [
+    {
+      "path": ".opencode/commands/e2e.md",
+      "status": "UNTOUCHED",
+      "sha256": "08b17f2cb765665b753374265bc8f78df2599c3505c2245107dd6888061b95dd"
+    },
+    {
+      "path": ".opencode/commands/e2e-map.md",
+      "status": "UNTOUCHED",
+      "sha256": "76b3d4037a0144df2d40dc0eca01777690762a7cccc5d9562b0330333dfdb142"
+    },
+    {
+      "path": "agents/e2e-runner.md",
+      "status": "UNTOUCHED",
+      "sha256": "94811f4bbc491c351cdf220ab103d6bd251fb1d88d9d46ba4c8162637a236a5b"
+    },
+    {
+      "path": ".opencode/prompts/agents/e2e-runner.txt",
+      "status": "UNTOUCHED",
+      "sha256": "d7442445cbb276cb88d6cca5339b50ec3247683ed78ea512ccf4627ed666ad08"
+    },
+    {
+      "path": "legacy-command-shims/commands/e2e.md",
+      "status": "UNTOUCHED",
+      "sha256": "97ef29c9355344bd25b4e963e519f3eaf5b0c6f43a9174f47c9c5d1b4dbb579e"
+    },
+    {
+      "path": "skills/test-collaboration/SKILL.md",
+      "status": "UNTOUCHED",
+      "sha256": "741138330940e2c9d3cc7bec9e671787f24a361ff89be44e09a56abc8e10dcfa"
+    },
+    {
+      "path": "skills/e2e-testing/SKILL.md",
+      "status": "UNTOUCHED",
+      "sha256": "b0e00e7e17cb259101139900816c5528aed18dd10bcf5f9cb42cfc35baf8a755"
+    },
+    {
+      "path": "skills/click-path-audit/SKILL.md",
+      "status": "UNTOUCHED",
+      "sha256": "662fc5d02483bcd8ff799d6d3109a38da673182341cfc14445e9076fcd920162"
+    },
+    {
+      "path": ".opencode/opencode.json",
+      "status": "UNTOUCHED",
+      "sha256": "01e3d4405c4351cde1460e782da9aa80f0aa6a6796bc3bb149be1b12bcc63e84"
+    },
+    {
+      "path": "commands/plan-prd.md",
+      "status": "UNTOUCHED",
+      "sha256": "65707b5642fb5400b6ceaa7c3975ed7f70aa20b4edc8045925757c1f27e6897a"
+    },
+    {
+      "path": "pi/core/commands/plan-prd.md",
+      "status": "UNTOUCHED",
+      "sha256": "65707b5642fb5400b6ceaa7c3975ed7f70aa20b4edc8045925757c1f27e6897a"
+    },
+    {
+      "path": ".opencode/prompts/agents/intent-gate.txt",
+      "status": "UNTOUCHED",
+      "sha256": "82d9c4bfa3a5c021ec20ffdbf476d87862d4045794e78ed27d98f6bb512b42f8"
+    },
+    {
+      "path": ".claude/prds/e2e-v2-0-unified-journey-mapping.prd.md",
+      "status": "UNTOUCHED",
+      "sha256": "bbe563be553147e4ff348622e54a75689db209bd798e85f85a97d739895191a9"
+    }
+  ],
+  "dec_pending": [
+    {
+      "id": "DEC-04",
+      "topic": "Legacy /e2e <flow> shorthand",
+      "milestone": "M5",
+      "status": "OWNER_DECISION_REQUIRED"
+    },
+    {
+      "id": "DEC-05",
+      "topic": "run --ad-hoc policy",
+      "milestone": "M2",
+      "status": "OWNER_DECISION_REQUIRED"
+    },
+    {
+      "id": "DEC-06",
+      "topic": "Registry bootstrap/write policy",
+      "milestone": "M3",
+      "status": "OWNER_DECISION_REQUIRED"
+    },
+    {
+      "id": "DEC-07",
+      "topic": "Per-environment execution authorization",
+      "milestone": "M4",
+      "status": "OWNER_DECISION_REQUIRED"
+    },
+    {
+      "id": "DEC-09",
+      "topic": "Agent Browser optional exploration",
+      "milestone": "M4",
+      "status": "OWNER_DECISION_REQUIRED"
+    },
+    {
+      "id": "DEC-10",
+      "topic": "/e2e-map disable-default after parity",
+      "milestone": "M5",
+      "status": "OWNER_DECISION_REQUIRED"
+    },
+    {
+      "id": "DEC-11",
+      "topic": "CI automation policy",
+      "milestone": "M6",
+      "status": "OWNER_DECISION_REQUIRED"
+    },
+    {
+      "id": "DEC-12",
+      "topic": "Legacy State: stale schema reconciliation",
+      "milestone": "M5",
+      "status": "OWNER_DECISION_REQUIRED"
+    }
+  ],
+  "dec_pending_count": 8,
+  "home_writes": 0,
+  "git_access": false,
+  "guardian_angel_access": false,
+  "browser_or_playwright_runs": 0,
+  "installs": 0,
+  "registry_writes": 0,
+  "tests_md_created": false,
+  "e2e_map_disabled": false,
+  "note": "Inventory covers all 19 baseline M1 artifacts plus 1 corrective erratum (docs/e2e-v2/m1/errata/workflow-active-d05.md) = 20 files total. Review tooling (m1.test.mjs) is fully tracked and inventoried; no tests/ directory exclusions."
+}

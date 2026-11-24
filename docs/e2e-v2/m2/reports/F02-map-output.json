@@ -1,0 +1,88 @@
+{
+  "generated_at": "2026-11-23T00:00:00Z",
+  "milestone": "M2",
+  "method": "reference-implementation harness (node --test): docs/e2e-v2/m2/tests/detector.mjs over docs/e2e-v2/m2/tests/fixtures.mjs",
+  "status": "EXECUTED",
+  "live_prompt_verification": "DEFERRED_TO_M6 (48-scenario acceptance)",
+  "writes_performed": false,
+  "fixture_id": "F02",
+  "scenario_id": "B02",
+  "name": "Next.js Pages Router",
+  "expected_output": "1 journey | 3 exclusions tercatat",
+  "spec_of_record": "docs/e2e-v2/m1/reports/F01-F06-map-output-expected.json + docs/e2e-v2/m1/detector-characterization.md §1",
+  "contract_checks": [
+    {
+      "contract": "must_output: pages/index.tsx mapped",
+      "observed": [
+        "pages/index.tsx"
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "contract": "must_output: 3 exclusions recorded explicitly",
+      "observed": [
+        "pages/_app.tsx",
+        "pages/_document.tsx",
+        "pages/api/health.ts"
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "contract": "must_not: _app or _document mapped as UI pages",
+      "observed": [
+        "pages/index.tsx"
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "contract": "must_not: pages/api/* mapped as UI pages",
+      "observed": [
+        "pages/index.tsx"
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "contract": "expected_output: 1 journey",
+      "observed": 1,
+      "verdict": "PASS"
+    }
+  ],
+  "contract_passed": true,
+  "observed": {
+    "stacks": {
+      "next-pages": 1
+    },
+    "route_count": 1,
+    "ui_route_count": 1,
+    "exclusions": [
+      {
+        "file": "pages/_app.tsx",
+        "reason": "_app is a Next.js shell, not a UI page"
+      },
+      {
+        "file": "pages/_document.tsx",
+        "reason": "_document is a Next.js shell, not a UI page"
+      },
+      {
+        "file": "pages/api/health.ts",
+        "reason": "API directory is not a browser surface"
+      }
+    ],
+    "journeys": [
+      {
+        "journey_key": "next-pages:index:public",
+        "name": "index",
+        "actor": "public",
+        "risk": "normal",
+        "confidence": "confirmed",
+        "routes": [
+          "/index"
+        ],
+        "alternate_paths": [],
+        "sources": [
+          "pages/index.tsx:1"
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "scenario_id": "V611-11",
+  "group": "V611",
+  "expected": "zero fail/cancelled, complete TAP, exit 0",
+  "actual": {
+    "exit_code": 0,
+    "tap": {
+      "tests": 9,
+      "pass": 9,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "log": "evidence/red-green/V611-11-suite.log",
+    "log_sha256": "8a2b613849c2bbd7e43b2dd808553ff72f6d179411acca36720632ef3ada4e2d",
+    "command": "node --test docs/e2e-v2/m6/tests/r1-correctness.test.mjs",
+    "complete": true
+  },
+  "status": "PASS",
+  "evidence_level": "DETERMINISTIC_REFERENCE",
+  "source_file": "docs/e2e-v2/m6/tests/acceptance-ledger.mjs",
+  "source_sha256": "1dd92f7b9a8a84c33414f6f690970292649f21998e038be254dc9ad994821b6f",
+  "created_at": "2026-11-24T05:28:48.162Z"
+}

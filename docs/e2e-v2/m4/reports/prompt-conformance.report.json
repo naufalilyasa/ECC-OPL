@@ -1,0 +1,61 @@
+{
+  "generated_at": "2026-11-23T00:00:00Z",
+  "milestone": "M4",
+  "method": "reference-implementation harness (node --test): docs/e2e-v2/m4/tests/runner.mjs",
+  "status": "PROPOSAL_ONLY",
+  "fixture_provenance": "SYNTHETIC_REFERENCE",
+  "live_prompt_verification": "DEFERRED_TO_M6",
+  "live_playwright_execution": "DEFERRED_TO_M6",
+  "registry_writes": 0,
+  "applied": false,
+  "note": "Fixture observations only. No real Playwright run, owner consent, registry mutation or CLI execution. A record Command string is data, never an executed command.",
+  "scenario_id": "PROMPT",
+  "acceptance": [
+    "AC-014"
+  ],
+  "command_preimage_sha256": "c562e0a2a2707c49362431b04ac1895f02c091e3d7ae193837ab6bf35b9d8436",
+  "command_preimage_actual_sha256": "c562e0a2a2707c49362431b04ac1895f02c091e3d7ae193837ab6bf35b9d8436",
+  "classification": {
+    "status": "MISSING_CONTRACT",
+    "delta_status": "NOT_IMPLEMENTED",
+    "present": [
+      "environment_gate_named",
+      "registry_trust_boundary",
+      "state_enum"
+    ],
+    "missing": [
+      "base_url",
+      "classification",
+      "named_service",
+      "account_class",
+      "fixture_owner",
+      "network_scope",
+      "operations",
+      "per_operation_approval",
+      "guardian_final",
+      "spec_sha256",
+      "test_node",
+      "assertion_summary",
+      "exit_code",
+      "runner_status",
+      "target_environment",
+      "artifacts",
+      "start_time",
+      "end_time",
+      "redaction_status",
+      "test_counts",
+      "no_auto_install",
+      "agent_browser_off"
+    ],
+    "live_prompt_verification": "DEFERRED_TO_M6",
+    "runtime_enforcement_claimed": false,
+    "security_boundary_claimed": false
+  },
+  "proposed_insertion_sha256": "7693c0427d589e0c423d6b3a704eaf7ffc884fa3b8479bd5ad87fddf076c7cbd",
+  "proposed_insertion_bytes_base64": "KipERUMtMDcvMDgvMDkgc2FmZXR5IGFuZCBldmlkZW5jZSBvdmVycmlkZSoqIOKAlCB0aGVzZSByZXF1aXJlbWVudHMgdGFrZSBwcmVjZWRlbmNlIG92ZXIgY29uZmxpY3RpbmcgYGUyZS1ydW5uZXJgIGRlZmF1bHRzOgoKLSBQcm9kdWN0aW9uIG9yIHVua25vd24gdGFyZ2V0cyBhcmUgYEJMT0NLRURgIGJlZm9yZSBydW5uZXIgZGlzcGF0Y2gsIHByb2Nlc3Mgc3Bhd24sIG9yIG5ldHdvcmsgYWNjZXNzLiBOb24tcHJvZHVjdGlvbiByZXF1aXJlcyBleHBsaWNpdCBvd25lciBhdXRob3JpemF0aW9uIGZvciB0aGUgZXhhY3QgZW52aXJvbm1lbnQgYW5kIGVhY2ggcmVxdWVzdGVkIG9wZXJhdGlvbiwgaW5jbHVkaW5nIGhpZ2gtcmlzayBzaWRlIGVmZmVjdHM7IGEgR3VhcmRpYW4gZGVuaWFsIGlzIGZpbmFsLiBNaXNzaW5nLCB1bmNsZWFyLCBvciBtaXNtYXRjaGVkIGF1dGhvcml6YXRpb24gaXMgYEJMT0NLRURgLgotIFByZWZsaWdodCBtdXN0IGlkZW50aWZ5IHRoZSBiYXNlIFVSTCwgY2xhc3NpZmljYXRpb24sIG5hbWVkIHNlcnZpY2UsIGFjY291bnQgY2xhc3MsIGZpeHR1cmUgb3duZXIsIG5ldHdvcmsgc2NvcGUsIGFuZCBhbGxvd2VkIG11dGF0aW9ucy4gVXNlIHNhZmUgZml4dHVyZXMuIE5ldmVyIGluZmVyIGV4ZWN1dGlvbiBwZXJtaXNzaW9uIGZyb20gcG9saWN5IGFwcHJvdmFsIG9yIGEgcmVnaXN0cnkgZW50cnkuCi0gVXNlIGEgcGVyc2lzdGVudCBQbGF5d3JpZ2h0IHNwZWMgYW5kIGFuIGFscmVhZHktaW5zdGFsbGVkIFBsYXl3cmlnaHQgcnVubmVyOyBuZXZlciBhdXRvLWluc3RhbGwgYSBwYWNrYWdlLCBicm93c2VyLCBvciBDTEkuIEFnZW50IEJyb3dzZXIgaXMgb3B0aW9uYWwsIGRlZmF1bHQgT0ZGLCBhbmQgY2Fubm90IGVzdGFibGlzaCBjb3ZlcmFnZS4gTm8gZXh0ZXJuYWwgYXJ0aWZhY3QgdXBsb2FkIHdpdGhvdXQgYXBwcm92YWwuCi0gVGhlIHJ1bm5lciByZXR1cm5zIG9ic2VydmVkIGB0ZXN0X2lkYCwgZmxvdywgc3BlYyBwYXRoIGFuZCBTSEEtMjU2LCBleGFjdCB0ZXN0IG5vZGUsIGFjdHVhbCBQbGF5d3JpZ2h0IENMSSwgZXhpdCBjb2RlLCBydW5uZXIgc3RhdHVzLCBhc3NlcnRpb24gc3VtbWFyeSwgdGFyZ2V0IGVudmlyb25tZW50LCBhcnRpZmFjdHMsIHN0YXJ0L2VuZCB0aW1lcywgcmVkYWN0aW9uIHN0YXR1cywgYW5kIHRlc3QgY291bnRzLiBOZXZlciBleGVjdXRlIHJlY29yZGVkIHJlZ2lzdHJ5IGBDb21tYW5kOmAgdGV4dCBvciBpbnZlbnQgbWlzc2luZyBldmlkZW5jZS4KLSBgY292ZXJlZGAgcmVxdWlyZXMgbWVhbmluZ2Z1bCBiZWhhdmlvcmFsIGFzc2VydGlvbnMsIGF0IGxlYXN0IG9uZSBleGVjdXRlZCB0ZXN0LCBleGl0IDAsIGFuIGV4YWN0IGlkZW50aXR5IG1hdGNoLCBhbmQgZXhpc3RpbmcgcmVkYWN0ZWQgYXJ0aWZhY3RzIGluc2lkZSB0aGUgc2NvcGVkIGlnbm9yZWQgcm9vdC4gU2tpcHBlZCwgZmlsdGVyZWQsIHplcm8tdGVzdCwgd2VhaywgbWlzc2luZywgaW5jb25zaXN0ZW50LCBvciB1bnZlcmlmaWFibGUgZXZpZGVuY2UgbmV2ZXIgZWFybnMgY292ZXJhZ2U7IGZhaWx1cmVzIHN0YXkgZmFpbHVyZXMsIGFuZCByZXRyaWVzIGFyZSByZXBvcnRlZCBzZXBhcmF0ZWx5LiBQcm9wb3NlIGFueSByZWdpc3RyeSBjaGFuZ2Ugb25seSB1bmRlciBpdHMgc2VwYXJhdGUgYXV0aG9yaXphdGlvbiBnYXRlLgoK",
+  "proposed_insertion_byte_length": 1671,
+  "insertion_ends_with_two_lf": true,
+  "proposed_postimage_sha256": "f3e33e02aba9392308941ff98d5749a0aa50bd74d71684c29ff6afcf2aa1aab1",
+  "command_postimage_actual_sha256": "c562e0a2a2707c49362431b04ac1895f02c091e3d7ae193837ab6bf35b9d8436",
+  "approval_required": "separate exact-diff approval; not granted in M4 plan approval"
+}

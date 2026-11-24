@@ -1,0 +1,90 @@
+{
+  "generated_at": "2026-11-23T00:00:00Z",
+  "milestone": "M2",
+  "method": "node:crypto sha256 over live worktree files (no git, no .guardian-angel)",
+  "status": "RECORDED",
+  "live_prompt_verification": "DEFERRED_TO_M6 (48-scenario acceptance)",
+  "note": "M1 carried no worktree byte-manifest for its own artifacts; this snapshot lets M3+ prove they were not mutated in M2 (no M2 write path appears below).",
+  "files": [
+    {
+      "path": "docs/e2e-v2/SOURCE-BASELINE-FROZEN.md",
+      "sha256": "607f20e315665f35f24d68eecbb8fe26b9bfea5364348e7db36f79376c702f3a"
+    },
+    {
+      "path": "docs/e2e-v2/m1/command-resolution-evidence.md",
+      "sha256": "ccd7e9bc5f7484be4598a6d5fb06a3e255361b9659c627caecbacec232a7ccbf"
+    },
+    {
+      "path": "docs/e2e-v2/m1/detector-characterization.md",
+      "sha256": "ce692da6d4d4671a83ee9ef930b6d09505258de24e13e8857391d502750f195f"
+    },
+    {
+      "path": "docs/e2e-v2/m1/errata/workflow-active-d05.md",
+      "sha256": "d33432ac0d3f10f64c9880605516433c0ed537c65c91dabfbfaccc8e6e984bf7"
+    },
+    {
+      "path": "docs/e2e-v2/m1/reports/F01-F06-map-output-expected.json",
+      "sha256": "abdf0780ac0d675b8abc443a0a069f6102c14d210adaf8825629a552107e0d14"
+    },
+    {
+      "path": "docs/e2e-v2/m1/reports/bundle-validator.report.json",
+      "sha256": "e4e6457fdc97dae9ce8121cc68b3ba9e7a3ada8dcdaf3714522e901236eaaafa"
+    },
+    {
+      "path": "docs/e2e-v2/m1/reports/command-resolution.report.json",
+      "sha256": "bd45bff9f3e3a455013724882b32d5850018f32557919f53217ef4f6a40d4d18"
+    },
+    {
+      "path": "docs/e2e-v2/m1/reports/frozen-hashes.report.json",
+      "sha256": "3fb76e0c1189156c83d8c7203425b2aac3ad4e897e075ee7b87f3b24b7543b21"
+    },
+    {
+      "path": "docs/e2e-v2/m1/reports/journey-grouping.report.json",
+      "sha256": "263214116647d944e8972db1794fca3168b77f2bd5d76ab3cba7b42064b8a5fe"
+    },
+    {
+      "path": "docs/e2e-v2/m1/reports/locale-dedup.report.json",
+      "sha256": "b8ae392ae320aa59bc5f22018023f1eb63b3bcf1ab9a997738adcc793fef0901"
+    },
+    {
+      "path": "docs/e2e-v2/m1/reports/mode-parser.report.json",
+      "sha256": "1e6b31bce67f97ba816b48702dbd833ca00e28120cf0b253dafb855e8a806d9b"
+    },
+    {
+      "path": "docs/e2e-v2/m1/reports/parser-failclosed.report.json",
+      "sha256": "abbfb5a19239fb7291535bbcae89689a0a0007668ff7ba1d053a6a2b1cd49b15"
+    },
+    {
+      "path": "docs/e2e-v2/m1/reports/registry-path.reject.json",
+      "sha256": "d2b2b09d5e65690bad0d54feb8bdca054ed13f7f8c98167c609dcc8b9acca1cc"
+    },
+    {
+      "path": "docs/e2e-v2/m1/reports/scope-check.report.json",
+      "sha256": "60c91c2751cf13ed2ee4f29120fe94d84e007530cc5015362d3bc3b51443d576"
+    },
+    {
+      "path": "docs/e2e-v2/m1/reports/symlink-escape.reject.json",
+      "sha256": "1f5baa3648e151b17e2f1d19f77acc8e52d8d4b94c0d7732ba0ce2a1af20403b"
+    },
+    {
+      "path": "docs/e2e-v2/m1/tests/m1.test.mjs",
+      "sha256": "8c3b54402683aa15fa0196277519965a1518d162b867b0e0c0ad65ee21ac708e"
+    },
+    {
+      "path": "docs/e2e-v2/m1/traceability-m1.md",
+      "sha256": "5cd2299211f855fa8e1ab499df2f43d2ca26d8df91a3054c617524f83d825625"
+    },
+    {
+      "path": "docs/e2e-v2/contracts/command-contract.md",
+      "sha256": "0805b23209688a1ea6bfabc5732b654aad227d551b35dbd04757a5dba0e6666f"
+    },
+    {
+      "path": "docs/e2e-v2/contracts/journey-contract-freeze.md",
+      "sha256": "ccab0abbe28bc5baa8ed49521b061b3ca7fd25951808c1ca522bc12a0440fed9"
+    },
+    {
+      "path": "docs/e2e-v2/contracts/validator-specs.md",
+      "sha256": "5e2efd77da6dce51572293d904d6699aed9a63ac017e230fe214d86a8c772f09"
+    }
+  ]
+}

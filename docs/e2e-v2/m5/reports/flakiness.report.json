@@ -1,0 +1,39 @@
+{
+  "generated_at": "2026-11-23T00:00:00Z",
+  "milestone": "M5",
+  "method": "reference-implementation harness (node --test): docs/e2e-v2/m5/tests/migration.mjs",
+  "status": "EXECUTED",
+  "fixture_provenance": "SYNTHETIC_REFERENCE",
+  "live_prompt_verification": "DEFERRED_TO_M6",
+  "live_playwright_execution": "DEFERRED_TO_M6",
+  "registry_writes": 0,
+  "applied": false,
+  "note": "Fixture observations only. No real browser, runner spawn, registry mutation, config change or CLI execution. Recorded commands are data, never executed.",
+  "scenario_id": "C09",
+  "acceptance": [
+    "AC-018",
+    "C09"
+  ],
+  "fixture": "RETRY",
+  "mapped": {
+    "caseId": "E06",
+    "enum": [
+      "PASS",
+      "FAIL",
+      "BLOCKED",
+      "UNVERIFIED",
+      "CANCELLED",
+      "PARTIAL"
+    ],
+    "allowed": true,
+    "retry": {
+      "retries": 2,
+      "flaky": true
+    },
+    "retryFoldedIntoPass": false,
+    "fabricatedPass": false,
+    "reasons": [],
+    "outcome": "PASS"
+  },
+  "folded_into_pass": false
+}

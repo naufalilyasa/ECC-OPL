@@ -1,0 +1,9 @@
+decision_id,decision_status,correct_topic,consuming_milestone,approved_policy_summary,requirement_ids,prd_acs,gates_before,gates_after
+DEC-04,APPROVED,Legacy /e2e <flow> shorthand,M5,"Deprecate legacy shorthand; migration hint; no implicit execution",E2E-FR-016,AC-017,OPEN/PENDING_DEC,APPROVED
+DEC-05,APPROVED,Explicit run --ad-hoc policy,M2,"Allow explicit run --ad-hoc; isolated sandbox; authorized non-production target; no registry coverage credit",E2E-FR-006,AC-007,OPEN/PENDING_DEC,APPROVED
+DEC-06,APPROVED,Registry bootstrap/write policy,M3,"Registry bootstrap/write requires explicit approval of exact proposed diff",E2E-FR-014/E2E-FR-015,AC-010/AC-011,OPEN/PENDING_DEC,APPROVED
+DEC-07,APPROVED,Per-environment execution authorization,M4,"Non-production only by default; per-environment and operation authorization; production blocked",E2E-FR-011/E2E-NFR-001,AC-008,OPEN/PENDING_DEC,APPROVED
+DEC-09,APPROVED,Agent Browser optional exploration,M4,"Agent Browser optional and default OFF; deterministic Playwright baseline; no auto-install",E2E-NFR-002,AC-012,OPEN/PENDING_DEC,APPROVED
+DEC-10,APPROVED,/e2e-map disable-default after parity,M5,"Disable-default only after parity verification + effective runtime confirmation + rollback readiness",E2E-FR-001 (public command count),AC-001,OPEN/PENDING_DEC,APPROVED
+DEC-11,APPROVED,CI automation policy,M6,"CI automation deferred; not part of active V2.0 implementation",E2E-NFR (future),future,OPEN/PENDING_DEC,APPROVED
+DEC-12,APPROVED,Legacy State: stale schema reconciliation,M5,"stale is journey assessment not Registry State; legacy State: stale needs reviewed migration to valid enum",E2E-FR-013,AC-009,OPEN/PENDING_DEC,APPROVED

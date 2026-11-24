@@ -1,0 +1,170 @@
+{
+  "workflow": "tdd",
+  "phase": "done",
+  "timestamp": "2026-11-22T16:47:01Z",
+  "plan_ref": {
+    "path": "docs/plans/e2e-v2-0-unified-journey-mapping.plan.md",
+    "revision": "r3",
+    "sha256": "ea20d4f2c549b34f54c19f0111c030bbc68aa6cb67833edf6ffd18da9a04b1dd",
+    "scope": "M1",
+    "readiness": "READY_FOR_EXECUTION",
+    "upstream": {
+      "prd": ".claude/prds/e2e-v2-0-unified-journey-mapping.prd.md",
+      "prd_sha256": "bbe563be553147e4ff348622e54a75689db209bd798e85f85a97d739895191a9",
+      "approved_digest": "047918df0835bc7ea52f0d0dc7714f0b29394cce32ad8c2580b2973dfce1d211",
+      "note": "worktree PRD digest includes owner-approval annotation; immutable approved snapshot is 047918df..."
+    },
+    "prerequisites": [
+      {
+        "id": "DEC-04",
+        "stage_blocked": "M5",
+        "status": "APPROVED",
+        "description": "Legacy /e2e <flow> shorthand — deprecate with migration hint, no implicit execution (owner amendment 001)",
+        "approved_at": "2026-11-22"
+      },
+      {
+        "id": "DEC-05",
+        "stage_blocked": "M2",
+        "status": "APPROVED",
+        "description": "Explicit run --ad-hoc policy — isolated sandbox, authorized non-prod target, no registry coverage credit (owner amendment 001)",
+        "approved_at": "2026-11-22"
+      },
+      {
+        "id": "DEC-06",
+        "stage_blocked": "M3",
+        "status": "APPROVED",
+        "description": "Registry bootstrap/write policy — explicit approval of exact proposed diff (owner amendment 001)",
+        "approved_at": "2026-11-22"
+      },
+      {
+        "id": "DEC-07",
+        "stage_blocked": "M4",
+        "status": "APPROVED",
+        "description": "Per-environment execution authorization — non-prod by default, prod blocked (owner amendment 001)",
+        "approved_at": "2026-11-22"
+      },
+      {
+        "id": "DEC-09",
+        "stage_blocked": "M4",
+        "status": "APPROVED",
+        "description": "Agent Browser optional exploration — default OFF, deterministic Playwright baseline, no auto-install (owner amendment 001)",
+        "approved_at": "2026-11-22"
+      },
+      {
+        "id": "DEC-10",
+        "stage_blocked": "M5",
+        "status": "APPROVED",
+        "description": "/e2e-map disable-default — only after parity + effective-runtime confirmation + rollback readiness (owner amendment 001)",
+        "approved_at": "2026-11-22"
+      },
+      {
+        "id": "DEC-11",
+        "stage_blocked": "M6",
+        "status": "APPROVED",
+        "description": "CI automation policy — deferred, not in active V2.0 implementation (owner amendment 001)",
+        "approved_at": "2026-11-22"
+      },
+      {
+        "id": "DEC-12",
+        "stage_blocked": "M5",
+        "status": "APPROVED",
+        "description": "Legacy State: stale schema reconciliation — stale is journey assessment not Registry State; reviewed migration required (owner amendment 001)",
+        "approved_at": "2026-11-22"
+      },
+      {
+        "id": "ASM-01/ARGS",
+        "kind": "technical_validation_gate",
+        "stage_blocked": "M2",
+        "status": "NOT_VERIFIED",
+        "probe": "DEFERRED_TO_M2",
+        "description": "$ARGUMENTS parsing and subcommand/flag passing semantics — must not be marked VERIFIED before probe runs"
+      },
+      {
+        "id": "ASM-01/PRECEDENCE",
+        "kind": "technical_validation_gate",
+        "stage_blocked": "M2",
+        "status": "NOT_VERIFIED",
+        "probe": "DEFERRED_TO_M2",
+        "description": "Project vs dual-global effective command winner — must not be marked VERIFIED before probe runs"
+      },
+      {
+        "id": "ASM-02",
+        "kind": "technical_validation_gate",
+        "stage_blocked": "M2",
+        "status": "NOT_VERIFIED",
+        "probe": "DEFERRED_TO_M2",
+        "description": "Detector portability across F01-F06 stacks — must not be marked VERIFIED before probe runs"
+      }
+    ],
+    "review": {
+      "verdict": "APPROVE",
+      "reviewed_plan_sha256": "ea20d4f2c549b34f54c19f0111c030bbc68aa6cb67833edf6ffd18da9a04b1dd",
+      "blockers_open": 0,
+      "evidence_ref": "docs/plans/e2e-v2-0-plan-review-r3.md"
+    },
+    "approval": {
+      "status": "APPROVED",
+      "record_type": "IMPLEMENTATION_PLAN",
+      "approved_plan_sha256": "ea20d4f2c549b34f54c19f0111c030bbc68aa6cb67833edf6ffd18da9a04b1dd",
+      "approved_by": "Owner",
+      "approved_at": "2026-11-22T15:14:35Z",
+      "evidence_ref": "docs/plans/e2e-v2-0-plan-approval-r3.md"
+    },
+    "redVerified": false
+  },
+  "gates": {
+    "planApproved": true,
+    "redVerified": true
+  },
+  "current_task": "M1",
+  "mode": "FEATURE_OR_BUG",
+  "test_runner": {
+    "command": "node --test",
+    "detected_from": "Node v24.21.0 built-in test runner; M1 deterministic checks are shasum/jq/grep wrapped in node --test",
+    "cwd": "."
+  },
+  "ac_status": {
+    "AC-001": "VERIFIED",
+    "AC-019": "VERIFIED",
+    "A01": "VERIFIED",
+    "A07": "VERIFIED",
+    "B01": "VERIFIED",
+    "B02": "VERIFIED",
+    "B03": "VERIFIED",
+    "B04": "VERIFIED",
+    "B05": "VERIFIED",
+    "B06": "VERIFIED",
+    "D05": "VERIFIED",
+    "E01": "VERIFIED",
+    "E04": "VERIFIED"
+  },
+  "ac_notes": {
+    "D05": "KNOWN_STALE_NOT_MUTATED — see docs/e2e-v2/m1/errata/workflow-active-d05.md; authoritative evidence is frozen-hashes.report.json status NOT_VERIFIED. Left unchanged: not in scope of decision amendment 001."
+  },
+  "pending_tasks": [],
+  "coverage": {
+    "status": "NOT_MEASURED",
+    "note": "M1 has no product code; deterministic artifact assertions, no coverage tool run."
+  },
+  "green_evidence": {
+    "outcome": "PASS",
+    "task_id": "M1",
+    "command": "node --test docs/e2e-v2/m1/tests/m1.test.mjs",
+    "results": "13 pass / 0 fail / 0 skipped",
+    "test_file": "docs/e2e-v2/m1/tests/m1.test.mjs",
+    "test_sha256": "e6322e2501de1490e098e450d61eb53cc05cab744df14a3ba8ee6d31b77a699c",
+    "tap_sha256": "ca9b34824305ff07b16ed604411935963ae24f81a287ea8798c7ab5303bbda2a",
+    "red_evidence": "13 assertion failures on initial stubs (RED_VALID)",
+    "green_evidence": "13/13 assertions pass after M1 artifacts completed"
+  },
+  "red_verified": true,
+  "decision_amendment": {
+    "amendment_id": "DECISION-AMENDMENT-001",
+    "record": "docs/e2e-v2/decisions/DECISION-OWNER-APPROVAL-001.md",
+    "register": "docs/e2e-v2/decisions/DECISION-REGISTER.md",
+    "traceability": "docs/e2e-v2/decisions/REQUIREMENT-TRACEABILITY.csv",
+    "gates": "docs/e2e-v2/decisions/MILESTONE-GATES.json",
+    "owner_decisions_resolved": 8,
+    "asm_gates_not_promoted": true
+  }
+}

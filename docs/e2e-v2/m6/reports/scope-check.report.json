@@ -1,0 +1,951 @@
+{
+  "generated_at": "2026-11-24T05:29:01.540Z",
+  "milestone": "M6",
+  "registry_writes": 0,
+  "applied": false,
+  "fixture_provenance": "SCRATCH_PLAYWRIGHT_LOOPBACK + DETERMINISTIC_REFERENCE",
+  "scenario_id": "SCOPE",
+  "status": "PASS",
+  "acceptance": [
+    "AC-001",
+    "AC-015",
+    "E01",
+    "E04",
+    "E05"
+  ],
+  "allowed_write_root": "docs/e2e-v2/m6/**",
+  "outside_writes": 0,
+  "files": [
+    {
+      "path": "docs/e2e-v2/m6/REPLAY.md",
+      "bytes": 1860
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/CHANGE-REQUEST-AND-AUTHORIZATION.md",
+      "bytes": 693
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/IMPLEMENTATION-REPORT.md",
+      "bytes": 137
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/M5-SAFETY-REMEDIATION.md",
+      "bytes": 266
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/M6-EVIDENCE-CORRECTION.md",
+      "bytes": 129
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/PRODUCT-FIX-REQUEST.md",
+      "bytes": 346
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/README.md",
+      "bytes": 183
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/RELEASE-DECISION.md",
+      "bytes": 184
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/REPLAY.md",
+      "bytes": 138
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/RESIDUALS-AND-GATES.md",
+      "bytes": 239
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/ROLLBACK-AND-DEPLOYMENT-PROPOSAL.md",
+      "bytes": 103
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/RUNTIME-PROBE-PLAN-AND-RESULTS.md",
+      "bytes": 145
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/SCOPE-AND-PARITY.md",
+      "bytes": 250
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/artifact-provenance.json",
+      "bytes": 2197
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/assertion-output-digest-contract.json",
+      "bytes": 285
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/boundary-call-chain-final.json",
+      "bytes": 3374
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/commands-and-exit-codes.jsonl",
+      "bytes": 6520
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/corrections-placeholder-map.json",
+      "bytes": 2593
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/d04-verifier-mutation.json",
+      "bytes": 1092
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/n19-before-after.json",
+      "bytes": 910
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/negative-mutations.json",
+      "bytes": 11084
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/negative-tests.json",
+      "bytes": 15456
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/positive-checks.json",
+      "bytes": 7102
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/positive-tests.json",
+      "bytes": 9123
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/product-boundary-checks.csv",
+      "bytes": 2307
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/product-boundary-summary.json",
+      "bytes": 5794
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/protected-surface-scope.json",
+      "bytes": 737
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/r1-acceptance-ledger.csv",
+      "bytes": 13600
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/r11-acceptance-ledger.csv",
+      "bytes": 23023
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/r11-targeted-checks.json",
+      "bytes": 22485
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/B01.json",
+      "bytes": 133
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/B02.json",
+      "bytes": 253
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/B03.json",
+      "bytes": 274
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/B04.json",
+      "bytes": 133
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/B05.json",
+      "bytes": 133
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/B06.json",
+      "bytes": 133
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/E01.json",
+      "bytes": 133
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/E02.json",
+      "bytes": 133
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/E03.json",
+      "bytes": 133
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/E04.json",
+      "bytes": 133
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/G01.json",
+      "bytes": 133
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/G02.json",
+      "bytes": 133
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/G03.json",
+      "bytes": 133
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/G04.json",
+      "bytes": 129
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/L01.json",
+      "bytes": 129
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/L02.json",
+      "bytes": 231
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/L03.json",
+      "bytes": 189
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/L04.json",
+      "bytes": 189
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/L05.json",
+      "bytes": 189
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/L06.json",
+      "bytes": 189
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/L07.json",
+      "bytes": 145
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/L08.json",
+      "bytes": 146
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/L09.json",
+      "bytes": 146
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/L10.json",
+      "bytes": 133
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/N01.json",
+      "bytes": 137
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/N02.json",
+      "bytes": 137
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/N03.json",
+      "bytes": 137
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/N04.json",
+      "bytes": 137
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/N05.json",
+      "bytes": 137
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/N06.json",
+      "bytes": 137
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/N07.json",
+      "bytes": 137
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/N08.json",
+      "bytes": 137
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/N09.json",
+      "bytes": 137
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/N10.json",
+      "bytes": 137
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/N11.json",
+      "bytes": 137
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/N12.json",
+      "bytes": 137
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/N13.json",
+      "bytes": 137
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/N14.json",
+      "bytes": 137
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/N15.json",
+      "bytes": 137
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/N16.json",
+      "bytes": 137
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/N17.json",
+      "bytes": 137
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/N18.json",
+      "bytes": 137
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/N19.json",
+      "bytes": 249
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/N20.json",
+      "bytes": 137
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/P01.json",
+      "bytes": 133
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/P02.json",
+      "bytes": 133
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/P03.json",
+      "bytes": 133
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/P04.json",
+      "bytes": 133
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/P05.json",
+      "bytes": 133
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/P06.json",
+      "bytes": 179
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/S01.json",
+      "bytes": 275
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/S02.json",
+      "bytes": 133
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/S03.json",
+      "bytes": 133
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/S04.json",
+      "bytes": 177
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/S05.json",
+      "bytes": 133
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/S06.json",
+      "bytes": 254
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/V01.json",
+      "bytes": 133
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/V02.json",
+      "bytes": 133
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/V03.json",
+      "bytes": 133
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/V04.json",
+      "bytes": 133
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/V05.json",
+      "bytes": 133
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/V06.json",
+      "bytes": 133
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/V07.json",
+      "bytes": 133
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/V08.json",
+      "bytes": 133
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/V09.json",
+      "bytes": 133
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/V10.json",
+      "bytes": 133
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/V11.json",
+      "bytes": 133
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/receipts/V12.json",
+      "bytes": 133
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/red-green/V611-11-suite.log",
+      "bytes": 838
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/red-green/m6-corrections-GREEN.log",
+      "bytes": 1201
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/red-green/m6-corrections-RED.log",
+      "bytes": 32417
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/red-green/m6-corrections-tdd.json",
+      "bytes": 2647
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/red-green/m6-full-suite-GREEN.log",
+      "bytes": 5883
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/red-green-command-log.jsonl",
+      "bytes": 384
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/red-tests.json",
+      "bytes": 516
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/rollback-deployment-proposal.json",
+      "bytes": 2151
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/runtime-probe-plan.json",
+      "bytes": 2512
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/M611-A01.json",
+      "bytes": 350
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/M611-A02.json",
+      "bytes": 350
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/M611-A03.json",
+      "bytes": 350
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/M611-A04.json",
+      "bytes": 350
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/M611-A05.json",
+      "bytes": 350
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/M611-A06.json",
+      "bytes": 350
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/M611-A07.json",
+      "bytes": 350
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/M611-A08.json",
+      "bytes": 350
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/M611-B01.json",
+      "bytes": 350
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/M611-B02.json",
+      "bytes": 350
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/M611-B03.json",
+      "bytes": 350
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/M611-B04.json",
+      "bytes": 350
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/M611-B05.json",
+      "bytes": 350
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/M611-B06.json",
+      "bytes": 350
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/M611-B07.json",
+      "bytes": 350
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/M611-B08.json",
+      "bytes": 350
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/M611-C01.json",
+      "bytes": 350
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/M611-C02.json",
+      "bytes": 350
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/M611-C03.json",
+      "bytes": 350
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/M611-C04.json",
+      "bytes": 350
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/M611-C05.json",
+      "bytes": 350
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/M611-C06.json",
+      "bytes": 350
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/M611-C07.json",
+      "bytes": 350
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/M611-D01.json",
+      "bytes": 350
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/M611-D02.json",
+      "bytes": 351
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/M611-D03.json",
+      "bytes": 350
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/M611-D04.json",
+      "bytes": 351
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/M611-D05.json",
+      "bytes": 580
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/M611-E01.json",
+      "bytes": 350
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/M611-E02.json",
+      "bytes": 350
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/M611-E03.json",
+      "bytes": 350
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/M611-E04.json",
+      "bytes": 350
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/M611-E05.json",
+      "bytes": 350
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/M611-E06.json",
+      "bytes": 350
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/M611-F01.json",
+      "bytes": 350
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/M611-F02.json",
+      "bytes": 350
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/M611-F03.json",
+      "bytes": 350
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/M611-F04.json",
+      "bytes": 350
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/M611-F05.json",
+      "bytes": 350
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/M611-F06.json",
+      "bytes": 350
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/N611-01.json",
+      "bytes": 349
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/N611-02.json",
+      "bytes": 349
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/N611-03.json",
+      "bytes": 349
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/N611-04.json",
+      "bytes": 349
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/N611-05.json",
+      "bytes": 349
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/N611-06.json",
+      "bytes": 349
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/N611-07.json",
+      "bytes": 349
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/N611-08.json",
+      "bytes": 349
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/N611-09.json",
+      "bytes": 349
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/N611-10.json",
+      "bytes": 349
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/N611-11.json",
+      "bytes": 349
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/N611-12.json",
+      "bytes": 349
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/N611-13.json",
+      "bytes": 349
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/N611-14.json",
+      "bytes": 349
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/N611-15.json",
+      "bytes": 349
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/N611-16.json",
+      "bytes": 349
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/N611-17.json",
+      "bytes": 350
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/N611-18.json",
+      "bytes": 349
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/N611-19.json",
+      "bytes": 349
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/N611-20.json",
+      "bytes": 349
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/V611-01.json",
+      "bytes": 349
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/V611-02.json",
+      "bytes": 349
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/V611-03.json",
+      "bytes": 349
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/V611-04.json",
+      "bytes": 349
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/V611-05.json",
+      "bytes": 349
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/V611-06.json",
+      "bytes": 349
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/V611-07.json",
+      "bytes": 349
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/V611-08.json",
+      "bytes": 349
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/V611-09.json",
+      "bytes": 349
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/V611-10.json",
+      "bytes": 349
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/V611-11.json",
+      "bytes": 772
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scenario-receipts/V611-12.json",
+      "bytes": 349
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/scope-and-frozen-hashes.json",
+      "bytes": 4111
+    },
+    {
+      "path": "docs/e2e-v2/m6/evidence/simulated-gate-results.json",
+      "bytes": 4061
+    },
+    {
+      "path": "docs/e2e-v2/m6/reports/acceptance-ledger.json",
+      "bytes": 54917
+    },
+    {
+      "path": "docs/e2e-v2/m6/reports/coverage.report.json",
+      "bytes": 1451
+    },
+    {
+      "path": "docs/e2e-v2/m6/reports/env-boundary.report.json",
+      "bytes": 624
+    },
+    {
+      "path": "docs/e2e-v2/m6/reports/m6-decision-packet.json",
+      "bytes": 4973
+    },
+    {
+      "path": "docs/e2e-v2/m6/reports/m6-preflight.report.json",
+      "bytes": 8862
+    },
+    {
+      "path": "docs/e2e-v2/m6/reports/mutation-suite.report.json",
+      "bytes": 5182
+    },
+    {
+      "path": "docs/e2e-v2/m6/reports/parity-audit.report.json",
+      "bytes": 4224
+    },
+    {
+      "path": "docs/e2e-v2/m6/reports/playwright-execution.report.json",
+      "bytes": 6086
+    },
+    {
+      "path": "docs/e2e-v2/m6/reports/prompt-conformance.report.json",
+      "bytes": 1935
+    },
+    {
+      "path": "docs/e2e-v2/m6/reports/scope-check.report.json",
+      "bytes": 24881
+    },
+    {
+      "path": "docs/e2e-v2/m6/scripts/emit-m6-reports.mjs",
+      "bytes": 17113
+    },
+    {
+      "path": "docs/e2e-v2/m6/scripts/emit-r1-evidence.mjs",
+      "bytes": 23744
+    },
+    {
+      "path": "docs/e2e-v2/m6/scripts/emit-r11-evidence.mjs",
+      "bytes": 25295
+    },
+    {
+      "path": "docs/e2e-v2/m6/scripts/release-decision.mjs",
+      "bytes": 2155
+    },
+    {
+      "path": "docs/e2e-v2/m6/scripts/verify-package.mjs",
+      "bytes": 1750
+    },
+    {
+      "path": "docs/e2e-v2/m6/tdd-record.md",
+      "bytes": 13764
+    },
+    {
+      "path": "docs/e2e-v2/m6/tests/acceptance-ledger.mjs",
+      "bytes": 39147
+    },
+    {
+      "path": "docs/e2e-v2/m6/tests/conformance.test.mjs",
+      "bytes": 4411
+    },
+    {
+      "path": "docs/e2e-v2/m6/tests/fixtures.mjs",
+      "bytes": 11862
+    },
+    {
+      "path": "docs/e2e-v2/m6/tests/m6-corrections.test.mjs",
+      "bytes": 11125
+    },
+    {
+      "path": "docs/e2e-v2/m6/tests/m6.test.mjs",
+      "bytes": 22926
+    },
+    {
+      "path": "docs/e2e-v2/m6/tests/mutation-suite.mjs",
+      "bytes": 9680
+    },
+    {
+      "path": "docs/e2e-v2/m6/tests/r1-1-correctness.test.mjs",
+      "bytes": 3844
+    },
+    {
+      "path": "docs/e2e-v2/m6/tests/r1-correctness.test.mjs",
+      "bytes": 5106
+    },
+    {
+      "path": "docs/e2e-v2/m6/tests/registry-state.mjs",
+      "bytes": 458
+    },
+    {
+      "path": "docs/e2e-v2/m6/tests/scratch-runner.mjs",
+      "bytes": 9187
+    },
+    {
+      "path": "docs/e2e-v2/m6/traceability-m6.md",
+      "bytes": 11724
+    }
+  ],
+  "frozen_trees": {
+    "trees": [
+      {
+        "name": "m1",
+        "expectedFiles": 16,
+        "observedFiles": 16,
+        "expectedSha256": "8416c0671af8ae60850d9d72f249968976c907cf4aa62b605d663bd5eb1625ca",
+        "observedSha256": "8416c0671af8ae60850d9d72f249968976c907cf4aa62b605d663bd5eb1625ca",
+        "encoding": "sorted repo-relative path<TAB>sha256<LF>",
+        "historical_expected_sha256": "8416c0671af8ae60850d9d72f249968976c907cf4aa62b605d663bd5eb1625ca",
+        "historical_match": true,
+        "match_basis": "HISTORICAL_BASELINE",
+        "match": true
+      },
+      {
+        "name": "m2",
+        "expectedFiles": 27,
+        "observedFiles": 27,
+        "expectedSha256": "2f81da73f2068357f4265a3cfbaf6a9435a3e502d52dcd32d33b3b445fc97588",
+        "observedSha256": "2f81da73f2068357f4265a3cfbaf6a9435a3e502d52dcd32d33b3b445fc97588",
+        "encoding": "sorted repo-relative path<TAB>sha256<LF>",
+        "historical_expected_sha256": "2f81da73f2068357f4265a3cfbaf6a9435a3e502d52dcd32d33b3b445fc97588",
+        "historical_match": true,
+        "match_basis": "HISTORICAL_BASELINE",
+        "match": true
+      },
+      {
+        "name": "m3",
+        "expectedFiles": 17,
+        "observedFiles": 17,
+        "expectedSha256": "2e8c7cf63a44b3d073185be0a4fe59de87fd9583ffc79abc6066b151066e23c7",
+        "observedSha256": "2e8c7cf63a44b3d073185be0a4fe59de87fd9583ffc79abc6066b151066e23c7",
+        "encoding": "sorted repo-relative path<TAB>sha256<LF>",
+        "historical_expected_sha256": "2e8c7cf63a44b3d073185be0a4fe59de87fd9583ffc79abc6066b151066e23c7",
+        "historical_match": true,
+        "match_basis": "HISTORICAL_BASELINE",
+        "match": true
+      },
+      {
+        "name": "m4",
+        "expectedFiles": 20,
+        "observedFiles": 20,
+        "expectedSha256": "88c50d13760dd24dd47b9e5f2a2d8aa707b0f008abcf19b06fa7370641bc7807",
+        "observedSha256": "88c50d13760dd24dd47b9e5f2a2d8aa707b0f008abcf19b06fa7370641bc7807",
+        "encoding": "sorted repo-relative path<TAB>sha256<LF>",
+        "historical_expected_sha256": "88c50d13760dd24dd47b9e5f2a2d8aa707b0f008abcf19b06fa7370641bc7807",
+        "historical_match": true,
+        "match_basis": "HISTORICAL_BASELINE",
+        "match": true
+      },
+      {
+        "name": "m5",
+        "expectedFiles": 23,
+        "observedFiles": 29,
+        "expectedSha256": "267c3b8bce980c97cadfc54b815fb79190d9a8f9f6951cb29ae92839dbf7b014",
+        "observedSha256": "524a975360ae6f244bc3e20908fafaa8fd17937231ada2388e74f9aca737b189",
+        "encoding": "sorted repo-relative path<TAB>sha256<LF>",
+        "historical_expected_sha256": "267c3b8bce980c97cadfc54b815fb79190d9a8f9f6951cb29ae92839dbf7b014",
+        "historical_match": false,
+        "amendment": {
+          "after_sha256": "524a975360ae6f244bc3e20908fafaa8fd17937231ada2388e74f9aca737b189",
+          "change_request": "E2E-V2-M5-SAFETY-REMEDIATION-01",
+          "helper_before": "146c8cfd51e8f01679d08784077c0bd7e565747efa508ce392417e94de781f11",
+          "helper_after": "b5bb301655b713e484e449cb2e2549794b56a8307d0fec727a1ca96ac26cff80",
+          "scope": "REFERENCE_ONLY (docs/e2e-v2/m5/tests/migration.mjs helpers only)"
+        },
+        "match_basis": "APPROVED_AMENDMENT",
+        "match": true
+      },
+      {
+        "name": "contracts",
+        "expectedFiles": 3,
+        "observedFiles": 3,
+        "expectedSha256": "a550f29ea751c7635cdc5d73bbc2e6a0a29d7cdf7153e43f23e429a4f4e05e8c",
+        "observedSha256": "a550f29ea751c7635cdc5d73bbc2e6a0a29d7cdf7153e43f23e429a4f4e05e8c",
+        "encoding": "sorted repo-relative path<TAB>sha256<LF>",
+        "historical_expected_sha256": "a550f29ea751c7635cdc5d73bbc2e6a0a29d7cdf7153e43f23e429a4f4e05e8c",
+        "historical_match": true,
+        "match_basis": "HISTORICAL_BASELINE",
+        "match": true
+      }
+    ],
+    "allMatch": true
+  },
+  "frozen_trees_all_match": true,
+  "registry_absent": {
+    "TESTS.md": true,
+    ".governance/docs-map.json": true
+  },
+  "bundle_ids": {
+    "ok": true,
+    "count": 48,
+    "duplicates": []
+  },
+  "scenarios": [
+    "E01",
+    "E04",
+    "E05"
+  ]
+}

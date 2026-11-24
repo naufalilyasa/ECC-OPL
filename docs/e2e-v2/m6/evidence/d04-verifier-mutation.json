@@ -1,0 +1,9 @@
+{
+  "receipt": "evidence/red-green/d04-verifier-mutation.json",
+  "baseline_sha256": "064bd09e4414e47f70242317fe7e72366af024229bd019af864ac1cd43160eef",
+  "mutated_sha256": "a6bb5823e8af222059be94ff6709dfed58ed17549e93140e0b2edfc3e2c310aa",
+  "hash_changed": true,
+  "exit_code": 1,
+  "diagnostic": "node:fs:483\n    return binding.readFileUtf8(path, stringToFlags(options.flag));\n                   ^\n\nError: ENOENT: no such file or directory, open '/private/var/folders/xq/22yplbd15tz0jj4hnsr1m11c0000gp/T/m611-d04-MsS844/pkg/SHA256-MANIFEST.json'\n    at readFileSync (node:fs:483:20)\n    at file:///Users/ctp-itdev2/ECC/docs/e2e-v2/m6/scripts/verify-package.mjs:9:29\n    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\n    at async node:internal/modules/esm/loader:647:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {\n  errno: -2,\n  code: 'ENOENT',\n  syscall: 'open',\n  path: '/private/var/folders/xq/22yplbd15tz0jj4hnsr1m11c0000gp/T/m611-d04-MsS844/pkg/SHA256-MANIFEST.json'\n}\n\nNode.js v24.21.0",
+  "status": "PASS"
+}

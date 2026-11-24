@@ -1,0 +1,64 @@
+{
+  "generated_at": "2026-11-24T05:29:01.540Z",
+  "milestone": "M6",
+  "registry_writes": 0,
+  "applied": false,
+  "fixture_provenance": "STATIC_READ_ONLY",
+  "scenario_id": "PROMPT",
+  "status": "PASS",
+  "acceptance": [
+    "AC-001",
+    "AC-020",
+    "A01",
+    "D01"
+  ],
+  "live_prompt_verification": "NOT_RUN",
+  "runtime_enforcement_claimed": false,
+  "command_preimages": [
+    {
+      "name": "command_e2e",
+      "path": "./.opencode/commands/e2e.md",
+      "expected_sha256": "c562e0a2a2707c49362431b04ac1895f02c091e3d7ae193837ab6bf35b9d8436",
+      "observed_sha256": "c562e0a2a2707c49362431b04ac1895f02c091e3d7ae193837ab6bf35b9d8436",
+      "match": true
+    },
+    {
+      "name": "command_e2e_map",
+      "path": "./.opencode/commands/e2e-map.md",
+      "expected_sha256": "76b3d4037a0144df2d40dc0eca01777690762a7cccc5d9562b0330333dfdb142",
+      "observed_sha256": "76b3d4037a0144df2d40dc0eca01777690762a7cccc5d9562b0330333dfdb142",
+      "match": true
+    }
+  ],
+  "project_config": {
+    "name": "opencode.project.json",
+    "path": "./.opencode/opencode.json",
+    "expected_sha256": "01e3d4405c4351cde1460e782da9aa80f0aa6a6796bc3bb149be1b12bcc63e84",
+    "observed_sha256": "01e3d4405c4351cde1460e782da9aa80f0aa6a6796bc3bb149be1b12bcc63e84",
+    "match": true
+  },
+  "owner_config_drift": {
+    "path": "$HOME/.config/opencode/opencode.jsonc",
+    "observed_sha256": "b194d4b4343e7d20fdb82ba6f12387bd739e553bbf7f4cfb4501d67d3c49f719",
+    "observed_at": "2026-11-24T05:29:01.540Z",
+    "owner_authorized": true,
+    "affects_pass_fail": false,
+    "compared_to_constant": false,
+    "modification_or_restoration_performed": false,
+    "note": "Computed from the active file during this run; observational only."
+  },
+  "registry_absent": {
+    "TESTS.md": true,
+    ".governance/docs-map.json": true
+  },
+  "scenarios": [
+    "A01",
+    "A02",
+    "A03",
+    "A04",
+    "A05",
+    "A06",
+    "A07",
+    "A08"
+  ]
+}

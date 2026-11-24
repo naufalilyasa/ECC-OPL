@@ -1,0 +1,43 @@
+{
+  "generated_at": "2026-11-23T00:00:00Z",
+  "milestone": "M4",
+  "method": "reference-implementation harness (node --test): docs/e2e-v2/m4/tests/runner.mjs",
+  "status": "EXECUTED",
+  "fixture_provenance": "SYNTHETIC_REFERENCE",
+  "live_prompt_verification": "DEFERRED_TO_M6",
+  "live_playwright_execution": "DEFERRED_TO_M6",
+  "registry_writes": 0,
+  "applied": false,
+  "note": "Fixture observations only. No real Playwright run, owner consent, registry mutation or CLI execution. A record Command string is data, never an executed command.",
+  "scenario_id": "D02",
+  "acceptance": [
+    "AC-011",
+    "E2E-FR-011"
+  ],
+  "fixture": "F12",
+  "synthetic_inputs": {
+    "mode": "run|full",
+    "classification": "non-production|production|unknown",
+    "guardian": "ALLOW|DENY"
+  },
+  "approved": {
+    "outcome": "ALLOW",
+    "dispatch_spy_calls": 1
+  },
+  "production": {
+    "outcome": "BLOCKED",
+    "dispatch_spy_calls": 0,
+    "reason": "classification \"production\" is not an approved non-production target; base URL is not parseable; missing named service; missing account class; missing fixture owner; missing network scope; missing requested operation list; authorization environment mismatch"
+  },
+  "guardian_denial": {
+    "outcome": "BLOCKED",
+    "dispatch_spy_calls": 0
+  },
+  "d02_oracle": {
+    "detected": false,
+    "expectedDispatchCount": 1,
+    "observedDispatchCount": 0,
+    "reason": "no unsafe dispatch observed"
+  },
+  "execution": "NOT_RUN"
+}

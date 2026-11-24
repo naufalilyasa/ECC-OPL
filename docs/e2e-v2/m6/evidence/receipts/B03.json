@@ -1,0 +1,7 @@
+{
+  "scenario_id": "B03",
+  "expected": "\"PRODUCT_WRITER_VALIDATED_PASS\"",
+  "actual": "{\"result\":\"PRODUCT_WRITER_VALIDATED_PASS\",\"race_safe\":false,\"source\":\"docs/e2e-v2/m5/tests/migration.mjs\"}",
+  "status": "PASS",
+  "created_at": "2026-11-24T05:20:28.130Z"
+}

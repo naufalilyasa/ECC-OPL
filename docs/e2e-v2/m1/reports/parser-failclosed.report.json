@@ -1,0 +1,26 @@
+{
+  "generated_at": "2026-11-22T16:05:00Z",
+  "scenario_id": "A07",
+  "stimulus": "unknown/conflicting/injection args",
+  "expected": "fail closed + usage message",
+  "method": "parser negative test",
+  "status": "NOT_RUN",
+  "deferred_to": "M2",
+  "deferred_reason": "No parser exists in M1 by design. This artifact is the frozen negative matrix the M2 parser must satisfy; it records no execution outcome.",
+  "spec_of_record": "docs/e2e-v2/contracts/validator-specs.md §1",
+  "negative_cases": 9,
+  "observed_results": null,
+  "cases": [
+    { "id": "PS-01", "input_class": "unknown mode", "required_outcome": "fail closed + usage listing the 6 modes", "runner_status": "NOT_RUN" },
+    { "id": "PS-02", "input_class": "conflicting modes", "required_outcome": "fail closed, no mode selected", "runner_status": "NOT_RUN" },
+    { "id": "PS-03", "input_class": "duplicate flags", "required_outcome": "fail closed, no execution", "runner_status": "NOT_RUN" },
+    { "id": "PS-04", "input_class": "empty arguments after run", "required_outcome": "resolve to no-args preview, never run with empty target", "runner_status": "NOT_RUN" },
+    { "id": "PS-05", "input_class": "shell metacharacters (; rm)", "required_outcome": "fail closed before any shell boundary", "runner_status": "NOT_RUN" },
+    { "id": "PS-06", "input_class": "command substitution $(...)", "required_outcome": "fail closed, no interpolation, no network", "runner_status": "NOT_RUN" },
+    { "id": "PS-07", "input_class": "backtick substitution", "required_outcome": "fail closed, literal text only", "runner_status": "NOT_RUN" },
+    { "id": "PS-08", "input_class": "newline smuggling", "required_outcome": "fail closed, one mode per invocation", "runner_status": "NOT_RUN" },
+    { "id": "PS-09", "input_class": "Command: containing shell text", "required_outcome": "never executed; treated as untrusted data", "runner_status": "NOT_RUN", "evidence_artifact": "command-not-executed.trace.json" }
+  ],
+  "requirement_ids": ["E2E-FR-001", "E2E-FR-020", "E2E-NFR-002"],
+  "prd_ac": "AC-001"
+}

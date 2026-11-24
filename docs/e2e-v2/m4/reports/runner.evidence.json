@@ -1,0 +1,62 @@
+{
+  "generated_at": "2026-11-23T00:00:00Z",
+  "milestone": "M4",
+  "method": "reference-implementation harness (node --test): docs/e2e-v2/m4/tests/runner.mjs",
+  "status": "EXECUTED",
+  "fixture_provenance": "SYNTHETIC_REFERENCE",
+  "live_prompt_verification": "DEFERRED_TO_M6",
+  "live_playwright_execution": "DEFERRED_TO_M6",
+  "registry_writes": 0,
+  "applied": false,
+  "note": "Fixture observations only. No real Playwright run, owner consent, registry mutation or CLI execution. A record Command string is data, never an executed command.",
+  "scenario_id": "C04",
+  "acceptance": [
+    "AC-012",
+    "AC-014"
+  ],
+  "fixture": "F10",
+  "envelope": "synthetic — see docs/e2e-v2/m4/tests/fixtures.mjs (no invented live CLI or timestamps)",
+  "valid": true,
+  "fixture_verdict": "PASS_VERIFIED",
+  "execution_state": "EXECUTED",
+  "checks": {
+    "required": {
+      "ok": true
+    },
+    "identity": {
+      "ok": true,
+      "reasons": []
+    },
+    "spec": {
+      "ok": true,
+      "reasons": []
+    },
+    "counts": {
+      "ok": true,
+      "reasons": []
+    },
+    "assertion": {
+      "ok": true,
+      "reasons": []
+    },
+    "artifacts": {
+      "ok": true,
+      "reasons": []
+    },
+    "redaction": {
+      "ok": true,
+      "reasons": []
+    }
+  },
+  "count_comparison": {
+    "current": "fixture test/assertion counts",
+    "prior": "fixture prior-stage counts",
+    "unchanged_ok": true,
+    "test_drop_anomaly": [
+      "tests decreased from 4 to 3"
+    ],
+    "complete_eligible": false
+  },
+  "actual_cli": "NOT_RUN",
+  "live_coverage_credit": false
+}

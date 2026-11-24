@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-11-23T00:00:00Z",
+  "milestone": "M5",
+  "method": "reference-implementation harness (node --test): docs/e2e-v2/m5/tests/migration.mjs",
+  "status": "EXECUTED",
+  "fixture_provenance": "SYNTHETIC_REFERENCE",
+  "live_prompt_verification": "DEFERRED_TO_M6",
+  "live_playwright_execution": "DEFERRED_TO_M6",
+  "registry_writes": 0,
+  "applied": false,
+  "note": "Fixture observations only. No real browser, runner spawn, registry mutation, config change or CLI execution. Recorded commands are data, never executed.",
+  "scenario_id": "D04",
+  "acceptance": [
+    "AC-016",
+    "E2E-FR-016"
+  ],
+  "fixture": "F09",
+  "symlink_escape": {
+    "allowed": false,
+    "code": "SYMLINK_ESCAPE",
+    "realPath": "/private/var/folders/xq/22yplbd15tz0jj4hnsr1m11c0000gp/T/opencode/m5-emit-sym-UCJNo1/outside/TESTS.md"
+  }
+}

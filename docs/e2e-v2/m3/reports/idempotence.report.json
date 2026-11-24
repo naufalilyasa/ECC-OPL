@@ -1,0 +1,47 @@
+{
+  "generated_at": "2026-11-23T00:00:00Z",
+  "milestone": "M3",
+  "method": "reference-implementation harness (node --test): docs/e2e-v2/m3/tests/registry.mjs",
+  "status": "EXECUTED",
+  "live_prompt_verification": "DEFERRED_TO_M6 (48-scenario acceptance)",
+  "scenario_id": "B09",
+  "acceptance": [
+    "AC-009",
+    "E2E-FR-009"
+  ],
+  "fixture": "F07 replayed twice",
+  "cases": [
+    {
+      "case_id": "B09",
+      "input": "replay #1",
+      "result": {
+        "applied": true,
+        "changes": 5,
+        "new_ids": 0
+      }
+    },
+    {
+      "case_id": "B09",
+      "input": "replay #2",
+      "result": {
+        "applied": true,
+        "changes": 0,
+        "new_ids": 0
+      }
+    },
+    {
+      "case_id": "B09",
+      "input": "genuinely new flow",
+      "result": {
+        "caseId": "B09",
+        "id": "TEST-E2E-003",
+        "journey": "refund flow",
+        "source": "/refund",
+        "requiresApproval": true,
+        "writes": 0
+      }
+    }
+  ],
+  "second_replay_byte_identical": true,
+  "new_ids_total": 0
+}

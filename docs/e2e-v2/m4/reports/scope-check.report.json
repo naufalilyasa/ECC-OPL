@@ -1,0 +1,65 @@
+{
+  "generated_at": "2026-11-23T00:00:00Z",
+  "milestone": "M4",
+  "scenario_id": "M4-SCOPE",
+  "status": "PASS",
+  "fixture_provenance": "SYNTHETIC_REFERENCE",
+  "live_prompt_verification": "DEFERRED_TO_M6",
+  "live_playwright_execution": "DEFERRED_TO_M6",
+  "registry_writes": 0,
+  "write_scope": {
+    "allowed": "docs/e2e-v2/m4/**",
+    "actual_written": [
+      "docs/e2e-v2/m4/tests/fixtures.mjs",
+      "docs/e2e-v2/m4/tests/runner.mjs",
+      "docs/e2e-v2/m4/tests/m4.test.mjs",
+      "docs/e2e-v2/m4/tests/conformance.test.mjs",
+      "docs/e2e-v2/m4/tests/prompt-conformance.strict.mjs",
+      "docs/e2e-v2/m4/scripts/emit-m4-reports.mjs",
+      "docs/e2e-v2/m4/reports/m4-preflight.report.json",
+      "docs/e2e-v2/m4/reports/env-gating.report.json",
+      "docs/e2e-v2/m4/reports/blocked-dependency.report.json",
+      "docs/e2e-v2/m4/reports/handoff.request.json",
+      "docs/e2e-v2/m4/reports/runner.evidence.json",
+      "docs/e2e-v2/m4/reports/weak-assertion.report.json",
+      "docs/e2e-v2/m4/reports/fail-downgrade.report.json",
+      "docs/e2e-v2/m4/reports/artifact-redaction.report.json",
+      "docs/e2e-v2/m4/reports/mutation-suite.report.json",
+      "docs/e2e-v2/m4/reports/prompt-conformance.report.json",
+      "docs/e2e-v2/m4/reports/coverage.report.json",
+      "docs/e2e-v2/m4/reports/scope-check.report.json",
+      "docs/e2e-v2/m4/tdd-record.md",
+      "docs/e2e-v2/m4/traceability-m4.md"
+    ],
+    "temporary_scratch": "mkdtemp under /private/var/folders/xq/22yplbd15tz0jj4hnsr1m11c0000gp/T/opencode, removed by owning test via literal-path rmSync",
+    "outside_writes": 0
+  },
+  "forbidden_surface": {
+    "git_operations": "NONE",
+    "git_or_guardian_angel_access": "NONE",
+    "product_code_edits": "NONE",
+    "network": "NONE",
+    "browser_or_playwright_execution_or_install": "NONE",
+    "dependency_install": "NONE",
+    "registry_write": "NONE (0 in every report)",
+    "active_home_write": "NONE",
+    "command_preimage_edit": "NONE — .opencode/commands/e2e.md remains c562e0a2...",
+    "TESTS_md": "ABSENT",
+    "docs_map": "ABSENT"
+  },
+  "frozen_trees": { "m1": "IDENTICAL", "m2": "IDENTICAL", "m3": "IDENTICAL", "contracts": "IDENTICAL" },
+  "prompt_delta": {
+    "status": "PROPOSAL_ONLY",
+    "applied": false,
+    "separate_exact_diff_approval_required": true,
+    "command_preimage_sha256": "c562e0a2a2707c49362431b04ac1895f02c091e3d7ae193837ab6bf35b9d8436",
+    "proposed_insertion_sha256": "7693c0427d589e0c423d6b3a704eaf7ffc884fa3b8479bd5ad87fddf076c7cbd",
+    "proposed_postimage_sha256": "f3e33e02aba9392308941ff98d5749a0aa50bd74d71684c29ff6afcf2aa1aab1"
+  },
+  "gates_not_verified": [
+    "ASM-01/ARGS", "ASM-01/PRECEDENCE", "ASM-02",
+    "D05 Guardian/Git policy/core behavior",
+    "AC-015", "AC-016", "AC-017", "AC-018"
+  ],
+  "limitations": "Filesystem snapshots cover named allowed sources only. They do not prove no network/process activity or inspect .git/Guardian Angel."
+}

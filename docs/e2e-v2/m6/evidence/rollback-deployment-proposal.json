@@ -1,0 +1,57 @@
+{
+  "change_request": "E2E-V2-M5-SAFETY-REMEDIATION-01",
+  "status": "PROPOSAL_ONLY_NOT_APPLIED",
+  "candidate_scope": "No live installation, no disable-default, no registry migration. This is a backup/rollback rehearsal plan for a future separately authorized P5 operation.",
+  "files": [
+    {
+      "path": ".opencode/commands/e2e.md",
+      "sha256": "c562e0a2a2707c49362431b04ac1895f02c091e3d7ae193837ab6bf35b9d8436",
+      "bytes": 11929
+    },
+    {
+      "path": ".opencode/commands/e2e-map.md",
+      "sha256": "76b3d4037a0144df2d40dc0eca01777690762a7cccc5d9562b0330333dfdb142",
+      "bytes": 5123
+    },
+    {
+      "path": ".opencode/prompts/agents/e2e-runner.txt",
+      "sha256": "d7442445cbb276cb88d6cca5339b50ec3247683ed78ea512ccf4627ed666ad08",
+      "bytes": 8070
+    },
+    {
+      "path": "agents/e2e-runner.md",
+      "sha256": "94811f4bbc491c351cdf220ab103d6bd251fb1d88d9d46ba4c8162637a236a5b",
+      "bytes": 5079
+    }
+  ],
+  "backup_plan": {
+    "location": "disposable scratch (0700) outside discovery roots; exact root assigned at execution time",
+    "rule": "per-file byte copy + SHA-256 + mode; no overwrite of unrelated later changes; expected-current-state hash check before any apply"
+  },
+  "apply_rehearsal": [
+    "Copy each candidate file into disposable 0700 scratch preserve bytes/mode",
+    "Compute before hashes and backup manifest",
+    "Apply candidate discovery/disable transformation ONLY to scratch copies",
+    "Verify intended transformed bytes and parity expectations"
+  ],
+  "rollback_rehearsal": [
+    "Restore from backup into scratch by byte comparison",
+    "Assert each restored file SHA-256 equals recorded before hash",
+    "Assert no file outside scratch changed; sentinel outside root unchanged",
+    "Report ROLLBACK_VERIFIED with exact 5-file digest list or precise failure"
+  ],
+  "gates": {
+    "P5_OWNER_DEPLOYMENT_AUTHORIZATION": "NOT_GIVEN",
+    "disable_default": "BLOCKED_DEPLOYMENT_GATED",
+    "applied": false
+  },
+  "frozen_workflows": [
+    "/plan-prd",
+    "/plan",
+    "/tdd",
+    "/code-review-quick",
+    "/refactor-clean",
+    "Guardian Angel",
+    "security chains"
+  ]
+}

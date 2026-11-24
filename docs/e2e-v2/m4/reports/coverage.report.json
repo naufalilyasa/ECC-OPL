@@ -1,0 +1,51 @@
+{
+  "generated_at": "2026-11-23T00:00:00Z",
+  "milestone": "M4",
+  "fixture_provenance": "SYNTHETIC_REFERENCE",
+  "live_prompt_verification": "DEFERRED_TO_M6",
+  "live_playwright_execution": "DEFERRED_TO_M6",
+  "registry_writes": 0,
+  "node_version_observed": "v24.21.0",
+  "tool": "node --experimental-test-coverage (built-in; no dependency installed)",
+  "threshold": { "lines": 80, "branches": 80, "functions": 80 },
+  "targets": [
+    {
+      "module": "docs/e2e-v2/m4/tests/runner.mjs",
+      "command": "TMPDIR=/private/var/folders/xq/22yplbd15tz0jj4hnsr1m11c0000gp/T/opencode node --experimental-test-coverage --test-coverage-include=docs/e2e-v2/m4/tests/runner.mjs --test-coverage-lines=80 --test-coverage-branches=80 --test-coverage-functions=80 --test docs/e2e-v2/m4/tests/*.test.mjs",
+      "exit_code": 0,
+      "lines_percent": 100.0,
+      "branches_percent": 84.93,
+      "functions_percent": 89.19,
+      "status": "PASS",
+      "raw_line": "runner.mjs | 100.00 | 84.93 | 89.19"
+    },
+    {
+      "module": "docs/e2e-v2/m4/scripts/emit-m4-reports.mjs",
+      "command": "TMPDIR=/private/var/folders/xq/22yplbd15tz0jj4hnsr1m11c0000gp/T/opencode node --experimental-test-coverage --test-coverage-include=docs/e2e-v2/m4/scripts/emit-m4-reports.mjs --test-coverage-lines=80 --test-coverage-branches=80 --test-coverage-functions=80 --test docs/e2e-v2/m4/tests/*.test.mjs",
+      "exit_code": 0,
+      "lines_percent": 100.0,
+      "branches_percent": 94.74,
+      "functions_percent": 83.33,
+      "status": "PASS",
+      "raw_line": "emit-m4-reports.mjs | 100.00 | 94.74 | 83.33"
+    }
+  ],
+  "pooling": "none — each module measured separately; percentages are not averaged",
+  "coverage_history": [
+    {
+      "stage": "first runner.mjs measurement",
+      "lines_percent": 95.74,
+      "branches_percent": 78.40,
+      "functions_percent": 89.19,
+      "exit_code": 1,
+      "status": "FAIL",
+      "failure": "78.40% branch coverage does not meet threshold of 80%",
+      "remediation": "added branch-focused tests (unapproved operation/wildcard, bypass dependency short-circuit, tampered allowlist, non-regular artifact, missing/uninspectable inputs) and removed two redundant symlink-component loops already covered by realpath containment"
+    }
+  ],
+  "not_measured": [
+    "prompt prose (static text; no code coverage claim)",
+    "fixture data files and test-only files (not production modules)",
+    "project-wide coverage from these targets (this is per-module only)"
+  ]
+}

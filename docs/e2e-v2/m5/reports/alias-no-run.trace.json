@@ -1,0 +1,61 @@
+{
+  "generated_at": "2026-11-23T00:00:00Z",
+  "milestone": "M5",
+  "method": "reference-implementation harness (node --test): docs/e2e-v2/m5/tests/migration.mjs",
+  "status": "EXECUTED",
+  "fixture_provenance": "SYNTHETIC_REFERENCE",
+  "live_prompt_verification": "DEFERRED_TO_M6",
+  "live_playwright_execution": "DEFERRED_TO_M6",
+  "registry_writes": 0,
+  "applied": false,
+  "note": "Fixture observations only. No real browser, runner spawn, registry mutation, config change or CLI execution. Recorded commands are data, never executed.",
+  "scenario_id": "D07",
+  "acceptance": [
+    "AC-017",
+    "DEC-04"
+  ],
+  "fixture": "F13",
+  "legacy_inputs": [
+    {
+      "caseId": "D07",
+      "runnerInvocations": 0,
+      "dispatched": false,
+      "coverageCredit": false,
+      "registry_writes": 0,
+      "applied": false,
+      "outcome": "LEGACY_SHORTHAND_DEPRECATED",
+      "flow": "auth",
+      "subcommand": "auth",
+      "hint": "Use /e2e run <flow> or /e2e map",
+      "migrationTarget": "/e2e run <flow> or /e2e map"
+    },
+    {
+      "caseId": "D07",
+      "runnerInvocations": 0,
+      "dispatched": false,
+      "coverageCredit": false,
+      "registry_writes": 0,
+      "applied": false,
+      "outcome": "LEGACY_SHORTHAND_DEPRECATED",
+      "flow": "checkout",
+      "subcommand": "checkout",
+      "hint": "Use /e2e run <flow> or /e2e map",
+      "migrationTarget": "/e2e run <flow> or /e2e map"
+    },
+    {
+      "caseId": "D07",
+      "runnerInvocations": 0,
+      "dispatched": false,
+      "coverageCredit": false,
+      "registry_writes": 0,
+      "applied": false,
+      "outcome": "LEGACY_SHORTHAND_DEPRECATED",
+      "flow": "payment",
+      "subcommand": "payment",
+      "hint": "Use /e2e run <flow> or /e2e map",
+      "migrationTarget": "/e2e run <flow> or /e2e map"
+    }
+  ],
+  "runner_invocations": 0,
+  "coverage_credit": false
+}

@@ -1,0 +1,30 @@
+{
+  "generated_at": "2026-11-24T05:29:01.540Z",
+  "milestone": "M6",
+  "registry_writes": 0,
+  "applied": false,
+  "fixture_provenance": "SCRATCH_PLAYWRIGHT_LOOPBACK + DETERMINISTIC_REFERENCE",
+  "scenario_id": "D02",
+  "status": "PASS",
+  "acceptance": [
+    "AC-011",
+    "D02",
+    "C08",
+    "C12"
+  ],
+  "target_label": "E2E_NONPROD_LOCAL_FIXTURE",
+  "production_target": "BLOCKED",
+  "production_code": "BLOCKED_PRODUCTION_TARGET",
+  "real_credentials_used": 0,
+  "synthetic_token": "REDACTED_IN_ARTIFACTS",
+  "scenarios": [
+    "C01",
+    "C02",
+    "C03",
+    "C08",
+    "C09",
+    "C11",
+    "C12",
+    "D02"
+  ]
+}

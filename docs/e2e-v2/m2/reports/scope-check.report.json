@@ -1,0 +1,140 @@
+{
+  "generated_at": "2026-11-23T00:00:00Z",
+  "scenario_id": "E04",
+  "milestone": "M2",
+  "method": "node:crypto sha256 over live worktree files; static path allowlist; no git, no .guardian-angel",
+  "status": "PASS",
+  "scope": "ECC-OPL M2: docs/e2e-v2/m2/, docs/plans/ (plan input), .opencode/commands/e2e.md (authorized)",
+  "allowed_write_roots": [
+    "docs/e2e-v2/m2/",
+    "docs/plans/",
+    ".opencode/commands/e2e.md"
+  ],
+  "repo_sources": [
+    {
+      "path": ".opencode/commands/e2e.md",
+      "frozen_sha256": "08b17f2cb765665b753374265bc8f78df2599c3505c2245107dd6888061b95dd",
+      "actual_sha256": "1fe90046b445b2ce1753211851799e231526f9c5aed0e13cf3c8060d70097074",
+      "status": "AUTHORIZED_DELTA"
+    },
+    {
+      "path": ".opencode/commands/e2e-map.md",
+      "frozen_sha256": "76b3d4037a0144df2d40dc0eca01777690762a7cccc5d9562b0330333dfdb142",
+      "actual_sha256": "76b3d4037a0144df2d40dc0eca01777690762a7cccc5d9562b0330333dfdb142",
+      "status": "UNTOUCHED"
+    },
+    {
+      "path": "agents/e2e-runner.md",
+      "frozen_sha256": "94811f4bbc491c351cdf220ab103d6bd251fb1d88d9d46ba4c8162637a236a5b",
+      "actual_sha256": "94811f4bbc491c351cdf220ab103d6bd251fb1d88d9d46ba4c8162637a236a5b",
+      "status": "UNTOUCHED"
+    },
+    {
+      "path": ".opencode/prompts/agents/e2e-runner.txt",
+      "frozen_sha256": "d7442445cbb276cb88d6cca5339b50ec3247683ed78ea512ccf4627ed666ad08",
+      "actual_sha256": "d7442445cbb276cb88d6cca5339b50ec3247683ed78ea512ccf4627ed666ad08",
+      "status": "UNTOUCHED"
+    },
+    {
+      "path": "legacy-command-shims/commands/e2e.md",
+      "frozen_sha256": "97ef29c9355344bd25b4e963e519f3eaf5b0c6f43a9174f47c9c5d1b4dbb579e",
+      "actual_sha256": "97ef29c9355344bd25b4e963e519f3eaf5b0c6f43a9174f47c9c5d1b4dbb579e",
+      "status": "UNTOUCHED"
+    },
+    {
+      "path": "skills/test-collaboration/SKILL.md",
+      "frozen_sha256": "741138330940e2c9d3cc7bec9e671787f24a361ff89be44e09a56abc8e10dcfa",
+      "actual_sha256": "741138330940e2c9d3cc7bec9e671787f24a361ff89be44e09a56abc8e10dcfa",
+      "status": "UNTOUCHED"
+    },
+    {
+      "path": "skills/e2e-testing/SKILL.md",
+      "frozen_sha256": "b0e00e7e17cb259101139900816c5528aed18dd10bcf5f9cb42cfc35baf8a755",
+      "actual_sha256": "b0e00e7e17cb259101139900816c5528aed18dd10bcf5f9cb42cfc35baf8a755",
+      "status": "UNTOUCHED"
+    },
+    {
+      "path": "skills/click-path-audit/SKILL.md",
+      "frozen_sha256": "662fc5d02483bcd8ff799d6d3109a38da673182341cfc14445e9076fcd920162",
+      "actual_sha256": "662fc5d02483bcd8ff799d6d3109a38da673182341cfc14445e9076fcd920162",
+      "status": "UNTOUCHED"
+    }
+  ],
+  "authorized_delta_count": 1,
+  "authorized_delta": [
+    {
+      "path": ".opencode/commands/e2e.md",
+      "frozen_sha256": "08b17f2cb765665b753374265bc8f78df2599c3505c2245107dd6888061b95dd",
+      "actual_sha256": "1fe90046b445b2ce1753211851799e231526f9c5aed0e13cf3c8060d70097074",
+      "status": "AUTHORIZED_DELTA"
+    }
+  ],
+  "guardrails": [
+    {
+      "path": ".opencode/commands/e2e-map.md",
+      "sha256": "76b3d4037a0144df2d40dc0eca01777690762a7cccc5d9562b0330333dfdb142",
+      "writes_by_m2": 0
+    },
+    {
+      "path": ".opencode/workflows/active.json",
+      "sha256": "32ec37786bb4742f65b1a4b8c9ca74fe26ca29114d28a2c71006e143899ca050",
+      "writes_by_m2": 0
+    },
+    {
+      "path": "agents/e2e-runner.md",
+      "sha256": "94811f4bbc491c351cdf220ab103d6bd251fb1d88d9d46ba4c8162637a236a5b",
+      "writes_by_m2": 0
+    },
+    {
+      "path": ".opencode/prompts/agents/e2e-runner.txt",
+      "sha256": "d7442445cbb276cb88d6cca5339b50ec3247683ed78ea512ccf4627ed666ad08",
+      "writes_by_m2": 0
+    }
+  ],
+  "frozen_m1_artifact_count": 20,
+  "frozen_m1_manifest": "docs/e2e-v2/m2/reports/frozen-artifacts.manifest.json",
+  "written_files": [
+    "docs/e2e-v2/m2/reports/F01-map-output.json",
+    "docs/e2e-v2/m2/reports/F02-map-output.json",
+    "docs/e2e-v2/m2/reports/F03-map-output.json",
+    "docs/e2e-v2/m2/reports/F04-F06-map-output.json",
+    "docs/e2e-v2/m2/reports/command-not-executed.trace.json",
+    "docs/e2e-v2/m2/reports/command-resolution.report.json",
+    "docs/e2e-v2/m2/reports/frozen-artifacts.manifest.json",
+    "docs/e2e-v2/m2/reports/journey-grouping.report.json",
+    "docs/e2e-v2/m2/reports/locale-dedup.report.json",
+    "docs/e2e-v2/m2/reports/m2-preflight.report.json",
+    "docs/e2e-v2/m2/reports/parser-failclosed.report.json",
+    "docs/e2e-v2/m2/reports/prompt-injection.report.json",
+    "docs/e2e-v2/m2/reports/registry-path.reject.json",
+    "docs/e2e-v2/m2/reports/scope-check.report.json",
+    "docs/e2e-v2/m2/reports/stale-assessment.report.json",
+    "docs/e2e-v2/m2/reports/symlink-escape.reject.json",
+    "docs/e2e-v2/m2/scripts/emit-map-reports.mjs",
+    "docs/e2e-v2/m2/scripts/emit-reports.mjs",
+    "docs/e2e-v2/m2/scripts/emit-scope-check.mjs",
+    "docs/e2e-v2/m2/tdd-record.md",
+    "docs/e2e-v2/m2/tests/detector.mjs",
+    "docs/e2e-v2/m2/tests/fixtures.mjs",
+    "docs/e2e-v2/m2/tests/m2.test.mjs",
+    "docs/e2e-v2/m2/tests/parser.mjs",
+    "docs/e2e-v2/m2/tests/resolver.mjs",
+    "docs/e2e-v2/m2/tests/validators.mjs",
+    "docs/e2e-v2/m2/traceability-m2.md",
+    "docs/plans/e2e-v2-0-m2-unified-interface.plan.md",
+    ".opencode/commands/e2e.md"
+  ],
+  "written_file_count": 29,
+  "violations": [],
+  "violation_count": 0,
+  "home_writes": 0,
+  "git_access": false,
+  "guardian_angel_access": false,
+  "browser_or_playwright_runs": 0,
+  "installs": 0,
+  "registry_writes": 0,
+  "tests_md_created": false,
+  "e2e_map_disabled": false,
+  "workflow_active_json_written": false,
+  "live_prompt_verification": "DEFERRED_TO_M6 (48-scenario acceptance)"
+}

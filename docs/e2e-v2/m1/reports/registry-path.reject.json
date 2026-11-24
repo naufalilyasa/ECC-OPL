@@ -1,0 +1,28 @@
+{
+  "generated_at": "2026-11-22T16:05:00Z",
+  "scenario_id": "B11",
+  "stimulus": "registry ../../ atau symlink escape",
+  "expected": "rejected sebelum write",
+  "method": "path validator",
+  "status": "NOT_RUN",
+  "deferred_to": "M2",
+  "deferred_reason": "Registry path resolution is M2/M3 implementation. M1 freezes the rejection matrix only; no path was resolved and no write was attempted.",
+  "spec_of_record": "docs/e2e-v2/contracts/validator-specs.md §2",
+  "observed_results": null,
+  "cases": [
+    { "id": "RP-01", "input_class": "absolute registry path (/etc/TESTS.md)", "required_outcome": "REJECT", "runner_status": "NOT_RUN" },
+    { "id": "RP-02", "input_class": "parent traversal ../../TESTS.md", "required_outcome": "REJECT", "runner_status": "NOT_RUN" },
+    { "id": "RP-03", "input_class": "symlinked TESTS.md resolving outside repo", "required_outcome": "REJECT on realpath check before write", "runner_status": "NOT_RUN" },
+    { "id": "RP-04", "input_class": "docs-map mapping to an external directory", "required_outcome": "REJECT, docs-map is untrusted data", "runner_status": "NOT_RUN" },
+    { "id": "RP-05", "input_class": "dual-location conflict (TESTS.md vs docs-map)", "required_outcome": "STOP, do not pick a winner", "runner_status": "NOT_RUN" },
+    { "id": "RP-06", "input_class": "Test file field absolute or containing ..", "required_outcome": "REJECT spec path, registry untouched", "runner_status": "NOT_RUN" }
+  ],
+  "baseline_facts": {
+    "TESTS_md_present": false,
+    "governance_docs_map_present": false,
+    "resolution_consequence": "Registry resolves to root TESTS.md; registry bootstrap is a proposal only (PENDING_DEC DEC-06)."
+  },
+  "writes_performed": false,
+  "requirement_ids": ["E2E-FR-015", "E2E-NFR-003"],
+  "prd_ac": "AC-016"
+}

@@ -1,0 +1,99 @@
+{
+  "generated_at": "2026-11-23T00:00:00Z",
+  "milestone": "M2",
+  "method": "reference-implementation harness (node --test): docs/e2e-v2/m2/tests/detector.mjs over docs/e2e-v2/m2/tests/fixtures.mjs",
+  "status": "EXECUTED",
+  "live_prompt_verification": "DEFERRED_TO_M6 (48-scenario acceptance)",
+  "writes_performed": false,
+  "scenario_id": "B05",
+  "stimulus": "locale variants + journeys",
+  "expected": "satu parameterized flow; beberapa rute jadi satu journey",
+  "spec_of_record": "docs/e2e-v2/contracts/journey-contract-freeze.md §3 (D1, D3)",
+  "fixture_ids": [
+    "F01",
+    "F04",
+    "F05"
+  ],
+  "observed_results": {
+    "F01": {
+      "journeys": 3,
+      "dashboard": {
+        "journey_key": "next-app:dashboard:authenticated",
+        "name": "dashboard",
+        "actor": "authenticated",
+        "risk": "critical",
+        "confidence": "partial",
+        "routes": [
+          "/[locale]/dashboard",
+          "/en/dashboard",
+          "/id/dashboard"
+        ],
+        "alternate_paths": [
+          "/en/dashboard",
+          "/id/dashboard"
+        ],
+        "sources": [
+          "app/(grp)/[locale]/dashboard/page.tsx:1",
+          "app/(grp)/en/dashboard/page.tsx:1",
+          "app/(grp)/id/dashboard/page.tsx:1"
+        ]
+      }
+    },
+    "F04": {
+      "journeys": 2
+    }
+  },
+  "assertions": [
+    {
+      "id": "LD-01",
+      "rule": "D1",
+      "assertion": "en/, id/ and [locale]/ mirrors of one page produce exactly one journey_key with a locale parameter",
+      "expected": "journey_count == 1",
+      "observed": 1,
+      "runner_status": "PASS"
+    },
+    {
+      "id": "LD-02",
+      "rule": "D1",
+      "assertion": "no page appears twice across locale variants",
+      "expected": "distinct (name, actors) count == journey count",
+      "observed": "3 distinct / 3 journeys",
+      "runner_status": "PASS"
+    },
+    {
+      "id": "LD-03",
+      "rule": "D1",
+      "assertion": "locale variants are recorded in alternate_paths[], not as new journeys",
+      "expected": "alternate_paths non-empty, journeys unchanged",
+      "observed": [
+        "/en/dashboard",
+        "/id/dashboard"
+      ],
+      "runner_status": "PASS"
+    },
+    {
+      "id": "LD-04",
+      "rule": "D3",
+      "assertion": "two role-dependent paths are only merged when each carries an actor label",
+      "expected": "merged == false without actors",
+      "observed": "2 journeys for 2 unlabelled paths",
+      "runner_status": "PASS"
+    },
+    {
+      "id": "LD-05",
+      "rule": "D2",
+      "assertion": "several routes with the same outcome/actor/state/risk produce one journey",
+      "expected": "routes 3 -> journeys 1",
+      "observed": [
+        "/products",
+        "/products/:id",
+        "/products/:id/edit"
+      ],
+      "runner_status": "PASS"
+    }
+  ],
+  "requirement_ids": [
+    "E2E-FR-019"
+  ],
+  "prd_ac": "AC-019"
+}

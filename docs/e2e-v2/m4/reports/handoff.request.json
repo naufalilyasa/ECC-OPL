@@ -1,0 +1,33 @@
+{
+  "generated_at": "2026-11-23T00:00:00Z",
+  "milestone": "M4",
+  "method": "reference-implementation harness (node --test): docs/e2e-v2/m4/tests/runner.mjs",
+  "status": "EXECUTED",
+  "fixture_provenance": "SYNTHETIC_REFERENCE",
+  "live_prompt_verification": "DEFERRED_TO_M6",
+  "live_playwright_execution": "DEFERRED_TO_M6",
+  "registry_writes": 0,
+  "applied": false,
+  "note": "Fixture observations only. No real Playwright run, owner consent, registry mutation or CLI execution. A record Command string is data, never an executed command.",
+  "scenario_id": "C01",
+  "acceptance": [
+    "AC-014",
+    "E2E-FR-013"
+  ],
+  "fixture": "F07/F10",
+  "handoff": {
+    "id": "TEST-E2E-001",
+    "spec": "tests/e2e/checkout.spec.ts",
+    "node": "checkout completes to confirmation",
+    "expectation": "order confirmation rendered with a non-empty order id",
+    "environment": "E2E_NONPROD_LOCAL_FIXTURE@http://127.0.0.1:4321",
+    "allowedCommand": "npx playwright test tests/e2e/checkout.spec.ts --reporter=json"
+  },
+  "dispatch_count": 0,
+  "independent_binding": {
+    "bound": true,
+    "reasons": [],
+    "fixtureVerdict": "PASS_VERIFIED"
+  },
+  "credit_eligible": false
+}

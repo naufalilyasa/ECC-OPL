@@ -1,0 +1,56 @@
+{
+  "artifact": "command-resolution.report.json",
+  "milestone": "M2",
+  "phase": "Phase 1 — ASM-01 probe",
+  "generated_at": "2026-11-23T00:00:00Z",
+  "method": "isolated sandbox probe under privacy temp dir, HOME redirected; real $HOME configs read-only; no .git / .guardian-angel access; no installs; no external network target",
+  "result": "INCONCLUSIVE",
+  "status": "INCONCLUSIVE",
+  "subassertions": {
+    "ASM-01/ARGS": {
+      "status": "INCONCLUSIVE",
+      "gate_state": "VALIDATION_REQUIRED (not promoted)",
+      "runtime_observation": "No channel in opencode v2.3.2 expands a command template without a model turn; command templates are exposed only as name+description via GET /api/command, so $ARGUMENTS substitution could not be observed without a network/model invocation, which this milestone forbids.",
+      "supporting_local_evidence": [
+        "~/.config/opencode/MIGRATION.md:176 documents the command shape {\"template\": \"... $ARGUMENTS\"} for user input.",
+        "~/.config/opencode/MIGRATION.md:190 and :333 document $ARGUMENTS as the placeholder inside a command template.",
+        "Both declared e2e surfaces use template \"{file:commands/e2e.md}\\n\\n$ARGUMENTS\" (project .opencode/opencode.json and global ~/.config/opencode/opencode.json), i.e. the raw argument string is appended after the file body."
+      ],
+      "consequence_for_m2": "M2 prompt-side grammar must treat the trailing argument string as one opaque token sequence and parse it itself; it must not rely on runtime-side subcommand or flag semantics."
+    },
+    "ASM-01/PRECEDENCE": {
+      "status": "INCONCLUSIVE",
+      "gate_state": "VALIDATION_REQUIRED (not promoted)",
+      "runtime_observations": [
+        "The running service instance on this machine is scoped to $HOME (/Users/ctp-itdev2), project id 1fefe641128ea1aa473fc97ea01f455a4877573f. GET /api/location reports directory /Users/ctp-itdev2 even when invoked from cwd /Users/ctp-itdev2/ECC, and the location[directory] query parameter does not re-scope it.",
+        "GET /api/command from that instance returns 88 commands = 76 global ~/.config/opencode/commands/*.md (75 listed after one name collision) + 13 plugin-provided commands, with 0 entries from the ECC project .opencode/commands/ set (46 files). The effective command set for this workspace is therefore global-only.",
+        "opencode --standalone in an isolated sandbox project (HOME redirected, project/.opencode/commands/e2e.md present, global home/.config/opencode/commands/e2e.md present, config commands.e2e sentinel present) reports location = the sandbox project and project id \"global\", but GET /api/command returns data: [] — no command discovery in a cold private instance. The isolated probe channel is therefore unavailable.",
+        "opencode --standalone debug config inside the sandbox proves the redirected surfaces are read: it lists the sandbox document with commands.e2e = {template: SENTINEL-B-TEMPLATE $ARGUMENTS, description: SENTINEL-B-GLOBALJSON}.",
+        "Real-surface merge order reported by opencode debug config: global opencode.json, global opencode.jsonc, directory ~/.config/opencode, directory ~/.opencode, project ECC/.opencode/opencode.json, directory ECC/.opencode (project last).",
+        "The two e2e markdown templates that could be consulted are byte-identical: ~/.config/opencode/commands/e2e.md and /Users/ctp-itdev2/ECC/.opencode/commands/e2e.md both hash 08b17f2cb765665b753374265bc8f78df2599c3505c2245107dd6888061b95dd, matching the frozen baseline. No content-level discrimination between the two roots is possible even if a run were permitted."
+      ],
+      "why_not_promoted": "Producing a winner requires executing /e2e help in each of candidates A-D and reading the echoed sentinel. Every available invocation path expands a command template only through a model turn (session.command / session.prompt), which is a network and cost action excluded by the milestone guardrails. Reporting a winner from source-order alone would be an assumption, not evidence.",
+      "consequence_for_m2": "M2 output is contract-bound to behaviour, not to a file location, so the unresolved winner does not block the parser, validators, resolver or fixture work. Live prompt verification stays DEFERRED_TO_M6 and the gate stays VALIDATION_REQUIRED. M5 parity/disable-default work (DEC-10) must treat the winner as unknown."
+    }
+  },
+  "candidates_attempted": [
+    { "id": "A", "config": "project override only", "executed": false, "reason": "no command-discovery output in a cold private instance (data: [])" },
+    { "id": "B", "config": "global opencode.json only", "executed": false, "reason": "same cold-instance limitation; config surface proven read via debug config" },
+    { "id": "C", "config": "dual global (json + jsonc)", "executed": false, "reason": "same cold-instance limitation" },
+    { "id": "D", "config": "project + both globals", "executed": false, "reason": "same cold-instance limitation" }
+  ],
+  "ARGS-ECHO": "NOT_OBSERVED",
+  "sandbox": {
+    "path": "<privacy-temp>/opencode/m2-probe",
+    "cleanup": "deleted; existence check returned removed:true",
+    "real_home_writes": "none"
+  },
+  "real_config_rehash_after_probe": [
+    { "path": "~/.config/opencode/opencode.json", "hash": "bd747d4f42d22e7c0dc1f14b65e815b043117083fd548292489509c653e26843", "unchanged": true },
+    { "path": "~/.config/opencode/opencode.jsonc", "hash": "9263d862ba18d99054bbb932b974fbf423312e282059ff11add59e8ee7c1e551", "unchanged": true },
+    { "path": "~/.config/opencode/commands/e2e.md", "hash": "08b17f2cb765665b753374265bc8f78df2599c3505c2245107dd6888061b95dd", "unchanged": true }
+  ],
+  "gates_promoted": 0,
+  "live_prompt_verification": "DEFERRED_TO_M6",
+  "conclusion": "ASM-01/ARGS and ASM-01/PRECEDENCE remain VALIDATION_REQUIRED. The probe is recorded as executed-and-inconclusive with raw observations, not as verified. No gate in MILESTONE-GATES.json is amended by this report."
+}

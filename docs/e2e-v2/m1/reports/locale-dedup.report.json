@@ -1,0 +1,22 @@
+{
+  "generated_at": "2026-11-22T16:05:00Z",
+  "scenario_id": "B05",
+  "stimulus": "locale variants + journeys",
+  "expected": "satu parameterized flow; beberapa rute jadi satu journey",
+  "method": "dedup assertion",
+  "status": "NOT_RUN",
+  "deferred_to": "M2",
+  "deferred_reason": "Assertions require a journey map to assert over. M1 froze the rules; no route was discovered and no journey was mapped.",
+  "spec_of_record": "docs/e2e-v2/contracts/journey-contract-freeze.md §3 (D1, D3)",
+  "observed_results": null,
+  "assertions": [
+    { "id": "LD-01", "rule": "D1", "assertion": "en/, id/ and [locale]/ mirrors of one page produce exactly one journey_key with a locale parameter", "expected": "journey_count == 1", "runner_status": "NOT_RUN" },
+    { "id": "LD-02", "rule": "D1", "assertion": "no page appears twice across locale variants", "expected": "distinct (name, actors) count == journey count", "runner_status": "NOT_RUN" },
+    { "id": "LD-03", "rule": "D1", "assertion": "locale variants are recorded in alternate_paths[], not as new journeys", "expected": "alternate_paths non-empty, journeys unchanged", "runner_status": "NOT_RUN" },
+    { "id": "LD-04", "rule": "D3", "assertion": "two role-dependent paths are only merged when each carries an actor label", "expected": "merged == false without actors", "runner_status": "NOT_RUN" },
+    { "id": "LD-05", "rule": "D2", "assertion": "several routes with the same outcome/actor/state/risk produce one journey", "expected": "routes 3 -> journeys 1", "runner_status": "NOT_RUN" }
+  ],
+  "requirement_ids": ["E2E-FR-019"],
+  "prd_ac": "AC-019",
+  "fixture_ids": ["F01", "F04", "F05"]
+}

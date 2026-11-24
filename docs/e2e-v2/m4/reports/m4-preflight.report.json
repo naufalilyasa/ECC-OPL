@@ -1,0 +1,57 @@
+{
+  "generated_at": "2026-11-23T00:00:00Z",
+  "milestone": "M4",
+  "scenario_id": "M4-0",
+  "status": "PASS",
+  "scope": "upstream hash + frozen-tree + absence verification before and after M4 reference implementation",
+  "method": "read-only shasum -a 256 (verified) + Node node:crypto tree hashing; no .git/.guardian-angel access",
+  "fixture_provenance": "SYNTHETIC_REFERENCE",
+  "live_prompt_verification": "DEFERRED_TO_M6",
+  "live_playwright_execution": "DEFERRED_TO_M6",
+  "registry_writes": 0,
+  "plan": {
+    "path": "docs/plans/e2e-v2-0-m4-runner-evidence.plan.md",
+    "revision": "r3",
+    "expected_sha256": "848f35c350c6f7c73bf4afd28d59352b314031ffe08315c852300ac141215b34",
+    "actual_sha256": "848f35c350c6f7c73bf4afd28d59352b314031ffe08315c852300ac141215b34",
+    "status": "MATCH"
+  },
+  "review_evidence": "docs/plans/e2e-v2-0-m4-plan-review-r3.md (APPROVE, 0 blockers, body byte-identical to approved r2 2aa1a0e9...)",
+  "approval_evidence": "docs/plans/e2e-v2-0-m4-plan-approval-r3.md (APPROVED by Owner, 2026-11-23T04:55:00Z, plan r3)",
+  "pinned_hashes": [
+    { "label": "PRD canonical (R1 bundle PRD-CANDIDATE.md)", "expected": "047918df0835bc7ea52f0d0dc7714f0b29394cce32ad8c2580b2973dfce1d211", "actual": "047918df0835bc7ea52f0d0dc7714f0b29394cce32ad8c2580b2973dfce1d211", "status": "MATCH" },
+    { "label": "PRD worktree annotation copy", "expected": "bbe563be553147e4ff348622e54a75689db209bd798e85f85a97d739895191a9", "actual": "bbe563be553147e4ff348622e54a75689db209bd798e85f85a97d739895191a9", "status": "MATCH" },
+    { "label": "BUNDLE SHA256-MANIFEST.json", "expected": "6cf52ecd57a537578d0caf444b2bf0e914aae96c93e77a9c89e33c4d48083747", "actual": "6cf52ecd57a537578d0caf444b2bf0e914aae96c93e77a9c89e33c4d48083747", "status": "MATCH" },
+    { "label": "BUNDLE ACCEPTANCE-MATRIX.csv", "expected": "400d3fcc22c48fb75f85ee22aeb0de23d0d0bbcf9dd776ae33aeb2ec88789caf", "actual": "400d3fcc22c48fb75f85ee22aeb0de23d0d0bbcf9dd776ae33aeb2ec88789caf", "status": "MATCH" },
+    { "label": "DECISION-REGISTER.md", "expected": "cd848701e25fddf6ab33c5853a2bd93a791e0786b225dc8534be912c4c03d223", "actual": "cd848701e25fddf6ab33c5853a2bd93a791e0786b225dc8534be912c4c03d223", "status": "MATCH" },
+    { "label": "MILESTONE-GATES.json", "expected": "00c6b4550a130fcec4e20abda25919b9a08fe4b493b9439687865d70d017c8e5", "actual": "00c6b4550a130fcec4e20abda25919b9a08fe4b493b9439687865d70d017c8e5", "status": "MATCH" },
+    { "label": "M6-ENV-AUTHORIZATION-PROPOSAL.md (policy only)", "expected": "bc7b6afae7aa3178df78b109f31fe69e6ca222be5208fe70dabd31d601989cf4", "actual": "bc7b6afae7aa3178df78b109f31fe69e6ca222be5208fe70dabd31d601989cf4", "status": "MATCH" },
+    { "label": "m3-final-state-snapshot.json", "expected": "0a8af7dbaa772cfe89cb5373c6658697624e7cf2ed28f3fcbea3b00f964f3e2d", "actual": "0a8af7dbaa772cfe89cb5373c6658697624e7cf2ed28f3fcbea3b00f964f3e2d", "status": "MATCH" },
+    { "label": "command preimage .opencode/commands/e2e.md", "expected": "c562e0a2a2707c49362431b04ac1895f02c091e3d7ae193837ab6bf35b9d8436", "actual": "c562e0a2a2707c49362431b04ac1895f02c091e3d7ae193837ab6bf35b9d8436", "status": "MATCH" },
+    { "label": "agents/e2e-runner.md (read-only)", "expected": "94811f4bbc491c351cdf220ab103d6bd251fb1d88d9d46ba4c8162637a236a5b", "actual": "94811f4bbc491c351cdf220ab103d6bd251fb1d88d9d46ba4c8162637a236a5b", "status": "MATCH" },
+    { "label": ".opencode/prompts/agents/e2e-runner.txt (read-only)", "expected": "d7442445cbb276cb88d6cca5339b50ec3247683ed78ea512ccf4627ed666ad08", "actual": "d7442445cbb276cb88d6cca5339b50ec3247683ed78ea512ccf4627ed666ad08", "status": "MATCH" }
+  ],
+  "frozen_tree_manifests": [
+    { "tree": "docs/e2e-v2/m1", "expected_count": 16, "actual_count": 16, "expected_hash": "8416c0671af8ae60850d9d72f249968976c907cf4aa62b605d663bd5eb1625ca", "actual_hash_before": "8416c0671af8ae60850d9d72f249968976c907cf4aa62b605d663bd5eb1625ca", "actual_hash_after": "8416c0671af8ae60850d9d72f249968976c907cf4aa62b605d663bd5eb1625ca", "status": "IDENTICAL" },
+    { "tree": "docs/e2e-v2/m2", "expected_count": 27, "actual_count": 27, "expected_hash": "2f81da73f2068357f4265a3cfbaf6a9435a3e502d52dcd32d33b3b445fc97588", "actual_hash_before": "2f81da73f2068357f4265a3cfbaf6a9435a3e502d52dcd32d33b3b445fc97588", "actual_hash_after": "2f81da73f2068357f4265a3cfbaf6a9435a3e502d52dcd32d33b3b445fc97588", "status": "IDENTICAL" },
+    { "tree": "docs/e2e-v2/m3", "expected_count": 17, "actual_count": 17, "expected_hash": "2e8c7cf63a44b3d073185be0a4fe59de87fd9583ffc79abc6066b151066e23c7", "actual_hash_before": "2e8c7cf63a44b3d073185be0a4fe59de87fd9583ffc79abc6066b151066e23c7", "actual_hash_after": "2e8c7cf63a44b3d073185be0a4fe59de87fd9583ffc79abc6066b151066e23c7", "status": "IDENTICAL" },
+    { "tree": "docs/e2e-v2/contracts", "expected_count": 3, "actual_count": 3, "expected_hash": "a550f29ea751c7635cdc5d73bbc2e6a0a29d7cdf7153e43f23e429a4f4e05e8c", "actual_hash_before": "a550f29ea751c7635cdc5d73bbc2e6a0a29d7cdf7153e43f23e429a4f4e05e8c", "actual_hash_after": "a550f29ea751c7635cdc5d73bbc2e6a0a29d7cdf7153e43f23e429a4f4e05e8c", "status": "IDENTICAL" }
+  ],
+  "tree_record_encoding": "sorted UTF-8 'path<TAB>sha256<LF>' records, repo-relative paths, SHA-256 of concatenation",
+  "m2_frozen_manifest": { "path": "docs/e2e-v2/m2/reports/frozen-artifacts.manifest.json", "entries": 20, "drift": 0, "missing": 0, "status": "IDENTICAL" },
+  "m1_frozen_hashes_report": { "path": "docs/e2e-v2/m1/reports/frozen-hashes.report.json", "workflow_files_present": 9, "drift": 0, "status": "IDENTICAL", "d05_status": "NOT_VERIFIED", "note": "frozen-workflow-file surface only; no .git/.guardian-angel access, so D05 core/Guardian/Git policy remains NOT_VERIFIED" },
+  "registry_files_absent": [
+    { "path": "TESTS.md", "absent_before": true, "absent_after": true },
+    { "path": ".governance/docs-map.json", "absent_before": true, "absent_after": true }
+  ],
+  "playwright_probe": "NOT_PERFORMED (M4 forbids browser/runtime probing; C08 uses an injected synthetic availability value only)",
+  "known_existing_deltas": [
+    "M1-01 command drift and M1-11 inventory count are pre-existing AUTHORIZED_DELTA from M3 historical evidence (M1 suite intentionally not re-executed). Not repaired here."
+  ],
+  "exclusions": [
+    "No .git or .guardian-angel inspection (Guardian Angel authoritative; forbidden surface)",
+    "No network, process spawn, install, registry write, active-HOME write or prompt edit",
+    "Filesystem snapshots cover named allowed sources only; they do not prove absence of forbidden activity"
+  ],
+  "blockers": []
+}

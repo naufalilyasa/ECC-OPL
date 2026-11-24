@@ -1,0 +1,24 @@
+{
+  "generated_at": "2026-11-22T16:05:00Z",
+  "scenario_id": "B06",
+  "stimulus": "multi-route grouping",
+  "expected": "satu journey, bukan satu test per URL",
+  "method": "journey contract check",
+  "status": "NOT_RUN",
+  "deferred_to": "M2",
+  "deferred_reason": "Grouping assertions need a discovered route set. M1 froze the grouping rules; nothing was discovered or mapped.",
+  "spec_of_record": "docs/e2e-v2/contracts/journey-contract-freeze.md §3 (D2, D4)",
+  "observed_results": null,
+  "assertions": [
+    { "id": "JG-01", "rule": "D2", "assertion": "list -> detail -> edit collapses into one journey, not three", "expected": "journeys == 1", "runner_status": "NOT_RUN" },
+    { "id": "JG-02", "rule": "D2", "assertion": "one journey is never emitted per URL", "expected": "journeys < routes", "runner_status": "NOT_RUN" },
+    { "id": "JG-03", "rule": "D2", "assertion": "journey name uses the project's own words, not a URL slug", "expected": "name not a path", "runner_status": "NOT_RUN" },
+    { "id": "JG-04", "rule": "D2", "assertion": "money/auth/destructive flows are flagged risk=critical", "expected": "risk == critical", "runner_status": "NOT_RUN" },
+    { "id": "JG-05", "rule": "D4", "assertion": "dynamic/conditional/generated routes report confidence=partial", "expected": "confidence != confirmed", "runner_status": "NOT_RUN" },
+    { "id": "JG-06", "rule": "§4", "assertion": "a journey with empty test_registry_ids[] yields a Section 2 row AND a Section 4 block proposal", "expected": "proposals == 1 + 1", "runner_status": "NOT_RUN" },
+    { "id": "JG-07", "rule": "§4", "assertion": "new ID is max(existing numeric) + 1; no reserved or removed ID reused", "expected": "id == max + 1", "runner_status": "NOT_RUN" }
+  ],
+  "requirement_ids": ["E2E-FR-008", "E2E-FR-019"],
+  "prd_ac": "AC-009",
+  "fixture_ids": ["F03", "F06"]
+}

@@ -1,0 +1,105 @@
+{
+  "generated_at": "2026-11-22T16:05:00Z",
+  "scenario_id": "D05",
+  "tool": "shasum -a 256",
+  "d05_scope": "WORKFLOW_FILES_ONLY",
+  "status": "NOT_VERIFIED",
+  "status_reason": "D05 requires frozen workflows AND Guardian Angel AND the A07b/core guard AND Git policy to be byte-identical with no bypass. M1 is forbidden .git and .guardian-angel access, so only the workflow-file surface can be evidenced. This report is therefore NOT complete D05 evidence.",
+  "files": [
+    {
+      "path": ".opencode/commands/tdd.md",
+      "role": "frozen /tdd",
+      "sha256": "b33e3b1f3de1b055b51b13995ed3e6b8e7312394c931ed760d82f22a64a0f1c5",
+      "expected_status": "BYTE_IDENTICAL",
+      "prior_audit_ref": null,
+      "status": "NO_PRIOR_REF"
+    },
+    {
+      "path": ".opencode/commands/code-review-quick.md",
+      "role": "frozen /code-review-quick V1.1.2",
+      "sha256": "a3f066596883801dc5d681b90515556a897f560340a0560cde3076d8095b8bcb",
+      "expected_status": "BYTE_IDENTICAL",
+      "prior_audit_ref": null,
+      "status": "NO_PRIOR_REF"
+    },
+    {
+      "path": ".opencode/commands/refactor-clean.md",
+      "role": "frozen /refactor-clean V1.1.4",
+      "sha256": "bdffa41f542e50fff37cbff2698843e1036245ba7b74e1cdf3e826fbf9e8a3fb",
+      "expected_status": "BYTE_IDENTICAL",
+      "prior_audit_ref": null,
+      "status": "NO_PRIOR_REF"
+    },
+    {
+      "path": ".opencode/commands/deep-research.md",
+      "role": "frozen /deep-research",
+      "sha256": "8725266654c89bba9174361caac15321a4fe7d5ae9e439cb42934d4a62393558",
+      "expected_status": "BYTE_IDENTICAL",
+      "prior_audit_ref": null,
+      "status": "NO_PRIOR_REF"
+    },
+    {
+      "path": ".opencode/commands/security-audit.md",
+      "role": "frozen /security-audit",
+      "sha256": "6c9885d49044fd137ff9b6e51b337eb5d927de8968d4e11dd8eafb248beacefc",
+      "expected_status": "BYTE_IDENTICAL",
+      "prior_audit_ref": null,
+      "status": "NO_PRIOR_REF"
+    },
+    {
+      "path": ".opencode/commands/plan.md",
+      "role": "frozen /plan",
+      "sha256": "c8d1e68b70b5ac39bc7bb7d7f3b3816da921619b7d98ed25c046970737ec0ece",
+      "expected_status": "BYTE_IDENTICAL",
+      "prior_audit_ref": null,
+      "status": "NO_PRIOR_REF"
+    },
+    {
+      "path": "commands/plan-prd.md",
+      "role": "frozen /plan-prd",
+      "sha256": "65707b5642fb5400b6ceaa7c3975ed7f70aa20b4edc8045925757c1f27e6897a",
+      "expected_status": "BYTE_IDENTICAL",
+      "prior_audit_ref": null,
+      "status": "BYTE_IDENTICAL",
+      "paired_with": "pi/core/commands/plan-prd.md",
+      "pair_status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": "pi/core/commands/plan-prd.md",
+      "role": "second copy of /plan-prd (must be byte-identical)",
+      "sha256": "65707b5642fb5400b6ceaa7c3975ed7f70aa20b4edc8045925757c1f27e6897a",
+      "expected_status": "BYTE_IDENTICAL",
+      "prior_audit_ref": null,
+      "status": "BYTE_IDENTICAL",
+      "paired_with": "commands/plan-prd.md",
+      "pair_status": "BYTE_IDENTICAL"
+    },
+    {
+      "path": ".opencode/prompts/agents/intent-gate.txt",
+      "role": "Intent Gate surface",
+      "sha256": "82d9c4bfa3a5c021ec20ffdbf476d87862d4045794e78ed27d98f6bb512b42f8",
+      "expected_status": "BYTE_IDENTICAL",
+      "prior_audit_ref": null,
+      "status": "NO_PRIOR_REF"
+    }
+  ],
+  "exclusions": [
+    {
+      "surface": "Guardian Angel",
+      "status": "NOT_VERIFIED",
+      "reason": "review-constraint exclusion: .guardian-angel access is forbidden in M1; surface never read"
+    },
+    {
+      "surface": "A07b / core guard",
+      "status": "NOT_VERIFIED",
+      "reason": "review-constraint exclusion: A07b is a guard behaviour, not a file surface, so it has no hash row"
+    },
+    {
+      "surface": "Git policy",
+      "status": "NOT_VERIFIED",
+      "reason": "review-constraint exclusion: .git access is forbidden in M1; Git controls never inspected"
+    }
+  ],
+  "drift_detected": false,
+  "note": "No historical audit reference is reachable from this session, so every row is an honest current-state snapshot (NO_PRIOR_REF) rather than an assumed match. The only byte-identity claim made here is the /plan-prd dual-copy pair."
+}

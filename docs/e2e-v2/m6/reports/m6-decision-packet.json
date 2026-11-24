@@ -1,0 +1,100 @@
+{
+  "generated_at": "2026-11-24T05:29:01.540Z",
+  "milestone": "M6",
+  "registry_writes": 0,
+  "applied": false,
+  "fixture_provenance": "SCRATCH_PLAYWRIGHT_LOOPBACK + DETERMINISTIC_REFERENCE",
+  "scenario_id": "DECISION",
+  "status": "BLOCKED",
+  "acceptance": [
+    "DEC-10",
+    "AC-018",
+    "E06"
+  ],
+  "decision_class": "ACTUAL",
+  "release_authority": true,
+  "product_boundary_class": "REFERENCE_ONLY",
+  "gates": {
+    "P1": {
+      "name": "Effective resolution",
+      "status": "NOT_VERIFIED"
+    },
+    "P2": {
+      "name": "Parity",
+      "status": "VERIFIED_IN_M5_AND_M6"
+    },
+    "P3": {
+      "name": "Registry safety",
+      "status": "BLOCKED",
+      "reason": "productBoundary.status=FAIL"
+    },
+    "P4": {
+      "name": "Rollback readiness",
+      "status": "VERIFIED_IN_M5_AND_M6"
+    },
+    "P5": {
+      "name": "Owner deployment authorization",
+      "status": "NOT_GIVEN"
+    },
+    "A08": {
+      "name": "Live orchestration smoke",
+      "status": "NOT_RUN"
+    }
+  },
+  "product_boundary": {
+    "status": "FAIL",
+    "gate_effect": "BLOCKED",
+    "blocker": true,
+    "classification": "REFERENCE_ONLY",
+    "reason": "productBoundary.status=FAIL",
+    "findings": [
+      "S01/S02 M5 reference helpers remediated; no verifiable actual /e2e registry writer",
+      "No deterministic production registry writer found in inspected source"
+    ],
+    "blockingLimitations": [
+      "No deterministic production registry writer was found in the inspected source; prompt assurances are not a strong write-safety boundary. Remediation of M5 reference helpers cannot be advertised as product remediation.",
+      "TOCTOU_NOT_FULLY_PROVEN"
+    ],
+    "boundaryEvidence": {
+      "S01": {
+        "verified": false
+      },
+      "S02": {
+        "verified": false
+      }
+    },
+    "product_writer_validation": "PRODUCT_WRITER_NOT_VERIFIED"
+  },
+  "disable_default_permitted": false,
+  "gate_status": "BLOCKED_DEPLOYMENT_GATED",
+  "live_disable_default": "BLOCKED_DEPLOYMENT_GATED",
+  "production_targets": "BLOCKED",
+  "remaining_requirements": [
+    "P1: prove effective command winner (ASM-01) in an isolated probe",
+    "P3: productBoundary.status=FAIL",
+    "P5: obtain explicit owner deployment AUTHORIZATION for exact scope",
+    "A08: execute authorized live multi-phase orchestration smoke (currently NOT_RUN)",
+    "AUTHORIZATION: explicit P5 scope, candidate digest, targets and operations approval missing",
+    "PRODUCT_BOUNDARY_CLASS=REFERENCE_ONLY: helper fix is not a product writer fix",
+    "PRODUCT-FINDING: S01/S02 M5 reference helpers remediated; no verifiable actual /e2e registry writer",
+    "PRODUCT-FINDING: No deterministic production registry writer found in inspected source",
+    "BLOCKING-LIMITATION: No deterministic production registry writer was found in the inspected source; prompt assurances are not a strong write-safety boundary. Remediation of M5 reference helpers cannot be advertised as product remediation.",
+    "BLOCKING-LIMITATION: TOCTOU_NOT_FULLY_PROVEN"
+  ],
+  "blockers": [
+    "P1: prove effective command winner (ASM-01) in an isolated probe",
+    "P3: productBoundary.status=FAIL",
+    "P5: obtain explicit owner deployment AUTHORIZATION for exact scope",
+    "A08: execute authorized live multi-phase orchestration smoke (currently NOT_RUN)",
+    "AUTHORIZATION: explicit P5 scope, candidate digest, targets and operations approval missing",
+    "PRODUCT_BOUNDARY_CLASS=REFERENCE_ONLY: helper fix is not a product writer fix",
+    "PRODUCT-FINDING: S01/S02 M5 reference helpers remediated; no verifiable actual /e2e registry writer",
+    "PRODUCT-FINDING: No deterministic production registry writer found in inspected source",
+    "BLOCKING-LIMITATION: No deterministic production registry writer was found in the inspected source; prompt assurances are not a strong write-safety boundary. Remediation of M5 reference helpers cannot be advertised as product remediation.",
+    "BLOCKING-LIMITATION: TOCTOU_NOT_FULLY_PROVEN"
+  ],
+  "owner_decision": "Blocked: P1: prove effective command winner (ASM-01) in an isolated probe; P3: productBoundary.status=FAIL; P5: obtain explicit owner deployment AUTHORIZATION for exact scope; A08: execute authorized live multi-phase orchestration smoke (currently NOT_RUN); AUTHORIZATION: explicit P5 scope, candidate digest, targets and operations approval missing; PRODUCT_BOUNDARY_CLASS=REFERENCE_ONLY: helper fix is not a product writer fix; PRODUCT-FINDING: S01/S02 M5 reference helpers remediated; no verifiable actual /e2e registry writer; PRODUCT-FINDING: No deterministic production registry writer found in inspected source; BLOCKING-LIMITATION: No deterministic production registry writer was found in the inspected source; prompt assurances are not a strong write-safety boundary. Remediation of M5 reference helpers cannot be advertised as product remediation.; BLOCKING-LIMITATION: TOCTOU_NOT_FULLY_PROVEN",
+  "scenarios": [
+    "E06"
+  ]
+}

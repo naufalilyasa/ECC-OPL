@@ -1,0 +1,116 @@
+{
+  "register_id": "DECISION-REGISTER-001",
+  "amendment_id": "DECISION-AMENDMENT-001",
+  "approved_at": "2026-11-22",
+  "approver": "Owner",
+  "authorization_scope": "policy_and_architecture_only",
+  "authorization_boundary": "Keputusan ini menyetujui policy dan architecture, bukan izin menjalankan browser, memodifikasi registry, atau menonaktifkan command sekarang.",
+  "decisions": [
+    {
+      "id": "DEC-04",
+      "topic": "Legacy /e2e <flow> shorthand",
+      "milestone": "M5",
+      "status": "APPROVED",
+      "policy": "Deprecate legacy shorthand. Berikan migration hint, tanpa implicit execution.",
+      "requirement_ids": ["E2E-FR-016"],
+      "prd_acs": ["AC-017"]
+    },
+    {
+      "id": "DEC-05",
+      "topic": "Explicit run --ad-hoc policy",
+      "milestone": "M2",
+      "status": "APPROVED",
+      "policy": "Allow explicit run --ad-hoc, isolated sandbox, authorized non-production target, no registry coverage credit.",
+      "requirement_ids": ["E2E-FR-006"],
+      "prd_acs": ["AC-007"]
+    },
+    {
+      "id": "DEC-06",
+      "topic": "Registry bootstrap / write policy",
+      "milestone": "M3",
+      "status": "APPROVED",
+      "policy": "Registry bootstrap/write memerlukan explicit approval terhadap exact proposed diff.",
+      "requirement_ids": ["E2E-FR-014", "E2E-FR-015"],
+      "prd_acs": ["AC-010", "AC-011"]
+    },
+    {
+      "id": "DEC-07",
+      "topic": "Per-environment execution authorization",
+      "milestone": "M4",
+      "status": "APPROVED",
+      "policy": "Non-production execution only by default. Require per-environment and operation authorization. Production remains blocked.",
+      "requirement_ids": ["E2E-FR-011", "E2E-NFR-001"],
+      "prd_acs": ["AC-008"]
+    },
+    {
+      "id": "DEC-09",
+      "topic": "Agent Browser optional exploration",
+      "milestone": "M4",
+      "status": "APPROVED",
+      "policy": "Agent Browser optional dan default OFF. Playwright deterministic execution menjadi baseline. No auto-install.",
+      "requirement_ids": ["E2E-NFR-002"],
+      "prd_acs": ["AC-012"]
+    },
+    {
+      "id": "DEC-10",
+      "topic": "/e2e-map disable-default after parity",
+      "milestone": "M5",
+      "status": "APPROVED",
+      "policy": "Disable-default hanya setelah parity verification, effective runtime confirmation, dan rollback readiness.",
+      "requirement_ids": ["E2E-FR-001"],
+      "prd_acs": ["AC-001"]
+    },
+    {
+      "id": "DEC-11",
+      "topic": "CI automation policy",
+      "milestone": "M6",
+      "status": "APPROVED",
+      "policy": "CI automation deferred; tidak termasuk implementasi aktif V2.0.",
+      "requirement_ids": [],
+      "prd_acs": []
+    },
+    {
+      "id": "DEC-12",
+      "topic": "Legacy State: stale schema reconciliation",
+      "milestone": "M5",
+      "status": "APPROVED",
+      "policy": "stale adalah journey assessment, bukan Registry State. Legacy State: stale memerlukan reviewed migration ke enum yang valid.",
+      "requirement_ids": ["E2E-FR-013"],
+      "prd_acs": ["AC-009"]
+    }
+  ],
+  "already_confirmed_not_reopened": ["DEC-01", "DEC-02", "DEC-03", "DEC-08", "ADR-E2E-001..014"],
+  "technical_validation_gates": [
+    {
+      "id": "ASM-01/ARGS",
+      "kind": "validation_gate",
+      "milestone": "M2",
+      "status": "NOT_VERIFIED",
+      "probe": "DEFERRED_TO_M2",
+      "description": "$ARGUMENTS parsing and subcommand/flag passing semantics"
+    },
+    {
+      "id": "ASM-01/PRECEDENCE",
+      "kind": "validation_gate",
+      "milestone": "M2",
+      "status": "NOT_VERIFIED",
+      "probe": "DEFERRED_TO_M2",
+      "description": "Project vs dual-global effective command winner"
+    },
+    {
+      "id": "ASM-02",
+      "kind": "validation_gate",
+      "milestone": "M2",
+      "status": "NOT_VERIFIED",
+      "probe": "DEFERRED_TO_M2",
+      "description": "Detector portability across F01-F06 stacks"
+    }
+  ],
+  "invariants": {
+    "approved_prd_unchanged": "047918df0835bc7ea52f0d0dc7714f0b29394cce32ad8c2580b2973dfce1d211",
+    "approved_plan_r3_unchanged": "ea20d4f2c549b34f54c19f0111c030bbc68aa6cb67833edf6ffd18da9a04b1dd",
+    "frozen_m1_artifacts_unchanged": true,
+    "asm_gates_not_promoted": true,
+    "owner_decisions_resolved": 8
+  }
+}

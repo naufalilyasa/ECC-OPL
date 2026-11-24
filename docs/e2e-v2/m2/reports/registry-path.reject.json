@@ -1,0 +1,88 @@
+{
+  "generated_at": "2026-11-23T00:00:00Z",
+  "milestone": "M2",
+  "method": "reference-implementation harness (node --test): docs/e2e-v2/m2/tests/{parser,validators}.mjs",
+  "status": "EXECUTED",
+  "live_prompt_verification": "DEFERRED_TO_M6 (48-scenario acceptance)",
+  "scenario_id": "B11",
+  "spec_of_record": "docs/e2e-v2/contracts/validator-specs.md §2",
+  "cases": [
+    {
+      "id": "RP-01",
+      "input": "docs-map → /etc/TESTS.md",
+      "observed": {
+        "rejections": [
+          {
+            "code": "RP-01",
+            "reason": "absolute registry path rejected: /etc/TESTS.md"
+          }
+        ],
+        "resolution": "/var/folders/xq/22yplbd15tz0jj4hnsr1m11c0000gp/T/m2-emit-sx6pk1/repo/TESTS.md"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "RP-02",
+      "input": "docs-map → ../../TESTS.md",
+      "observed": {
+        "rejections": [
+          {
+            "code": "RP-02",
+            "reason": "parent traversal rejected: ../../TESTS.md"
+          }
+        ],
+        "resolution": "/var/folders/xq/22yplbd15tz0jj4hnsr1m11c0000gp/T/m2-emit-sx6pk1/repo/TESTS.md"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "RP-03",
+      "input": "root TESTS.md symlinked outside repo",
+      "observed": {
+        "ok": false,
+        "code": "RP-03",
+        "path": null
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "RP-04",
+      "input": "docs-map → link/TESTS.md (link escapes repo)",
+      "observed": {
+        "rejections": [
+          {
+            "code": "RP-04",
+            "reason": "docs-map maps outside the workspace; ignored"
+          }
+        ],
+        "resolution": "/var/folders/xq/22yplbd15tz0jj4hnsr1m11c0000gp/T/m2-emit-sx6pk1/repo/TESTS.md"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "RP-05",
+      "input": "TESTS.md and docs-map disagree",
+      "observed": {
+        "ok": false,
+        "stop": true,
+        "code": "RP-05"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "RP-06",
+      "input": "Test file: /etc/passwd.spec.ts ; ../outside/checkout.spec.ts",
+      "observed": {
+        "absolute": "RP-06",
+        "traversal": "RP-06"
+      },
+      "verdict": "PASS"
+    }
+  ],
+  "writes_performed": false,
+  "requirement_ids": [
+    "E2E-FR-020",
+    "E2E-NFR-002"
+  ],
+  "prd_ac": "AC-016"
+}

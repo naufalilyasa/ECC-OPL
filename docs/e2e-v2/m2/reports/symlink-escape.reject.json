@@ -1,0 +1,51 @@
+{
+  "generated_at": "2026-11-23T00:00:00Z",
+  "milestone": "M2",
+  "method": "reference-implementation harness (node --test): docs/e2e-v2/m2/tests/{parser,validators}.mjs",
+  "status": "EXECUTED",
+  "live_prompt_verification": "DEFERRED_TO_M6 (48-scenario acceptance)",
+  "scenario_id": "D04",
+  "spec_of_record": "docs/e2e-v2/contracts/validator-specs.md §3",
+  "cases": [
+    {
+      "id": "SE-01",
+      "input": "evidence/run.json is a symlink to outside the repo",
+      "observed": {
+        "code": "SE-01",
+        "citable": false
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "SE-02",
+      "input": "artifact path outside the scoped root",
+      "observed": {
+        "code": "SE-02",
+        "citable": false
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "SE-03",
+      "input": "tests/e2e/checkout.spec.ts symlinked outside the repo",
+      "observed": {
+        "code": "SE-03"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "SE-04",
+      "input": "Evidence: evidence/missing.json",
+      "observed": {
+        "code": "SE-04",
+        "coverable": false
+      },
+      "verdict": "PASS"
+    }
+  ],
+  "writes_performed": false,
+  "requirement_ids": [
+    "E2E-FR-015"
+  ],
+  "prd_ac": "AC-016"
+}

@@ -1,0 +1,204 @@
+{
+  "generated_at": "2026-11-24T05:29:01.540Z",
+  "milestone": "M6",
+  "registry_writes": 0,
+  "applied": false,
+  "fixture_provenance": "SCRATCH_PLAYWRIGHT_LOOPBACK + DETERMINISTIC_REFERENCE",
+  "scenario_id": "C04",
+  "status": "PASS",
+  "acceptance": [
+    "AC-011",
+    "AC-014",
+    "C04",
+    "C05",
+    "C06",
+    "C07",
+    "C10"
+  ],
+  "target_label": "E2E_NONPROD_LOCAL_FIXTURE",
+  "target_url": "http://127.0.0.1:<ephemeral>",
+  "browser": "chromium",
+  "playwright_version": "1.65.1",
+  "external_network": "PROHIBITED",
+  "runs": {
+    "happy": {
+      "executionMethod": "real_playwright_scratch",
+      "targetLabel": "E2E_NONPROD_LOCAL_FIXTURE",
+      "kind": "happy",
+      "status": "PASS",
+      "exitCode": 0,
+      "durationMs": 628,
+      "nodeId": "chromium@1.65.1@worker-61671",
+      "assertionKind": "behavioral",
+      "testCount": 1,
+      "skipped": false,
+      "covered": false,
+      "observedEvidence": "observed=ORDER_CONFIRMED:Ada",
+      "error": null,
+      "artifacts": [
+        {
+          "path": "scratch/happy/evidence.txt",
+          "bytes": 28,
+          "sha256": "0592fff4699197a4b80a22a06207c2410b8b01796bb7df746428b46a5bdf4a44"
+        },
+        {
+          "path": "scratch/happy/screenshot.png",
+          "bytes": 12718,
+          "sha256": "7d15d7c91c1a5096431be22a5506f4aca7f03099719c2b2f8ce0920b45ab64f8"
+        },
+        {
+          "path": "scratch/happy/trace.zip",
+          "bytes": 16959,
+          "sha256": "3f7135758354ef194855391f545392ab627a7f5927ba331e380e797e9e20fc41"
+        }
+      ],
+      "redactionsCount": 0,
+      "startedAt": "2026-11-24T05:29:01.665Z",
+      "endedAt": "2026-11-24T05:29:02.170Z"
+    },
+    "weak": {
+      "executionMethod": "real_playwright_scratch",
+      "targetLabel": "E2E_NONPROD_LOCAL_FIXTURE",
+      "kind": "weak",
+      "status": "PASS",
+      "exitCode": 0,
+      "durationMs": 266,
+      "nodeId": "chromium@1.65.1@worker-61677",
+      "assertionKind": "visibility-only",
+      "testCount": 1,
+      "skipped": false,
+      "covered": false,
+      "observedEvidence": "visible=true",
+      "error": null,
+      "artifacts": [
+        {
+          "path": "scratch/weak/evidence.txt",
+          "bytes": 12,
+          "sha256": "a8a6b296ec49811fe8dad27f1164601ecd1a223a6a61a8cb94de718b5f78ccd5"
+        },
+        {
+          "path": "scratch/weak/screenshot.png",
+          "bytes": 8927,
+          "sha256": "0f6671976105d52ddab05b6c19eb99c28b453898fcb7f7cc5d9c2ab6c3c664cd"
+        },
+        {
+          "path": "scratch/weak/trace.zip",
+          "bytes": 7643,
+          "sha256": "3aa92e04f6f9da1c6a5915a386131c2cf643c2d01b076734cdeb0f710ac9bc81"
+        }
+      ],
+      "redactionsCount": 0,
+      "startedAt": "2026-11-24T05:29:02.286Z",
+      "endedAt": "2026-11-24T05:29:02.437Z"
+    },
+    "broken": {
+      "executionMethod": "real_playwright_scratch",
+      "targetLabel": "E2E_NONPROD_LOCAL_FIXTURE",
+      "kind": "broken",
+      "status": "FAIL",
+      "exitCode": 1,
+      "durationMs": 266,
+      "nodeId": "chromium@1.65.1@worker-61683",
+      "assertionKind": "behavioral",
+      "testCount": 1,
+      "skipped": false,
+      "covered": false,
+      "observedEvidence": "observed=ACTUAL_VALUE",
+      "error": "behavioral assertion failed",
+      "artifacts": [
+        {
+          "path": "scratch/broken/evidence.txt",
+          "bytes": 21,
+          "sha256": "0d0f84e28ed7a672019f6171485f3223a75368edb2aceb2d1cfaa59a5630187b"
+        }
+      ],
+      "redactionsCount": 0,
+      "startedAt": "2026-11-24T05:29:02.555Z",
+      "endedAt": "2026-11-24T05:29:02.703Z"
+    },
+    "skipped": {
+      "executionMethod": "real_playwright_scratch",
+      "targetLabel": "E2E_NONPROD_LOCAL_FIXTURE",
+      "kind": "skipped",
+      "status": "PASS",
+      "exitCode": 0,
+      "durationMs": 277,
+      "nodeId": "chromium@1.65.1@worker-61689",
+      "assertionKind": "none",
+      "testCount": 0,
+      "skipped": true,
+      "covered": false,
+      "observedEvidence": "skipped=0-tests",
+      "error": null,
+      "artifacts": [
+        {
+          "path": "scratch/skipped/evidence.txt",
+          "bytes": 15,
+          "sha256": "e3b5ffffd37fa3a32062d4339b81c36f736ad54f59fe4062af8e4fa65636236e"
+        },
+        {
+          "path": "scratch/skipped/screenshot.png",
+          "bytes": 4254,
+          "sha256": "3878570f4a62a0d65f57cf1754e0269e56ec797f4e36e26b44c172eb6e800401"
+        },
+        {
+          "path": "scratch/skipped/trace.zip",
+          "bytes": 2140,
+          "sha256": "5266cf5c3ee61f12990f546155bfa5834b5cb8a975e228c1a4eb2873304ecee3"
+        }
+      ],
+      "redactionsCount": 0,
+      "startedAt": "2026-11-24T05:29:02.818Z",
+      "endedAt": "2026-11-24T05:29:02.981Z"
+    },
+    "cred": {
+      "executionMethod": "real_playwright_scratch",
+      "targetLabel": "E2E_NONPROD_LOCAL_FIXTURE",
+      "kind": "cred",
+      "status": "PASS",
+      "exitCode": 0,
+      "durationMs": 276,
+      "nodeId": "chromium@1.65.1@worker-61694",
+      "assertionKind": "behavioral",
+      "testCount": 1,
+      "skipped": false,
+      "covered": false,
+      "observedEvidence": "token=[REDACTED]",
+      "error": null,
+      "artifacts": [
+        {
+          "path": "scratch/cred/evidence.txt",
+          "bytes": 16,
+          "sha256": "6975c2ca81b20ceca66e0ceb3fa3801ce60d75619c32e1d5fc10b8677ea828fa"
+        },
+        {
+          "path": "scratch/cred/screenshot.png",
+          "bytes": 11155,
+          "sha256": "411a128a71a9f1eb82cc3832f89167e3492e1c5390403913e30df8b9e80d396c"
+        },
+        {
+          "path": "scratch/cred/trace.zip",
+          "bytes": 9881,
+          "sha256": "aed78a29075a4928e0039f81b770d145a065473077e6a4c378e10bb7c8cf64ae"
+        }
+      ],
+      "redactionsCount": 2,
+      "startedAt": "2026-11-24T05:29:03.098Z",
+      "endedAt": "2026-11-24T05:29:03.257Z"
+    }
+  },
+  "verdicts": {
+    "happy": "PASS",
+    "weak": "PASS_UNVERIFIED",
+    "broken": "FAIL",
+    "skipped": "NOT_EXECUTED",
+    "cred": "PASS"
+  },
+  "scenarios": [
+    "C04",
+    "C05",
+    "C06",
+    "C07",
+    "C10"
+  ]
+}

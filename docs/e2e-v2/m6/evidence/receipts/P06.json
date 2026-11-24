@@ -1,0 +1,7 @@
+{
+  "scenario_id": "P06",
+  "expected": "\"TOCTOU_NOT_FULLY_PROVEN\"",
+  "actual": "\"TOCTOU_NOT_FULLY_PROVEN\"",
+  "status": "PASS",
+  "created_at": "2026-11-24T05:20:28.129Z"
+}

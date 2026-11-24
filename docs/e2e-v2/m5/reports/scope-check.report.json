@@ -1,0 +1,120 @@
+{
+  "generated_at": "2026-11-23T00:00:00Z",
+  "milestone": "M5",
+  "status": "EXECUTED",
+  "fixture_provenance": "SYNTHETIC_REFERENCE",
+  "live_prompt_verification": "DEFERRED_TO_M6",
+  "live_playwright_execution": "DEFERRED_TO_M6",
+  "registry_writes": 0,
+  "applied": false,
+  "scenario_id": "SCOPE",
+  "acceptance": [
+    "PRECONDITION"
+  ],
+  "allowed_write_root": "docs/e2e-v2/m5/**",
+  "m5_files": [
+    "docs/e2e-v2/m5/reports/alias-no-run.trace.json",
+    "docs/e2e-v2/m5/reports/concurrency.report.json",
+    "docs/e2e-v2/m5/reports/coverage.report.json",
+    "docs/e2e-v2/m5/reports/discovery-after-disable.report.json",
+    "docs/e2e-v2/m5/reports/flakiness.report.json",
+    "docs/e2e-v2/m5/reports/m5-decision-packet.json",
+    "docs/e2e-v2/m5/reports/m5-preflight.report.json",
+    "docs/e2e-v2/m5/reports/mutation-suite.report.json",
+    "docs/e2e-v2/m5/reports/parity.report.json",
+    "docs/e2e-v2/m5/reports/prompt-conformance.report.json",
+    "docs/e2e-v2/m5/reports/registry-block.diff.json",
+    "docs/e2e-v2/m5/reports/registry-path.reject.json",
+    "docs/e2e-v2/m5/reports/restore-rehearsal.report.json",
+    "docs/e2e-v2/m5/reports/scope-check.report.json",
+    "docs/e2e-v2/m5/reports/symlink-escape.reject.json",
+    "docs/e2e-v2/m5/reports/terminal-outcomes.report.json",
+    "docs/e2e-v2/m5/scripts/emit-m5-reports.mjs",
+    "docs/e2e-v2/m5/tdd-record.md",
+    "docs/e2e-v2/m5/tests/conformance.test.mjs",
+    "docs/e2e-v2/m5/tests/fixtures.mjs",
+    "docs/e2e-v2/m5/tests/m5.test.mjs",
+    "docs/e2e-v2/m5/tests/migration.mjs",
+    "docs/e2e-v2/m5/traceability-m5.md"
+  ],
+  "m5_file_count": 23,
+  "outside_allowed_root_writes": 0,
+  "frozen_trees": [
+    {
+      "name": "m1",
+      "expected_files": 16,
+      "observed_files": 16,
+      "expected_sha256": "8416c0671af8ae60850d9d72f249968976c907cf4aa62b605d663bd5eb1625ca",
+      "observed_sha256": "8416c0671af8ae60850d9d72f249968976c907cf4aa62b605d663bd5eb1625ca",
+      "unchanged": true
+    },
+    {
+      "name": "m2",
+      "expected_files": 27,
+      "observed_files": 27,
+      "expected_sha256": "2f81da73f2068357f4265a3cfbaf6a9435a3e502d52dcd32d33b3b445fc97588",
+      "observed_sha256": "2f81da73f2068357f4265a3cfbaf6a9435a3e502d52dcd32d33b3b445fc97588",
+      "unchanged": true
+    },
+    {
+      "name": "m3",
+      "expected_files": 17,
+      "observed_files": 17,
+      "expected_sha256": "2e8c7cf63a44b3d073185be0a4fe59de87fd9583ffc79abc6066b151066e23c7",
+      "observed_sha256": "2e8c7cf63a44b3d073185be0a4fe59de87fd9583ffc79abc6066b151066e23c7",
+      "unchanged": true
+    },
+    {
+      "name": "m4",
+      "expected_files": 20,
+      "observed_files": 20,
+      "expected_sha256": "88c50d13760dd24dd47b9e5f2a2d8aa707b0f008abcf19b06fa7370641bc7807",
+      "observed_sha256": "88c50d13760dd24dd47b9e5f2a2d8aa707b0f008abcf19b06fa7370641bc7807",
+      "unchanged": true
+    },
+    {
+      "name": "contracts",
+      "expected_files": 3,
+      "observed_files": 3,
+      "expected_sha256": "a550f29ea751c7635cdc5d73bbc2e6a0a29d7cdf7153e43f23e429a4f4e05e8c",
+      "observed_sha256": "a550f29ea751c7635cdc5d73bbc2e6a0a29d7cdf7153e43f23e429a4f4e05e8c",
+      "unchanged": true
+    }
+  ],
+  "frozen_trees_all_unchanged": true,
+  "active_files": [
+    {
+      "path": ".opencode/commands/e2e.md",
+      "sha256": "c562e0a2a2707c49362431b04ac1895f02c091e3d7ae193837ab6bf35b9d8436",
+      "unchanged": true
+    },
+    {
+      "path": ".opencode/commands/e2e-map.md",
+      "sha256": "76b3d4037a0144df2d40dc0eca01777690762a7cccc5d9562b0330333dfdb142",
+      "unchanged": true
+    },
+    {
+      "path": ".opencode/opencode.json",
+      "sha256": "01e3d4405c4351cde1460e782da9aa80f0aa6a6796bc3bb149be1b12bcc63e84",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/ctp-itdev2/.config/opencode/opencode.json",
+      "sha256": "bd747d4f42d22e7c0dc1f14b65e815b043117083fd548292489509c653e26843",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/ctp-itdev2/.config/opencode/opencode.jsonc",
+      "sha256": "85378ac09a398760fccae61499ab3bd5207713d3ba214b71c92e5acf52071dbf",
+      "unchanged": true
+    }
+  ],
+  "active_files_all_unchanged": true,
+  "registry_absent": {
+    "TESTS.md": true,
+    ".governance/docs-map.json": true
+  },
+  "scratch_used": "/private/var/folders/xq/22yplbd15tz0jj4hnsr1m11c0000gp/T/opencode (0700 disposable, all fixtures removed by creators)",
+  "all_invariants_hold": true,
+  "note": "Audit of active tree only. Scratch fixtures created/removed inside approved disposable root; no active config, command, registry, .git or .guardian-angel writes occurred."
+}

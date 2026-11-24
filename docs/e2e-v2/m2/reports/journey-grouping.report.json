@@ -1,0 +1,144 @@
+{
+  "generated_at": "2026-11-23T00:00:00Z",
+  "milestone": "M2",
+  "method": "reference-implementation harness (node --test): docs/e2e-v2/m2/tests/detector.mjs over docs/e2e-v2/m2/tests/fixtures.mjs",
+  "status": "EXECUTED",
+  "live_prompt_verification": "DEFERRED_TO_M6 (48-scenario acceptance)",
+  "writes_performed": false,
+  "scenario_id": "B06",
+  "stimulus": "multi-route grouping",
+  "expected": "satu journey, bukan satu test per URL",
+  "spec_of_record": "docs/e2e-v2/contracts/journey-contract-freeze.md §3 (D2, D4) + §4",
+  "fixture_ids": [
+    "F03",
+    "F06"
+  ],
+  "observed_results": {
+    "F03": [
+      {
+        "journey_key": "laravel:login:public",
+        "name": "login",
+        "actor": "public",
+        "risk": "critical",
+        "confidence": "confirmed",
+        "routes": [
+          "/login"
+        ],
+        "alternate_paths": [],
+        "sources": [
+          "routes/web.php:1",
+          "resources/js/Pages/Auth/Login.tsx:1"
+        ]
+      },
+      {
+        "journey_key": "laravel:dashboard:authenticated",
+        "name": "dashboard",
+        "actor": "authenticated",
+        "risk": "critical",
+        "confidence": "confirmed",
+        "routes": [
+          "/dashboard",
+          "/dashboard/edit"
+        ],
+        "alternate_paths": [],
+        "sources": [
+          "routes/web.php:1",
+          "resources/js/Pages/Dashboard.tsx:1"
+        ]
+      }
+    ],
+    "F04": [
+      {
+        "journey_key": "react-router:products:authenticated",
+        "name": "products",
+        "actor": "authenticated",
+        "risk": "critical",
+        "confidence": "partial",
+        "routes": [
+          "/products",
+          "/products/:id",
+          "/products/:id/edit"
+        ],
+        "alternate_paths": [],
+        "sources": [
+          "src/App.tsx:1"
+        ]
+      },
+      {
+        "journey_key": "react-router:orders:authenticated",
+        "name": "orders",
+        "actor": "authenticated",
+        "risk": "critical",
+        "confidence": "partial",
+        "routes": [
+          "/orders/:id"
+        ],
+        "alternate_paths": [],
+        "sources": [
+          "src/App.tsx:1"
+        ]
+      }
+    ],
+    "proposal": {
+      "section2Rows": 1,
+      "section4Blocks": 1,
+      "nextId": "TEST-E2E-008"
+    }
+  },
+  "assertions": [
+    {
+      "id": "JG-01",
+      "rule": "D2",
+      "assertion": "list -> detail -> edit collapses into one journey, not three",
+      "expected": "journeys == 1",
+      "runner_status": "PASS"
+    },
+    {
+      "id": "JG-02",
+      "rule": "D2",
+      "assertion": "one journey is never emitted per URL",
+      "expected": "journeys < routes",
+      "runner_status": "PASS"
+    },
+    {
+      "id": "JG-03",
+      "rule": "D2",
+      "assertion": "journey name uses the project's own words, not a URL slug",
+      "expected": "name not a path",
+      "runner_status": "PASS"
+    },
+    {
+      "id": "JG-04",
+      "rule": "D2",
+      "assertion": "money/auth/destructive flows are flagged risk=critical",
+      "expected": "risk == critical",
+      "runner_status": "PASS"
+    },
+    {
+      "id": "JG-05",
+      "rule": "D4",
+      "assertion": "dynamic/conditional/generated routes report confidence=partial",
+      "expected": "confidence != confirmed",
+      "runner_status": "PASS"
+    },
+    {
+      "id": "JG-06",
+      "rule": "§4",
+      "assertion": "a journey with empty test_registry_ids[] yields a Section 2 row AND a Section 4 block proposal",
+      "expected": "proposals == 1 + 1",
+      "runner_status": "PASS"
+    },
+    {
+      "id": "JG-07",
+      "rule": "§4",
+      "assertion": "new ID is max(existing numeric) + 1; no reserved or removed ID reused",
+      "expected": "id == max + 1",
+      "runner_status": "PASS"
+    }
+  ],
+  "requirement_ids": [
+    "E2E-FR-008",
+    "E2E-FR-019"
+  ],
+  "prd_ac": "AC-009"
+}

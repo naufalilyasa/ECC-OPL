@@ -1,0 +1,93 @@
+{
+  "generated_at": "2026-11-22T19:30:00Z",
+  "scenario_id": "A01",
+  "stimulus": "/e2e help",
+  "expected": "semua mode terdaftar, tanpa default berbahaya",
+  "method": "static command contract test",
+  "status": "PASS",
+  "artifact_under_test": "docs/e2e-v2/contracts/command-contract.md",
+  "checks": {
+    "modes_complete": "PASS",
+    "no_seventh_mode": "PASS",
+    "no_dangerous_default": "PASS",
+    "gate_table_complete": "PASS",
+    "state_enum_exact": "PASS",
+    "gating_mode_count": "PASS",
+    "mode_write_gates_consistent": "PASS",
+    "pending_dec_marked": "PASS"
+  },
+  "eligible_write_modes": [
+    "map",
+    "run",
+    "full"
+  ],
+  "readonly_modes": [
+    "status",
+    "help",
+    "no-args"
+  ],
+  "modes": [
+    {
+      "id": "map",
+      "writes": "optional after explicit approval of specific registry diff (PENDING_DEC DEC-06)",
+      "browser": "never",
+      "gate": "registry write approval"
+    },
+    {
+      "id": "run",
+      "writes": "authorized matched-block outcome reconciliation, including verified PASS and recorded FAIL where contract allows",
+      "browser": "approved target only",
+      "gate": "environment gate (PENDING_DEC DEC-07) + evidence"
+    },
+    {
+      "id": "full",
+      "writes": "approved registry/spec/evidence",
+      "browser": "after mapping review",
+      "gate": "combined precise review"
+    },
+    {
+      "id": "status",
+      "writes": "none",
+      "browser": "never",
+      "gate": "none (read-only)"
+    },
+    {
+      "id": "help",
+      "writes": "none",
+      "browser": "never",
+      "gate": "none (read-only)"
+    },
+    {
+      "id": "no-args",
+      "writes": "none",
+      "browser": "never",
+      "gate": "none (read-only)"
+    }
+  ],
+  "sub_modes": [
+    {
+      "id": "run --ad-hoc",
+      "status": "PENDING_DEC",
+      "dec": "DEC-05",
+      "note": "Sub-mode of run, not a seventh mode; existence and opt-in shape unresolved."
+    }
+  ],
+  "state_enum": [
+    "missing",
+    "in progress",
+    "unverified",
+    "covered",
+    "not applicable"
+  ],
+  "state_enum_excluded": {
+    "stale": "assessment only, never a Registry State (PENDING_DEC DEC-12)"
+  },
+  "execution_deferred": true,
+  "deferred_to": "M2",
+  "execution_note": "A01 is a static contract check: it verifies the frozen contract text, not parser runtime behaviour. No command was invoked, no browser, no registry. Runtime parser behaviour is A07 (parser-failclosed.report.json), NOT_RUN and deferred to M2.",
+  "requirement_ids": [
+    "E2E-FR-001",
+    "E2E-NFR-005"
+  ],
+  "prd_ac": "AC-001"
+}

@@ -1,0 +1,64 @@
+{
+  "generated_at": "2026-11-23T00:00:00Z",
+  "milestone": "M3",
+  "method": "reference-implementation harness (node --test): docs/e2e-v2/m3/tests/registry.mjs",
+  "status": "EXECUTED",
+  "live_prompt_verification": "DEFERRED_TO_M6 (48-scenario acceptance)",
+  "scenario_id": "B10-ext",
+  "acceptance": [
+    "AC-010",
+    "E2E-FR-010"
+  ],
+  "fixture": "synthetic legacy rows (canonical ECC has none)",
+  "cases": [
+    {
+      "case_id": "B10-ext",
+      "input": "legacy row State: stale",
+      "result": {
+        "caseId": "B10-ext",
+        "id": "TEST-E2E-002",
+        "ok": false,
+        "code": "B10",
+        "schemaMismatch": true,
+        "assessment": "stale",
+        "applied": false,
+        "proposal": {
+          "decision": "DEC-12",
+          "field": "State",
+          "from": "stale",
+          "to": "unverified"
+        },
+        "reason": "legacy State: stale is an assessment, not a Registry State; propose the correction (DEC-12)"
+      }
+    },
+    {
+      "case_id": "B10-ext",
+      "input": "valid row State: covered",
+      "result": {
+        "caseId": "B10-ext",
+        "id": "TEST-E2E-001",
+        "ok": true,
+        "applied": false,
+        "proposal": null
+      }
+    },
+    {
+      "case_id": "MUTATION-8",
+      "input": "State validator offered \"stale\"",
+      "result": {
+        "ok": false,
+        "code": "STATE-INVALID",
+        "reason": "State \"stale\" is outside the 5 controlled values"
+      }
+    }
+  ],
+  "state_enum": [
+    "missing",
+    "in progress",
+    "unverified",
+    "covered",
+    "not applicable"
+  ],
+  "mutation_8_rejected": true,
+  "migration_applied": false
+}

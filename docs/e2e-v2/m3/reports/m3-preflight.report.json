@@ -1,0 +1,209 @@
+{
+  "generated_at": "2026-11-23T00:00:00Z",
+  "milestone": "M3",
+  "method": "reference-implementation harness (node --test): docs/e2e-v2/m3/tests/registry.mjs",
+  "status": "PASS",
+  "live_prompt_verification": "DEFERRED_TO_M6 (48-scenario acceptance)",
+  "scenario_id": "M3-0",
+  "scope": "upstream hash + absence verification before any M3 write",
+  "upstream_hashes": [
+    {
+      "label": "PRD canonical (R1 bundle)",
+      "path": "<scratch>/e2e-m1-ref/bundle/ecc-opl-e2e-v2.0-prd-r1-external-review/PRD-CANDIDATE.md",
+      "role": "approved digest",
+      "expected_sha256": "047918df0835bc7ea52f0d0dc7714f0b29394cce32ad8c2580b2973dfce1d211",
+      "actual_sha256": "047918df0835bc7ea52f0d0dc7714f0b29394cce32ad8c2580b2973dfce1d211",
+      "status": "MATCH"
+    },
+    {
+      "label": "PRD worktree copy",
+      "path": ".claude/prds/e2e-v2-0-unified-journey-mapping.prd.md",
+      "role": "post-approval copy (never compared to 047918df)",
+      "expected_sha256": "bbe563be553147e4ff348622e54a75689db209bd798e85f85a97d739895191a9",
+      "actual_sha256": "bbe563be553147e4ff348622e54a75689db209bd798e85f85a97d739895191a9",
+      "status": "MATCH"
+    },
+    {
+      "label": "MILESTONE-GATES.json",
+      "path": "docs/e2e-v2/decisions/MILESTONE-GATES.json",
+      "role": "frozen gates",
+      "expected_sha256": "00c6b4550a130fcec4e20abda25919b9a08fe4b493b9439687865d70d017c8e5",
+      "actual_sha256": "00c6b4550a130fcec4e20abda25919b9a08fe4b493b9439687865d70d017c8e5",
+      "status": "MATCH"
+    },
+    {
+      "label": "DECISION-REGISTER.md",
+      "path": "docs/e2e-v2/decisions/DECISION-REGISTER.md",
+      "role": "frozen register",
+      "expected_sha256": "cd848701e25fddf6ab33c5853a2bd93a791e0786b225dc8534be912c4c03d223",
+      "actual_sha256": "cd848701e25fddf6ab33c5853a2bd93a791e0786b225dc8534be912c4c03d223",
+      "status": "MATCH"
+    },
+    {
+      "label": "M3 registry diff proposal",
+      "path": "<scratch>/m3m5m6-proposals/M3-REGISTRY-DIFF-PROPOSAL.md",
+      "role": "approved bootstrap diff source",
+      "expected_sha256": "500704509dfadf4a386c60631fc4a60c435cb28fc4244714a818a8aae762069f",
+      "actual_sha256": "500704509dfadf4a386c60631fc4a60c435cb28fc4244714a818a8aae762069f",
+      "status": "MATCH"
+    },
+    {
+      "label": "M3 plan r4",
+      "path": "docs/plans/e2e-v2-0-m3-registry-governance.plan.md",
+      "role": "executed plan",
+      "expected_sha256": "4f57829b49c1a319357b637eb3fdbf77e81cd560639fbc1ce824b3e7da22b29a",
+      "actual_sha256": "4f57829b49c1a319357b637eb3fdbf77e81cd560639fbc1ce824b3e7da22b29a",
+      "status": "MATCH"
+    }
+  ],
+  "frozen_m2_manifest": {
+    "path": "docs/e2e-v2/m2/reports/frozen-artifacts.manifest.json",
+    "artifact_count": 20,
+    "artifacts": [
+      {
+        "path": "docs/e2e-v2/SOURCE-BASELINE-FROZEN.md",
+        "frozen_sha256": "607f20e315665f35f24d68eecbb8fe26b9bfea5364348e7db36f79376c702f3a",
+        "actual_sha256": "607f20e315665f35f24d68eecbb8fe26b9bfea5364348e7db36f79376c702f3a",
+        "status": "IDENTICAL"
+      },
+      {
+        "path": "docs/e2e-v2/m1/command-resolution-evidence.md",
+        "frozen_sha256": "ccd7e9bc5f7484be4598a6d5fb06a3e255361b9659c627caecbacec232a7ccbf",
+        "actual_sha256": "ccd7e9bc5f7484be4598a6d5fb06a3e255361b9659c627caecbacec232a7ccbf",
+        "status": "IDENTICAL"
+      },
+      {
+        "path": "docs/e2e-v2/m1/detector-characterization.md",
+        "frozen_sha256": "ce692da6d4d4671a83ee9ef930b6d09505258de24e13e8857391d502750f195f",
+        "actual_sha256": "ce692da6d4d4671a83ee9ef930b6d09505258de24e13e8857391d502750f195f",
+        "status": "IDENTICAL"
+      },
+      {
+        "path": "docs/e2e-v2/m1/errata/workflow-active-d05.md",
+        "frozen_sha256": "d33432ac0d3f10f64c9880605516433c0ed537c65c91dabfbfaccc8e6e984bf7",
+        "actual_sha256": "d33432ac0d3f10f64c9880605516433c0ed537c65c91dabfbfaccc8e6e984bf7",
+        "status": "IDENTICAL"
+      },
+      {
+        "path": "docs/e2e-v2/m1/reports/F01-F06-map-output-expected.json",
+        "frozen_sha256": "abdf0780ac0d675b8abc443a0a069f6102c14d210adaf8825629a552107e0d14",
+        "actual_sha256": "abdf0780ac0d675b8abc443a0a069f6102c14d210adaf8825629a552107e0d14",
+        "status": "IDENTICAL"
+      },
+      {
+        "path": "docs/e2e-v2/m1/reports/bundle-validator.report.json",
+        "frozen_sha256": "e4e6457fdc97dae9ce8121cc68b3ba9e7a3ada8dcdaf3714522e901236eaaafa",
+        "actual_sha256": "e4e6457fdc97dae9ce8121cc68b3ba9e7a3ada8dcdaf3714522e901236eaaafa",
+        "status": "IDENTICAL"
+      },
+      {
+        "path": "docs/e2e-v2/m1/reports/command-resolution.report.json",
+        "frozen_sha256": "bd45bff9f3e3a455013724882b32d5850018f32557919f53217ef4f6a40d4d18",
+        "actual_sha256": "bd45bff9f3e3a455013724882b32d5850018f32557919f53217ef4f6a40d4d18",
+        "status": "IDENTICAL"
+      },
+      {
+        "path": "docs/e2e-v2/m1/reports/frozen-hashes.report.json",
+        "frozen_sha256": "3fb76e0c1189156c83d8c7203425b2aac3ad4e897e075ee7b87f3b24b7543b21",
+        "actual_sha256": "3fb76e0c1189156c83d8c7203425b2aac3ad4e897e075ee7b87f3b24b7543b21",
+        "status": "IDENTICAL"
+      },
+      {
+        "path": "docs/e2e-v2/m1/reports/journey-grouping.report.json",
+        "frozen_sha256": "263214116647d944e8972db1794fca3168b77f2bd5d76ab3cba7b42064b8a5fe",
+        "actual_sha256": "263214116647d944e8972db1794fca3168b77f2bd5d76ab3cba7b42064b8a5fe",
+        "status": "IDENTICAL"
+      },
+      {
+        "path": "docs/e2e-v2/m1/reports/locale-dedup.report.json",
+        "frozen_sha256": "b8ae392ae320aa59bc5f22018023f1eb63b3bcf1ab9a997738adcc793fef0901",
+        "actual_sha256": "b8ae392ae320aa59bc5f22018023f1eb63b3bcf1ab9a997738adcc793fef0901",
+        "status": "IDENTICAL"
+      },
+      {
+        "path": "docs/e2e-v2/m1/reports/mode-parser.report.json",
+        "frozen_sha256": "1e6b31bce67f97ba816b48702dbd833ca00e28120cf0b253dafb855e8a806d9b",
+        "actual_sha256": "1e6b31bce67f97ba816b48702dbd833ca00e28120cf0b253dafb855e8a806d9b",
+        "status": "IDENTICAL"
+      },
+      {
+        "path": "docs/e2e-v2/m1/reports/parser-failclosed.report.json",
+        "frozen_sha256": "abbfb5a19239fb7291535bbcae89689a0a0007668ff7ba1d053a6a2b1cd49b15",
+        "actual_sha256": "abbfb5a19239fb7291535bbcae89689a0a0007668ff7ba1d053a6a2b1cd49b15",
+        "status": "IDENTICAL"
+      },
+      {
+        "path": "docs/e2e-v2/m1/reports/registry-path.reject.json",
+        "frozen_sha256": "d2b2b09d5e65690bad0d54feb8bdca054ed13f7f8c98167c609dcc8b9acca1cc",
+        "actual_sha256": "d2b2b09d5e65690bad0d54feb8bdca054ed13f7f8c98167c609dcc8b9acca1cc",
+        "status": "IDENTICAL"
+      },
+      {
+        "path": "docs/e2e-v2/m1/reports/scope-check.report.json",
+        "frozen_sha256": "60c91c2751cf13ed2ee4f29120fe94d84e007530cc5015362d3bc3b51443d576",
+        "actual_sha256": "60c91c2751cf13ed2ee4f29120fe94d84e007530cc5015362d3bc3b51443d576",
+        "status": "IDENTICAL"
+      },
+      {
+        "path": "docs/e2e-v2/m1/reports/symlink-escape.reject.json",
+        "frozen_sha256": "1f5baa3648e151b17e2f1d19f77acc8e52d8d4b94c0d7732ba0ce2a1af20403b",
+        "actual_sha256": "1f5baa3648e151b17e2f1d19f77acc8e52d8d4b94c0d7732ba0ce2a1af20403b",
+        "status": "IDENTICAL"
+      },
+      {
+        "path": "docs/e2e-v2/m1/tests/m1.test.mjs",
+        "frozen_sha256": "8c3b54402683aa15fa0196277519965a1518d162b867b0e0c0ad65ee21ac708e",
+        "actual_sha256": "8c3b54402683aa15fa0196277519965a1518d162b867b0e0c0ad65ee21ac708e",
+        "status": "IDENTICAL"
+      },
+      {
+        "path": "docs/e2e-v2/m1/traceability-m1.md",
+        "frozen_sha256": "5cd2299211f855fa8e1ab499df2f43d2ca26d8df91a3054c617524f83d825625",
+        "actual_sha256": "5cd2299211f855fa8e1ab499df2f43d2ca26d8df91a3054c617524f83d825625",
+        "status": "IDENTICAL"
+      },
+      {
+        "path": "docs/e2e-v2/contracts/command-contract.md",
+        "frozen_sha256": "0805b23209688a1ea6bfabc5732b654aad227d551b35dbd04757a5dba0e6666f",
+        "actual_sha256": "0805b23209688a1ea6bfabc5732b654aad227d551b35dbd04757a5dba0e6666f",
+        "status": "IDENTICAL"
+      },
+      {
+        "path": "docs/e2e-v2/contracts/journey-contract-freeze.md",
+        "frozen_sha256": "ccab0abbe28bc5baa8ed49521b061b3ca7fd25951808c1ca522bc12a0440fed9",
+        "actual_sha256": "ccab0abbe28bc5baa8ed49521b061b3ca7fd25951808c1ca522bc12a0440fed9",
+        "status": "IDENTICAL"
+      },
+      {
+        "path": "docs/e2e-v2/contracts/validator-specs.md",
+        "frozen_sha256": "5e2efd77da6dce51572293d904d6699aed9a63ac017e230fe214d86a8c772f09",
+        "actual_sha256": "5e2efd77da6dce51572293d904d6699aed9a63ac017e230fe214d86a8c772f09",
+        "status": "IDENTICAL"
+      }
+    ]
+  },
+  "m1_zip": {
+    "name": "ecc-opl-e2e-v2.0-m1-r1-contract-evidence-reconciliation-review.zip",
+    "pinned_sha256": "9d1417f1709ab14933476cacf37b46b0dc512849011abea67984bb4fe073c22f",
+    "present": false,
+    "note": "not present in the worktree or scratch; plan r4 permits skipping re-verification when absent"
+  },
+  "registry_files_absent": [
+    {
+      "path": "TESTS.md",
+      "absent": true
+    },
+    {
+      "path": ".governance/docs-map.json",
+      "absent": true
+    }
+  ],
+  "playwright": {
+    "node_modules_present": false,
+    "config_present": false,
+    "dependency_declared": false,
+    "absent": true
+  },
+  "e2e_md_sha256_before": "1fe90046b445b2ce1753211851799e231526f9c5aed0e13cf3c8060d70097074",
+  "blockers": []
+}

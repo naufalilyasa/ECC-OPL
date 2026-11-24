@@ -1,0 +1,50 @@
+{
+  "note": "Every removed unconditional/fallback success branch and the concrete assertion that replaced it.",
+  "branches": [
+    {
+      "id": "M611-C02",
+      "old": "() => true",
+      "replacement": "Reads evidence/assertion-output-digest-contract.json; if applies=true recomputes the declared artifact digest from bytes, otherwise requires applies=false, no sha256 field and a non-empty reason (not applicable, no fictional hash)."
+    },
+    {
+      "id": "M611-F03",
+      "old": "() => true",
+      "replacement": "Recomputes the fingerprint of the accessible protected source files and compares it with the captured before value; verifies Guardian Angel and Git policy are explicitly NOT_VERIFIED and never opened."
+    },
+    {
+      "id": "V611-11",
+      "old": "() => true",
+      "replacement": "Spawns `node --test docs/e2e-v2/m6/tests/r1-correctness.test.mjs`, parses TAP counts, requires exit 0, fail=0, cancelled=0, pass>0 and tests = pass+fail+skipped+cancelled+todo; records log bytes and SHA-256."
+    },
+    {
+      "id": "N611-17",
+      "old": "if (i === 16) return true",
+      "replacement": "Executes the D04 listed-file mutation through verify-package.mjs and asserts nonzero exit plus `HASH:` diagnostic with changed bytes; records evidence/red-green/d04-verifier-mutation.json."
+    },
+    {
+      "id": "M611-D05",
+      "old": "sha(zip)===expected || sha(zip).length===64",
+      "replacement": "Exact equality of the validated E2E_M6_R1_ZIP SHA-256 to the approved digest only; missing archive is BLOCKED_BASELINE_MISSING."
+    },
+    {
+      "id": "N611-index-fallback",
+      "old": "if (!m) return true (generic fallback PASS)",
+      "replacement": "Returns BLOCKED with the exact unmapped index and reason; no check is silently certified."
+    },
+    {
+      "id": "M611-A08",
+      "old": "every L03-L06 id startsWith('L')",
+      "replacement": "Maps L03-L06 to C04/C05/C06/C07 and asserts each emitted scenario_predicate_id matches its expected behavior predicate."
+    },
+    {
+      "id": "M611-B02/B03/S06 statuses",
+      "old": "statusOf: () => 'PASS' regardless of observed value",
+      "replacement": "Status is derived from the observed PRODUCT_WRITER_VALIDATED_PASS result; S06/B03 notes now state REFERENCE_ONLY and PRODUCT_WRITER_NOT_VERIFIED."
+    },
+    {
+      "id": "absolute paths",
+      "old": "hardcoded /Users/... and /private/var/... in fixtures and emitters",
+      "replacement": "Validated E2E_* env inputs with fail-closed baseline statuses, safe archive extraction and sanitized display paths in all outputs."
+    }
+  ]
+}

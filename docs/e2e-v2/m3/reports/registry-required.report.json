@@ -1,0 +1,45 @@
+{
+  "generated_at": "2026-11-23T00:00:00Z",
+  "milestone": "M3",
+  "method": "reference-implementation harness (node --test): docs/e2e-v2/m3/tests/registry.mjs",
+  "status": "EXECUTED",
+  "live_prompt_verification": "DEFERRED_TO_M6 (48-scenario acceptance)",
+  "scenario_id": "C02",
+  "acceptance": [
+    "AC-006",
+    "E2E-FR-005"
+  ],
+  "fixture": "absent registry + empty bootstrap skeleton",
+  "cases": [
+    {
+      "case_id": "C02",
+      "input": "run TEST-E2E-001",
+      "result": {
+        "caseId": "C02",
+        "outcome": "REGISTRY_REQUIRED",
+        "dispatched": false,
+        "runnerInvocations": 0,
+        "registryChanged": false,
+        "next": "flow belum terdaftar — jalankan /e2e-map"
+      }
+    },
+    {
+      "case_id": "C02",
+      "input": "run TEST-E2E-001 against bootstrap skeleton",
+      "result": {
+        "caseId": "C02",
+        "outcome": "REGISTRY_REQUIRED",
+        "dispatched": false,
+        "runnerInvocations": 0,
+        "registryChanged": false,
+        "next": "flow belum terdaftar — jalankan /e2e-map"
+      }
+    }
+  ],
+  "negative_dispatch": {
+    "dispatched": false,
+    "runner_invocations": 0,
+    "registry_writes": 0
+  },
+  "live_execution": "DEFERRED_TO_M4/M6 (no browser authorized)"
+}

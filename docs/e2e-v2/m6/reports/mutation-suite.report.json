@@ -1,0 +1,194 @@
+{
+  "generated_at": "2026-11-24T05:29:01.540Z",
+  "milestone": "M6",
+  "registry_writes": 0,
+  "applied": false,
+  "fixture_provenance": "SCRATCH_PLAYWRIGHT_LOOPBACK + DETERMINISTIC_REFERENCE",
+  "scenario_id": "MUT",
+  "status": "PASS",
+  "acceptance": [
+    "AC-022",
+    "E02"
+  ],
+  "total": 14,
+  "detected": 14,
+  "bypassed": 0,
+  "all_detected": true,
+  "mutations": [
+    {
+      "mutation": 1,
+      "registry_writes": 0,
+      "applied": false,
+      "live_execution": false,
+      "proven_in": "M6",
+      "detected": true,
+      "expected": 0,
+      "observed": 1,
+      "oracle_reason": "map phase forced a runner dispatch",
+      "observedDispatch": true
+    },
+    {
+      "mutation": 2,
+      "registry_writes": 0,
+      "applied": false,
+      "live_execution": false,
+      "proven_in": "M6",
+      "detected": true,
+      "expected": 0,
+      "observed": 1,
+      "oracle_reason": "status phase attempted a registry write",
+      "observedWrite": true
+    },
+    {
+      "mutation": 3,
+      "registry_writes": 0,
+      "applied": false,
+      "live_execution": false,
+      "proven_in": "M6",
+      "detected": true,
+      "expected": 0,
+      "observed": 1,
+      "oracle_reason": "bare command started a browser",
+      "observedBrowser": true
+    },
+    {
+      "mutation": 4,
+      "registry_writes": 0,
+      "applied": false,
+      "live_execution": false,
+      "proven_in": "M6",
+      "detected": true,
+      "expected": "REGISTRY_REQUIRED",
+      "observed": "EXECUTED",
+      "oracle_reason": "unregistered run executed without --ad-hoc",
+      "observedUnregisteredExec": true
+    },
+    {
+      "mutation": 5,
+      "registry_writes": 0,
+      "applied": false,
+      "live_execution": false,
+      "proven_in": "M6",
+      "detected": true,
+      "expected": "state !== covered AND registryWrites === 0",
+      "observed": {
+        "state": "covered",
+        "registryWrites": 1
+      },
+      "oracle_reason": "ad-hoc PASS was granted covered state",
+      "observedCovered": true
+    },
+    {
+      "mutation": 6,
+      "registry_writes": 0,
+      "applied": false,
+      "live_execution": false,
+      "proven_in": "M6",
+      "detected": true,
+      "expected": "DUPLICATE_ID_REJECTED",
+      "observed": "UPDATE_APPLIED",
+      "oracle_reason": "duplicate TEST-ID update proceeded",
+      "observedDuplicate": true
+    },
+    {
+      "mutation": 7,
+      "registry_writes": 0,
+      "applied": false,
+      "live_execution": false,
+      "proven_in": "M6",
+      "detected": true,
+      "expected": "PATH_REJECTED / SYMLINK_ESCAPE",
+      "observed": "WRITE_ATTEMPTED",
+      "oracle_reason": "registry path escape reached a write attempt",
+      "observedEscape": true
+    },
+    {
+      "mutation": 8,
+      "registry_writes": 0,
+      "applied": false,
+      "live_execution": false,
+      "proven_in": "M6",
+      "detected": true,
+      "expected": "INVALID_REGISTRY_STATE",
+      "observed": "stale",
+      "oracle_reason": "invalid State accepted as a valid enum",
+      "observedInvalidState": true,
+      "canonical_valid": false
+    },
+    {
+      "mutation": 9,
+      "registry_writes": 0,
+      "applied": false,
+      "live_execution": false,
+      "proven_in": "M6",
+      "detected": true,
+      "expected": 0,
+      "observed": 1,
+      "oracle_reason": "untrusted Command text reached a shell",
+      "observedShellExec": true
+    },
+    {
+      "mutation": 10,
+      "registry_writes": 0,
+      "applied": false,
+      "live_execution": false,
+      "proven_in": "M4",
+      "detected": true,
+      "expected": "PASS_UNVERIFIED / no coverage credit",
+      "observed": "PASS_VERIFIED(credit)",
+      "oracle_reason": "weak assertion exit 0 awarded coverage credit",
+      "observedCovered": true
+    },
+    {
+      "mutation": 11,
+      "registry_writes": 0,
+      "applied": false,
+      "live_execution": false,
+      "proven_in": "M6",
+      "detected": true,
+      "expected": "NOT_EXECUTED / UNVERIFIED",
+      "observed": "covered",
+      "oracle_reason": "zero/skipped test run was marked covered",
+      "observedCovered": true
+    },
+    {
+      "mutation": 12,
+      "registry_writes": 0,
+      "applied": false,
+      "live_execution": false,
+      "proven_in": "M4",
+      "detected": true,
+      "expected": 0,
+      "observed": 1,
+      "oracle_reason": "unsafe production target reached dispatch",
+      "observedSpawn": true
+    },
+    {
+      "mutation": 13,
+      "registry_writes": 0,
+      "applied": false,
+      "live_execution": false,
+      "proven_in": "M5",
+      "detected": true,
+      "expected": "WRITE_CONFLICT / no clobber",
+      "observed": "OVERWRITTEN",
+      "oracle_reason": "concurrent edit clobbered writer A by skipping hash-before-write",
+      "observedClobber": true
+    },
+    {
+      "mutation": 14,
+      "registry_writes": 0,
+      "applied": false,
+      "live_execution": false,
+      "proven_in": "M5",
+      "detected": true,
+      "expected": "BLOCKED_PREMATURE_DISABLE",
+      "observed": "BLOCKED_PREMATURE_DISABLE",
+      "oracle_reason": "premature disable attempted with P1/P5 unsatisfied",
+      "observedDisable": true
+    }
+  ],
+  "scenarios": [
+    "E02"
+  ]
+}

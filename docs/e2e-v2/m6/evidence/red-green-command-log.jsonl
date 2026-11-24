@@ -1,0 +1,2 @@
+{"id":"RED11","command":"node --test docs/e2e-v2/m6/tests/m6-corrections.test.mjs","exit_code":1,"result":"tests 13 / pass 1 / fail 12","source":"evidence/red-green/m6-corrections-tdd.json"}
+{"id":"GREEN11","command":"node --test docs/e2e-v2/m6/tests/m6-corrections.test.mjs","exit_code":0,"result":"tests 13 / pass 13 / fail 0","source":"evidence/red-green/m6-corrections-tdd.json"}

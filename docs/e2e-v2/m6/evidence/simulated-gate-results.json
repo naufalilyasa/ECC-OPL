@@ -1,0 +1,140 @@
+{
+  "decision_class": "SIMULATION",
+  "release_authority": false,
+  "note": "Veto probes only. Never publish as release authority.",
+  "blocked_probe": {
+    "caseId": "DECISION",
+    "policy": "DEC-10",
+    "decision_class": "SIMULATION",
+    "release_authority": false,
+    "disableDefaultTarget": "/e2e-map",
+    "disableDefaultPermitted": false,
+    "productionTargets": "BLOCKED",
+    "liveDisableDefault": "BLOCKED_DEPLOYMENT_GATED",
+    "gates": {
+      "P1": {
+        "name": "Effective resolution",
+        "status": "VERIFIED"
+      },
+      "P2": {
+        "name": "Parity",
+        "status": "VERIFIED_IN_M5_AND_M6"
+      },
+      "P3": {
+        "name": "Registry safety",
+        "status": "BLOCKED",
+        "reason": "productBoundary.status=FAIL"
+      },
+      "P4": {
+        "name": "Rollback readiness",
+        "status": "VERIFIED_IN_M5_AND_M6"
+      },
+      "P5": {
+        "name": "Owner deployment authorization",
+        "status": "GIVEN"
+      },
+      "A08": {
+        "name": "Live orchestration smoke",
+        "status": "VERIFIED"
+      }
+    },
+    "gateStatus": "BLOCKED_DEPLOYMENT_GATED",
+    "productBoundary": {
+      "status": "FAIL",
+      "gate_effect": "BLOCKED",
+      "blocker": true,
+      "classification": "REFERENCE_ONLY",
+      "reason": "productBoundary.status=FAIL",
+      "findings": [
+        "SIM-M5-stale",
+        "SIM-M5-symlink"
+      ],
+      "blockingLimitations": [],
+      "boundaryEvidence": {
+        "S01": {
+          "verified": false
+        },
+        "S02": {
+          "verified": false
+        }
+      },
+      "product_writer_validation": "PRODUCT_WRITER_NOT_VERIFIED"
+    },
+    "remainingRequirements": [
+      "P3: productBoundary.status=FAIL",
+      "PRODUCT_BOUNDARY_CLASS=REFERENCE_ONLY: helper fix is not a product writer fix",
+      "PRODUCT-FINDING: SIM-M5-stale",
+      "PRODUCT-FINDING: SIM-M5-symlink"
+    ],
+    "blockers": [
+      "P3: productBoundary.status=FAIL",
+      "PRODUCT_BOUNDARY_CLASS=REFERENCE_ONLY: helper fix is not a product writer fix",
+      "PRODUCT-FINDING: SIM-M5-stale",
+      "PRODUCT-FINDING: SIM-M5-symlink"
+    ],
+    "owner_decision": "Blocked: P3: productBoundary.status=FAIL; PRODUCT_BOUNDARY_CLASS=REFERENCE_ONLY: helper fix is not a product writer fix; PRODUCT-FINDING: SIM-M5-stale; PRODUCT-FINDING: SIM-M5-symlink"
+  },
+  "missing_boundary_probe": {
+    "caseId": "DECISION",
+    "policy": "DEC-10",
+    "decision_class": "SIMULATION",
+    "release_authority": false,
+    "disableDefaultTarget": "/e2e-map",
+    "disableDefaultPermitted": false,
+    "productionTargets": "BLOCKED",
+    "liveDisableDefault": "BLOCKED_DEPLOYMENT_GATED",
+    "gates": {
+      "P1": {
+        "name": "Effective resolution",
+        "status": "VERIFIED"
+      },
+      "P2": {
+        "name": "Parity",
+        "status": "VERIFIED_IN_M5_AND_M6"
+      },
+      "P3": {
+        "name": "Registry safety",
+        "status": "NOT_VERIFIED",
+        "reason": "product boundary evidence absent"
+      },
+      "P4": {
+        "name": "Rollback readiness",
+        "status": "VERIFIED_IN_M5_AND_M6"
+      },
+      "P5": {
+        "name": "Owner deployment authorization",
+        "status": "GIVEN"
+      },
+      "A08": {
+        "name": "Live orchestration smoke",
+        "status": "VERIFIED"
+      }
+    },
+    "gateStatus": "BLOCKED_DEPLOYMENT_GATED",
+    "productBoundary": {
+      "status": "NOT_VERIFIED",
+      "gate_effect": "NOT_VERIFIED",
+      "blocker": true,
+      "classification": "NOT_VERIFIED",
+      "reason": "product boundary evidence absent",
+      "findings": [],
+      "blockingLimitations": [],
+      "boundaryEvidence": {
+        "S01": {
+          "verified": false
+        },
+        "S02": {
+          "verified": false
+        }
+      },
+      "product_writer_validation": "PRODUCT_WRITER_NOT_VERIFIED"
+    },
+    "remainingRequirements": [
+      "P3: product boundary evidence absent"
+    ],
+    "blockers": [
+      "P3: product boundary evidence absent"
+    ],
+    "owner_decision": "Blocked: P3: product boundary evidence absent"
+  }
+}

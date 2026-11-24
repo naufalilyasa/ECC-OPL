@@ -1,0 +1,228 @@
+{
+  "generated_at": "2026-11-23T00:00:00Z",
+  "milestone": "M5",
+  "method": "reference-implementation harness (node --test): docs/e2e-v2/m5/tests/migration.mjs",
+  "status": "EXECUTED",
+  "fixture_provenance": "SYNTHETIC_REFERENCE",
+  "live_prompt_verification": "DEFERRED_TO_M6",
+  "live_playwright_execution": "DEFERRED_TO_M6",
+  "registry_writes": 0,
+  "applied": false,
+  "note": "Fixture observations only. No real browser, runner spawn, registry mutation, config change or CLI execution. Recorded commands are data, never executed.",
+  "scenario_id": "D06",
+  "acceptance": [
+    "AC-017",
+    "E2E-FR-017"
+  ],
+  "fixture": "F14/F01-F06/F13",
+  "stacks": [
+    {
+      "caseId": "D06",
+      "stackId": "F01",
+      "parity": true,
+      "diffs": [],
+      "counts": {
+        "routes": {
+          "new": 2,
+          "legacy": 2
+        },
+        "flows": {
+          "new": 2,
+          "legacy": 2
+        },
+        "excluded": {
+          "new": 1,
+          "legacy": 1
+        },
+        "partial": {
+          "new": 0,
+          "legacy": 0
+        }
+      }
+    },
+    {
+      "caseId": "D06",
+      "stackId": "F02",
+      "parity": true,
+      "diffs": [],
+      "counts": {
+        "routes": {
+          "new": 2,
+          "legacy": 2
+        },
+        "flows": {
+          "new": 1,
+          "legacy": 1
+        },
+        "excluded": {
+          "new": 1,
+          "legacy": 1
+        },
+        "partial": {
+          "new": 1,
+          "legacy": 1
+        }
+      }
+    },
+    {
+      "caseId": "D06",
+      "stackId": "F03",
+      "parity": true,
+      "diffs": [],
+      "counts": {
+        "routes": {
+          "new": 2,
+          "legacy": 2
+        },
+        "flows": {
+          "new": 1,
+          "legacy": 1
+        },
+        "excluded": {
+          "new": 1,
+          "legacy": 1
+        },
+        "partial": {
+          "new": 0,
+          "legacy": 0
+        }
+      }
+    },
+    {
+      "caseId": "D06",
+      "stackId": "F04",
+      "parity": true,
+      "diffs": [],
+      "counts": {
+        "routes": {
+          "new": 1,
+          "legacy": 1
+        },
+        "flows": {
+          "new": 1,
+          "legacy": 1
+        },
+        "excluded": {
+          "new": 1,
+          "legacy": 1
+        },
+        "partial": {
+          "new": 0,
+          "legacy": 0
+        }
+      }
+    },
+    {
+      "caseId": "D06",
+      "stackId": "F05",
+      "parity": true,
+      "diffs": [],
+      "counts": {
+        "routes": {
+          "new": 2,
+          "legacy": 2
+        },
+        "flows": {
+          "new": 2,
+          "legacy": 2
+        },
+        "excluded": {
+          "new": 1,
+          "legacy": 1
+        },
+        "partial": {
+          "new": 0,
+          "legacy": 0
+        }
+      }
+    },
+    {
+      "caseId": "D06",
+      "stackId": "F06",
+      "parity": true,
+      "diffs": [],
+      "counts": {
+        "routes": {
+          "new": 1,
+          "legacy": 1
+        },
+        "flows": {
+          "new": 1,
+          "legacy": 1
+        },
+        "excluded": {
+          "new": 1,
+          "legacy": 1
+        },
+        "partial": {
+          "new": 1,
+          "legacy": 1
+        }
+      }
+    },
+    {
+      "caseId": "D06",
+      "stackId": "F13",
+      "parity": true,
+      "diffs": [],
+      "counts": {
+        "routes": {
+          "new": 2,
+          "legacy": 2
+        },
+        "flows": {
+          "new": 1,
+          "legacy": 1
+        },
+        "excluded": {
+          "new": 1,
+          "legacy": 1
+        },
+        "partial": {
+          "new": 0,
+          "legacy": 0
+        }
+      }
+    }
+  ],
+  "divergent_case": {
+    "caseId": "D06",
+    "stackId": "F02",
+    "parity": false,
+    "diffs": [
+      {
+        "category": "routes",
+        "missingInLegacy": [
+          "/dashboard"
+        ],
+        "missingInNew": []
+      },
+      {
+        "category": "partial",
+        "missingInLegacy": [
+          "/dashboard/:id"
+        ],
+        "missingInNew": []
+      }
+    ],
+    "counts": {
+      "routes": {
+        "new": 2,
+        "legacy": 1
+      },
+      "flows": {
+        "new": 1,
+        "legacy": 1
+      },
+      "excluded": {
+        "new": 1,
+        "legacy": 1
+      },
+      "partial": {
+        "new": 1,
+        "legacy": 0
+      }
+    }
+  },
+  "parity_all_stacks": true
+}

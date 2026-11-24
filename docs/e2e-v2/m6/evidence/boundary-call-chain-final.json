@@ -1,0 +1,71 @@
+{
+  "change_request": "E2E-V2-M5-SAFETY-REMEDIATION-01",
+  "owner_authorization_basis": "owner answer \"jalankan semua\" to full-option question (M5 + M6), 2026-11-24",
+  "method": "read-only static trace of source and prompts; no model/plugin/MCP execution",
+  "product_boundary_class": "REFERENCE_ONLY",
+  "finding": "docs/e2e-v2/m5/tests/migration.mjs is imported only by docs/e2e-v2/m5/scripts/emit-m5-reports.mjs and docs/e2e-v2/m6/scripts/emit-r1-evidence.mjs (reference harnesses). The public .opencode/commands/e2e.md is a prompt template; it does not import/call migration.mjs. No deterministic production registry writer exists in the inspected source path.",
+  "entries": [
+    {
+      "id": "E2E_COMMAND",
+      "path": ".opencode/commands/e2e.md",
+      "sha256": "c562e0a2a2707c49362431b04ac1895f02c091e3d7ae193837ab6bf35b9d8436",
+      "kind": "PROMPT_TEMPLATE",
+      "reaches_migration_mjs": false
+    },
+    {
+      "id": "E2E_RUNNER_AGENT",
+      "path": ".opencode/prompts/agents/e2e-runner.txt",
+      "sha256": "d7442445cbb276cb88d6cca5339b50ec3247683ed78ea512ccf4627ed666ad08",
+      "kind": "PROMPT_TEMPLATE",
+      "reaches_migration_mjs": false
+    },
+    {
+      "id": "M5_HELPER",
+      "path": "docs/e2e-v2/m5/tests/migration.mjs",
+      "sha256": "b5bb301655b713e484e449cb2e2549794b56a8307d0fec727a1ca96ac26cff80",
+      "kind": "DETERMINISTIC_REFERENCE",
+      "functions": [
+        "applyFieldScopedUpdate",
+        "checkRegistryPathSafety"
+      ]
+    },
+    {
+      "id": "M5_EMITTER",
+      "path": "docs/e2e-v2/m5/scripts/emit-m5-reports.mjs",
+      "sha256": "33502f5b5cdc497b661d46e66871d8e6efbda9bd45e65e8b2c6eab092cd15d2b",
+      "kind": "REFERENCE_HARNESS",
+      "imports": "../tests/migration.mjs"
+    },
+    {
+      "id": "M6_EMITTER",
+      "path": "docs/e2e-v2/m6/scripts/emit-r1-evidence.mjs",
+      "sha256": "bd2801ed5ddce5a9879b1976d1baff21fa1de40b5262129e466f40dc89dbceeb",
+      "kind": "REFERENCE_HARNESS",
+      "imports": "../../m5/tests/migration.mjs"
+    }
+  ],
+  "classifications": [
+    {
+      "defect": "S01",
+      "class": "REFERENCE_ONLY",
+      "note": "M5 helper applyFieldScopedUpdate accepts invalid State; no evidence the prompt-driven command calls this helper"
+    },
+    {
+      "defect": "S02",
+      "class": "REFERENCE_ONLY",
+      "note": "M5 helper checkRegistryPathSafety lexical fallback; no evidence the prompt-driven command calls this helper"
+    }
+  ],
+  "product_writer_validation": "PRODUCT_WRITER_NOT_VERIFIED",
+  "toctou": "TOCTOU_NOT_FULLY_PROVEN",
+  "limitation": "No deterministic production registry writer was found in the inspected source; prompt assurances are not a strong write-safety boundary. Remediation of M5 reference helpers cannot be advertised as product remediation.",
+  "amendment_result": {
+    "m5_helper_before": "146c8cfd51e8f01679d08784077c0bd7e565747efa508ce392417e94de781f11",
+    "m5_helper_after": "b5bb301655b713e484e449cb2e2549794b56a8307d0fec727a1ca96ac26cff80",
+    "red": "17 failing assertions (S01 x7, S02 x10)",
+    "green": "47/47 focused M5 remediation tests",
+    "coverage": "migration.mjs lines 98.99%, branches 82.88%, functions 100%",
+    "full_suite": "53 tests: 51 pass, 2 fail (pre-existing active-HOME opencode.jsonc hash-pin drift, out of scope)",
+    "race_safety": "TOCTOU_NOT_FULLY_PROVEN; race_safe:false on every path result"
+  }
+}

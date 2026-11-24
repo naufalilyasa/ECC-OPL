@@ -1,0 +1,94 @@
+{
+  "generated_at": "2026-11-23T00:00:00Z",
+  "milestone": "M3",
+  "method": "reference-implementation harness (node --test): docs/e2e-v2/m3/tests/registry.mjs",
+  "status": "EXECUTED",
+  "live_prompt_verification": "DEFERRED_TO_M6 (48-scenario acceptance)",
+  "scenario_id": "B08",
+  "acceptance": [
+    "AC-009",
+    "E2E-FR-008",
+    "E2E-FR-009"
+  ],
+  "fixture": "F07 (temp copy)",
+  "cases": [
+    {
+      "case_id": "B08",
+      "input": "verified PASS on TEST-E2E-001",
+      "result": {
+        "caseId": "B08",
+        "applied": true,
+        "blockId": "TEST-E2E-001",
+        "via": "id",
+        "nextText": "# E2E Test Registry (ECC-OPL)\n\n## Section 2 — Journey index\n| ID | Journey | Source | Level | Execution group | State |\n|---|---|---|---|---|---|\n| TEST-E2E-001 | checkout | /checkout | ui | g1 | covered |\n| TEST-E2E-002 | login | /login | ui | g1 | missing |\n\n## Section 4 — Test blocks\n<!-- Writable by a verified run: State, Test file, Test node, Command, Evidence only. -->\n\n### TEST-E2E-001 — checkout to confirmation\n- Purpose: verify checkout completes\n- Source: /checkout\n- Representative input: /checkout, /cart\n- Observable expectation: order confirmation rendered\n- Level: ui\n- Execution group: g1\n- Boundary: fixtures/checkout\n- State: covered\n- Test file: tests/e2e/checkout-flow.spec.ts\n- Test node: checkout completes\n- Command: npx playwright test tests/e2e/checkout-flow.spec.ts --reporter=json\n- Evidence: evidence/checkout-2026-11-23.json\n\n### TEST-E2E-002 — login with email\n- Purpose: verify login\n- Source: /login\n- Representative input: /login\n- Observable expectation: session cookie set\n- Level: ui\n- Execution group: g1\n- Boundary: fixtures/login\n- State: missing\n- Test file:\n- Test node:\n- Command:\n- Evidence:\n",
+        "changes": [
+          {
+            "id": "TEST-E2E-001",
+            "field": "State",
+            "from": "unverified",
+            "to": "covered"
+          },
+          {
+            "id": "TEST-E2E-001",
+            "field": "Test file",
+            "from": "tests/e2e/checkout.spec.ts",
+            "to": "tests/e2e/checkout-flow.spec.ts"
+          },
+          {
+            "id": "TEST-E2E-001",
+            "field": "Test node",
+            "from": "checkout to confirmation",
+            "to": "checkout completes"
+          },
+          {
+            "id": "TEST-E2E-001",
+            "field": "Command",
+            "from": "npx playwright test tests/e2e/checkout.spec.ts",
+            "to": "npx playwright test tests/e2e/checkout-flow.spec.ts --reporter=json"
+          },
+          {
+            "id": "TEST-E2E-001",
+            "field": "Evidence",
+            "from": "evidence/checkout.json",
+            "to": "evidence/checkout-2026-11-23.json"
+          }
+        ],
+        "diff": "- State: unverified\n+ State: covered\n- Test file: tests/e2e/checkout.spec.ts\n+ Test file: tests/e2e/checkout-flow.spec.ts\n- Test node: checkout to confirmation\n+ Test node: checkout completes\n- Command: npx playwright test tests/e2e/checkout.spec.ts\n+ Command: npx playwright test tests/e2e/checkout-flow.spec.ts --reporter=json\n- Evidence: evidence/checkout.json\n+ Evidence: evidence/checkout-2026-11-23.json",
+        "renumbered": 0,
+        "newIds": []
+      }
+    },
+    {
+      "case_id": "B08",
+      "input": "outcome carrying a non-permitted field (Purpose)",
+      "result": {
+        "caseId": "B08",
+        "applied": false,
+        "code": "FIELD-NOT-PERMITTED",
+        "fields": [
+          "Purpose"
+        ],
+        "nextText": "# E2E Test Registry (ECC-OPL)\n\n## Section 2 — Journey index\n| ID | Journey | Source | Level | Execution group | State |\n|---|---|---|---|---|---|\n| TEST-E2E-001 | checkout | /checkout | ui | g1 | covered |\n| TEST-E2E-002 | login | /login | ui | g1 | missing |\n\n## Section 4 — Test blocks\n<!-- Writable by a verified run: State, Test file, Test node, Command, Evidence only. -->\n\n### TEST-E2E-001 — checkout to confirmation\n- Purpose: verify checkout completes\n- Source: /checkout\n- Representative input: /checkout, /cart\n- Observable expectation: order confirmation rendered\n- Level: ui\n- Execution group: g1\n- Boundary: fixtures/checkout\n- State: unverified\n- Test file: tests/e2e/checkout.spec.ts\n- Test node: checkout to confirmation\n- Command: npx playwright test tests/e2e/checkout.spec.ts\n- Evidence: evidence/checkout.json\n\n### TEST-E2E-002 — login with email\n- Purpose: verify login\n- Source: /login\n- Representative input: /login\n- Observable expectation: session cookie set\n- Level: ui\n- Execution group: g1\n- Boundary: fixtures/login\n- State: missing\n- Test file:\n- Test node:\n- Command:\n- Evidence:\n",
+        "changes": [],
+        "renumbered": 0,
+        "newIds": []
+      }
+    }
+  ],
+  "permitted_write_fields": [
+    "State",
+    "Test file",
+    "Test node",
+    "Command",
+    "Evidence"
+  ],
+  "changed_fields": [
+    "State",
+    "Test file",
+    "Test node",
+    "Command",
+    "Evidence"
+  ],
+  "renumbered": 0,
+  "other_blocks_untouched": true
+}

@@ -1,0 +1,41 @@
+{
+  "artifact": "m2-preflight.report.json",
+  "milestone": "M2",
+  "phase": "Phase 0 — preflight",
+  "generated_at": "2026-11-23T00:00:00Z",
+  "method": "shasum -a 256 on live worktree; no .git / .guardian-angel access",
+  "status": "PASS",
+  "drift_rows": 0,
+  "baseline_reference": "docs/e2e-v2/SOURCE-BASELINE-FROZEN.md",
+  "repo_sources": [
+    { "path": ".opencode/commands/e2e.md", "expected": "08b17f2cb765665b753374265bc8f78df2599c3505c2245107dd6888061b95dd", "observed": "08b17f2cb765665b753374265bc8f78df2599c3505c2245107dd6888061b95dd", "match": true },
+    { "path": ".opencode/commands/e2e-map.md", "expected": "76b3d4037a0144df2d40dc0eca01777690762a7cccc5d9562b0330333dfdb142", "observed": "76b3d4037a0144df2d40dc0eca01777690762a7cccc5d9562b0330333dfdb142", "match": true },
+    { "path": "agents/e2e-runner.md", "expected": "94811f4bbc491c351cdf220ab103d6bd251fb1d88d9d46ba4c8162637a236a5b", "observed": "94811f4bbc491c351cdf220ab103d6bd251fb1d88d9d46ba4c8162637a236a5b", "match": true },
+    { "path": ".opencode/prompts/agents/e2e-runner.txt", "expected": "d7442445cbb276cb88d6cca5339b50ec3247683ed78ea512ccf4627ed666ad08", "observed": "d7442445cbb276cb88d6cca5339b50ec3247683ed78ea512ccf4627ed666ad08", "match": true },
+    { "path": "legacy-command-shims/commands/e2e.md", "expected": "97ef29c9355344bd25b4e963e519f3eaf5b0c6f43a9174f47c9c5d1b4dbb579e", "observed": "97ef29c9355344bd25b4e963e519f3eaf5b0c6f43a9174f47c9c5d1b4dbb579e", "match": true },
+    { "path": "skills/test-collaboration/SKILL.md", "expected": "741138330940e2c9d3cc7bec9e671787f24a361ff89be44e09a56abc8e10dcfa", "observed": "741138330940e2c9d3cc7bec9e671787f24a361ff89be44e09a56abc8e10dcfa", "match": true },
+    { "path": "skills/e2e-testing/SKILL.md", "expected": "b0e00e7e17cb259101139900816c5528aed18dd10bcf5f9cb42cfc35baf8a755", "observed": "b0e00e7e17cb259101139900816c5528aed18dd10bcf5f9cb42cfc35baf8a755", "match": true },
+    { "path": "skills/click-path-audit/SKILL.md", "expected": "662fc5d02483bcd8ff799d6d3109a38da673182341cfc14445e9076fcd920162", "observed": "662fc5d02483bcd8ff799d6d3109a38da673182341cfc14445e9076fcd920162", "match": true }
+  ],
+  "config_surfaces": [
+    { "path": ".opencode/opencode.json", "scope": "project", "observed": "01e3d4405c4351cde1460e782da9aa80f0aa6a6796bc3bb149be1b12bcc63e84", "prior_reference": "none", "status": "NO_PRIOR_REF" },
+    { "path": "~/.config/opencode/opencode.json", "scope": "global (read-only)", "observed": "bd747d4f42d22e7c0dc1f14b65e815b043117083fd548292489509c653e26843", "prior_reference": "none", "status": "NO_PRIOR_REF" },
+    { "path": "~/.config/opencode/opencode.jsonc", "scope": "global (read-only)", "observed": "9263d862ba18d99054bbb932b974fbf423312e282059ff11add59e8ee7c1e551", "prior_reference": "none", "status": "NO_PRIOR_REF" }
+  ],
+  "environment_facts": {
+    "node_version": "v24.21.0",
+    "opencode_version": "2.3.2",
+    "playwright_installed": false,
+    "playwright_evidence": "node_modules/playwright absent; no `playwright` binary on PATH (2026-11-23)",
+    "tests_md": "absent",
+    "docs_map": ".governance/docs-map.json absent",
+    "registry_bootstrap_target": "root TESTS.md (absent; none created)"
+  },
+  "workflow_gate": {
+    "source": ".opencode/workflows/active.json (read-only; not edited)",
+    "planApproved": true,
+    "redVerified": false
+  },
+  "live_prompt_verification": "DEFERRED_TO_M6 (48-scenario acceptance)",
+  "conclusion": "Baseline byte-identical on all 8 repo sources; config surfaces unchanged since freeze; no drift. M2 may proceed."
+}

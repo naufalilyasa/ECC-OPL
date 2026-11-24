@@ -1,0 +1,248 @@
+{
+  "generated_at": "2026-11-24T05:29:01.540Z",
+  "milestone": "M6",
+  "registry_writes": 0,
+  "applied": false,
+  "fixture_provenance": "SCRATCH_PLAYWRIGHT_LOOPBACK + DETERMINISTIC_REFERENCE",
+  "scenario_id": "D06",
+  "status": "PASS",
+  "acceptance": [
+    "AC-017",
+    "AC-019",
+    "D06",
+    "B01",
+    "F13"
+  ],
+  "stacks": [
+    {
+      "caseId": "D06",
+      "stackId": "F01",
+      "parity": true,
+      "diffs": [],
+      "counts": {
+        "routes": {
+          "new": 2,
+          "legacy": 2
+        },
+        "flows": {
+          "new": 2,
+          "legacy": 2
+        },
+        "excluded": {
+          "new": 1,
+          "legacy": 1
+        },
+        "partial": {
+          "new": 0,
+          "legacy": 0
+        }
+      }
+    },
+    {
+      "caseId": "D06",
+      "stackId": "F02",
+      "parity": true,
+      "diffs": [],
+      "counts": {
+        "routes": {
+          "new": 2,
+          "legacy": 2
+        },
+        "flows": {
+          "new": 1,
+          "legacy": 1
+        },
+        "excluded": {
+          "new": 1,
+          "legacy": 1
+        },
+        "partial": {
+          "new": 1,
+          "legacy": 1
+        }
+      }
+    },
+    {
+      "caseId": "D06",
+      "stackId": "F03",
+      "parity": true,
+      "diffs": [],
+      "counts": {
+        "routes": {
+          "new": 2,
+          "legacy": 2
+        },
+        "flows": {
+          "new": 1,
+          "legacy": 1
+        },
+        "excluded": {
+          "new": 1,
+          "legacy": 1
+        },
+        "partial": {
+          "new": 0,
+          "legacy": 0
+        }
+      }
+    },
+    {
+      "caseId": "D06",
+      "stackId": "F04",
+      "parity": true,
+      "diffs": [],
+      "counts": {
+        "routes": {
+          "new": 1,
+          "legacy": 1
+        },
+        "flows": {
+          "new": 1,
+          "legacy": 1
+        },
+        "excluded": {
+          "new": 1,
+          "legacy": 1
+        },
+        "partial": {
+          "new": 0,
+          "legacy": 0
+        }
+      }
+    },
+    {
+      "caseId": "D06",
+      "stackId": "F05",
+      "parity": true,
+      "diffs": [],
+      "counts": {
+        "routes": {
+          "new": 2,
+          "legacy": 2
+        },
+        "flows": {
+          "new": 2,
+          "legacy": 2
+        },
+        "excluded": {
+          "new": 1,
+          "legacy": 1
+        },
+        "partial": {
+          "new": 0,
+          "legacy": 0
+        }
+      }
+    },
+    {
+      "caseId": "D06",
+      "stackId": "F06",
+      "parity": true,
+      "diffs": [],
+      "counts": {
+        "routes": {
+          "new": 1,
+          "legacy": 1
+        },
+        "flows": {
+          "new": 1,
+          "legacy": 1
+        },
+        "excluded": {
+          "new": 1,
+          "legacy": 1
+        },
+        "partial": {
+          "new": 1,
+          "legacy": 1
+        }
+      }
+    },
+    {
+      "caseId": "D06",
+      "stackId": "F13",
+      "parity": true,
+      "diffs": [],
+      "counts": {
+        "routes": {
+          "new": 2,
+          "legacy": 2
+        },
+        "flows": {
+          "new": 1,
+          "legacy": 1
+        },
+        "excluded": {
+          "new": 1,
+          "legacy": 1
+        },
+        "partial": {
+          "new": 0,
+          "legacy": 0
+        }
+      }
+    }
+  ],
+  "divergent_case": {
+    "caseId": "D06",
+    "stackId": "F02",
+    "parity": false,
+    "diffs": [
+      {
+        "category": "routes",
+        "missingInLegacy": [
+          "/dashboard"
+        ],
+        "missingInNew": []
+      },
+      {
+        "category": "partial",
+        "missingInLegacy": [
+          "/dashboard/:id"
+        ],
+        "missingInNew": []
+      }
+    ],
+    "counts": {
+      "routes": {
+        "new": 2,
+        "legacy": 1
+      },
+      "flows": {
+        "new": 1,
+        "legacy": 1
+      },
+      "excluded": {
+        "new": 1,
+        "legacy": 1
+      },
+      "partial": {
+        "new": 1,
+        "legacy": 0
+      }
+    }
+  },
+  "parity_all_stacks": true,
+  "scenarios": [
+    "B01",
+    "B02",
+    "B03",
+    "B04",
+    "B05",
+    "B06",
+    "B07",
+    "B08",
+    "B09",
+    "B10",
+    "B11",
+    "B12",
+    "D01",
+    "D03",
+    "D04",
+    "D06",
+    "D07",
+    "D08",
+    "D09",
+    "D10"
+  ]
+}

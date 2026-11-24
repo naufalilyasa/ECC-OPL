@@ -1,0 +1,19 @@
+{
+  "generated_at": "2026-11-23T00:00:00Z",
+  "milestone": "M5",
+  "scenario_id": "PROMPT",
+  "status": "EXECUTED",
+  "fixture_provenance": "STATIC_READ_ONLY",
+  "live_prompt_verification": "DEFERRED_TO_M6",
+  "live_playwright_execution": "DEFERRED_TO_M6",
+  "registry_writes": 0,
+  "applied": false,
+  "runtime_enforcement_claimed": false,
+  "static_checks_only": true,
+  "all_pins_match": true,
+  "registry_absent": {
+    "TESTS.md": true,
+    ".governance/docs-map.json": true
+  },
+  "note": "Static byte comparison only; not runtime enforcement. No live prompt/command verification performed in M5."
+}

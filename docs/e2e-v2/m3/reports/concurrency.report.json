@@ -1,0 +1,49 @@
+{
+  "generated_at": "2026-11-23T00:00:00Z",
+  "milestone": "M3",
+  "method": "reference-implementation harness (node --test): docs/e2e-v2/m3/tests/registry.mjs",
+  "status": "EXECUTED",
+  "live_prompt_verification": "DEFERRED_TO_M6 (48-scenario acceptance)",
+  "scenario_id": "B12",
+  "acceptance": [
+    "AC-016-supporting (M5 acceptance; NOT claimed complete)",
+    "E2E-FR-015"
+  ],
+  "fixture": "F11 (temp-dir file, deleted before exit)",
+  "cases": [
+    {
+      "case_id": "B12",
+      "input": "hash unchanged between diff and write",
+      "result": {
+        "caseId": "B12",
+        "outcome": "WRITE_OK",
+        "conflict": false,
+        "writePermitted": true,
+        "applied": false
+      }
+    },
+    {
+      "case_id": "B12",
+      "input": "concurrent owner edit after diff",
+      "result": {
+        "caseId": "B12",
+        "outcome": "WRITE_CONFLICT",
+        "conflict": true,
+        "writePermitted": false,
+        "applied": false,
+        "rebaseRequired": true,
+        "reapprovalRequired": true,
+        "rebase": {
+          "recomputeFrom": "registry@72e76848ea35243823e7fd278ffd865b457bc987bca240e86d23a05a8ddd420e",
+          "requiresApproval": true,
+          "previousDiff": "approved-diff@fbdf3d5d56c6d673a3258d238ceec9d34a18535f03ffeed606b5da59cfa322bb"
+        }
+      }
+    }
+  ],
+  "hash_before": "fbdf3d5d56c6d673a3258d238ceec9d34a18535f03ffeed606b5da59cfa322bb",
+  "hash_after_concurrent_edit": "72e76848ea35243823e7fd278ffd865b457bc987bca240e86d23a05a8ddd420e",
+  "owner_bytes_intact": true,
+  "applied": false,
+  "live_execution": "DEFERRED_TO_M6 (live cross-turn concurrency stays in the acceptance suite)"
+}

@@ -1,0 +1,96 @@
+{
+  "generated_at": "2026-11-23T00:00:00Z",
+  "milestone": "M2",
+  "method": "reference-implementation harness (node --test): docs/e2e-v2/m2/tests/detector.mjs over docs/e2e-v2/m2/tests/fixtures.mjs",
+  "status": "EXECUTED",
+  "live_prompt_verification": "DEFERRED_TO_M6 (48-scenario acceptance)",
+  "writes_performed": false,
+  "fixture_id": "F03",
+  "scenario_id": "B03",
+  "name": "Laravel + Inertia React",
+  "expected_output": "2 journeys | role labels | critical path flag",
+  "spec_of_record": "docs/e2e-v2/m1/reports/F01-F06-map-output-expected.json + docs/e2e-v2/m1/detector-characterization.md §1",
+  "contract_checks": [
+    {
+      "contract": "must_output: login -> dashboard -> edit journey spanning routes/web.php and resources/js/Pages",
+      "observed": [
+        "routes/web.php:1",
+        "resources/js/Pages/Dashboard.tsx:1"
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "contract": "must_output: auth role boundary labelled in actors",
+      "observed": "authenticated",
+      "verdict": "PASS"
+    },
+    {
+      "contract": "must_output: critical path flagged for the auth-gated flow",
+      "observed": "critical",
+      "verdict": "PASS"
+    },
+    {
+      "contract": "must_not: role-dependent paths merged without an actor label",
+      "observed": [
+        "/dashboard",
+        "/dashboard/edit"
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "contract": "must_not: routes/api.php mapped as a browser journey",
+      "observed": [
+        "routes/web.php:1 resources/js/Pages/Auth/Login.tsx:1",
+        "routes/web.php:1 resources/js/Pages/Dashboard.tsx:1"
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "contract": "expected_output: 2 journeys",
+      "observed": 2,
+      "verdict": "PASS"
+    }
+  ],
+  "contract_passed": true,
+  "observed": {
+    "stacks": {
+      "laravel": 4
+    },
+    "route_count": 4,
+    "ui_route_count": 3,
+    "exclusions": [],
+    "journeys": [
+      {
+        "journey_key": "laravel:login:public",
+        "name": "login",
+        "actor": "public",
+        "risk": "critical",
+        "confidence": "confirmed",
+        "routes": [
+          "/login"
+        ],
+        "alternate_paths": [],
+        "sources": [
+          "routes/web.php:1",
+          "resources/js/Pages/Auth/Login.tsx:1"
+        ]
+      },
+      {
+        "journey_key": "laravel:dashboard:authenticated",
+        "name": "dashboard",
+        "actor": "authenticated",
+        "risk": "critical",
+        "confidence": "confirmed",
+        "routes": [
+          "/dashboard",
+          "/dashboard/edit"
+        ],
+        "alternate_paths": [],
+        "sources": [
+          "routes/web.php:1",
+          "resources/js/Pages/Dashboard.tsx:1"
+        ]
+      }
+    ]
+  }
+}

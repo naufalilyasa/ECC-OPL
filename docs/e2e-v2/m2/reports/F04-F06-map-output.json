@@ -1,0 +1,331 @@
+{
+  "generated_at": "2026-11-23T00:00:00Z",
+  "milestone": "M2",
+  "method": "reference-implementation harness (node --test): docs/e2e-v2/m2/tests/detector.mjs over docs/e2e-v2/m2/tests/fixtures.mjs",
+  "status": "EXECUTED",
+  "live_prompt_verification": "DEFERRED_TO_M6 (48-scenario acceptance)",
+  "writes_performed": false,
+  "fixtures": [
+    {
+      "fixture_id": "F04",
+      "scenario_id": "B04",
+      "name": "React Router",
+      "expected_output": "2 journeys | dynamic path PARTIAL",
+      "spec_of_record": "docs/e2e-v2/m1/reports/F01-F06-map-output-expected.json + docs/e2e-v2/m1/detector-characterization.md §1",
+      "contract_checks": [
+        {
+          "contract": "must_output: nested routes flattened to full paths",
+          "observed": [
+            "/products",
+            "/products/:id",
+            "/products/:id/edit"
+          ],
+          "verdict": "PASS"
+        },
+        {
+          "contract": "must_output: guard wrapper correlated to its route children",
+          "observed": [
+            "authenticated",
+            "authenticated"
+          ],
+          "verdict": "PASS"
+        },
+        {
+          "contract": "must_not: a guarded route reported as public",
+          "observed": 0,
+          "verdict": "PASS"
+        },
+        {
+          "contract": "must_not: a dynamic route reported as confirmed",
+          "observed": "partial",
+          "verdict": "PASS"
+        },
+        {
+          "contract": "expected_output: 2 journeys",
+          "observed": 2,
+          "verdict": "PASS"
+        }
+      ],
+      "contract_passed": true,
+      "observed": {
+        "stacks": {
+          "react-router": 4
+        },
+        "route_count": 4,
+        "ui_route_count": 4,
+        "exclusions": [],
+        "journeys": [
+          {
+            "journey_key": "react-router:products:authenticated",
+            "name": "products",
+            "actor": "authenticated",
+            "risk": "critical",
+            "confidence": "partial",
+            "routes": [
+              "/products",
+              "/products/:id",
+              "/products/:id/edit"
+            ],
+            "alternate_paths": [],
+            "sources": [
+              "src/App.tsx:1"
+            ]
+          },
+          {
+            "journey_key": "react-router:orders:authenticated",
+            "name": "orders",
+            "actor": "authenticated",
+            "risk": "critical",
+            "confidence": "partial",
+            "routes": [
+              "/orders/:id"
+            ],
+            "alternate_paths": [],
+            "sources": [
+              "src/App.tsx:1"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "F05",
+      "scenario_id": "B04",
+      "name": "SvelteKit / Astro / Nuxt",
+      "expected_output": "3 stack reports | 0 invented path | PARTIAL untuk dynamic",
+      "spec_of_record": "docs/e2e-v2/m1/reports/F01-F06-map-output-expected.json + docs/e2e-v2/m1/detector-characterization.md §1",
+      "contract_checks": [
+        {
+          "contract": "must_output: src/routes/**/+page.svelte matched only by the SvelteKit detector",
+          "observed": 3,
+          "verdict": "PASS"
+        },
+        {
+          "contract": "must_output: src/pages/**/*.astro matched only by the Astro detector",
+          "observed": 1,
+          "verdict": "PASS"
+        },
+        {
+          "contract": "must_output: pages/**/*.vue matched only by the Nuxt detector",
+          "observed": 1,
+          "verdict": "PASS"
+        },
+        {
+          "contract": "must_not: a route invented by a detector whose stack did not match",
+          "observed": [
+            "nuxt:pages/index.vue",
+            "astro:src/pages/index.astro",
+            "sveltekit:src/routes/+page.svelte",
+            "sveltekit:src/routes/about/+page.svelte",
+            "sveltekit:src/routes/blog/[slug]/+page.svelte"
+          ],
+          "verdict": "PASS"
+        },
+        {
+          "contract": "must_not: locale mirrors listed twice",
+          "observed": [
+            "nuxt:index:public",
+            "astro:index:public",
+            "sveltekit:root:public",
+            "sveltekit:about:public",
+            "sveltekit:blog:public"
+          ],
+          "verdict": "PASS"
+        },
+        {
+          "contract": "must_not: a dynamic route reported as confidence=confirmed",
+          "observed": "partial",
+          "verdict": "PASS"
+        }
+      ],
+      "contract_passed": true,
+      "observed": {
+        "stacks": {
+          "nuxt": 1,
+          "astro": 1,
+          "sveltekit": 3
+        },
+        "route_count": 5,
+        "ui_route_count": 5,
+        "exclusions": [],
+        "journeys": [
+          {
+            "journey_key": "nuxt:index:public",
+            "name": "index",
+            "actor": "public",
+            "risk": "normal",
+            "confidence": "confirmed",
+            "routes": [
+              "/index"
+            ],
+            "alternate_paths": [],
+            "sources": [
+              "pages/index.vue:1"
+            ]
+          },
+          {
+            "journey_key": "astro:index:public",
+            "name": "index",
+            "actor": "public",
+            "risk": "normal",
+            "confidence": "confirmed",
+            "routes": [
+              "/index"
+            ],
+            "alternate_paths": [],
+            "sources": [
+              "src/pages/index.astro:1"
+            ]
+          },
+          {
+            "journey_key": "sveltekit:root:public",
+            "name": "root",
+            "actor": "public",
+            "risk": "normal",
+            "confidence": "confirmed",
+            "routes": [
+              "//"
+            ],
+            "alternate_paths": [],
+            "sources": [
+              "src/routes/+page.svelte:1"
+            ]
+          },
+          {
+            "journey_key": "sveltekit:about:public",
+            "name": "about",
+            "actor": "public",
+            "risk": "normal",
+            "confidence": "confirmed",
+            "routes": [
+              "/about"
+            ],
+            "alternate_paths": [],
+            "sources": [
+              "src/routes/about/+page.svelte:1"
+            ]
+          },
+          {
+            "journey_key": "sveltekit:blog:public",
+            "name": "blog",
+            "actor": "public",
+            "risk": "normal",
+            "confidence": "partial",
+            "routes": [
+              "/blog/[slug]"
+            ],
+            "alternate_paths": [],
+            "sources": [
+              "src/routes/blog/[slug]/+page.svelte:1"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "F06",
+      "scenario_id": "B04",
+      "name": "Yii2 / Express / Fastify / Hono",
+      "expected_output": "4 route groups | API flagged | PARTIAL untuk conditional",
+      "spec_of_record": "docs/e2e-v2/m1/reports/F01-F06-map-output-expected.json + docs/e2e-v2/m1/detector-characterization.md §1",
+      "contract_checks": [
+        {
+          "contract": "must_output: urlManager rules and controller actions grouped",
+          "observed": [
+            "/site/login",
+            "/post/<id:\\d+>"
+          ],
+          "verdict": "PASS"
+        },
+        {
+          "contract": "must_output: app.get/post registrations flagged as API, not browser",
+          "observed": [
+            "/api/health:api",
+            "/api/ping:api",
+            "/api/users:api",
+            "/api/orders:api"
+          ],
+          "verdict": "PASS"
+        },
+        {
+          "contract": "must_output: confidence stated explicitly per group",
+          "observed": [
+            "partial",
+            "partial"
+          ],
+          "verdict": "PASS"
+        },
+        {
+          "contract": "must_not: a server route presented as a browser journey",
+          "observed": [
+            "config/web.php:1",
+            "config/web.php:1"
+          ],
+          "verdict": "PASS"
+        },
+        {
+          "contract": "must_not: a conditional route reported as confirmed",
+          "observed": [
+            "partial",
+            "partial"
+          ],
+          "verdict": "PASS"
+        },
+        {
+          "contract": "expected_output: 4 route groups",
+          "observed": [
+            "fastify",
+            "hono",
+            "yii2",
+            "express"
+          ],
+          "verdict": "PASS"
+        }
+      ],
+      "contract_passed": true,
+      "observed": {
+        "stacks": {
+          "fastify": 1,
+          "hono": 1,
+          "yii2": 2,
+          "express": 2
+        },
+        "route_count": 6,
+        "ui_route_count": 2,
+        "exclusions": [],
+        "journeys": [
+          {
+            "journey_key": "yii2:site:public",
+            "name": "site",
+            "actor": "public",
+            "risk": "normal",
+            "confidence": "partial",
+            "routes": [
+              "/site/login"
+            ],
+            "alternate_paths": [],
+            "sources": [
+              "config/web.php:1"
+            ]
+          },
+          {
+            "journey_key": "yii2:post:public",
+            "name": "post",
+            "actor": "public",
+            "risk": "normal",
+            "confidence": "partial",
+            "routes": [
+              "/post/<id:\\d+>"
+            ],
+            "alternate_paths": [],
+            "sources": [
+              "config/web.php:1"
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "contract_passed": true,
+  "artifact_name_note": "F04/F05/F06 share this artifact name in docs/e2e-v2/m1/reports/F01-F06-map-output-expected.json."
+}

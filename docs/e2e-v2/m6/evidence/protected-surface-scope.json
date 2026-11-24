@@ -1,0 +1,24 @@
+{
+  "authorized_scope": [
+    "docs/e2e-v2/m6/evidence/**",
+    "docs/e2e-v2/m6/reports/**"
+  ],
+  "excluded_surfaces": {
+    "GUARDIAN_ANGEL": {
+      "status": "NOT_VERIFIED",
+      "reason": "restricted metadata not accessed"
+    },
+    "GIT_POLICY": {
+      "status": "NOT_VERIFIED",
+      "reason": "restricted metadata not accessed"
+    }
+  },
+  "before_sha256": "16f0bf6711473f6678581b1d9e4dd3d29fcc46f9056f5e5cb96a37af90ea8ab2",
+  "after_sha256": "16f0bf6711473f6678581b1d9e4dd3d29fcc46f9056f5e5cb96a37af90ea8ab2",
+  "verified_files": [
+    "docs/e2e-v2/m6/tests/acceptance-ledger.mjs",
+    "docs/e2e-v2/m6/tests/fixtures.mjs",
+    "docs/e2e-v2/m6/tests/registry-state.mjs",
+    "docs/e2e-v2/m6/scripts/verify-package.mjs"
+  ]
+}

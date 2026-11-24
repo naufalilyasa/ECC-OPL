@@ -1,0 +1,68 @@
+{
+  "generated_at": "2026-11-23T00:00:00Z",
+  "milestone": "M2",
+  "method": "reference-implementation harness (node --test): docs/e2e-v2/m2/tests/{parser,validators}.mjs",
+  "status": "EXECUTED",
+  "live_prompt_verification": "DEFERRED_TO_M6 (48-scenario acceptance)",
+  "scenario_id": "B10",
+  "spec_of_record": "docs/e2e-v2/contracts/validator-specs.md §4",
+  "cases": [
+    {
+      "id": "B10-1",
+      "input": "State: stale",
+      "observed": {
+        "ok": false,
+        "code": "B10",
+        "applied": false,
+        "proposal": {
+          "State": "unverified"
+        },
+        "reason": "legacy State: stale is an assessment, not a State; propose the correction (DEC-12)"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "B10-2",
+      "input": "State: covered, evidence invalid",
+      "observed": {
+        "ok": true,
+        "proposedState": "unverified",
+        "reason": "evidence went invalid"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "B10-3",
+      "input": "State: covered, route gone",
+      "observed": {
+        "ok": true,
+        "assessment": "stale",
+        "proposedState": "unverified",
+        "reason": "route is gone"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "B10-4",
+      "input": "State: done (outside the enum)",
+      "observed": {
+        "ok": false,
+        "code": "STATE-INVALID",
+        "reason": "State \"done\" is outside the 5 controlled values"
+      },
+      "verdict": "PASS"
+    }
+  ],
+  "assertions": [
+    "State: stale is a schema mismatch with a proposed correction and applied:false (DEC-12)",
+    "covered + invalid evidence proposes unverified, never stale",
+    "covered + route gone yields assessment:stale with a separate State proposal",
+    "a State outside the 5 controlled values rejects the row and proposes nothing"
+  ],
+  "writes_performed": false,
+  "requirement_ids": [
+    "E2E-FR-010",
+    "E2E-FR-015"
+  ],
+  "prd_ac": "AC-016"
+}

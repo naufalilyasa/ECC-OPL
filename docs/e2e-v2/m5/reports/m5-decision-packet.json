@@ -1,0 +1,47 @@
+{
+  "generated_at": "2026-11-23T00:00:00Z",
+  "milestone": "M5",
+  "method": "reference-implementation harness (node --test): docs/e2e-v2/m5/tests/migration.mjs",
+  "status": "EXECUTED",
+  "fixture_provenance": "SYNTHETIC_REFERENCE",
+  "live_prompt_verification": "DEFERRED_TO_M6",
+  "live_playwright_execution": "DEFERRED_TO_M6",
+  "registry_writes": 0,
+  "applied": false,
+  "note": "Fixture observations only. No real browser, runner spawn, registry mutation, config change or CLI execution. Recorded commands are data, never executed.",
+  "scenario_id": "DECISION",
+  "acceptance": [
+    "DEC-10",
+    "GATES-P1-P5"
+  ],
+  "fixture": "NONE",
+  "gates": {
+    "P1": {
+      "name": "Effective resolution",
+      "status": "NOT_VERIFIED"
+    },
+    "P2": {
+      "name": "Parity",
+      "status": "VERIFIED_IN_M5_REFERENCE"
+    },
+    "P3": {
+      "name": "Registry safety",
+      "status": "VERIFIED_IN_M5_REFERENCE"
+    },
+    "P4": {
+      "name": "Rollback readiness",
+      "status": "VERIFIED_IN_M5_REFERENCE"
+    },
+    "P5": {
+      "name": "Owner deployment authorization",
+      "status": "NOT_GIVEN"
+    }
+  },
+  "disable_default_permitted": false,
+  "gate_status": "BLOCKED_DEPLOYMENT_GATED",
+  "remaining_requirements": [
+    "P1: prove effective command winner (ASM-01) in an isolated probe",
+    "P5: obtain explicit owner disable-default authorization naming /e2e-map"
+  ],
+  "owner_decision": "P1 probe + explicit P5 disable-default instruction required before any live change"
+}
