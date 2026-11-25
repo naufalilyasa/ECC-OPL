@@ -1,7 +1,7 @@
 'use strict';
 
 const { stripPluginNamespace } = require('./plugin-namespace');
-const { adaptAntigravityAgent } = require('./antigravity-agent');
+const { adaptAntigravityAgent, adaptAntigravityCommandToSkill } = require('./antigravity-agent');
 const { adaptAntigravityRule } = require('./antigravity-rule');
 const { adaptCopilotAgent } = require('./copilot-agent');
 const { adaptCopilotRule } = require('./copilot-rule');
@@ -44,6 +44,12 @@ function transformInstallContent(operation, content) {
   }
   if (operation.contentTransform === 'antigravity-agent-frontmatter') {
     return adaptAntigravityAgent(content, operation.sourceRelativePath);
+  }
+  if (operation.contentTransform === 'antigravity-agent-frontmatter-cli') {
+    return adaptAntigravityAgent(content, operation.sourceRelativePath, { runtime: 'cli' });
+  }
+  if (operation.contentTransform === 'antigravity-command-to-skill') {
+    return adaptAntigravityCommandToSkill(content, operation.destinationPath);
   }
   if (operation.contentTransform === 'antigravity-rule-frontmatter') {
     return adaptAntigravityRule(content, operation.sourceRelativePath);

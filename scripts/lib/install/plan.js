@@ -110,6 +110,8 @@ function buildCopyFileOperation({
   const applicableTransform = (contentTransform === 'copilot-workflow-paths'
     || contentTransform === 'copilot-agent-frontmatter'
     || contentTransform === 'antigravity-agent-frontmatter'
+    || contentTransform === 'antigravity-agent-frontmatter-cli'
+    || contentTransform === 'antigravity-command-to-skill'
     || contentTransform === 'qwen-agent-frontmatter')
     && !/\.md$/i.test(sourceRelativePath) ? undefined : contentTransform;
   return {

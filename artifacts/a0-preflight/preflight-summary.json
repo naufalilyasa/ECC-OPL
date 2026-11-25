@@ -1,0 +1,8 @@
+{
+  "timestamp_utc": "2026-11-25T02:16:31.589085+00:00",
+  "pid_69840_status": "PID 69840 is absent (clean)",
+  "source_baseline_commit": "42fae4ebb5e995690d3a5752b461e475d229c40e",
+  "governing_brief_sha256": "5593df533bf74eca2d5b054419ca893f994df25c2a652fff4c304d570aa0d00b",
+  "agy_version": "1.5.16",
+  "preflight_status": "PASS"
+}

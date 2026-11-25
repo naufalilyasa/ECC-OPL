@@ -5,7 +5,7 @@ const { getInstallTargetAdapter, planInstallTargetScaffold } = require('./instal
 const { resolveInvocationEnvironment } = require('./invocation-environment');
 
 const DEFAULT_REPO_ROOT = path.join(__dirname, '../..');
-const SUPPORTED_INSTALL_TARGETS = ['claude', 'claude-project', 'cursor', 'antigravity', 'codex', 'copilot', 'gemini', 'opencode', 'codebuddy', 'joycode', 'qwen', 'zed', 'hermes', 'openclaw', 'kimi', 'adal'];
+const SUPPORTED_INSTALL_TARGETS = ['claude', 'claude-project', 'cursor', 'antigravity', 'antigravity-cli', 'codex', 'copilot', 'gemini', 'opencode', 'codebuddy', 'joycode', 'qwen', 'zed', 'hermes', 'openclaw', 'kimi', 'adal'];
 const COMPONENT_FAMILY_PREFIXES = {
   baseline: 'baseline:',
   language: 'lang:',
@@ -288,13 +288,20 @@ function assertKnownModuleIds(moduleIds, manifests) {
   }
 }
 
+function moduleSupportsTarget(module, target) {
+  const targets = Array.isArray(module && module.targets) ? module.targets : [];
+  if (targets.includes(target)) return true;
+  if (target === 'antigravity-cli' && targets.includes('antigravity')) return true;
+  return false;
+}
+
 function intersectTargets(modules) {
   if (!Array.isArray(modules) || modules.length === 0) {
     return [];
   }
 
   return SUPPORTED_INSTALL_TARGETS.filter(target => (
-    modules.every(module => Array.isArray(module.targets) && module.targets.includes(target))
+    modules.every(module => moduleSupportsTarget(module, target))
   ));
 }
 
@@ -661,7 +668,7 @@ function resolveInstallPlan(options = {}) {
 
     const supportsTarget = !target
       || (
-        readModuleTargetsOrThrow(module).includes(target)
+        moduleSupportsTarget(module, target)
         && (!targetAdapter || targetAdapter.supportsModule(module, targetPlanningInput))
       );
 
