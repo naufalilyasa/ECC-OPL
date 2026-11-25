@@ -67,7 +67,7 @@ test('adaptAntigravityAgent defaults to editor runtime without breaking existing
   const adapted = adaptAntigravityAgent(source, 'agents/code-simplifier.md');
   const parsed = yaml.load(adapted.match(/^---\n([\s\S]*?)\n---\n/)[1]);
 
-  assert.strictEqual(parsed.model, 'pro');
+  assert.strictEqual(parsed.model, 'sonnet');
   assert.deepStrictEqual(parsed.tools, [
     'view_file',
     'replace_file_content',
@@ -98,7 +98,7 @@ test('adaptAntigravityAgent with runtime: "cli" maps tools to native CLI names',
   const parsed = yaml.load(adapted.match(/^---\n([\s\S]*?)\n---\n/)[1]);
 
   assert.strictEqual(parsed.name, 'opl-generic-mapper');
-  assert.strictEqual(parsed.model, 'pro');
+  assert.strictEqual(parsed.model, 'opus');
   assert.strictEqual(Object.hasOwn(parsed, 'color'), false);
   assert.strictEqual(Object.hasOwn(parsed, 'hooks'), false);
   assert.deepStrictEqual(parsed.tools, [
@@ -116,7 +116,7 @@ test('adaptAntigravityAgent with runtime: "cli" maps tools to native CLI names',
 });
 
 // 4. Model tier mapping in CLI mode
-test('adaptAntigravityAgent maps model tiers correctly (haiku -> flash, sonnet/opus -> pro)', () => {
+test('adaptAntigravityAgent passes model through unchanged (no unapproved tier translation)', () => {
   const sourceHaiku = [
     '---',
     'name: quick-helper',
@@ -129,7 +129,7 @@ test('adaptAntigravityAgent maps model tiers correctly (haiku -> flash, sonnet/o
 
   const adapted = adaptAntigravityAgent(sourceHaiku, 'agents/quick-helper.md', { runtime: 'cli' });
   const parsed = yaml.load(adapted.match(/^---\n([\s\S]*?)\n---\n/)[1]);
-  assert.strictEqual(parsed.model, 'flash');
+  assert.strictEqual(parsed.model, 'haiku');
 });
 
 // 5. Restricted Reviewer Tool Stripping
@@ -246,7 +246,7 @@ test('adaptAntigravityAgent preserves mcp__* tools in CLI mode without throwing'
 });
 
 // 10. Defensive reviewer tool stripping via label
-test('adaptAntigravityAgent defensively strips reviewer tools even if frontmatter.name lacks reviewer keyword but label contains reviewer', () => {
+test('adaptAntigravityAgent strips reviewer tools for an explicit review role resolved from the label', () => {
   const malformedSource = [
     '---',
     'name: custom-auditor',
@@ -257,13 +257,31 @@ test('adaptAntigravityAgent defensively strips reviewer tools even if frontmatte
     'Body',
   ].join('\n');
 
-  const adapted = adaptAntigravityAgent(malformedSource, 'agents/custom-reviewer.md', { runtime: 'cli' });
+  // The label resolves to a canonical review role, so restriction applies.
+  const adapted = adaptAntigravityAgent(malformedSource, 'agents/code-reviewer.md', { runtime: 'cli' });
   const parsed = yaml.load(adapted.match(/^---\n([\s\S]*?)\n---\n/)[1]);
 
   assert.deepStrictEqual(parsed.tools, [
     'read_file',
     'grep_search',
   ]);
+});
+
+test('adaptAntigravityAgent does not strip tools from a non-review role whose name contains "reviewer"', () => {
+  const source = [
+    '---',
+    'name: reviewer-loop-runner',
+    'description: Runs reviewer loops',
+    'tools: Read, Edit, Write, Grep',
+    'model: sonnet',
+    '---',
+    'Body',
+  ].join('\n');
+
+  const adapted = adaptAntigravityAgent(source, 'agents/reviewer-loop-runner.md', { runtime: 'cli' });
+  const parsed = yaml.load(adapted.match(/^---\n([\s\S]*?)\n---\n/)[1]);
+
+  assert.ok(parsed.tools.includes('write_file'), 'substring match must not strip a non-review role');
 });
 
 // 11. Directory-level agents module path expands all files with opl- prefix
@@ -374,8 +392,9 @@ test('adaptAntigravityCommandToSkill sets skill name matching directory', () => 
 });
 
 // 14. Canonical ECC-OPL agent tool adaptations (A2.2)
-test('adaptAntigravityAgent enforces canonical ECC-OPL agent tool sets in CLI mode', () => {
-  // planner -> [read_file, grep_search, find_by_name, invoke_subagent]
+test('adaptAntigravityAgent narrows (never widens) canonical ECC-OPL agent tool sets in CLI mode', () => {
+  // planner declares only read tools: the canonical table must not add
+  // invoke_subagent, which the agent never asked for.
   const plannerSource = [
     '---',
     'name: planner',
@@ -388,7 +407,17 @@ test('adaptAntigravityAgent enforces canonical ECC-OPL agent tool sets in CLI mo
   const plannerAdapted = yaml.load(
     adaptAntigravityAgent(plannerSource, 'agents/planner.md', { runtime: 'cli' }).match(/^---\n([\s\S]*?)\n---\n/)[1]
   );
-  assert.deepStrictEqual(plannerAdapted.tools, ['read_file', 'grep_search', 'find_by_name', 'invoke_subagent']);
+  assert.deepStrictEqual(plannerAdapted.tools, ['read_file', 'grep_search', 'find_by_name']);
+
+  // planner that declares Task keeps it (canonical allows it).
+  const plannerWithTask = yaml.load(
+    adaptAntigravityAgent(
+      plannerSource.replace('tools: Read, Grep, Glob', 'tools: Read, Grep, Glob, Task'),
+      'agents/planner.md',
+      { runtime: 'cli' }
+    ).match(/^---\n([\s\S]*?)\n---\n/)[1]
+  );
+  assert.deepStrictEqual(plannerWithTask.tools, ['read_file', 'grep_search', 'find_by_name', 'invoke_subagent']);
 
   // code-simplifier -> [read_file, edit_file, write_file, grep_search, find_by_name] (NO run_command)
   const simplifierSource = [

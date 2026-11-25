@@ -65,7 +65,14 @@ function nowIso() {
 
 function sanitizeText(value, maxLength = 4000) {
   if (typeof value !== 'string') return '';
-  return value.slice(0, maxLength);
+  // Oversized input is REJECTED by the caller, never silently truncated: a
+  // truncated prompt would reach the agent as a different instruction.
+  if (maxLength && value.length > maxLength) {
+    const error = new Error(`text exceeds ${maxLength} characters`);
+    error.code = 'PROMPT_TOO_LARGE';
+    throw error;
+  }
+  return value;
 }
 
 // Normalize one browser-submitted feedback item into the shape delivered to

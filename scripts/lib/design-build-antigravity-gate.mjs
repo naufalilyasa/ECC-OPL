@@ -25,7 +25,13 @@ export function resolveDesignBuildResource(target, repoRoot = '') {
   return blocked('UNSUPPORTED_TARGET', { target })
 }
 
-/** Track A admission is a hard precondition for A5 (R12/IS-6/GAP-6). */
+/**
+ * Track A admission is a hard precondition for A5 (R12/IS-6/GAP-6).
+ * A bare `status: 'ADMITTED'` object is NOT sufficient: the certificate must
+ * carry verified canonical evidence (bundle seal, gate results, rendered
+ * evidence) and the full G0-G3 chain must pass. Synthetic fixture evidence is
+ * not production admission.
+ */
 export function enforceTrackAAadmission(certificate) {
   if (!certificate || certificate.status !== 'ADMITTED') {
     return blocked('TRACK_A_NOT_ADMITTED', {
@@ -33,6 +39,38 @@ export function enforceTrackAAadmission(certificate) {
       designBuildReferenceAdmission: 'BLOCKED'
     })
   }
+
+  // A bare status flag cannot unlock execution.
+  const missing = []
+  if (!certificate.approvedBundleSha256 || !/^[a-f0-9]{64}$/.test(String(certificate.approvedBundleSha256))) {
+    missing.push('approvedBundleSha256')
+  }
+  if (!certificate.gateResults || typeof certificate.gateResults !== 'object') {
+    missing.push('gateResults')
+  }
+  if (!Array.isArray(certificate.captures) || certificate.captures.length === 0) {
+    missing.push('captures')
+  }
+  if (!certificate.renderedEvidence || certificate.renderedEvidence.verified !== true) {
+    missing.push('renderedEvidence')
+  }
+  if (missing.length > 0) {
+    return blocked('TRACK_A_UNVERIFIED', {
+      why: 'ADMISSION_CERTIFICATE_INCOMPLETE',
+      missing,
+      designBuildReferenceAdmission: 'BLOCKED'
+    })
+  }
+
+  const chain = verifyGateChain(certificate.gateResults)
+  if (chain.status !== 'OK') {
+    return blocked('TRACK_A_UNVERIFIED', {
+      why: 'GATE_CHAIN_FAILED',
+      gate: chain.gate,
+      designBuildReferenceAdmission: 'BLOCKED'
+    })
+  }
+
   return { status: 'OK', designBuildReferenceAdmission: 'ADMITTED' }
 }
 

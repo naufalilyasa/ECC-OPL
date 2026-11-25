@@ -112,6 +112,7 @@ function buildCopyFileOperation({
     || contentTransform === 'antigravity-agent-frontmatter'
     || contentTransform === 'antigravity-agent-frontmatter-cli'
     || contentTransform === 'antigravity-command-to-skill'
+    || contentTransform === 'antigravity-prompt-to-agent'
     || contentTransform === 'qwen-agent-frontmatter')
     && !/\.md$/i.test(sourceRelativePath) ? undefined : contentTransform;
   return {

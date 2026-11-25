@@ -45,6 +45,13 @@ Read and follow `design-build` (installed skill) or its canonical copy at
 `skills/design-build/SKILL.md`. If neither resolves, stop and report — do not
 improvise the policy here.
 
+Phase 0 loads `frontend-design-direction` for product direction; before Freeze,
+load `a11y` for applicable accessibility requirements. Both are resolved from
+installed skills (canonical `skills/frontend-design-direction/` and the
+installed `a11y` skill), never from a hardcoded developer path. Do not also
+load `accessibility`, `frontend-a11y`, or `a11y-architect` unless a real gap
+exists. Routing policy is in the skill; this shim only carries the invocations.
+
 ## Pipeline
 
 ```
@@ -189,6 +196,26 @@ Point every checker at the built output or served URL — not a framework source
 shell. `shoot.mjs` also produces the share image. Rerun after fixes and after
 Harden; `GATE: OFF` is not a pass. If the owner ships as-is, record it verbatim
 with `gate.mjs --done "<what they said>"`.
+
+### A7 — Rendered finish evidence checker (Phase 8)
+
+Resolve `frontend-design-direction` from the installed skill and run its bundled
+checker against a **local** JSON report built from real observations:
+
+```bash
+FD="${OPENCODE_CONFIG_DIR:-$HOME/.config/opencode}/skills/frontend-design-direction"
+[ -f "$FD/scripts/check-evidence.js" ] || FD="./skills/frontend-design-direction"
+node "$FD/scripts/check-evidence.js" <local-report.json>
+```
+
+The report schema is `contract`, `targetViewports`, `accessibility`,
+`responsive`, `contentStates` (six states), and `renderedEvidence`. Viewport
+labels must match exactly between `targetViewports` and `renderedEvidence`;
+artifact paths stay relative to the report directory. The checker validates
+record completeness and local artifact presence only — it does not judge visual
+quality or prove accessibility. Never write placeholder observations to pass it.
+A11y findings are blocking at the relevant gate; an evidence PASS never
+overrides a failed G0–G3 gate.
 
 ## Output
 

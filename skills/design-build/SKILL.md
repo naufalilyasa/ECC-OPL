@@ -25,17 +25,23 @@ Do not use it for a one-shot component edit or a review of an existing page.
 
 | Phase | Skill | Produces |
 |-------|-------|----------|
-| Brief | this skill | facts, page kind, section order |
+| Brief | this skill + `frontend-design-direction` | facts, page kind, section order, product direction |
 | Escalate | this skill | at most one owner decision per gate |
 | Material | `ui-ux-pro-max` | candidate palettes, type, UX rules |
+| Prerequisites (cross-cutting) | `a11y` | applicable accessibility requirements (before Freeze) |
 | Taste | `design-taste-frontend` | dealt tokens, hero, moments, effects, CSS |
 | Prerequisites | `design-taste-frontend` | photographs, renders the contract will name |
 | Freeze | `design-contract-system` | `DESIGN.md`, `docs/design/*`, page contract |
 | Scaffold | `frontend-scaffold` | the shared shell and state shells |
 | Section loop | `plan-canvas` | one approval verdict per section |
 | Assemble | this skill | icons, credits, fragments, motion, diagrams |
-| Gate | `design-taste-frontend` | named FAILs and a literal gate verdict |
+| Gate | `design-taste-frontend` + `frontend-design-direction` (evidence checker) | named FAILs, literal gate verdict, rendered-evidence record |
 | Harden | `gan-style-harness` | generator/evaluator iterations (opt-in) |
+
+Cross-cutting knowledge sources, routed in only when relevant (never duplicated
+here): `frontend-design-direction` (Phase 0 direction, Phase 4 verify, Phase 8
+checker) and `a11y` (before Freeze requirements, Phase 5/6 implementation and
+verification). They are not new phases and add no new numbered gate.
 
 ## Pipeline Order
 
@@ -109,6 +115,140 @@ Typography is decided once, before freeze:
   freeze, the approved `TYPOGRAPHY-MAP.md` and design contract are authoritative;
   the taste engine never overrides them. Porting uses VERIFY only; AMEND needs
   explicit owner approval.
+
+## Product Direction & Accessibility (cross-cutting integration)
+
+Two existing skills are routed in **by reference**; their full contents are
+never duplicated here. Load each only at the phase that needs it. Do not reload
+the design collection for every section, and do not concatenate either skill
+into this file.
+
+### Phase 0 — Product direction (`frontend-design-direction`)
+
+Before any creative candidate selection, load `frontend-design-direction`
+(resolve from the installed skill; canonical source `skills/frontend-design-direction/`).
+Decide and record: product purpose/domain, primary audience and repeated user
+jobs, primary and secondary actions, visual hierarchy, information density,
+product tone/character, responsive constraints, relevant interaction patterns,
+required content states, existing design-system constraints, and framework and
+accessibility requirements. Record them in the **existing** design contract
+artifacts (`DESIGN.md`, `docs/design/*`, page `CONTRACT.md`) — no second design
+authority and no new document. Use local product references by default; never
+auto-connect UIZZE, install packages, or transmit project artifacts externally.
+
+For enterprise/operational applications prioritize scanability, task efficiency,
+stable layouts, and readable data density; avoid generic marketing heroes,
+decorative motion, oversized type, and deep card nesting. Marketing/editorial
+surfaces may be expressive when the approved direction calls for it. Do not
+impose one universal visual style across product categories.
+
+### Phases 1–3 — Candidates constrained by direction
+
+Use the recorded product direction as constraints for Material, Taste,
+Typography, and asset selection. `frontend-design-direction` proposes; it does
+not override the approved contract.
+
+### Phase 4 — Freeze
+
+Persist the selected direction and its checkable constraints in the canonical
+design contract. This skill is **not** a competing source of tokens, typography,
+spacing, radius, or composition. After Freeze it is **VERIFICATION only**. Any
+change to approved visual decisions uses the existing amendment/approval
+process and invalidates the affected approval and parity evidence.
+
+### Accessibility — primary source `a11y`
+
+Use the installed `a11y` skill as the primary accessibility knowledge source
+(three modes: Audit & Tooling; Concepts & Cross-Platform; Frontend Code
+Patterns). Do **not** also load `accessibility`, `frontend-a11y`, or
+`a11y-architect` unless a real capability gap exists. Load platform-specific
+guidance only for a genuine gap.
+
+Before Freeze, establish applicable requirements: semantic structure;
+accessible names, roles, and states; text and non-text contrast; keyboard
+interaction and focus order; visible, unobscured focus; form labeling and error
+feedback; dialog/overlay focus management; touch target size; text resize and
+responsive reflow; reduced motion; dynamic status announcements; table
+semantics. Web baseline is WCAG 2.2 AA with applicable exceptions; Flutter and
+Kotlin Compose use native platform semantics and tooling. Automated checks
+alone never establish WCAG compliance. Record these requirements in the
+contract before owner approval.
+
+Phase 5 Scaffold: implement accessibility foundations with existing project
+conventions and approved tokens — semantic components, shared keyboard
+behavior, focus styles, accessible icon buttons, form associations, navigation
+patterns. Do not create a duplicate component library.
+
+Phase 6 Section preview: before requesting Canvas approval, inspect applicable
+accessibility requirements and content states in the preview; fix design-level
+problems first. Behavior that cannot be shown in a standalone HTML preview is
+`UNTESTED_FOR_FRAMEWORK`, never PASS.
+
+Phase 6 Framework port: preserve approved appearance and accessibility
+semantics using native framework primitives. An accessibility correction that
+changes the approved design requires the existing owner amendment process and
+invalidates the affected approval and parity evidence; a correction that
+preserves the approved design is a normal candidate repair inside the
+authorized section scope.
+
+### Content-state completeness (`frontend-design-direction` contract)
+
+States: `loading`, `empty`, `error`, `partial`, `success`, `permission`. For
+each applicable state record trigger, visible feedback, user action, recovery
+behavior, and relevant accessibility semantics. Determine applicability before
+owner approval. A non-applicable state needs a specific reason; unavailable
+test access means `UNTESTED`, not `NOT_APPLICABLE`. Do not invent business
+behavior, artificial permission actions, or fabricated data to demonstrate a
+state. Exercise applicable states against the actual application during
+section and final verification.
+
+### G0–G3 extension (no new numbered gate)
+
+- **G0** — product direction and required accessibility constraints are
+  available; required content states and target capture profiles are identified.
+- **G1** — candidate consumes the approved contract; applicable semantic and
+  accessibility requirements are implemented and recorded as `contractChecks`
+  items (the state machine makes these **blocking**); no competing visual
+  authority overrides approved decisions.
+- **G2** — actual framework rendering matches the approved section: typography,
+  colors, geometry, responsive behavior, and applicable visual states, using
+  every capture profile required by the contract.
+- **G3** — applicable keyboard interaction, focus behavior, accessible names,
+  modal interaction, form feedback, and functional state transitions are
+  recorded as `interactionChecks` (**blocking**) and verified by exercising
+  real behavior, not element presence.
+
+Accessibility findings are **blocking** at the relevant gate. Required checks
+cannot be removed after a failure. A `frontend-design-direction` evidence PASS
+or an automated accessibility PASS never overrides a failed G0–G3 result. All
+existing stabilization requirements (complete scope coverage, exact reference
+identity, coherent checkpoint transitions) remain in force.
+
+### Phase 8 — rendered finish gate (reuse existing checker)
+
+Invoke the bundled checker against a **local** report built from real
+observations:
+
+```bash
+node <resolved-frontend-design-direction>/scripts/check-evidence.js <local-report.json>
+```
+
+Resolve `frontend-design-direction` from the installed skill, never a hardcoded
+developer path. The report uses the checker's actual schema: `contract`,
+`targetViewports`, `accessibility`, `responsive`, `contentStates`, and
+`renderedEvidence`. Use exact viewport labels consistently across
+`targetViewports` and `renderedEvidence`; resolve artifact paths relative to
+the report directory and comply with its path-containment checks.
+
+The checker validates evidence-record completeness and local artifact presence
+**only** — it does not judge screenshot quality, verify observation truth, or
+establish accessibility compliance. Therefore inspect actual rendered output,
+execute applicable accessibility checks, exercise relevant content states,
+record real observations, and bind the report to the current candidate
+revision. Never write placeholder observations to obtain checker success.
+Reuse current browser and accessibility tooling; do not add a mandatory
+external service or auto-install scanners. If a required verification cannot
+run, report the precise limitation and preserve the blocked/unverified status.
 
 ## One Design Authority (phase-scoped)
 

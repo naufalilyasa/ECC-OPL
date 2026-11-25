@@ -12,7 +12,7 @@ const {
   listRelativeFiles,
 } = require('./helpers');
 
-const SUPPORTED_SOURCE_PREFIXES = ['rules', 'agents', 'skills', 'commands'];
+const SUPPORTED_SOURCE_PREFIXES = ['rules', 'agents', 'skills', 'commands', '.opencode/commands', '.opencode/prompts/agents'];
 
 function supportsAntigravityCliSourcePath(sourceRelativePath) {
   const normalizedPath = normalizeRelativePath(sourceRelativePath);
@@ -87,35 +87,73 @@ function skillDestinationKey(operation) {
 
 /**
  * A command projection and a skill scaffold can resolve to the same skill
- * directory (e.g. commands/typography.md and skills/typography-system both
- * target opl-typography). Applying both silently overwrites one with the
- * other. Keep exactly one operation per skill directory, preferring the full
- * skill scaffold over a command-derived SKILL.md.
+ * directory (e.g. .opencode/commands/tdd.md and skills/tdd-workflow both target
+ * opl-tdd). The command is the PUBLIC invocable entrypoint (it arms workflow
+ * state and delegates to the specialist agent); the skill is supporting
+ * knowledge. Neither may be discarded.
+ *
+ * Rule: the command-derived entrypoint keeps the public name. A colliding
+ * skill scaffold is relocated to a distinct directory derived from its own
+ * source name, so the knowledge stays installed and reachable.
  */
 function dedupeSkillDestinations(operations) {
-  const seen = new Map();
+  const isCommandEntrypoint = op => op.contentTransform === 'antigravity-command-to-skill';
+  const byKey = new Map();
+  for (const op of operations) {
+    const key = skillDestinationKey(op);
+    if (!key) continue;
+    const prior = byKey.get(key);
+    if (!prior) { byKey.set(key, op); continue; }
+    // Command wins the public name.
+    if (isCommandEntrypoint(op) && !isCommandEntrypoint(prior)) {
+      byKey.set(key, op);
+      continue;
+    }
+  }
+
+  const publicKeys = new Set(byKey.keys());
   const kept = [];
+  const seen = new Set();
+
   for (const op of operations) {
     const key = skillDestinationKey(op);
     if (!key) {
-      kept.push(op);
+      if (!seen.has(op)) { seen.add(op); kept.push(op); }
       continue;
     }
-    const prior = seen.get(key);
-    if (!prior) {
-      seen.set(key, op);
-      kept.push(op);
+    if (byKey.get(key) === op) {
+      if (!seen.has(op)) { seen.add(op); kept.push(op); }
       continue;
     }
-    const isScaffold = op.contentTransform !== 'antigravity-command-to-skill';
-    const priorIsScaffold = prior.contentTransform !== 'antigravity-command-to-skill';
-    if (isScaffold && !priorIsScaffold) {
-      const index = kept.indexOf(prior);
-      if (index >= 0) kept[index] = op;
-      seen.set(key, op);
+    // A colliding scaffold that lost the public name is relocated, not dropped.
+    if (!isCommandEntrypoint(op)) {
+      const sourceName = String(op.sourceRelativePath || '')
+        .replace(/\\/g, '/')
+        .split('/')
+        .filter(Boolean)
+        .pop() || 'workflow';
+      let relocatedKey = `${key}-${sourceName}`;
+      // Guard against an accidental second collision.
+      let suffix = 2;
+      while (publicKeys.has(relocatedKey)) {
+        relocatedKey = `${key}-${sourceName}-${suffix}`;
+        suffix += 1;
+      }
+      publicKeys.add(relocatedKey);
+      const normalized = String(op.destinationPath).replace(/\\/g, '/');
+      const relocatedPath = normalized.replace(key, relocatedKey);
+      const relocated = {
+        ...op,
+        destinationPath: relocatedPath,
+        skillName: relocatedKey.split('/').pop(),
+      };
+      if (!seen.has(relocated)) { seen.add(relocated); kept.push(relocated); }
+      continue;
     }
-    // Otherwise drop the duplicate: first seen or existing scaffold wins.
+    // Command entrypoint that lost to another command: keep the first.
+    if (!seen.has(op)) { seen.add(op); kept.push(op); }
   }
+
   return kept;
 }
 
@@ -128,9 +166,10 @@ function planRuleOperations(moduleId, normalizedSourcePath, { repoRoot, targetRo
   }).map(withAntigravityRuleTrigger);
 }
 
-function planCommandOperations(moduleId, normalizedSourcePath, { repoRoot, targetRoot }) {
+function planCommandOperations(moduleId, normalizedSourcePath, { repoRoot, targetRoot, sourceBase = '' }) {
+  const sourceRoot = sourceBase ? path.join(repoRoot, sourceBase) : repoRoot;
   if (normalizedSourcePath === 'commands') {
-    const commandsDir = repoRoot ? path.join(repoRoot, 'commands') : null;
+    const commandsDir = sourceRoot ? path.join(sourceRoot, 'commands') : null;
     if (!commandsDir || !fs.existsSync(commandsDir) || !fs.statSync(commandsDir).isDirectory()) {
       return [];
     }
@@ -138,7 +177,7 @@ function planCommandOperations(moduleId, normalizedSourcePath, { repoRoot, targe
       .filter(file => file.endsWith('.md'))
       .map(relFile => createManagedOperation({
         moduleId,
-        sourceRelativePath: path.join('commands', relFile),
+        sourceRelativePath: path.join(sourceBase, 'commands', relFile),
         destinationPath: path.join(targetRoot, 'skills', remapCommandToSkillName(relFile), 'SKILL.md'),
         strategy: 'preserve-relative-path',
         contentTransform: 'antigravity-command-to-skill',
@@ -147,7 +186,7 @@ function planCommandOperations(moduleId, normalizedSourcePath, { repoRoot, targe
   const commandRelativePath = normalizedSourcePath.slice('commands/'.length);
   return [createManagedOperation({
     moduleId,
-    sourceRelativePath: normalizedSourcePath,
+    sourceRelativePath: path.join(sourceBase, normalizedSourcePath),
     destinationPath: path.join(targetRoot, 'skills', remapCommandToSkillName(commandRelativePath), 'SKILL.md'),
     strategy: 'preserve-relative-path',
     contentTransform: 'antigravity-command-to-skill',
@@ -155,6 +194,27 @@ function planCommandOperations(moduleId, normalizedSourcePath, { repoRoot, targe
 }
 
 function planAgentOperations(moduleId, normalizedSourcePath, { repoRoot, targetRoot }) {
+  // `.opencode/prompts/agents/*.txt` carries agent prompts that have no
+  // `agents/*.md` counterpart (plan-reviewer with Momus+Oracle dual pass).
+  // Project them as agents so the canonical roles are actually installed.
+  if (normalizedSourcePath === '.opencode/prompts/agents'
+      || normalizedSourcePath.startsWith('.opencode/prompts/agents/')) {
+    const dir = repoRoot ? path.join(repoRoot, '.opencode', 'prompts', 'agents') : null;
+    if (!dir || !fs.existsSync(dir) || !fs.statSync(dir).isDirectory()) return [];
+    return listRelativeFiles(dir)
+      .filter(file => file.endsWith('.txt'))
+      .map(relFile => {
+        const baseName = relFile.replace(/\.txt$/i, '');
+        return createManagedOperation({
+          moduleId,
+          sourceRelativePath: path.join('.opencode', 'prompts', 'agents', relFile),
+          destinationPath: path.join(targetRoot, 'agents', `${oplName(baseName)}.md`),
+          strategy: 'preserve-relative-path',
+          contentTransform: 'antigravity-prompt-to-agent',
+        });
+      });
+  }
+
   if (normalizedSourcePath === 'agents') {
     const agentsDir = repoRoot ? path.join(repoRoot, 'agents') : null;
     if (!agentsDir || !fs.existsSync(agentsDir) || !fs.statSync(agentsDir).isDirectory()) {
@@ -205,6 +265,18 @@ function planSkillOperations(moduleId, normalizedSourcePath, { repoRoot, targetR
 }
 
 function planSourcePath(moduleId, normalizedSourcePath, context) {
+  if (normalizedSourcePath === '.opencode/prompts/agents'
+      || normalizedSourcePath.startsWith('.opencode/prompts/agents/')) {
+    return planAgentOperations(moduleId, normalizedSourcePath, context);
+  }
+  if (normalizedSourcePath === '.opencode/commands'
+      || normalizedSourcePath.startsWith('.opencode/commands/')) {
+    return planCommandOperations(
+      moduleId,
+      `commands${normalizedSourcePath.slice('.opencode/commands'.length)}`,
+      { ...context, sourceBase: '.opencode' }
+    );
+  }
   if (normalizedSourcePath === 'rules' || normalizedSourcePath.startsWith('rules/')) {
     return planRuleOperations(moduleId, normalizedSourcePath, context);
   }

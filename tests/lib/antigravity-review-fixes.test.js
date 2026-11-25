@@ -182,12 +182,12 @@ test('F9: cross-runtime guard skips done states', () => {
 });
 
 // F10 [LOW] Windows-style label must resolve canonical agent tools.
-test('F10: Windows-style label resolves canonical agent tools', () => {
+test('F10: Windows-style label resolves canonical agent tools (narrowing only)', () => {
   const source = [
     '---',
     'name: custom-agent',
     'description: test',
-    'tools: Read, Write',
+    'tools: Read, Grep, Glob',
     '---',
     'body',
   ].join('\n');

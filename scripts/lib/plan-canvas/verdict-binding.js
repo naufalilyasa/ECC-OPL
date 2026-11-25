@@ -61,6 +61,20 @@ function isValidPromptLength(text) {
   return typeof text === 'string' && text.length <= MAX_PROMPT_CHARS;
 }
 
+/**
+ * Real magic-byte signatures. A MIME label alone is a client claim; the bytes
+ * must match the declared image type.
+ */
+const IMAGE_SIGNATURES = Object.freeze({
+  'image/png': buffer => buffer.length >= 8
+    && buffer.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])),
+  'image/jpeg': buffer => buffer.length >= 3
+    && buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff,
+  'image/webp': buffer => buffer.length >= 12
+    && buffer.subarray(0, 4).toString('ascii') === 'RIFF'
+    && buffer.subarray(8, 12).toString('ascii') === 'WEBP',
+});
+
 function validateAttachments(items) {
   if (!Array.isArray(items)) return { ok: false, reason: 'INVALID_MIME' };
   if (items.length > MAX_ATTACHMENTS) return { ok: false, reason: 'COUNT_EXCEEDED' };
@@ -70,6 +84,10 @@ function validateAttachments(items) {
     }
     if (!Buffer.isBuffer(item.data) || item.data.length > MAX_ATTACHMENT_BYTES) {
       return { ok: false, reason: 'TOO_LARGE' };
+    }
+    // The declared MIME must match the actual bytes.
+    if (!IMAGE_SIGNATURES[item.mime](item.data)) {
+      return { ok: false, reason: 'CONTENT_MISMATCH' };
     }
   }
   return { ok: true };

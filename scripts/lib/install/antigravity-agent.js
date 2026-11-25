@@ -39,6 +39,49 @@ const REVIEWER_DISALLOWED_CLI_TOOLS = new Set([
   'invoke_subagent',
 ]);
 
+// Explicit review roles only. A name substring match would strip tools from
+// unrelated agents whose name merely contains "reviewer".
+const REVIEW_ROLE_NAMES = new Set([
+  'code-reviewer',
+  'security-reviewer',
+  'plan-reviewer',
+  'commit-reviewer',
+  'a11y-architect',
+  'bengali-reviewer',
+  'cpp-reviewer',
+  'csharp-reviewer',
+  'database-reviewer',
+  'django-reviewer',
+  'fastapi-reviewer',
+  'flutter-reviewer',
+  'fsharp-reviewer',
+  'go-reviewer',
+  'healthcare-reviewer',
+  'java-reviewer',
+  'kotlin-reviewer',
+  'mle-reviewer',
+  'network-config-reviewer',
+  'php-reviewer',
+  'python-reviewer',
+  'rag-pipeline-reviewer',
+  'react-reviewer',
+  'ruby-reviewer',
+  'rust-reviewer',
+  'swift-reviewer',
+  'typescript-reviewer',
+  'vue-reviewer',
+]);
+
+function isReviewRole(name, label) {
+  const candidates = [
+    typeof name === 'string' ? name : '',
+    typeof label === 'string' ? path.basename(label.replace(/\\/g, '/'), '.md') : '',
+  ];
+  return candidates.some(candidate => (
+    candidate && REVIEW_ROLE_NAMES.has(candidate.replace(/^opl-/, ''))
+  ));
+}
+
 const CANONICAL_CLI_AGENT_TOOLS = Object.freeze({
   planner: ['read_file', 'grep_search', 'find_by_name', 'invoke_subagent'],
   'plan-reviewer': ['read_file', 'grep_search', 'find_by_name'],
@@ -54,11 +97,9 @@ const CANONICAL_CLI_AGENT_TOOLS = Object.freeze({
   build: ['read_file', 'edit_file', 'write_file', 'grep_search', 'find_by_name', 'run_command'],
 });
 
-const MODEL_NAMES = Object.freeze({
-  haiku: 'flash',
-  sonnet: 'pro',
-  opus: 'pro',
-});
+// Agent frontmatter `model:` is passed through unchanged. Tier names
+// (haiku/sonnet/opus) are host-relative and must not be translated into
+// concrete model IDs the owner has not approved; the host selects the model.
 
 function splitFrontmatter(source, label) {
   const raw = String(source || '');
@@ -127,23 +168,25 @@ function adaptAntigravityAgent(source, label = '<unknown>', options = {}) {
       }
       if (canonicalKey) {
         const canonicalTools = [...CANONICAL_CLI_AGENT_TOOLS[canonicalKey]];
+        // The canonical table may only NARROW declared permissions. Adding a
+        // tool the agent never declared would widen its authority.
         // Preserve explicitly declared MCP tools; they are host-provided and
         // cannot be reconstructed from the canonical built-in tool set.
+        const declared = new Set(tools);
+        const narrowed = canonicalTools.filter(tool => declared.has(tool));
         const declaredMcpTools = tools.filter(tool => tool.startsWith('mcp__'));
-        tools = [...new Set([...canonicalTools, ...declaredMcpTools])];
+        tools = [...new Set([...narrowed, ...declaredMcpTools])];
       }
     }
-    const isReviewer = (typeof frontmatter.name === 'string' && frontmatter.name.includes('reviewer'))
-      || (typeof label === 'string' && label.includes('reviewer'));
+    const isReviewer = isReviewRole(frontmatter.name, label);
     if (isCli && isReviewer) {
       tools = tools.filter(tool => !REVIEWER_DISALLOWED_CLI_TOOLS.has(tool));
     }
     adapted.tools = tools;
   }
   if (Object.hasOwn(frontmatter, 'model')) {
-    adapted.model = Object.hasOwn(MODEL_NAMES, frontmatter.model)
-      ? MODEL_NAMES[frontmatter.model]
-      : frontmatter.model;
+    // Pass through unchanged; see note above.
+    adapted.model = frontmatter.model;
   }
   const serialized = require('js-yaml')
     .dump(adapted, { lineWidth: -1, noRefs: true })
@@ -160,18 +203,46 @@ function adaptAntigravityCommandToSkill(source, destinationPath) {
     ...frontmatter,
     name: skillName,
   };
+  // The projected workflow must own its state under the agy target, not the
+  // OpenCode runtime's path.
+  const projectedBody = body
+    .replace(/\.opencode\/workflows\/active\.json/g, '.agents/ecc-opl/workflows/active.json')
+    .replace(/\.opencode\/markers\//g, '.agents/ecc-opl/markers/');
   const serialized = require('js-yaml')
     .dump(adapted, { lineWidth: -1, noRefs: true })
     .trimEnd()
     .replace(/\n/g, headerEol);
-  return `---${headerEol}${serialized}${headerEol}---${trailingFenceEol}${body}`;
+  return `---${headerEol}${serialized}${headerEol}---${trailingFenceEol}${projectedBody}`;
+}
+
+/**
+ * Project a plain-text agent prompt (`.opencode/prompts/agents/<name>.txt`)
+ * into a Markdown agent with CLI frontmatter. These prompts carry no YAML
+ * frontmatter, so one is synthesized from the destination name.
+ */
+function adaptAntigravityPromptToAgent(source, destinationPath) {
+  const baseName = path.basename(destinationPath, '.md');
+  const description = `${baseName.replace(/^opl-/, '')} agent (projected from the canonical prompt).`;
+  const frontmatter = {
+    name: baseName,
+    description,
+    tools: ['read_file', 'grep_search', 'find_by_name'],
+  };
+  const headerEol = '\n';
+  const serialized = require('js-yaml')
+    .dump(frontmatter, { lineWidth: -1, noRefs: true })
+    .trimEnd()
+    .replace(/\n/g, headerEol);
+  const body = String(source || '').trimStart();
+  return `---${headerEol}${serialized}${headerEol}---${headerEol}${headerEol}${body}`;
 }
 
 module.exports = {
   adaptAntigravityAgent,
   adaptAntigravityCommandToSkill,
+  adaptAntigravityPromptToAgent,
   CANONICAL_CLI_AGENT_TOOLS,
-  MODEL_NAMES,
+  REVIEW_ROLE_NAMES,
   TOOL_NAMES,
   CLI_TOOL_NAMES,
 };

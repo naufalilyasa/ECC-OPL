@@ -6,15 +6,36 @@
   "active_runtime_deployed": false,
   "dependencies": {
     "node": ">=18.0.0",
-    "playwright": "optional for live browser comparison"
+    "playwright": "optional for live browser comparison",
+    "skills": {
+      "frontend-design-direction": {
+        "source": "skills/frontend-design-direction/",
+        "checker": "skills/frontend-design-direction/scripts/check-evidence.js",
+        "loaded_in": [
+          "phase-0",
+          "phase-4-verify",
+          "phase-8"
+        ]
+      },
+      "a11y": {
+        "resolution": "installed skill (canonical name \"a11y\", 3 modes)",
+        "loaded_in": [
+          "pre-freeze",
+          "phase-5",
+          "phase-6"
+        ],
+        "note": "not bundled in repo; resolved from installed skill, never overwritten"
+      }
+    },
+    "design_contract": "existing DESIGN.md / docs/design/* / CONTRACT.md (no duplicate authority)"
   },
   "runtime_destination_base": "~/.config/opencode/",
   "files": [
     {
       "path": "commands/design-build.md",
       "destination": "commands/design-build.md",
-      "sha256": "392bd2edffb28e36ffe7babb2a60ecd03ad58cfeb32a2525332ab0566df548c2",
-      "bytes": 8944
+      "sha256": "5b08b619a0faf0414ffb059a62f969cca7e3475a1c6090ad4620df885cdc04b8",
+      "bytes": 10419
     },
     {
       "path": "commands/typography.md",
@@ -25,8 +46,8 @@
     {
       "path": ".opencode/commands/design-build.md",
       "destination": "commands/design-build.md",
-      "sha256": "392bd2edffb28e36ffe7babb2a60ecd03ad58cfeb32a2525332ab0566df548c2",
-      "bytes": 8944
+      "sha256": "5b08b619a0faf0414ffb059a62f969cca7e3475a1c6090ad4620df885cdc04b8",
+      "bytes": 10419
     },
     {
       "path": ".opencode/commands/typography.md",
@@ -37,8 +58,8 @@
     {
       "path": "skills/design-build/SKILL.md",
       "destination": "skills/design-build/SKILL.md",
-      "sha256": "91784a52d500656af407c8bfb9f9a793b7ade93d5550b018893746b79457f399",
-      "bytes": 15374
+      "sha256": "8b7a86470f6a70db44baae47d012fd93195e143e19570830810767af991e38c7",
+      "bytes": 23390
     },
     {
       "path": "skills/design-contract-system/SKILL.md",
@@ -148,5 +169,6 @@
       "sha256": "0c9631b9e1473e4457aa5e7042403e3977dae3809eeb6171d8786c183ad6cad2",
       "bytes": 2067
     }
-  ]
+  ],
+  "modified_utc": "2026-11-25T06:47:22.920139+00:00"
 }

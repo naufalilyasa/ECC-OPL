@@ -19,6 +19,7 @@ const ERRORS = Object.freeze({
   E_LOCK_CONTENTION: 'E_LOCK_CONTENTION',
   E_CROSS_RUNTIME_CLOBBER: 'E_CROSS_RUNTIME_CLOBBER',
   E_CROSS_WORKTREE_CLOBBER: 'E_CROSS_WORKTREE_CLOBBER',
+  E_CROSS_CONVERSATION_CLOBBER: 'E_CROSS_CONVERSATION_CLOBBER',
   E_INVALID_STATE: 'E_INVALID_STATE',
 });
 
@@ -249,8 +250,27 @@ function writeWorkflowState({
             `Existing workflow state belongs to worktree "${existing.worktreeId}". Explicit handoff required to switch to "${state.worktreeId}".`
           );
         }
+
+        // Guard 3: Cross-conversation clobbering (active state only). Two
+        // conversations in the same worktree share one state file; the one
+        // that did not open the workflow must not overwrite it.
+        if (
+          !existingIsTerminal &&
+          existing.conversationId &&
+          state.conversationId &&
+          existing.conversationId !== state.conversationId
+        ) {
+          throw createWorkflowError(
+            ERRORS.E_CROSS_CONVERSATION_CLOBBER,
+            `Existing workflow state belongs to conversation "${existing.conversationId}". Explicit handoff required to switch to "${state.conversationId}".`
+          );
+        }
       } catch (err) {
-        if (err.code === ERRORS.E_CROSS_RUNTIME_CLOBBER || err.code === ERRORS.E_CROSS_WORKTREE_CLOBBER) {
+        if (
+          err.code === ERRORS.E_CROSS_RUNTIME_CLOBBER
+          || err.code === ERRORS.E_CROSS_WORKTREE_CLOBBER
+          || err.code === ERRORS.E_CROSS_CONVERSATION_CLOBBER
+        ) {
           throw err;
         }
         // If file was corrupt, allow overwrite

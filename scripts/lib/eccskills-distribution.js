@@ -73,6 +73,19 @@ function generateReleaseManifest({ operations = [], sourceRoot = null, target = 
       };
     })
     .sort((a, b) => a.destinationPath.localeCompare(b.destinationPath));
+  // Two operations targeting one path would silently last-wins and ship the
+  // wrong file. Fail the release instead.
+  const seen = new Map();
+  for (const file of files) {
+    const key = toPosixRelative(file.destinationPath);
+    const prior = seen.get(key);
+    if (prior) {
+      throw new Error(
+        `duplicate destination path: ${key} from ${prior.sourceRelativePath} and ${file.sourceRelativePath}`
+      );
+    }
+    seen.set(key, file);
+  }
   const manifest = {
     target,
     canonicalCommit,
@@ -110,21 +123,29 @@ function buildOwnershipLedger(manifest, projectRoot) {
 function detectManagedConflicts(ledger, manifest) {
   const conflicts = [];
   const root = ledger.root ? path.resolve(ledger.root) : '';
+  // A ledger built from a manifest is a PLAN, not proof of ownership. Only a
+  // ledger written by a completed install may claim a pre-existing file.
+  const installed = Boolean(ledger.installedAt);
   for (const file of manifest.files) {
     if (!fs.existsSync(file.destinationPath)) continue;
     const actual = sha256(fs.readFileSync(file.destinationPath));
     const rel = root
       ? path.relative(root, file.destinationPath).replace(/\\/g, '/')
       : file.destinationPath;
-    const expected = ledger.managed[rel] || ledger.managed[file.destinationPath];
-    if (expected && actual !== expected) {
-      conflicts.push({ destinationPath: file.destinationPath, expected, actual });
+    const expected = installed
+      ? (ledger.managed[rel] || ledger.managed[file.destinationPath])
+      : null;
+    if (!expected) {
+      // Present on disk but never written by ECC: installing would clobber it.
+      conflicts.push({ destinationPath: file.destinationPath, actual, kind: 'unmanaged' });
+    } else if (actual !== expected) {
+      conflicts.push({ destinationPath: file.destinationPath, expected, actual, kind: 'modified' });
     }
   }
   return conflicts;
 }
 
-function installRelease(manifest, { projectRoot, ledgerPath, backupRoot } = {}) {
+function installRelease(manifest, { projectRoot, ledgerPath, backupRoot, force = false } = {}) {
   if (!projectRoot || !ledgerPath || !backupRoot) {
     throw new Error('installRelease requires projectRoot, ledgerPath, and backupRoot');
   }
@@ -132,27 +153,68 @@ function installRelease(manifest, { projectRoot, ledgerPath, backupRoot } = {}) 
   const thisBackup = path.join(backupRoot, stamp);
   const installed = [];
 
-  for (const file of manifest.files) {
-    fs.mkdirSync(path.dirname(file.destinationPath), { recursive: true });
-    // Backup an existing file only if it is not already the desired content.
-    if (fs.existsSync(file.destinationPath)) {
-      const current = fs.readFileSync(file.destinationPath);
-      if (sha256(current) !== file.sha256) {
-        const rel = path.relative(projectRoot, file.destinationPath);
-        const backupFile = path.join(thisBackup, rel);
-        fs.mkdirSync(path.dirname(backupFile), { recursive: true });
-        fs.copyFileSync(file.destinationPath, backupFile);
+  // Refuse before touching anything: a destination that exists and is not in
+  // the current ledger is somebody else's file.
+  if (!force) {
+    const priorLedger = fs.existsSync(ledgerPath)
+      ? JSON.parse(fs.readFileSync(ledgerPath, 'utf8'))
+      : { managed: {} };
+    const unmanaged = manifest.files.filter(file => {
+      if (!fs.existsSync(file.destinationPath)) return false;
+      const rel = toPosixRelative(path.relative(projectRoot, file.destinationPath));
+      const owned = priorLedger.managed && (priorLedger.managed[rel] || priorLedger.managed[file.destinationPath]);
+      return !owned;
+    });
+    if (unmanaged.length > 0) {
+      throw new Error(
+        `refusing to overwrite unmanaged file: ${unmanaged[0].destinationPath} (pass force to override)`
+      );
+    }
+  }
+
+  try {
+    for (const file of manifest.files) {
+      fs.mkdirSync(path.dirname(file.destinationPath), { recursive: true });
+      // Backup an existing file only if it is not already the desired content.
+      if (fs.existsSync(file.destinationPath)) {
+        const current = fs.readFileSync(file.destinationPath);
+        if (sha256(current) !== file.sha256) {
+          const rel = path.relative(projectRoot, file.destinationPath);
+          const backupFile = path.join(thisBackup, rel);
+          fs.mkdirSync(path.dirname(backupFile), { recursive: true });
+          fs.copyFileSync(file.destinationPath, backupFile);
+        }
+      }
+      fs.copyFileSync(file.sourcePath, file.destinationPath);
+      if (sha256(fs.readFileSync(file.destinationPath)) !== file.sha256) {
+        throw new Error(`digest verification failed for ${file.destinationPath}`);
+      }
+      installed.push(file.destinationPath);
+    }
+  } catch (error) {
+    // Atomic: undo whatever this run already wrote so a failed install never
+    // leaves a half-projected tree behind.
+    for (const written of installed) {
+      const rel = toPosixRelative(path.relative(projectRoot, written));
+      const backupFile = path.join(thisBackup, rel);
+      try {
+        if (fs.existsSync(backupFile)) {
+          fs.copyFileSync(backupFile, written);
+        } else {
+          fs.unlinkSync(written);
+        }
+      } catch {
+        // Best-effort restore; the original error is the one that matters.
       }
     }
-    fs.copyFileSync(file.sourcePath, file.destinationPath);
-    if (sha256(fs.readFileSync(file.destinationPath)) !== file.sha256) {
-      throw new Error(`digest verification failed for ${file.destinationPath}`);
-    }
-    installed.push(file.destinationPath);
+    throw error;
   }
 
   const ledger = buildOwnershipLedger(manifest, projectRoot);
   ledger.backupDir = thisBackup;
+  // Marks the ledger as written by a real install. Without it the ledger is
+  // only a plan and cannot claim pre-existing files as managed.
+  ledger.installedAt = new Date().toISOString();
   fs.mkdirSync(path.dirname(ledgerPath), { recursive: true });
   fs.writeFileSync(ledgerPath, JSON.stringify(ledger, null, 2));
   return { installed, backupDir: thisBackup, ledgerPath };

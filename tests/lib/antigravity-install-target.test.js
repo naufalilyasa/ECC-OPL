@@ -67,7 +67,7 @@ test('antigravity is a supported install target', () => {
   assert.ok(SUPPORTED_INSTALL_TARGETS.includes('antigravity'));
 });
 
-test('transform maps Claude tools (including MultiEdit/ReadFile/NotebookRead), maps model tiers, and strips color', () => {
+test('transform maps Claude tools (including MultiEdit/ReadFile/NotebookRead), passes model through, and strips color', () => {
   const yaml = require('js-yaml');
   const adapted = adaptAntigravityAgent(CLAUDE_AGENT, 'agents/code-simplifier.md');
   const match = adapted.match(/^---\n([\s\S]*?)\n---\n/);
@@ -76,7 +76,7 @@ test('transform maps Claude tools (including MultiEdit/ReadFile/NotebookRead), m
 
   assert.strictEqual(parsed.name, 'code-simplifier');
   assert.strictEqual(parsed.description, 'Refactoring and simplification specialist.');
-  assert.strictEqual(parsed.model, 'pro');
+  assert.strictEqual(parsed.model, 'opus');
   assert.strictEqual(Object.hasOwn(parsed, 'color'), false);
   assert.deepStrictEqual(parsed.tools, [
     'view_file',
@@ -92,7 +92,7 @@ test('transform maps Claude tools (including MultiEdit/ReadFile/NotebookRead), m
   assert.ok(adapted.includes('You simplify complex code.'));
 });
 
-test('transform parses quoted tool scalars and maps haiku to flash', () => {
+test('transform parses quoted tool scalars and passes haiku through', () => {
   const yaml = require('js-yaml');
   const source = [
     '---',
@@ -107,7 +107,7 @@ test('transform parses quoted tool scalars and maps haiku to flash', () => {
   ].join('\n');
   const adapted = adaptAntigravityAgent(source, 'agents/fast-helper.md');
   const parsed = yaml.load(adapted.match(/^---\n([\s\S]*?)\n---\n/)[1]);
-  assert.strictEqual(parsed.model, 'flash');
+  assert.strictEqual(parsed.model, 'haiku');
   assert.deepStrictEqual(parsed.tools, ['view_file', 'replace_file_content']);
 });
 

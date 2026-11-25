@@ -46,8 +46,24 @@ function runTests() {
     assert.strictEqual(r.reason, 'UNSUPPORTED_TARGET');
   });
 
-  test('Track A admission: ADMITTED passes, BLOCKED halts A5', () => {
-    assert.strictEqual(enforceTrackAAadmission({ status: 'ADMITTED' }).status, 'OK');
+  test('Track A admission: bare ADMITTED does NOT unlock A5; verified cert does', () => {
+    // A bare status flag must never unlock execution.
+    const bare = enforceTrackAAadmission({ status: 'ADMITTED' });
+    assert.strictEqual(bare.status, 'BLOCKED');
+    assert.strictEqual(bare.reason, 'TRACK_A_UNVERIFIED');
+
+    const verified = enforceTrackAAadmission({
+      status: 'ADMITTED',
+      approvedBundleSha256: 'a'.repeat(64),
+      gateResults: {
+        G0_preflight: 'PASS', G1_contract: 'PASS',
+        G2_rendered_fidelity: 'PASS', G3_state_interaction: 'PASS'
+      },
+      captures: [{ viewport: 'desktop-1440' }],
+      renderedEvidence: { verified: true }
+    });
+    assert.strictEqual(verified.status, 'OK');
+
     const blocked = enforceTrackAAadmission({ status: 'BLOCKED', reason: 'MISSING_VIEWPORT' });
     assert.strictEqual(blocked.status, 'BLOCKED');
     assert.strictEqual(blocked.reason, 'TRACK_A_NOT_ADMITTED');
