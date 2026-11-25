@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "certificate": "TRACK_A_VISUAL_ADMISSION",
+  "status": "ADMITTED",
+  "source": "chromium-playwright",
+  "fixture": "p-web1 topbar fixture",
+  "approvedBundleSha256": "727c17ec7b23d04b440f372aa6d369a53f67fdef84bc8262d7c4b6f3be8e0496",
+  "candidateRevisionSha256": "6044ee98472ac06712b8aa8e7cd380699f31ebb807cca36196ab0cdec6c55ea6",
+  "profileDimensions": {
+    "desktop-1440": [
+      1440,
+      900
+    ],
+    "mobile-390": [
+      390,
+      844
+    ]
+  },
+  "captures": {
+    "desktop-1440": {
+      "referencePath": "desktop-1440-reference.png",
+      "candidatePath": "desktop-1440-candidate.png",
+      "referenceSha256": "0f95660848273f53b4877090f453dd566de47d4de54e627ba36f65db822628e2",
+      "candidateSha256": "0f95660848273f53b4877090f453dd566de47d4de54e627ba36f65db822628e2",
+      "verdict": "PARITY_PASS",
+      "diffs": [],
+      "landmarks": [
+        "topbar",
+        "warehouse-badge",
+        "brand"
+      ]
+    },
+    "mobile-390": {
+      "referencePath": "mobile-390-reference.png",
+      "candidatePath": "mobile-390-candidate.png",
+      "referenceSha256": "5e2a7440930b8f0dffb900459d34bd4aff6e7d9d504eaf94ac36b47e5823c12a",
+      "candidateSha256": "5e2a7440930b8f0dffb900459d34bd4aff6e7d9d504eaf94ac36b47e5823c12a",
+      "verdict": "PARITY_PASS",
+      "diffs": [],
+      "landmarks": [
+        "topbar",
+        "warehouse-badge",
+        "brand"
+      ]
+    }
+  },
+  "gateResults": {
+    "G0_preflight": "PASS",
+    "G1_contract": "PASS",
+    "G2_rendered_fidelity": "PASS",
+    "G3_state_interaction": "PASS"
+  },
+  "gateSequence": [
+    "G0_preflight",
+    "G1_contract",
+    "G2_rendered_fidelity",
+    "G3_state_interaction"
+  ],
+  "renderedEvidence": {
+    "source": "chromium-playwright",
+    "verified": true,
+    "generated_utc": "2026-11-25T17:27:15.301Z"
+  }
+}

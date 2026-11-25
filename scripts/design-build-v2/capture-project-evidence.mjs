@@ -101,10 +101,13 @@ async function main() {
 
   const profile = JSON.parse(readFileSync(resolve(profilePath), 'utf8'));
   const landmarks = resolveLandmarks(profile);
-  const html = inlineAssets(
-    readFileSync(join(project, 'public/index.html'), 'utf8'),
-    readFileSync(join(project, 'public/style.css'), 'utf8')
-  );
+  const rawHtml = readFileSync(join(project, 'public/index.html'), 'utf8');
+  const rawCss = readFileSync(join(project, 'public/style.css'), 'utf8');
+  const html = inlineAssets(rawHtml, rawCss);
+  // The admitted revision is the exact page bytes. Without it the certificate
+  // cannot be checked against a current checkout and the gate rejects it as
+  // ADMISSION_REVISION_UNBOUND.
+  const candidateRevisionSha256 = sha256(`${rawHtml}\u0000${rawCss}`);
 
   mkdirSync(outDir, { recursive: true });
 
@@ -155,6 +158,7 @@ async function main() {
     project,
     contract: profile.contract || null,
     approvedBundleSha256: bundleSha,
+    candidateRevisionSha256,
     profileDimensions,
     captures,
     renderProfiles,

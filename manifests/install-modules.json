@@ -1570,8 +1570,10 @@
       "kind": "commands",
       "description": "Complete active ECC-OPL engineering workflow suite for Antigravity CLI: every enabled customized workflow entrypoint, its agent and skill dependency closure, and the runtime scripts those workflows actually reference. Advanced gates stay enforced at execution time.",
       "paths": [
+        ".opencode/scripts/e2e-registry.mjs",
+        "scripts/design-build-v2/rendered-authority.mjs",
         "scripts/design-build-v2/section-gate.mjs",
-        ".opencode/scripts/e2e-registry.mjs"
+        "scripts/design-build-v2/state-machine.mjs"
       ],
       "targets": [
         "antigravity-cli"
