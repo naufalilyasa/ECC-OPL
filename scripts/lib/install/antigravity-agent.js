@@ -204,10 +204,13 @@ function adaptAntigravityCommandToSkill(source, destinationPath) {
     name: skillName,
   };
   // The projected workflow must own its state under the agy target, not the
-  // OpenCode runtime's path.
+  // OpenCode runtime's path. Match the bare directory too: commands run
+  // `mkdir -p .opencode/workflows` without a trailing `/active.json`, so a
+  // filename-only rewrite leaves the script creating the old dir and then
+  // failing ENOENT on the new one.
   const projectedBody = body
-    .replace(/\.opencode\/workflows\/active\.json/g, '.agents/ecc-opl/workflows/active.json')
-    .replace(/\.opencode\/markers\//g, '.agents/ecc-opl/markers/');
+    .replace(/\.opencode\/workflows(\/active\.json)?/g, '.agents/ecc-opl/workflows$1')
+    .replace(/\.opencode\/markers(\/)?/g, '.agents/ecc-opl/markers$1');
   const serialized = require('js-yaml')
     .dump(adapted, { lineWidth: -1, noRefs: true })
     .trimEnd()

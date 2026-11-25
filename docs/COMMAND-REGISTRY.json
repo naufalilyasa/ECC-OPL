@@ -137,11 +137,12 @@
     {
       "command": "design-build",
       "description": "Build a frontend page section by section with an interactive canvas approval loop. Policy lives in the design-build skill; this shim carries only the arguments and the host CLI adapters.",
-      "type": "review",
+      "type": "testing",
       "primaryAgents": [],
       "allAgents": [],
       "skills": [
         "design-build",
+        "frontend-design-direction",
         "plan-canvas"
       ],
       "path": "commands/design-build.md"
@@ -1141,8 +1142,8 @@
       "orchestration": 14,
       "planning": 2,
       "refactoring": 1,
-      "review": 19,
-      "testing": 53
+      "review": 18,
+      "testing": 54
     },
     "topAgents": [
       {

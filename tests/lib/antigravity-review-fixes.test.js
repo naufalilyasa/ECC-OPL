@@ -89,7 +89,10 @@ test('F2: updateWorkflowState reads under lock, merges, and releases lock', () =
   }
 });
 
-// F3 [CRITICAL] command and skill projections must never collide on a skill destination.
+// F3 [CRITICAL] command and skill projections must never collide on a skill
+// destination. Since the closure review, a colliding knowledge skill is
+// RELOCATED to a distinct destination rather than dropped, so both projections
+// survive and the destinations differ.
 test('F3: command and skill projections never collide on skill destination', () => {
   const adapter = getInstallTargetAdapter('antigravity-cli');
   const operations = adapter.planOperations({
@@ -98,13 +101,22 @@ test('F3: command and skill projections never collide on skill destination', () 
     homeDir: '/home/user',
     modules: [{ id: 'design', paths: ['commands/typography.md', 'skills/typography-system'] }],
   });
-  const typoOps = operations.filter(op =>
-    /\/skills\/opl-typography(?:-system)?(?:\/|$)/.test(op.destinationPath.replace(/\\/g, '/')));
+  const skillOps = operations.filter(op =>
+    /\/skills\/opl-typography/.test(op.destinationPath.replace(/\\/g, '/')));
   assert.strictEqual(
-    typoOps.length,
-    1,
-    `expected exactly one typography skill projection, got ${typoOps.length}`
+    skillOps.length,
+    2,
+    `expected both typography projections to survive, got ${skillOps.length}`
   );
+  const destinations = skillOps.map(op => op.destinationPath.replace(/\\/g, '/'));
+  assert.strictEqual(
+    new Set(destinations).size,
+    destinations.length,
+    `typography destinations still collide: ${destinations.join(', ')}`
+  );
+  // The command keeps the public name; the knowledge skill is relocated.
+  assert.ok(destinations.some(d => d.endsWith('/skills/opl-typography/SKILL.md')));
+  assert.ok(destinations.some(d => /\/skills\/opl-typography-typography-system$/.test(d)));
 });
 
 // F4 [HIGH] releaseWorkflowLock must not unlink a lock owned by another PID.

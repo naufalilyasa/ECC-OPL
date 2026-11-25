@@ -12,7 +12,7 @@ const {
   DESIGN_BUILD_SUBCOMMANDS,
   MAX_REPAIR_CYCLES,
   checkRepairCap,
-  enforceTrackAAadmission,
+  enforceTrackAAdmission,
   resolveDesignBuildResource,
   verifyGateChain
 } = require('../../scripts/lib/design-build-antigravity-gate.mjs');
@@ -48,11 +48,11 @@ function runTests() {
 
   test('Track A admission: bare ADMITTED does NOT unlock A5; verified cert does', () => {
     // A bare status flag must never unlock execution.
-    const bare = enforceTrackAAadmission({ status: 'ADMITTED' });
+    const bare = enforceTrackAAdmission({ status: 'ADMITTED' });
     assert.strictEqual(bare.status, 'BLOCKED');
     assert.strictEqual(bare.reason, 'TRACK_A_UNVERIFIED');
 
-    const verified = enforceTrackAAadmission({
+    const verified = enforceTrackAAdmission({
       status: 'ADMITTED',
       approvedBundleSha256: 'a'.repeat(64),
       gateResults: {
@@ -64,7 +64,7 @@ function runTests() {
     });
     assert.strictEqual(verified.status, 'OK');
 
-    const blocked = enforceTrackAAadmission({ status: 'BLOCKED', reason: 'MISSING_VIEWPORT' });
+    const blocked = enforceTrackAAdmission({ status: 'BLOCKED', reason: 'MISSING_VIEWPORT' });
     assert.strictEqual(blocked.status, 'BLOCKED');
     assert.strictEqual(blocked.reason, 'TRACK_A_NOT_ADMITTED');
   });

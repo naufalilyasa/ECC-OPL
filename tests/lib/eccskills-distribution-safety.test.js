@@ -26,7 +26,12 @@ function test(name, fn) {
   try { fn(); console.log(`  ✓ ${name}`); passed += 1; }
   catch (error) { console.log(`  ✗ ${name}\n    ${error.message}`); failed += 1; }
 }
-function tmp() { return fs.mkdtempSync(path.join(os.tmpdir(), 'eccskills-a3-')); }
+const TEMP_DIRS = [];
+function tmp() {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'eccskills-a3-'));
+  TEMP_DIRS.push(dir);
+  return dir;
+}
 function sha(buf) { return crypto.createHash('sha256').update(buf).digest('hex'); }
 
 function writeSource(root, rel, content) {
@@ -155,6 +160,9 @@ function runTests() {
     assert.ok(!fs.existsSync(p.ledgerPath));
   });
 
+  for (const dir of TEMP_DIRS) {
+    try { fs.rmSync(dir, { recursive: true, force: true }); } catch { /* best effort */ }
+  }
   console.log(`\n${passed} passed, ${failed} failed\n`);
   if (failed > 0) process.exitCode = 1;
 }

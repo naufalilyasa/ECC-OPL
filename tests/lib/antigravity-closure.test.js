@@ -19,6 +19,7 @@ const workflowState = require(path.join(REPO, 'scripts/lib/workflow-state'));
 
 let passed = 0;
 let failed = 0;
+const STATE_TEMP_DIRS = [];
 function test(name, fn) {
   try { fn(); console.log(`  ok ${name}`); passed += 1; }
   catch (error) { console.log(`  FAIL ${name}\n    ${error.message.split('\n')[0]}`); failed += 1; }
@@ -122,6 +123,7 @@ test('C8: canonical tool allowlists do not widen declared permissions', () => {
 
 function stateFixture() {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'closure-state-'));
+  STATE_TEMP_DIRS.push(dir);
   return { dir, customPath: path.join(dir, 'active.json') };
 }
 
@@ -169,5 +171,8 @@ test('C11: same conversation can advance its own state', () => {
   assert.strictEqual(workflowState.readWorkflowState({ customPath: f.customPath }).phase, 'green');
 });
 
+for (const dir of STATE_TEMP_DIRS) {
+  try { fs.rmSync(dir, { recursive: true, force: true }); } catch { /* best effort */ }
+}
 console.log(`\n${passed} passed, ${failed} failed\n`);
 if (failed > 0) process.exitCode = 1;

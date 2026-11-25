@@ -132,20 +132,27 @@ function dedupeSkillDestinations(operations) {
         .split('/')
         .filter(Boolean)
         .pop() || 'workflow';
-      let relocatedKey = `${key}-${sourceName}`;
+      // `key` is a full directory path; relocation works on the skill BASENAME.
+      const keyBasename = key.split('/').pop();
+      let relocatedBasename = `${keyBasename}-${sourceName}`;
       // Guard against an accidental second collision.
       let suffix = 2;
-      while (publicKeys.has(relocatedKey)) {
-        relocatedKey = `${key}-${sourceName}-${suffix}`;
+      while (publicKeys.has(`${key.slice(0, key.length - keyBasename.length)}${relocatedBasename}`)) {
+        relocatedBasename = `${keyBasename}-${sourceName}-${suffix}`;
         suffix += 1;
       }
-      publicKeys.add(relocatedKey);
+      const relocatedDir = `${key.slice(0, key.length - keyBasename.length)}${relocatedBasename}`;
+      publicKeys.add(relocatedDir);
+
+      // Replace the trailing skills/<basename> segment of the destination, so a
+      // nested file keeps its relative path under the new skill directory.
       const normalized = String(op.destinationPath).replace(/\\/g, '/');
-      const relocatedPath = normalized.replace(key, relocatedKey);
+      const suffixPath = normalized.slice(key.length);
+      const relocatedPath = `${relocatedDir}${suffixPath}`;
       const relocated = {
         ...op,
         destinationPath: relocatedPath,
-        skillName: relocatedKey.split('/').pop(),
+        skillName: relocatedBasename,
       };
       if (!seen.has(relocated)) { seen.add(relocated); kept.push(relocated); }
       continue;
@@ -194,6 +201,17 @@ function planCommandOperations(moduleId, normalizedSourcePath, { repoRoot, targe
 }
 
 function planAgentOperations(moduleId, normalizedSourcePath, { repoRoot, targetRoot }) {
+  // `agy` registers a subagent from `.agents/agents/<name>/agent.md` (verified
+  // against the 1.5.17 binary), not from a flat `<name>.md` file.
+  //
+  // Migration boundary: projects installed before this layout change still hold
+  // flat `.agents/agents/<name>.md` files. `agy` ignores them, so they are
+  // inert, but they are not removed here — a flat file may carry user edits and
+  // this installer has no proof of ownership for it. Reinstalling does not
+  // clean them up; remove them manually once the new layout is confirmed.
+  const agentDestination = baseName =>
+    path.join(targetRoot, 'agents', oplName(baseName), 'agent.md');
+
   // `.opencode/prompts/agents/*.txt` carries agent prompts that have no
   // `agents/*.md` counterpart (plan-reviewer with Momus+Oracle dual pass).
   // Project them as agents so the canonical roles are actually installed.
@@ -208,7 +226,7 @@ function planAgentOperations(moduleId, normalizedSourcePath, { repoRoot, targetR
         return createManagedOperation({
           moduleId,
           sourceRelativePath: path.join('.opencode', 'prompts', 'agents', relFile),
-          destinationPath: path.join(targetRoot, 'agents', `${oplName(baseName)}.md`),
+          destinationPath: agentDestination(baseName),
           strategy: 'preserve-relative-path',
           contentTransform: 'antigravity-prompt-to-agent',
         });
@@ -225,7 +243,7 @@ function planAgentOperations(moduleId, normalizedSourcePath, { repoRoot, targetR
       .map(relFile => createManagedOperation({
         moduleId,
         sourceRelativePath: path.join('agents', relFile),
-        destinationPath: path.join(targetRoot, 'agents', remapAgentPath(relFile)),
+        destinationPath: agentDestination(relFile.replace(/\.md$/i, '')),
         strategy: 'preserve-relative-path',
         contentTransform: 'antigravity-agent-frontmatter-cli',
       }));
@@ -234,7 +252,7 @@ function planAgentOperations(moduleId, normalizedSourcePath, { repoRoot, targetR
   return [createManagedOperation({
     moduleId,
     sourceRelativePath: normalizedSourcePath,
-    destinationPath: path.join(targetRoot, 'agents', remapAgentPath(agentRelativePath)),
+    destinationPath: agentDestination(agentRelativePath.replace(/\.md$/i, '')),
     strategy: 'preserve-relative-path',
     contentTransform: 'antigravity-agent-frontmatter-cli',
   })];
@@ -292,6 +310,35 @@ function planSourcePath(moduleId, normalizedSourcePath, context) {
   return [];
 }
 
+/**
+ * `agents/<name>.md` and `.opencode/prompts/agents/<name>.txt` can describe the
+ * same canonical agent. The rich `agents/*.md` definition wins; the prompt
+ * variant only fills gaps. Keeping both would install one over the other.
+ */
+function dedupeAgentDestinations(operations) {
+  const isPromptVariant = op => op.contentTransform === 'antigravity-prompt-to-agent';
+  // Identify agent operations by their transform, never by a path substring:
+  // a checkout under `.../ai-agents/...` would otherwise match every operation.
+  const isAgentOp = op =>
+    op.contentTransform === 'antigravity-agent-frontmatter-cli' || isPromptVariant(op);
+  const byDest = new Map();
+  const kept = [];
+  for (const op of operations) {
+    if (!isAgentOp(op)) { kept.push(op); continue; }
+    // APFS/NTFS treat these as the same file; key the same way.
+    const destKey = String(op.destinationPath || '').replace(/\\/g, '/').toLowerCase();
+    const prior = byDest.get(destKey);
+    if (!prior) { byDest.set(destKey, op); kept.push(op); continue; }
+    if (isPromptVariant(prior) && !isPromptVariant(op)) {
+      const index = kept.indexOf(prior);
+      if (index >= 0) kept[index] = op;
+      byDest.set(destKey, op);
+    }
+    // Otherwise drop the duplicate: the richer definition already won.
+  }
+  return kept;
+}
+
 module.exports = createInstallTargetAdapter({
   id: 'antigravity-cli',
   target: 'antigravity-cli',
@@ -318,6 +365,6 @@ module.exports = createInstallTargetAdapter({
           planSourcePath(module.id, normalizeRelativePath(sourceRelativePath), context));
     });
 
-    return dedupeSkillDestinations(operations);
+    return dedupeAgentDestinations(dedupeSkillDestinations(operations));
   },
 });

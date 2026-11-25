@@ -32,7 +32,7 @@ export function resolveDesignBuildResource(target, repoRoot = '') {
  * evidence) and the full G0-G3 chain must pass. Synthetic fixture evidence is
  * not production admission.
  */
-export function enforceTrackAAadmission(certificate) {
+export function enforceTrackAAdmission(certificate) {
   if (!certificate || certificate.status !== 'ADMITTED') {
     return blocked('TRACK_A_NOT_ADMITTED', {
       why: certificate?.reason || 'NO_ADMISSION_CERTIFICATE',

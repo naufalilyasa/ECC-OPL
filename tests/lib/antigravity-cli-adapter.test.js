@@ -212,8 +212,8 @@ test('antigravity-cli adapter plans skills with opl- namespace and omits duplica
   assert.ok(agentOp, 'Expected agent operation for code-reviewer');
   assert.strictEqual(agentOp.contentTransform, 'antigravity-agent-frontmatter-cli');
   assert.ok(
-    agentOp.destinationPath.replace(/\\/g, '/').includes('.agents/agents/opl-code-reviewer.md'),
-    `Expected destination to include .agents/agents/opl-code-reviewer.md, got: ${agentOp.destinationPath}`
+    agentOp.destinationPath.replace(/\\/g, '/').includes('.agents/agents/opl-code-reviewer/agent.md'),
+    `Expected destination to include .agents/agents/opl-code-reviewer/agent.md, got: ${agentOp.destinationPath}`
   );
 
   // Commands should NOT be projected to .agents/workflows/
@@ -299,8 +299,12 @@ test('antigravity-cli adapter expands directory-level "agents" module path with 
 
   assert.ok(operations.length > 50, `Expected at least 50 agents planned, got: ${operations.length}`);
   for (const op of operations) {
-    const filename = path.basename(op.destinationPath);
-    assert.ok(filename.startsWith('opl-'), `Expected agent destination filename to start with opl-, got: ${filename}`);
+    const normalized = op.destinationPath.replace(/\\/g, '/');
+    // agy registers a subagent from `.agents/agents/<name>/agent.md`.
+    assert.ok(
+      normalized.includes('/.agents/agents/opl-') && normalized.endsWith('/agent.md'),
+      `Expected agent destination .agents/agents/opl-<name>/agent.md, got: ${op.destinationPath}`
+    );
     assert.strictEqual(op.contentTransform, 'antigravity-agent-frontmatter-cli');
   }
 });

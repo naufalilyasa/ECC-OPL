@@ -11,6 +11,12 @@ const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 
+const {
+  copyContainedFile,
+  readFileNoFollow,
+  removeContainedPath
+} = require('./install/contained-fs');
+
 // Canonical baseline for this port. A6.2 pins the code line of the port; the
 // live HEAD (0f8e29db) is recorded separately by the caller when desired.
 const A6_CANONICAL_COMMIT = '42fae4ebb5e995690d3a5752b461e475d229c40e';
@@ -48,7 +54,11 @@ function generateReleaseManifest({ operations = [], sourceRoot = null, target = 
     if (!sourcePath && sourceRoot && op.sourceRelativePath) {
       sourcePath = path.join(sourceRoot, op.sourceRelativePath);
     }
-    if (!sourcePath || !fs.existsSync(sourcePath)) continue;
+    if (!sourcePath || !fs.existsSync(sourcePath)) {
+      // Silently dropping a required source would ship a manifest that claims
+      // completeness while omitting files.
+      throw new Error(`missing required source file: ${op.sourceRelativePath}`);
+    }
     if (fs.statSync(sourcePath).isDirectory()) {
       for (const rel of listFiles(sourcePath)) {
         expanded.push({
@@ -74,10 +84,11 @@ function generateReleaseManifest({ operations = [], sourceRoot = null, target = 
     })
     .sort((a, b) => a.destinationPath.localeCompare(b.destinationPath));
   // Two operations targeting one path would silently last-wins and ship the
-  // wrong file. Fail the release instead.
+  // wrong file. Compare case-insensitively because APFS and NTFS treat
+  // `SKILL.md` and `skill.md` as the same file.
   const seen = new Map();
   for (const file of files) {
-    const key = toPosixRelative(file.destinationPath);
+    const key = toPosixRelative(file.destinationPath).toLowerCase();
     const prior = seen.get(key);
     if (prior) {
       throw new Error(
@@ -128,10 +139,18 @@ function detectManagedConflicts(ledger, manifest) {
   const installed = Boolean(ledger.installedAt);
   for (const file of manifest.files) {
     if (!fs.existsSync(file.destinationPath)) continue;
-    const actual = sha256(fs.readFileSync(file.destinationPath));
     const rel = root
       ? path.relative(root, file.destinationPath).replace(/\\/g, '/')
       : file.destinationPath;
+    // A symlinked destination would otherwise be read through, escaping the
+    // project root. Treat it as unmanaged without reading its content.
+    let actual;
+    try {
+      actual = sha256(readFileNoFollow(file.destinationPath));
+    } catch {
+      conflicts.push({ destinationPath: file.destinationPath, kind: 'unmanaged' });
+      continue;
+    }
     const expected = installed
       ? (ledger.managed[rel] || ledger.managed[file.destinationPath])
       : null;
@@ -149,75 +168,109 @@ function installRelease(manifest, { projectRoot, ledgerPath, backupRoot, force =
   if (!projectRoot || !ledgerPath || !backupRoot) {
     throw new Error('installRelease requires projectRoot, ledgerPath, and backupRoot');
   }
+  const root = path.resolve(projectRoot);
   const stamp = new Date().toISOString().replace(/[:.]/g, '-');
-  const thisBackup = path.join(backupRoot, stamp);
-  const installed = [];
+  const thisBackup = path.resolve(path.join(backupRoot, stamp));
+  // Records what to undo: `restore` when a backup exists, `remove` when this
+  // run created the file. An identical pre-existing file records NOTHING, so
+  // rollback can never delete a file ECC did not write.
+  const undo = [];
+  const previousLedger = fs.existsSync(ledgerPath)
+    ? JSON.parse(fs.readFileSync(ledgerPath, 'utf8'))
+    : null;
 
-  // Refuse before touching anything: a destination that exists and is not in
-  // the current ledger is somebody else's file.
+  // Refuse before touching anything: a destination outside the project root, a
+  // modified managed file, or an unmanaged file with DIFFERENT content is not
+  // ours to overwrite. An unmanaged file that already matches the release
+  // byte-for-byte is not an overwrite — nothing would be written — so it is
+  // allowed and recorded as "already correct".
   if (!force) {
-    const priorLedger = fs.existsSync(ledgerPath)
-      ? JSON.parse(fs.readFileSync(ledgerPath, 'utf8'))
-      : { managed: {} };
-    const unmanaged = manifest.files.filter(file => {
-      if (!fs.existsSync(file.destinationPath)) return false;
-      const rel = toPosixRelative(path.relative(projectRoot, file.destinationPath));
-      const owned = priorLedger.managed && (priorLedger.managed[rel] || priorLedger.managed[file.destinationPath]);
-      return !owned;
+    const conflicts = detectManagedConflicts(previousLedger || { managed: {}, root }, manifest);
+    const blocking = conflicts.filter(conflict => {
+      if (conflict.kind !== 'unmanaged') return true;
+      const file = manifest.files.find(f => f.destinationPath === conflict.destinationPath);
+      return !file || conflict.actual !== file.sha256;
     });
-    if (unmanaged.length > 0) {
+    if (blocking.length > 0) {
       throw new Error(
-        `refusing to overwrite unmanaged file: ${unmanaged[0].destinationPath} (pass force to override)`
+        `refusing to overwrite ${blocking[0].kind} file: ${blocking[0].destinationPath} (pass force to override)`
       );
     }
   }
 
   try {
     for (const file of manifest.files) {
-      fs.mkdirSync(path.dirname(file.destinationPath), { recursive: true });
-      // Backup an existing file only if it is not already the desired content.
-      if (fs.existsSync(file.destinationPath)) {
-        const current = fs.readFileSync(file.destinationPath);
-        if (sha256(current) !== file.sha256) {
-          const rel = path.relative(projectRoot, file.destinationPath);
-          const backupFile = path.join(thisBackup, rel);
-          fs.mkdirSync(path.dirname(backupFile), { recursive: true });
-          fs.copyFileSync(file.destinationPath, backupFile);
-        }
+      // Containment is enforced by the canonical helper, not by string math.
+      // Relative destinations resolve against the project root, never cwd.
+      const dest = path.resolve(root, file.destinationPath);
+      const rel = toPosixRelative(path.relative(root, dest));
+      if (rel.startsWith('..') || path.isAbsolute(rel)) {
+        throw new Error(`destination escapes project root: ${file.destinationPath}`);
       }
-      fs.copyFileSync(file.sourcePath, file.destinationPath);
-      if (sha256(fs.readFileSync(file.destinationPath)) !== file.sha256) {
+      // The canonical helper resolves against an existing trusted root.
+      fs.mkdirSync(root, { recursive: true });
+
+      const existed = fs.existsSync(dest);
+      const identical = existed && sha256(readFileNoFollow(dest)) === file.sha256;
+
+      // Already byte-for-byte correct: writing again would only risk
+      // truncating a file the undo journal deliberately does not cover.
+      if (identical) continue;
+
+      if (existed) {
+        const backupFile = path.join(thisBackup, rel);
+        fs.mkdirSync(thisBackup, { recursive: true });
+        copyContainedFile(dest, backupFile, thisBackup, 'backup');
+        undo.push({ target: dest, restore: backupFile });
+      } else if (!existed) {
+        undo.push({ target: dest, remove: true });
+      }
+
+      // Bind to the actual release bytes: verify the SOURCE digest before the
+      // copy, so a source changed after manifest generation is caught instead
+      // of shipping content that no longer matches the manifest.
+      const sourceBytes = readFileNoFollow(file.sourcePath);
+      if (sha256(sourceBytes) !== file.sha256) {
+        throw new Error(`source changed since manifest generation: ${file.sourceRelativePath}`);
+      }
+      copyContainedFile(file.sourcePath, dest, root, 'install');
+      if (sha256(readFileNoFollow(dest)) !== file.sha256) {
         throw new Error(`digest verification failed for ${file.destinationPath}`);
       }
-      installed.push(file.destinationPath);
     }
+
+    const ledger = buildOwnershipLedger(manifest, root);
+    ledger.backupDir = thisBackup;
+    ledger.installedAt = new Date().toISOString();
+    // Only files this install CREATED may be removed on rollback. A file that
+    // already existed (even with identical content) is never ours to delete.
+    ledger.added = undo.filter(entry => entry.remove).map(entry => toPosixRelative(path.relative(root, entry.target)));
+    // Preserve the previous ledger so a later rollback can return to it.
+    if (previousLedger) ledger.previous = previousLedger;
+    fs.mkdirSync(path.dirname(ledgerPath), { recursive: true });
+    fs.writeFileSync(ledgerPath, JSON.stringify(ledger, null, 2));
+
+    return { installed: manifest.files.map(f => f.destinationPath), backupDir: thisBackup, ledgerPath };
   } catch (error) {
-    // Atomic: undo whatever this run already wrote so a failed install never
-    // leaves a half-projected tree behind.
-    for (const written of installed) {
-      const rel = toPosixRelative(path.relative(projectRoot, written));
-      const backupFile = path.join(thisBackup, rel);
+    const recoveryErrors = [];
+    for (const entry of undo.reverse()) {
       try {
-        if (fs.existsSync(backupFile)) {
-          fs.copyFileSync(backupFile, written);
-        } else {
-          fs.unlinkSync(written);
+        if (entry.restore) {
+          copyContainedFile(entry.restore, entry.target, root, 'rollback');
+        } else if (entry.remove) {
+          removeContainedPath(entry.target, root, 'rollback');
         }
-      } catch {
-        // Best-effort restore; the original error is the one that matters.
+      } catch (recoveryError) {
+        // Never claim atomic recovery while an error was swallowed.
+        recoveryErrors.push(`${entry.target}: ${recoveryError.message}`);
       }
+    }
+    if (recoveryErrors.length > 0) {
+      error.message += `\nINCOMPLETE RECOVERY (${recoveryErrors.length} path(s)):\n${recoveryErrors.join('\n')}`;
+      error.recoveryErrors = recoveryErrors;
     }
     throw error;
   }
-
-  const ledger = buildOwnershipLedger(manifest, projectRoot);
-  ledger.backupDir = thisBackup;
-  // Marks the ledger as written by a real install. Without it the ledger is
-  // only a plan and cannot claim pre-existing files as managed.
-  ledger.installedAt = new Date().toISOString();
-  fs.mkdirSync(path.dirname(ledgerPath), { recursive: true });
-  fs.writeFileSync(ledgerPath, JSON.stringify(ledger, null, 2));
-  return { installed, backupDir: thisBackup, ledgerPath };
 }
 
 function rollbackRelease({ projectRoot: explicitRoot, ledgerPath, backupRoot } = {}) {
@@ -235,29 +288,34 @@ function rollbackRelease({ projectRoot: explicitRoot, ledgerPath, backupRoot } =
       // Restore only files the user has not touched since install.
       const expected = ledger.managed && ledger.managed[rel];
       if (expected && fs.existsSync(target)) {
-        if (sha256(fs.readFileSync(target)) !== expected) {
+        if (sha256(readFileNoFollow(target)) !== expected) {
           // User-modified file: preserve it (do not overwrite).
           continue;
         }
       }
-      fs.mkdirSync(path.dirname(target), { recursive: true });
-      fs.copyFileSync(path.join(backupDir, entry), target);
+      copyContainedFile(path.join(backupDir, entry), target, projectRoot, 'rollback');
       rolledBack.push(target);
     }
   }
-  // Remove files added by the release that the user has not modified.
-  if (ledger.managed && backupDir) {
-    for (const [rel, expected] of Object.entries(ledger.managed)) {
-      const target = path.join(projectRoot, rel);
-      const backedUp = path.join(backupDir, rel);
-      if (fs.existsSync(target) && !fs.existsSync(backedUp)) {
-        const current = sha256(fs.readFileSync(target));
-        if (current === expected) fs.unlinkSync(target);
-      }
-    }
+  // Remove ONLY files this install created and the user has not modified.
+  // `ledger.added` is authoritative; falling back to "no backup exists" would
+  // delete a pre-existing identical file that was never ours.
+  const added = Array.isArray(ledger.added) ? ledger.added : [];
+  for (const rel of added) {
+    const target = path.join(projectRoot, rel);
+    const expected = ledger.managed && ledger.managed[rel];
+    if (!fs.existsSync(target) || !expected) continue;
+    if (sha256(readFileNoFollow(target)) !== expected) continue;
+    removeContainedPath(target, projectRoot, 'rollback');
   }
-  fs.unlinkSync(ledgerPath);
-  return { rolledBack };
+  // Restore the previous installation state instead of erasing it, so rolling
+  // back a reinstall returns to the prior release rather than to nothing.
+  if (ledger.previous) {
+    fs.writeFileSync(ledgerPath, JSON.stringify(ledger.previous, null, 2));
+  } else {
+    fs.unlinkSync(ledgerPath);
+  }
+  return { rolledBack, restoredPrevious: Boolean(ledger.previous) };
 }
 
 function listFiles(dir) {

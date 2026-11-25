@@ -253,16 +253,18 @@ function writeWorkflowState({
 
         // Guard 3: Cross-conversation clobbering (active state only). Two
         // conversations in the same worktree share one state file; the one
-        // that did not open the workflow must not overwrite it.
+        // that did not open the workflow must not overwrite it. An untagged
+        // write must not slip past by omitting conversationId.
         if (
           !existingIsTerminal &&
           existing.conversationId &&
-          state.conversationId &&
           existing.conversationId !== state.conversationId
         ) {
           throw createWorkflowError(
             ERRORS.E_CROSS_CONVERSATION_CLOBBER,
-            `Existing workflow state belongs to conversation "${existing.conversationId}". Explicit handoff required to switch to "${state.conversationId}".`
+            `Existing workflow state belongs to conversation "${existing.conversationId}". Explicit handoff required to switch to ${
+              state.conversationId ? `"${state.conversationId}"` : 'an untagged conversation'
+            }.`
           );
         }
       } catch (err) {

@@ -75,6 +75,13 @@ function sanitizeText(value, maxLength = 4000) {
   return value;
 }
 
+// Anchor locators come from the browser, not the human. Truncating one keeps
+// the commentary usable; rejecting it would discard what the user typed.
+function truncate(value, maxLength) {
+  if (typeof value !== 'string') return '';
+  return value.length > maxLength ? value.slice(0, maxLength) : value;
+}
+
 // Normalize one browser-submitted feedback item into the shape delivered to
 // the agent. Returns null for unusable input rather than throwing so a
 // malformed item can never wedge the queue.
@@ -95,14 +102,17 @@ function normalizeFeedbackItem(raw, counter, maxTextLength = 4000) {
   if (kind === 'annotation') {
     const anchor = raw.anchor && typeof raw.anchor === 'object' ? raw.anchor : null;
     if (!anchor || typeof anchor.selector !== 'string') return null;
+    // Anchor parts are browser-generated locators, not user prose. Truncate an
+    // oversized one instead of dropping the item: discarding it would silently
+    // throw away the commentary the human actually typed.
     item.anchor = {
-      selector: sanitizeText(anchor.selector, 500),
-      tag: sanitizeText(anchor.tag, 60),
-      snippet: sanitizeText(anchor.snippet, 400)
+      selector: truncate(anchor.selector, 500),
+      tag: truncate(anchor.tag, 60),
+      snippet: truncate(anchor.snippet, 400)
     };
     if (anchor.textRange && typeof anchor.textRange === 'object') {
       item.anchor.textRange = {
-        text: sanitizeText(anchor.textRange.text, 1000)
+        text: truncate(anchor.textRange.text, 1000)
       };
     }
     if (!item.text) return null;
