@@ -45,6 +45,7 @@ const CANONICAL_CLI_AGENT_TOOLS = Object.freeze({
   architect: ['read_file', 'grep_search', 'find_by_name'],
   explore: ['read_file', 'grep_search', 'find_by_name'],
   'code-reviewer': ['read_file', 'grep_search', 'find_by_name'],
+  'security-reviewer': ['read_file', 'grep_search', 'find_by_name'],
   'docs-lookup': ['read_file', 'grep_search', 'find_by_name', 'read_url_content', 'search_web'],
   'tdd-guide': ['read_file', 'edit_file', 'write_file', 'grep_search', 'run_command'],
   'code-simplifier': ['read_file', 'edit_file', 'write_file', 'grep_search', 'find_by_name'],

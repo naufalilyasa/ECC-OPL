@@ -8,6 +8,8 @@ import { constants as FS } from 'node:fs'
 import { readFileSync, writeFileSync, lstatSync, realpathSync, openSync, closeSync, writeSync, fsyncSync, fchmodSync, renameSync, unlinkSync, existsSync, mkdirSync } from 'node:fs'
 import { dirname, join, resolve, relative, isAbsolute, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { createRequire as __createRequire } from 'node:module'
+const __require = __createRequire(import.meta.url)
 
 import { validateState, parseRegistry, allocateId, bootstrapProposal, APPROVED_BOOTSTRAP_DIFF } from './e2e-runtime/registry.mjs'
 import { applyFieldScopedUpdate, checkRegistryPathSafety, checkWriteConflict as m5Conflict } from './e2e-runtime/migration.mjs'
@@ -194,10 +196,17 @@ function main() {
   const base = { operation, call_chain: callChain(operation, req), validators: VALIDATORS, registry_writes: 0, applied: false }
 
   if (operation === 'map') {
-    const res = '.opencode/resources/e2e-journey-mapper.md'
-    if (!existsSync(join(REPO, res))) fail('INTERNAL_MAPPER_MISSING')
+    // Target-aware mapper resolution: OpenCode keeps its legacy resource,
+    // Antigravity CLI reads the projected .agents/ecc-opl/e2e resource.
+    const target = req.target === 'antigravity-cli' ? 'antigravity-cli' : 'opencode'
+    const { resolveMapperResource } = __require('../../scripts/lib/e2e-antigravity-target.js')
+    let mapper
+    try { mapper = resolveMapperResource(target, REPO) } catch { fail('INTERNAL_MAPPER_MISSING') }
+    // The agy mapper is projected into the installed project, so it is not
+    // expected to exist in this source repo; the canonical opencode one must.
+    if (target === 'opencode' && !mapper.exists) fail('INTERNAL_MAPPER_MISSING')
     if (!existsSync(join(REPO, 'agents/e2e-runner.md'))) fail('RUNNER_MISSING')
-    output({ ...base, status: 'OK', mapper: { resource: `internal:${res}`, legacy_command_read: 0 },
+    output({ ...base, status: 'OK', target, mapper: { resource: `internal:${mapper.resource}`, legacy_command_read: 0 },
       runner: 'agents/e2e-runner.md', legacy_command_read: 0, legacy_compatibility: req.legacy === true })
     return
   }
