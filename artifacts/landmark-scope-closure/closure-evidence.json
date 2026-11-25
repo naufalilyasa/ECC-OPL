@@ -1,0 +1,79 @@
+{
+  "generated_utc": "2026-11-25T16:53:53.731Z",
+  "profile": {
+    "landmarks": [
+      {
+        "name": "panel-header",
+        "selector": ".panel-header",
+        "props": [
+          "display",
+          "minHeight",
+          "fontWeight"
+        ]
+      },
+      {
+        "name": "status-pill",
+        "selector": ".status-pill",
+        "props": [
+          "display",
+          "borderRadius",
+          "fontVariantNumeric"
+        ]
+      },
+      {
+        "name": "reminder-row",
+        "selector": ".reminder-row",
+        "props": [
+          "display",
+          "gap",
+          "paddingTop"
+        ]
+      }
+    ],
+    "profileKey": "6375b3c8b513a627",
+    "source": "custom (non-P-WEB1)"
+  },
+  "viewports": [
+    "desktop-1440",
+    "mobile-390"
+  ],
+  "results": [
+    {
+      "name": "1. complete approved landmark coverage",
+      "ok": true,
+      "detail": "panel-header, status-pill, reminder-row"
+    },
+    {
+      "name": "2. matching candidate passes at every viewport",
+      "ok": true,
+      "detail": "PARITY_PASS, PARITY_PASS"
+    },
+    {
+      "name": "3. deliberate mismatch in one required landmark fails",
+      "ok": true,
+      "detail": "PARITY_FAIL, PARITY_FAIL"
+    },
+    {
+      "name": "4. missing required measurement fails",
+      "ok": true,
+      "detail": "PARITY_FAIL"
+    },
+    {
+      "name": "5. admission blocked without real evidence",
+      "ok": true,
+      "detail": "verifier=BLOCKED/SCREENSHOT_PAIR_INCOMPLETE gate=BLOCKED"
+    },
+    {
+      "name": "5b. same certificate admits only when the real PNGs are supplied",
+      "ok": true,
+      "detail": "ADMITTED"
+    },
+    {
+      "name": "6. canonical a11y import and frontend direction intact",
+      "ok": true,
+      "detail": "a11y=true direction=true"
+    }
+  ],
+  "allPassed": true,
+  "note": "This is measurement evidence for the closure directive, NOT a Track A admission certificate for any production project."
+}
