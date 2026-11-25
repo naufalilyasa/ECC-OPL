@@ -93,7 +93,12 @@ function runTests() {
     tampered.gateResults.G2_rendered_fidelity = 'FAIL';
     const result = verifyAdmissionCertificate(tampered, images);
     assert.strictEqual(result.status, 'BLOCKED');
-    assert.strictEqual(result.reason, 'G2_NOT_AUTHORITATIVE');
+    // G2 FAIL is now caught by the complete-chain check, which runs before the
+    // rendered-evidence check. Either reason blocks; the gate is what matters.
+    assert.ok(
+      ['GATE_CHAIN_FAILED', 'G2_NOT_AUTHORITATIVE'].includes(result.reason),
+      `unexpected reason: ${result.reason}`
+    );
   });
 
   test('rejects incoherent gate transition sequence', () => {

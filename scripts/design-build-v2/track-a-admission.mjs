@@ -18,8 +18,9 @@ function blocked(reason, extra = {}) {
  * Verify a Track A admission certificate against the actual PNG bytes.
  * @param cert parsed track-a-admission.json
  * @param images { [viewport]: { reference: Buffer, candidate: Buffer } }
+ * @param options { approvedBundleSha256?, requireApprovedBundle? }
  */
-export function verifyAdmissionCertificate(cert, images = {}) {
+export function verifyAdmissionCertificate(cert, images = {}, options = {}) {
   if (!cert || typeof cert !== 'object') return blocked('INVALID_CERTIFICATE')
 
   // 1. Complete approved scope: required viewports all present.
@@ -49,9 +50,15 @@ export function verifyAdmissionCertificate(cert, images = {}) {
     }
   }
 
-  // 3. Authoritative G2 exit code — PASS must be declared by rendered evidence.
+  // 3. Complete applicable gate chain. Every gate must be present and PASS.
+  // A caller-declared PASS label is not evidence on its own, but a declared
+  // FAIL (or an absent gate) can never be overridden by good screenshots.
   const gates = cert.gateResults || {}
-  if (gates.G2_rendered_fidelity !== 'PASS') return blocked('G2_NOT_AUTHORITATIVE')
+  for (const gateName of CANONICAL_GATE_SEQUENCE) {
+    if (gates[gateName] !== 'PASS') {
+      return blocked('GATE_CHAIN_FAILED', { gate: gateName, actual: gates[gateName] ?? null })
+    }
+  }
   for (const vp of REQUIRED_VIEWPORTS) {
     if (captures[vp].verdict !== 'PARITY_PASS') return blocked('G2_NOT_AUTHORITATIVE', { viewport: vp })
   }
@@ -66,8 +73,20 @@ export function verifyAdmissionCertificate(cert, images = {}) {
     return blocked('GATE_SEQUENCE_INCOHERENT')
   }
 
-  // 5. Approved bundle seal must be present and bound.
-  if (!/^[0-9a-f]{64}$/.test(cert.approvedBundleSha256 || '')) return blocked('BUNDLE_SEAL_MISSING')
+  // 5. Approved bundle seal must be present, well formed, and — when an anchor
+  // is supplied or required — match the independently known approved bundle.
+  // The certificate's own digests prove only internal consistency; the anchor
+  // is what proves the reference is the one that was actually approved.
+  const seal = cert.approvedBundleSha256 || ''
+  if (!/^[0-9a-f]{64}$/.test(seal)) return blocked('BUNDLE_SEAL_MISSING')
+  const anchor = options.approvedBundleSha256
+  if (anchor) {
+    if (seal !== anchor) {
+      return blocked('APPROVED_BUNDLE_MISMATCH', { declared: seal, approved: anchor })
+    }
+  } else if (options.requireApprovedBundle) {
+    return blocked('APPROVED_BUNDLE_ANCHOR_MISSING')
+  }
 
   return { status: 'ADMITTED', requiredViewports: REQUIRED_VIEWPORTS.slice(),
     verifiedViewports: REQUIRED_VIEWPORTS.slice(), gateSequence: seq.slice() }

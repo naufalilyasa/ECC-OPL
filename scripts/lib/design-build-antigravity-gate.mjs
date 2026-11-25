@@ -2,10 +2,16 @@
 // Enforces Track A admission (precondition), the ordered G0-G3 gate chain, and
 // the bounded repair loop. Reuses checkpoints from scripts/design-build-v2/;
 // no parallel state machine.
+import { readFileSync, realpathSync } from 'node:fs'
 import path from 'node:path'
+import { verifyAdmissionCertificate } from '../design-build-v2/track-a-admission.mjs'
 
 export const DESIGN_BUILD_SUBCOMMANDS = Object.freeze(['design', 'typography', 'verify', 'amend'])
 export const MAX_REPAIR_CYCLES = 2
+
+// The certificate must carry a passing capture for every viewport Track A
+// requires; a partial or arbitrary object cannot admit a page.
+export const REQUIRED_VIEWPORTS = ['desktop-1440', 'mobile-390']
 const GATE_SEQUENCE = Object.freeze(['G0_preflight', 'G1_contract', 'G2_rendered_fidelity', 'G3_state_interaction'])
 
 function blocked(reason, extra = {}) {
@@ -27,12 +33,18 @@ export function resolveDesignBuildResource(target, repoRoot = '') {
 
 /**
  * Track A admission is a hard precondition for A5 (R12/IS-6/GAP-6).
- * A bare `status: 'ADMITTED'` object is NOT sufficient: the certificate must
- * carry verified canonical evidence (bundle seal, gate results, rendered
- * evidence) and the full G0-G3 chain must pass. Synthetic fixture evidence is
- * not production admission.
+ *
+ * A declarative object is NOT admission. The certificate is handed to the
+ * canonical verifier (`verifyAdmissionCertificate`), which re-reads the actual
+ * persisted PNG bytes, checks their dimensions, and re-derives the digests.
+ * Shape checks here only produce a clearer diagnosis before that call; they can
+ * never grant admission on their own.
+ *
+ * @param certificate parsed track-a-admission.json
+ * @param images      { [viewport]: { reference: Buffer, candidate: Buffer } }
+ * @param options     { currentRevisionSha256 } to refuse a stale artifact
  */
-export function enforceTrackAAdmission(certificate) {
+export function enforceTrackAAdmission(certificate, images = {}, options = {}) {
   if (!certificate || certificate.status !== 'ADMITTED') {
     return blocked('TRACK_A_NOT_ADMITTED', {
       why: certificate?.reason || 'NO_ADMISSION_CERTIFICATE',
@@ -40,29 +52,47 @@ export function enforceTrackAAdmission(certificate) {
     })
   }
 
-  // A bare status flag cannot unlock execution.
-  const missing = []
-  if (!certificate.approvedBundleSha256 || !/^[a-f0-9]{64}$/.test(String(certificate.approvedBundleSha256))) {
-    missing.push('approvedBundleSha256')
-  }
-  if (!certificate.gateResults || typeof certificate.gateResults !== 'object') {
-    missing.push('gateResults')
-  }
-  // The certificate schema keys captures by viewport name (see
-  // track-a-admission.mjs, which is the authority on this shape). An array here
-  // would reject every certificate the real generator produces.
-  const captures = certificate.captures
-  if (!captures || typeof captures !== 'object' || Array.isArray(captures)
-    || Object.keys(captures).length === 0) {
-    missing.push('captures')
-  }
-  if (!certificate.renderedEvidence || certificate.renderedEvidence.verified !== true) {
-    missing.push('renderedEvidence')
-  }
-  if (missing.length > 0) {
+  // A certificate admitted for revision X must not admit revision Y. An
+  // interrupted capture leaves the previous file in place, so the binding is
+  // checked before any evidence is trusted. Production admission must always
+  // carry a binding: omitting the current revision is a missing binding, never
+  // a reason to skip the check.
+  const currentRevision = options.currentRevisionSha256
+  if (!currentRevision) {
     return blocked('TRACK_A_UNVERIFIED', {
-      why: 'ADMISSION_CERTIFICATE_INCOMPLETE',
-      missing,
+      why: 'ADMISSION_REVISION_UNBOUND',
+      detail: 'currentRevisionSha256 is required on admission paths',
+      designBuildReferenceAdmission: 'BLOCKED'
+    })
+  }
+  const bound = certificate.candidateRevisionSha256
+  if (!bound) {
+    return blocked('TRACK_A_UNVERIFIED', {
+      why: 'ADMISSION_REVISION_UNBOUND',
+      designBuildReferenceAdmission: 'BLOCKED'
+    })
+  }
+  if (bound !== currentRevision) {
+    return blocked('TRACK_A_UNVERIFIED', {
+      why: 'ADMISSION_REVISION_STALE',
+      expected: currentRevision,
+      actual: bound,
+      designBuildReferenceAdmission: 'BLOCKED'
+    })
+  }
+
+  // The canonical verifier owns evidence integrity and the full applicable gate
+  // chain. The anchor (when supplied) proves the reference bundle is the one
+  // that was actually approved, not merely one the caller described.
+  const verification = verifyAdmissionCertificate(certificate, images, {
+    approvedBundleSha256: options.approvedBundleSha256,
+    requireApprovedBundle: options.requireApprovedBundle
+  })
+  if (verification.status !== 'ADMITTED') {
+    return blocked('TRACK_A_UNVERIFIED', {
+      why: verification.reason || 'CANONICAL_VERIFICATION_FAILED',
+      viewport: verification.viewport,
+      gate: verification.gate,
       designBuildReferenceAdmission: 'BLOCKED'
     })
   }
@@ -72,11 +102,64 @@ export function enforceTrackAAdmission(certificate) {
     return blocked('TRACK_A_UNVERIFIED', {
       why: 'GATE_CHAIN_FAILED',
       gate: chain.gate,
+      expected: chain.expected,
+      actual: chain.actual,
       designBuildReferenceAdmission: 'BLOCKED'
     })
   }
 
-  return { status: 'OK', designBuildReferenceAdmission: 'ADMITTED' }
+  return {
+    status: 'OK',
+    designBuildReferenceAdmission: 'ADMITTED',
+    requiredViewports: verification.requiredViewports,
+    verifiedViewports: verification.verifiedViewports,
+    gateSequence: verification.gateSequence
+  }
+}
+
+/**
+ * Load the PNG pairs a certificate names, relative to the certificate file.
+ * A capture may declare `<side>Path`/`<side>File`; when it declares nothing the
+ * producer's naming convention (`<viewport>-<side>.png`) is used, so a
+ * certificate written by capture-project-evidence.mjs round-trips.
+ * Missing bytes stay missing so the canonical verifier blocks instead of the
+ * gate inventing evidence.
+ */
+export function loadAdmissionImages(certificate, certificatePath) {
+  const images = {}
+  const baseDir = path.dirname(path.resolve(certificatePath))
+  // Compare REAL paths: a symlink placed inside the evidence directory passes a
+  // lexical prefix check while readFileSync follows it outside. Resolve the
+  // directory once; if it cannot be resolved there is nothing safe to load.
+  let realBase
+  try {
+    realBase = realpathSync(baseDir)
+  } catch {
+    return images
+  }
+  const captures = certificate?.captures || {}
+  for (const viewport of REQUIRED_VIEWPORTS) {
+    const capture = captures[viewport]
+    if (!capture) continue
+    const pair = {}
+    for (const side of ['reference', 'candidate']) {
+      const declared = capture[`${side}Path`] || capture[`${side}File`] || `${viewport}-${side}.png`
+      if (!declared) continue
+      const full = path.resolve(baseDir, declared)
+      let real
+      try {
+        real = realpathSync(full)
+      } catch {
+        continue
+      }
+      // A certificate is untrusted input: refuse anything whose real location
+      // is outside the real evidence directory.
+      if (real !== realBase && !real.startsWith(realBase + path.sep)) continue
+      pair[side] = readFileSync(real)
+    }
+    if (pair.reference || pair.candidate) images[viewport] = pair
+  }
+  return images
 }
 
 /** Ordered G0-G3 chain: every gate must be present and PASS. */

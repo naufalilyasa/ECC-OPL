@@ -1,0 +1,57 @@
+{
+  "base": "http://127.0.0.1:8000",
+  "route": "/scan?step=scan:receiving",
+  "viewports": {
+    "1440x900": {
+      "status": 200,
+      "url": "http://127.0.0.1:8000/scan?step=scan%3Areceiving",
+      "title": "Nexvora WMS",
+      "h1": "Scan workstation",
+      "bodyBackground": "rgba(0, 0, 0, 0)",
+      "fontFamily": "\"Instrument Sans\", ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+      "primary": "#1b2a41",
+      "bytes": 100979
+    },
+    "1280x900": {
+      "status": 200,
+      "url": "http://127.0.0.1:8000/scan?step=scan%3Areceiving",
+      "title": "Nexvora WMS",
+      "h1": "Scan workstation",
+      "bodyBackground": "rgba(0, 0, 0, 0)",
+      "fontFamily": "\"Instrument Sans\", ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+      "primary": "#1b2a41",
+      "bytes": 99894
+    },
+    "768x1024": {
+      "status": 200,
+      "url": "http://127.0.0.1:8000/scan?step=scan%3Areceiving",
+      "title": "Nexvora WMS",
+      "h1": "Scan workstation",
+      "bodyBackground": "rgba(0, 0, 0, 0)",
+      "fontFamily": "\"Instrument Sans\", ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+      "primary": "#1b2a41",
+      "bytes": 49042
+    },
+    "390x844": {
+      "status": 200,
+      "url": "http://127.0.0.1:8000/scan?step=scan%3Areceiving",
+      "title": "Nexvora WMS",
+      "h1": "Scan workstation",
+      "bodyBackground": "rgba(0, 0, 0, 0)",
+      "fontFamily": "\"Instrument Sans\", ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+      "primary": "#1b2a41",
+      "bytes": 41702
+    },
+    "360x800": {
+      "status": 200,
+      "url": "http://127.0.0.1:8000/scan?step=scan%3Areceiving",
+      "title": "Nexvora WMS",
+      "h1": "Scan workstation",
+      "bodyBackground": "rgba(0, 0, 0, 0)",
+      "fontFamily": "\"Instrument Sans\", ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+      "primary": "#1b2a41",
+      "bytes": 40111
+    }
+  },
+  "consoleErrors": []
+}

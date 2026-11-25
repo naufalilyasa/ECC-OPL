@@ -18,6 +18,7 @@
 import { readFileSync, writeFileSync, mkdirSync, join, resolve, sha256 } from './render-parity.mjs';
 import { measureRendered, compareRendered, resolveLandmarks } from './render-parity.mjs';
 import { verifyAdmissionCertificate } from './track-a-admission.mjs';
+import { pathToFileURL } from 'node:url';
 
 const REQUIRED = [
   { name: 'desktop-1440', width: 1440, height: 900 },
@@ -31,9 +32,65 @@ function arg(name, fallback = null) {
   return i >= 0 && i + 1 < process.argv.length ? process.argv[i + 1] : fallback;
 }
 
+/**
+ * Inline the project stylesheet into the HTML so Playwright's `setContent`
+ * (which has no origin) can resolve it.
+ *
+ * Only a real `<link rel="stylesheet" href="style.css">` element counts:
+ * commented-out tags and `data-href` lookalikes are not the intended asset.
+ * Any other wiring is an unsupported configuration and must fail loudly rather
+ * than produce silently unstyled evidence.
+ */
 function inlineAssets(html, css) {
-  // setContent has no origin, so the stylesheet link cannot resolve.
-  return html.replace(/<link[^>]+href="style\.css"[^>]*>/, `<style>${css}</style>`);
+  const source = String(html)
+  // Blank out HTML comments so a commented-out <link> cannot be selected. The
+  // comment text is restored afterwards, untouched. The sentinel carries a
+  // per-call nonce: a page that legitimately contains the placeholder text
+  // must not be rewritten into a comment body.
+  const nonce = sha256(`${source}\u0000${String(css)}`).slice(0, 16)
+  const sentinel = index => `\u0000COMMENT-${nonce}-${index}\u0000`
+  const comments = []
+  const withoutComments = source.replace(/<!--[\s\S]*?-->/g, (match) => {
+    comments.push(match)
+    return sentinel(comments.length - 1)
+  })
+
+  // Every real stylesheet link in the document, ignoring `data-href` and any
+  // other attribute that merely contains the string "href".
+  const linkTags = withoutComments.match(/<link\b[^>]*>/gi) || []
+  const stylesheets = linkTags.filter(tag => /rel\s*=\s*["']?stylesheet["']?/i.test(tag))
+  if (stylesheets.length === 0) {
+    throw new Error('could not find a <link rel="stylesheet"> element to inline')
+  }
+  if (stylesheets.length > 1) {
+    throw new Error(`unsupported asset configuration: ${stylesheets.length} stylesheet links found`)
+  }
+  const target = stylesheets[0]
+  const hrefMatch = target.match(/(?<![-\w])href\s*=\s*["']([^"']+)["']/i)
+  if (!hrefMatch) {
+    throw new Error('unsupported asset configuration: stylesheet link has no href')
+  }
+  const href = hrefMatch[1]
+  if (!/(?:^|\/)style\.css$/.test(href)) {
+    throw new Error(`unsupported asset configuration: cannot inline ${href} (expected style.css)`)
+  }
+
+  // A literal replacement string interprets `$&`, `$'`, `$1`... and a `</style>`
+  // inside the CSS would close the element early. Use a replacer function and
+  // neutralise the closing tag.
+  const safeCss = String(css).replace(/<\/style/gi, '<\\/style')
+  const inlined = withoutComments.replace(target, () => `<style>${safeCss}</style>`)
+  return inlined.replace(/\u0000COMMENT-([0-9a-f]+)-(\d+)\u0000/g, (match, tag, i) => (
+    tag === nonce ? comments[Number(i)] : match
+  ))
+}
+
+/**
+ * The certificate may only claim ADMITTED when the canonical verifier agrees.
+ * Kept as a named function so the invariant is directly testable.
+ */
+function deriveAdmissionStatus(verification) {
+  return verification && verification.status === 'ADMITTED' ? 'ADMITTED' : 'BLOCKED';
 }
 
 async function main() {
@@ -75,6 +132,10 @@ async function main() {
     captures[vp.name] = {
       referenceSha256: reference.screenshotSha256,
       candidateSha256: candidate.screenshotSha256,
+      // Named so a consumer can load the bytes back: the certificate is only
+      // useful if `loadAdmissionImages` can resolve what the producer wrote.
+      referencePath: `${vp.name}-reference.png`,
+      candidatePath: `${vp.name}-candidate.png`,
       verdict: verdict.code,
       diffs: verdict.diffs,
       landmarks: Object.keys(reference.landmarks),
@@ -111,7 +172,10 @@ async function main() {
   };
 
   // Self-check against the real admission verifier before claiming ADMITTED.
+  // The status written to disk is the verifier's, never a pre-computed guess:
+  // a failed check must not leave an ADMITTED certificate behind.
   const verification = verifyAdmissionCertificate(certificate, images);
+  certificate.status = deriveAdmissionStatus(verification);
   const outFile = join(outDir, 'track-a-admission.json');
   writeFileSync(outFile, JSON.stringify({ certificate, verification }, null, 2) + '\n');
 
@@ -125,7 +189,13 @@ async function main() {
   if (verification.status !== 'ADMITTED') process.exitCode = 1;
 }
 
-main().catch(error => {
-  console.error('CAPTURE FAILED:', error.message);
-  process.exitCode = 1;
-});
+export { deriveAdmissionStatus, inlineAssets };
+
+// Only run when executed directly; importing the module for tests must not
+// start a browser or require CLI arguments.
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main().catch(error => {
+    console.error('CAPTURE FAILED:', error.message);
+    process.exitCode = 1;
+  });
+}

@@ -46,46 +46,64 @@ function runTests() {
     assert.strictEqual(r.reason, 'UNSUPPORTED_TARGET');
   });
 
-  test('Track A admission: bare ADMITTED does NOT unlock A5; verified cert does', () => {
+  test('Track A admission: a declarative certificate never unlocks A5', () => {
     // A bare status flag must never unlock execution.
     const bare = enforceTrackAAdmission({ status: 'ADMITTED' });
     assert.strictEqual(bare.status, 'BLOCKED');
     assert.strictEqual(bare.reason, 'TRACK_A_UNVERIFIED');
 
-    const verified = enforceTrackAAdmission({
+    // Every field looks correct, but no screenshot bytes exist. Shape alone is
+    // not admission: the canonical verifier owns that decision.
+    const declarative = {
       status: 'ADMITTED',
       approvedBundleSha256: 'a'.repeat(64),
       gateResults: {
         G0_preflight: 'PASS', G1_contract: 'PASS',
         G2_rendered_fidelity: 'PASS', G3_state_interaction: 'PASS'
       },
-      // Viewport-keyed, matching track-a-admission.mjs (the schema authority).
+      gateSequence: ['G0_preflight', 'G1_contract', 'G2_rendered_fidelity', 'G3_state_interaction'],
       captures: {
         'desktop-1440': { verdict: 'PARITY_PASS' },
         'mobile-390': { verdict: 'PARITY_PASS' }
       },
-      renderedEvidence: { verified: true }
-    });
-    assert.strictEqual(verified.status, 'OK');
+      renderedEvidence: { verified: true, source: 'chromium-playwright' }
+    };
+    const noEvidence = enforceTrackAAdmission(declarative);
+    assert.strictEqual(noEvidence.status, 'BLOCKED',
+      'a declarative certificate with no PNG bytes must not admit');
+    assert.strictEqual(noEvidence.designBuildReferenceAdmission, 'BLOCKED');
 
-    // An array-shaped captures field must not be accepted: no real generator
-    // emits that shape, so accepting it would let a hand-built certificate pass.
-    const arrayShape = enforceTrackAAdmission({
+    const emptyEvidence = enforceTrackAAdmission(declarative, {});
+    assert.strictEqual(emptyEvidence.status, 'BLOCKED');
+
+    const blocked = enforceTrackAAdmission({ status: 'BLOCKED', reason: 'MISSING_VIEWPORT' });
+    assert.strictEqual(blocked.status, 'BLOCKED');
+    assert.strictEqual(blocked.reason, 'TRACK_A_NOT_ADMITTED');
+  });
+
+  test('a certificate bound to another candidate revision is refused', () => {
+    const cert = {
       status: 'ADMITTED',
+      candidateRevisionSha256: 'c'.repeat(64),
       approvedBundleSha256: 'a'.repeat(64),
       gateResults: {
         G0_preflight: 'PASS', G1_contract: 'PASS',
         G2_rendered_fidelity: 'PASS', G3_state_interaction: 'PASS'
       },
-      captures: [{ viewport: 'desktop-1440' }],
-      renderedEvidence: { verified: true }
-    });
-    assert.strictEqual(arrayShape.status, 'BLOCKED');
-    assert.ok(arrayShape.missing.includes('captures'));
+      gateSequence: ['G0_preflight', 'G1_contract', 'G2_rendered_fidelity', 'G3_state_interaction'],
+      captures: {
+        'desktop-1440': { verdict: 'PARITY_PASS' },
+        'mobile-390': { verdict: 'PARITY_PASS' }
+      },
+      renderedEvidence: { verified: true, source: 'chromium-playwright' }
+    };
+    const stale = enforceTrackAAdmission(cert, {}, { currentRevisionSha256: 'd'.repeat(64) });
+    assert.strictEqual(stale.status, 'BLOCKED');
+    assert.strictEqual(stale.why, 'ADMISSION_REVISION_STALE');
 
-    const blocked = enforceTrackAAdmission({ status: 'BLOCKED', reason: 'MISSING_VIEWPORT' });
-    assert.strictEqual(blocked.status, 'BLOCKED');
-    assert.strictEqual(blocked.reason, 'TRACK_A_NOT_ADMITTED');
+    const unbound = enforceTrackAAdmission({ ...cert, candidateRevisionSha256: undefined }, {},
+      { currentRevisionSha256: 'd'.repeat(64) });
+    assert.strictEqual(unbound.why, 'ADMISSION_REVISION_UNBOUND');
   });
 
   test('gate chain requires G0-G3 all PASS in order', () => {
