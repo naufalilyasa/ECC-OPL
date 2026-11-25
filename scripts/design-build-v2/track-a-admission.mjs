@@ -8,7 +8,7 @@ import { pngInfo } from './rendered-authority.mjs'
 export { pngInfo }
 const sha = (b) => createHash('sha256').update(b).digest('hex')
 const REQUIRED_VIEWPORTS = ['desktop-1440', 'mobile-390']
-const CANONICAL_GATE_SEQUENCE = ['G0_preflight', 'G1_contract', 'G2_rendered_fidelity', 'G3_state_interaction']
+export const CANONICAL_GATE_SEQUENCE = ['G0_preflight', 'G1_contract', 'G2_rendered_fidelity', 'G3_state_interaction']
 
 function blocked(reason, extra = {}) {
   return { status: 'BLOCKED', reason, ...extra }

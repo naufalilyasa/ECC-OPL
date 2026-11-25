@@ -59,10 +59,29 @@ function runTests() {
         G0_preflight: 'PASS', G1_contract: 'PASS',
         G2_rendered_fidelity: 'PASS', G3_state_interaction: 'PASS'
       },
-      captures: [{ viewport: 'desktop-1440' }],
+      // Viewport-keyed, matching track-a-admission.mjs (the schema authority).
+      captures: {
+        'desktop-1440': { verdict: 'PARITY_PASS' },
+        'mobile-390': { verdict: 'PARITY_PASS' }
+      },
       renderedEvidence: { verified: true }
     });
     assert.strictEqual(verified.status, 'OK');
+
+    // An array-shaped captures field must not be accepted: no real generator
+    // emits that shape, so accepting it would let a hand-built certificate pass.
+    const arrayShape = enforceTrackAAdmission({
+      status: 'ADMITTED',
+      approvedBundleSha256: 'a'.repeat(64),
+      gateResults: {
+        G0_preflight: 'PASS', G1_contract: 'PASS',
+        G2_rendered_fidelity: 'PASS', G3_state_interaction: 'PASS'
+      },
+      captures: [{ viewport: 'desktop-1440' }],
+      renderedEvidence: { verified: true }
+    });
+    assert.strictEqual(arrayShape.status, 'BLOCKED');
+    assert.ok(arrayShape.missing.includes('captures'));
 
     const blocked = enforceTrackAAdmission({ status: 'BLOCKED', reason: 'MISSING_VIEWPORT' });
     assert.strictEqual(blocked.status, 'BLOCKED');

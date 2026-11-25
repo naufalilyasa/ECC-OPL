@@ -17,14 +17,45 @@ const { chromium } = require('playwright')
 
 const sha256 = (b) => createHash('sha256').update(b).digest('hex')
 
-// Landmarks whose computed geometry/visibility/typography define P-WEB1 topbar fidelity.
-const LANDMARKS = [
+// Landmarks whose computed geometry/visibility/typography define fidelity.
+// The default set is the P-WEB1 topbar contract; any other project supplies its
+// own set through a profile so Track A admission is not locked to one fixture.
+const DEFAULT_LANDMARKS = [
   { name: 'topbar-container', selector: '.topbar', props: ['paddingTop', 'display', 'minHeight', 'gap'] },
   { name: 'warehouse-badge', selector: '.warehouse-badge', props: ['display', 'visibility', 'borderRadius', 'fontVariantNumeric'] },
   { name: 'brand', selector: '.brand', props: ['fontWeight', 'fontSize', 'fontFamily'] },
-]
+];
+
+/**
+ * Resolve the landmark set for a measurement or comparison.
+ *
+ * Accepts `{ landmarks }` inline or `{ profilePath }` pointing at a JSON file.
+ * A landmark without a selector or a props array is rejected: an empty selector
+ * would silently match nothing and turn every comparison into a false PASS.
+ */
+export function resolveLandmarks(profile = {}) {
+  let landmarks = profile.landmarks;
+  if (!landmarks && profile.profilePath) {
+    const parsed = JSON.parse(readFileSync(resolve(profile.profilePath), 'utf8'));
+    landmarks = parsed.landmarks;
+  }
+  if (!landmarks) return DEFAULT_LANDMARKS;
+  if (!Array.isArray(landmarks) || landmarks.length === 0) {
+    throw new Error('landmarks must be a non-empty array');
+  }
+  for (const lm of landmarks) {
+    if (!lm || typeof lm.selector !== 'string' || lm.selector.trim() === '') {
+      throw new Error(`landmark ${lm?.name ?? '(unnamed)'} requires a non-empty selector`);
+    }
+    if (!Array.isArray(lm.props) || lm.props.length === 0) {
+      throw new Error(`landmark ${lm.name ?? lm.selector} requires a non-empty props array`);
+    }
+  }
+  return landmarks;
+}
 
 export async function measureRendered(html, profile = {}) {
+  const landmarks = resolveLandmarks(profile);
   const width = profile.width ?? 390, height = profile.height ?? 844
   const dpr = profile.deviceScaleFactor ?? 1
   const browser = await chromium.launch({
@@ -42,7 +73,7 @@ export async function measureRendered(html, profile = {}) {
       await page.evaluate(() => document.fonts?.ready ?? Promise.resolve())
     }
     const measured = {}
-    for (const lm of LANDMARKS) {
+    for (const lm of landmarks) {
       const el = page.locator(lm.selector).first()
       const count = await el.count()
       if (!count) { measured[lm.name] = { present: false }; continue }
@@ -66,10 +97,10 @@ export async function measureRendered(html, profile = {}) {
 }
 
 // Compare two *rendered* measurements. Never accepts source-level TSX regex as proof.
-export function compareRendered(approved, cand, tolerance = 0.5) {
+export function compareRendered(approved, cand, tolerance = 0.5, landmarks = DEFAULT_LANDMARKS) {
   const diffs = []
   const a = approved.landmarks ?? {}, c = cand.landmarks ?? {}
-  for (const lm of LANDMARKS) {
+  for (const lm of landmarks) {
     const av = a[lm.name], cv = c[lm.name]
     if (!av?.present || !cv?.present) {
       diffs.push({ landmark: lm.name, property: 'presence', expected: Boolean(av?.present),

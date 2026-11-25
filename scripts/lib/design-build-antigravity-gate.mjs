@@ -48,7 +48,12 @@ export function enforceTrackAAdmission(certificate) {
   if (!certificate.gateResults || typeof certificate.gateResults !== 'object') {
     missing.push('gateResults')
   }
-  if (!Array.isArray(certificate.captures) || certificate.captures.length === 0) {
+  // The certificate schema keys captures by viewport name (see
+  // track-a-admission.mjs, which is the authority on this shape). An array here
+  // would reject every certificate the real generator produces.
+  const captures = certificate.captures
+  if (!captures || typeof captures !== 'object' || Array.isArray(captures)
+    || Object.keys(captures).length === 0) {
     missing.push('captures')
   }
   if (!certificate.renderedEvidence || certificate.renderedEvidence.verified !== true) {
