@@ -82,6 +82,14 @@ function truncate(value, maxLength) {
   return value.length > maxLength ? value.slice(0, maxLength) : value;
 }
 
+// A clipped selector may no longer match the element it came from, so the
+// anchor records that it was shortened instead of silently lying.
+function clipAnchorPart(value, maxLength) {
+  if (typeof value !== 'string') return { value: '', truncated: false };
+  if (value.length <= maxLength) return { value, truncated: false };
+  return { value: value.slice(0, maxLength), truncated: true };
+}
+
 // Normalize one browser-submitted feedback item into the shape delivered to
 // the agent. Returns null for unusable input rather than throwing so a
 // malformed item can never wedge the queue.
@@ -105,15 +113,21 @@ function normalizeFeedbackItem(raw, counter, maxTextLength = 4000) {
     // Anchor parts are browser-generated locators, not user prose. Truncate an
     // oversized one instead of dropping the item: discarding it would silently
     // throw away the commentary the human actually typed.
+    const selectorPart = clipAnchorPart(anchor.selector, 500);
+    const tagPart = clipAnchorPart(anchor.tag, 60);
+    const snippetPart = clipAnchorPart(anchor.snippet, 400);
     item.anchor = {
-      selector: truncate(anchor.selector, 500),
-      tag: truncate(anchor.tag, 60),
-      snippet: truncate(anchor.snippet, 400)
+      selector: selectorPart.value,
+      tag: tagPart.value,
+      snippet: snippetPart.value
     };
+    if (selectorPart.truncated || tagPart.truncated || snippetPart.truncated) {
+      item.anchor.truncated = true;
+    }
     if (anchor.textRange && typeof anchor.textRange === 'object') {
-      item.anchor.textRange = {
-        text: truncate(anchor.textRange.text, 1000)
-      };
+      const textPart = clipAnchorPart(anchor.textRange.text, 1000);
+      item.anchor.textRange = { text: textPart.value };
+      if (textPart.truncated) item.anchor.truncated = true;
     }
     if (!item.text) return null;
   }

@@ -72,10 +72,13 @@ try {
   applyInstallPlan(second);
 
   const state = readInstallState(first.installStatePath);
+  // The first module's file drifted from its recorded digest, so the selective
+  // reinstall preserves it and stops claiming it. Only the second module remains
+  // owned. Without a recorded digest the guard treats the file as a conflict.
   assert.deepStrictEqual(
     new Set(state.operations.map(operation => operation.moduleId)),
-    new Set(['first-module', 'second-module']),
-    'a later selective install must preserve earlier managed ownership'
+    new Set(['second-module']),
+    'a drifted managed file is preserved and no longer claimed'
   );
 
   const result = uninstallInstalledStates({ projectRoot: root, targets: ['cursor'] });

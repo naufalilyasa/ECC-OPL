@@ -16,8 +16,8 @@ const {
   generateReleaseManifest,
   buildOwnershipLedger,
   detectManagedConflicts,
-  installRelease,
-  rollbackRelease
+  _legacyInstallRelease: installRelease,
+  _legacyRollbackRelease: rollbackRelease
 } = require('../../scripts/lib/eccskills-distribution');
 
 let passed = 0;

@@ -32,6 +32,24 @@ function toPosixRelative(value) {
   return String(value || '').replace(/\\/g, '/');
 }
 
+/**
+ * Single source of truth for destination identity. Every consumer (conflict
+ * detection, ownership lookup, manifest verification, backup, install, ledger,
+ * rollback) must use this, so a relative destination can never be interpreted
+ * against process.cwd() in one place and projectRoot in another.
+ *
+ * Returns { absolute, relative } where `relative` is POSIX-normalized and
+ * guaranteed not to escape `root`.
+ */
+function resolveDestination(root, destinationPath) {
+  const absolute = path.resolve(root, destinationPath);
+  const relative = toPosixRelative(path.relative(root, absolute));
+  if (relative === '..' || relative.startsWith('../') || path.isAbsolute(relative)) {
+    throw new Error(`destination escapes project root: ${destinationPath}`);
+  }
+  return { absolute, relative };
+}
+
 function isIncluded(sourceRelativePath) {
   const normalized = String(sourceRelativePath || '').replace(/\\/g, '/');
   return !EXCLUDED_SOURCE_FRAGMENTS.some(fragment => normalized.includes(fragment));
@@ -124,7 +142,7 @@ function buildOwnershipLedger(manifest, projectRoot) {
   const managed = {};
   for (const file of manifest.files) {
     const rel = root
-      ? path.relative(root, file.destinationPath)
+      ? path.relative(root, path.resolve(root, file.destinationPath))
       : file.destinationPath;
     managed[rel.replace(/\\/g, '/')] = file.sha256;
   }
@@ -138,33 +156,49 @@ function detectManagedConflicts(ledger, manifest) {
   // ledger written by a completed install may claim a pre-existing file.
   const installed = Boolean(ledger.installedAt);
   for (const file of manifest.files) {
-    if (!fs.existsSync(file.destinationPath)) continue;
-    const rel = root
-      ? path.relative(root, file.destinationPath).replace(/\\/g, '/')
-      : file.destinationPath;
+    // Resolve identity against the ledger root, never process.cwd().
+    const { absolute, relative: rel } = resolveDestination(root, file.destinationPath);
+    if (!fs.existsSync(absolute)) continue;
     // A symlinked destination would otherwise be read through, escaping the
     // project root. Treat it as unmanaged without reading its content.
     let actual;
     try {
-      actual = sha256(readFileNoFollow(file.destinationPath));
+      actual = sha256(readFileNoFollow(absolute));
     } catch {
-      conflicts.push({ destinationPath: file.destinationPath, kind: 'unmanaged' });
+      conflicts.push({ destinationPath: absolute, kind: 'unmanaged' });
       continue;
     }
-    const expected = installed
-      ? (ledger.managed[rel] || ledger.managed[file.destinationPath])
-      : null;
+    const expected = installed ? (ledger.managed[rel] || ledger.managed[absolute]) : null;
     if (!expected) {
       // Present on disk but never written by ECC: installing would clobber it.
-      conflicts.push({ destinationPath: file.destinationPath, actual, kind: 'unmanaged' });
+      conflicts.push({ destinationPath: absolute, kind: 'unmanaged', actual });
     } else if (actual !== expected) {
-      conflicts.push({ destinationPath: file.destinationPath, expected, actual, kind: 'modified' });
+      conflicts.push({ destinationPath: absolute, expected, actual, kind: 'modified' });
     }
   }
   return conflicts;
 }
 
 function installRelease(manifest, { projectRoot, ledgerPath, backupRoot, force = false } = {}) {
+  // Minimal release: the canonical installer (scripts/install-apply.js with
+  // scripts/lib/install/{plan,apply}.js) is the single installation authority.
+  // This helper mutates raw source bytes and ignores contentTransform, so it
+  // must not be used to install a release. Kept only for manifest generation
+  // and conflict inspection until it is reconciled with transformed artifacts.
+  throw new Error(
+    'installRelease is unavailable for the minimal release: use scripts/install-apply.js ' +
+      '--target antigravity-cli (the canonical installer) as the installation authority'
+  );
+}
+
+function rollbackReleaseUnavailable({ projectRoot: explicitRoot, ledgerPath, backupRoot } = {}) {
+  throw new Error(
+    'rollbackRelease is unavailable for the minimal release: the canonical installer owns install state. ' +
+      'Roll back by reinstalling a prior release or restoring the backed-up project directory'
+  );
+}
+
+function _legacyInstallRelease(manifest, { projectRoot, ledgerPath, backupRoot, force = false } = {}) {
   if (!projectRoot || !ledgerPath || !backupRoot) {
     throw new Error('installRelease requires projectRoot, ledgerPath, and backupRoot');
   }
@@ -183,12 +217,12 @@ function installRelease(manifest, { projectRoot, ledgerPath, backupRoot, force =
   // modified managed file, or an unmanaged file with DIFFERENT content is not
   // ours to overwrite. An unmanaged file that already matches the release
   // byte-for-byte is not an overwrite — nothing would be written — so it is
-  // allowed and recorded as "already correct".
+  // allowed through, but it is NEVER adopted into the ownership ledger.
   if (!force) {
     const conflicts = detectManagedConflicts(previousLedger || { managed: {}, root }, manifest);
     const blocking = conflicts.filter(conflict => {
       if (conflict.kind !== 'unmanaged') return true;
-      const file = manifest.files.find(f => f.destinationPath === conflict.destinationPath);
+      const file = manifest.files.find(f => path.resolve(root, f.destinationPath) === conflict.destinationPath);
       return !file || conflict.actual !== file.sha256;
     });
     if (blocking.length > 0) {
@@ -200,30 +234,27 @@ function installRelease(manifest, { projectRoot, ledgerPath, backupRoot, force =
 
   try {
     for (const file of manifest.files) {
-      // Containment is enforced by the canonical helper, not by string math.
-      // Relative destinations resolve against the project root, never cwd.
-      const dest = path.resolve(root, file.destinationPath);
-      const rel = toPosixRelative(path.relative(root, dest));
-      if (rel.startsWith('..') || path.isAbsolute(rel)) {
-        throw new Error(`destination escapes project root: ${file.destinationPath}`);
-      }
+      // One identity for every downstream step: conflict detection, ownership,
+      // backup, install, ledger, rollback.
+      const { absolute: dest, relative: rel } = resolveDestination(root, file.destinationPath);
       // The canonical helper resolves against an existing trusted root.
       fs.mkdirSync(root, { recursive: true });
 
       const existed = fs.existsSync(dest);
       const identical = existed && sha256(readFileNoFollow(dest)) === file.sha256;
 
-      // Already byte-for-byte correct: writing again would only risk
-      // truncating a file the undo journal deliberately does not cover.
+      // Already byte-for-byte correct. Two cases, both leave the file alone:
+      //  - owned by a previous install: leave it, do not re-adopt or rewrite.
+      //  - unmanaged (user-owned): leave it, and NEVER adopt it (§2).
       if (identical) continue;
 
       if (existed) {
         const backupFile = path.join(thisBackup, rel);
         fs.mkdirSync(thisBackup, { recursive: true });
         copyContainedFile(dest, backupFile, thisBackup, 'backup');
-        undo.push({ target: dest, restore: backupFile });
-      } else if (!existed) {
-        undo.push({ target: dest, remove: true });
+        undo.push({ target: dest, restore: backupFile, rel });
+      } else {
+        undo.push({ target: dest, remove: true, rel });
       }
 
       // Bind to the actual release bytes: verify the SOURCE digest before the
@@ -239,12 +270,21 @@ function installRelease(manifest, { projectRoot, ledgerPath, backupRoot, force =
       }
     }
 
-    const ledger = buildOwnershipLedger(manifest, root);
+    // The ledger claims ONLY files this run actually wrote (or that a previous
+    // install already owned). An identical pre-existing unmanaged file is
+    // excluded, so a later upgrade cannot silently overwrite it.
+    const written = new Set(undo.map(entry => entry.rel));
+    const previouslyManaged = new Set(Object.keys(previousLedger && previousLedger.managed ? previousLedger.managed : {}));
+    const claimable = manifest.files.filter(file => {
+      const { relative } = resolveDestination(root, file.destinationPath);
+      return written.has(relative) || previouslyManaged.has(relative);
+    });
+    const ledger = buildOwnershipLedger({ ...manifest, files: claimable }, root);
     ledger.backupDir = thisBackup;
     ledger.installedAt = new Date().toISOString();
     // Only files this install CREATED may be removed on rollback. A file that
     // already existed (even with identical content) is never ours to delete.
-    ledger.added = undo.filter(entry => entry.remove).map(entry => toPosixRelative(path.relative(root, entry.target)));
+    ledger.added = undo.filter(entry => entry.remove).map(entry => entry.rel);
     // Preserve the previous ledger so a later rollback can return to it.
     if (previousLedger) ledger.previous = previousLedger;
     fs.mkdirSync(path.dirname(ledgerPath), { recursive: true });
@@ -274,6 +314,12 @@ function installRelease(manifest, { projectRoot, ledgerPath, backupRoot, force =
 }
 
 function rollbackRelease({ projectRoot: explicitRoot, ledgerPath, backupRoot } = {}) {
+  // See installRelease: the canonical installer owns install state for the
+  // minimal release, so this duplicate rollback path is disabled.
+  return rollbackReleaseUnavailable({ projectRoot: explicitRoot, ledgerPath, backupRoot });
+}
+
+function _legacyRollbackRelease({ projectRoot: explicitRoot, ledgerPath, backupRoot } = {}) {
   if (!fs.existsSync(ledgerPath)) return { rolledBack: [] };
   const ledger = JSON.parse(fs.readFileSync(ledgerPath, 'utf8'));
   const backupDir = ledger.backupDir || backupRoot;
@@ -283,13 +329,13 @@ function rollbackRelease({ projectRoot: explicitRoot, ledgerPath, backupRoot } =
   const rolledBack = [];
   if (backupDir && fs.existsSync(backupDir)) {
     for (const entry of listFiles(backupDir)) {
-      const rel = toPosixRelative(entry);
-      const target = path.join(projectRoot, rel);
-      // Restore only files the user has not touched since install.
+      const { absolute: target, relative: rel } = resolveDestination(projectRoot, toPosixRelative(entry));
+      // Restore only files the user has not touched since install. A missing
+      // managed key means ownership cannot be proven, so the file is preserved.
       const expected = ledger.managed && ledger.managed[rel];
-      if (expected && fs.existsSync(target)) {
-        if (sha256(readFileNoFollow(target)) !== expected) {
-          // User-modified file: preserve it (do not overwrite).
+      if (fs.existsSync(target)) {
+        if (!expected || sha256(readFileNoFollow(target)) !== expected) {
+          // User-modified or unproven-ownership file: preserve it.
           continue;
         }
       }
@@ -301,8 +347,8 @@ function rollbackRelease({ projectRoot: explicitRoot, ledgerPath, backupRoot } =
   // `ledger.added` is authoritative; falling back to "no backup exists" would
   // delete a pre-existing identical file that was never ours.
   const added = Array.isArray(ledger.added) ? ledger.added : [];
-  for (const rel of added) {
-    const target = path.join(projectRoot, rel);
+  for (const relEntry of added) {
+    const { absolute: target, relative: rel } = resolveDestination(projectRoot, relEntry);
     const expected = ledger.managed && ledger.managed[rel];
     if (!fs.existsSync(target) || !expected) continue;
     if (sha256(readFileNoFollow(target)) !== expected) continue;
@@ -336,5 +382,10 @@ module.exports = {
   detectManagedConflicts,
   installRelease,
   rollbackRelease,
-  toPosixRelative
+  resolveDestination,
+  toPosixRelative,
+  // Retained for focused regression only; not part of the minimal-release
+  // installation authority (see installRelease/rollbackRelease).
+  _legacyInstallRelease,
+  _legacyRollbackRelease
 };

@@ -13,7 +13,7 @@ const os = require('os');
 const path = require('path');
 
 const { renderCanvasHtml, canvasClientJs } = require('../../scripts/lib/plan-canvas/ui');
-const { rollbackRelease, toPosixRelative } = require('../../scripts/lib/eccskills-distribution');
+const { _legacyRollbackRelease: rollbackRelease, toPosixRelative } = require('../../scripts/lib/eccskills-distribution');
 const { createSessionStore } = require('../../scripts/lib/plan-canvas/sessions');
 const { createPlanCanvasServer } = require('../../scripts/lib/plan-canvas/server');
 const { computePlanDigest } = require('../../scripts/lib/plan-canvas/verdict-binding');

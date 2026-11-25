@@ -154,8 +154,8 @@ Model: gemini-3.8-flash-high
 **GREEN**
 
 ```
-✔ addItem appends without mutating the original cart
-✔ addItem merges quantity for an existing sku
+ok addItem appends without mutating the original cart
+ok addItem merges quantity for an existing sku
 tests 2  pass 2  fail 0
 ```
 

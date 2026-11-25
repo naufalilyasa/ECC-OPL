@@ -11,12 +11,31 @@ const {
   normalizeRelativePath,
   listRelativeFiles,
 } = require('./helpers');
+const {
+  dedupeAgentDestinations,
+  dedupeSkillDestinations,
+} = require('./antigravity-destinations');
 
-const SUPPORTED_SOURCE_PREFIXES = ['rules', 'agents', 'skills', 'commands', '.opencode/commands', '.opencode/prompts/agents'];
+const SUPPORTED_SOURCE_PREFIXES = [
+  'rules',
+  'agents',
+  'skills',
+  'commands',
+  '.opencode/commands',
+  '.opencode/prompts/agents',
+  // Runtime scripts the projected workflows actually invoke. Without these the
+  // modules that declare them plan zero operations and the installed
+  // entrypoints reference files that were never materialized.
+  '.opencode/scripts',
+  'scripts',
+];
 
 function supportsAntigravityCliSourcePath(sourceRelativePath) {
   const normalizedPath = normalizeRelativePath(sourceRelativePath);
   if (normalizedPath.split('/').includes('..')) return false;
+  // A module may list the `.opencode` directory itself; expand it to the two
+  // sub-trees this target projects so the planSourcePath routes can run.
+  if (normalizedPath === '.opencode') return true;
   return SUPPORTED_SOURCE_PREFIXES.some(prefix => (
     normalizedPath === prefix || normalizedPath.startsWith(`${prefix}/`)
   ));
@@ -75,95 +94,6 @@ function remapAgentPath(agentRelativePath) {
   return [...segments.slice(0, -1), oplName(segments[segments.length - 1])].join('/');
 }
 
-/**
- * Returns the destination skill directory for an operation targeting
- * `<root>/skills/<name>/...`, or null for non-skill operations.
- */
-function skillDestinationKey(operation) {
-  const normalized = String(operation.destinationPath || '').replace(/\\/g, '/');
-  const match = normalized.match(/^(.*\/skills\/[^/]+)/);
-  return match ? match[1] : null;
-}
-
-/**
- * A command projection and a skill scaffold can resolve to the same skill
- * directory (e.g. .opencode/commands/tdd.md and skills/tdd-workflow both target
- * opl-tdd). The command is the PUBLIC invocable entrypoint (it arms workflow
- * state and delegates to the specialist agent); the skill is supporting
- * knowledge. Neither may be discarded.
- *
- * Rule: the command-derived entrypoint keeps the public name. A colliding
- * skill scaffold is relocated to a distinct directory derived from its own
- * source name, so the knowledge stays installed and reachable.
- */
-function dedupeSkillDestinations(operations) {
-  const isCommandEntrypoint = op => op.contentTransform === 'antigravity-command-to-skill';
-  const byKey = new Map();
-  for (const op of operations) {
-    const key = skillDestinationKey(op);
-    if (!key) continue;
-    const prior = byKey.get(key);
-    if (!prior) { byKey.set(key, op); continue; }
-    // Command wins the public name.
-    if (isCommandEntrypoint(op) && !isCommandEntrypoint(prior)) {
-      byKey.set(key, op);
-      continue;
-    }
-  }
-
-  const publicKeys = new Set(byKey.keys());
-  const kept = [];
-  const seen = new Set();
-
-  for (const op of operations) {
-    const key = skillDestinationKey(op);
-    if (!key) {
-      if (!seen.has(op)) { seen.add(op); kept.push(op); }
-      continue;
-    }
-    if (byKey.get(key) === op) {
-      if (!seen.has(op)) { seen.add(op); kept.push(op); }
-      continue;
-    }
-    // A colliding scaffold that lost the public name is relocated, not dropped.
-    if (!isCommandEntrypoint(op)) {
-      const sourceName = String(op.sourceRelativePath || '')
-        .replace(/\\/g, '/')
-        .split('/')
-        .filter(Boolean)
-        .pop() || 'workflow';
-      // `key` is a full directory path; relocation works on the skill BASENAME.
-      const keyBasename = key.split('/').pop();
-      let relocatedBasename = `${keyBasename}-${sourceName}`;
-      // Guard against an accidental second collision.
-      let suffix = 2;
-      while (publicKeys.has(`${key.slice(0, key.length - keyBasename.length)}${relocatedBasename}`)) {
-        relocatedBasename = `${keyBasename}-${sourceName}-${suffix}`;
-        suffix += 1;
-      }
-      const relocatedDir = `${key.slice(0, key.length - keyBasename.length)}${relocatedBasename}`;
-      publicKeys.add(relocatedDir);
-
-      // Replace the trailing skills/<basename> segment of the destination, so a
-      // nested file keeps its relative path under the new skill directory.
-      const normalized = String(op.destinationPath).replace(/\\/g, '/');
-      const suffixPath = normalized.slice(key.length);
-      const relocatedPath = `${relocatedDir}${suffixPath}`;
-      const relocated = {
-        ...op,
-        destinationPath: relocatedPath,
-        skillName: relocatedBasename,
-      };
-      if (!seen.has(relocated)) { seen.add(relocated); kept.push(relocated); }
-      continue;
-    }
-    // Command entrypoint that lost to another command: keep the first.
-    if (!seen.has(op)) { seen.add(op); kept.push(op); }
-  }
-
-  return kept;
-}
-
 function planRuleOperations(moduleId, normalizedSourcePath, { repoRoot, targetRoot }) {
   return createFlatRuleOperations({
     moduleId,
@@ -219,7 +149,12 @@ function planAgentOperations(moduleId, normalizedSourcePath, { repoRoot, targetR
       || normalizedSourcePath.startsWith('.opencode/prompts/agents/')) {
     const dir = repoRoot ? path.join(repoRoot, '.opencode', 'prompts', 'agents') : null;
     if (!dir || !fs.existsSync(dir) || !fs.statSync(dir).isDirectory()) return [];
-    return listRelativeFiles(dir)
+    // A module may claim one prompt file; only a whole-directory claim expands.
+    const claimed = normalizedSourcePath.slice('.opencode/prompts/agents'.length).replace(/^\//, '');
+    const promptFiles = claimed
+      ? (fs.existsSync(path.join(dir, claimed)) ? [claimed] : [])
+      : listRelativeFiles(dir).filter(file => file.endsWith('.txt'));
+    return promptFiles
       .filter(file => file.endsWith('.txt'))
       .map(relFile => {
         const baseName = relFile.replace(/\.txt$/i, '');
@@ -249,10 +184,15 @@ function planAgentOperations(moduleId, normalizedSourcePath, { repoRoot, targetR
       }));
   }
   const agentRelativePath = normalizedSourcePath.slice('agents/'.length);
+  // A module may claim an individual agent file (e.g. `agents/tdd-guide.md`).
+  // Only a whole-directory claim expands to every agent; naming one file must
+  // project exactly that file, otherwise a minimal release installs all agents.
   return [createManagedOperation({
     moduleId,
     sourceRelativePath: normalizedSourcePath,
-    destinationPath: agentDestination(agentRelativePath.replace(/\.md$/i, '')),
+    destinationPath: agentDestination(
+      agentRelativePath.split('/').pop().replace(/\.md$/i, '')
+    ),
     strategy: 'preserve-relative-path',
     contentTransform: 'antigravity-agent-frontmatter-cli',
   })];
@@ -271,18 +211,71 @@ function planSkillOperations(moduleId, normalizedSourcePath, { repoRoot, targetR
         path.join('skills', entry.name),
         path.join(targetRoot, 'skills', remapSkillPath(entry.name)),
         'preserve-relative-path'
-      ));
+      ))
+      .map(withAntigravityStatePathRewrite);
   }
   const skillRelativePath = normalizedSourcePath.slice('skills/'.length);
+  const segments = skillRelativePath.split('/');
+  const lastSegment = segments[segments.length - 1];
+  const isSingleSkillFile = lastSegment.toLowerCase() === 'skill.md';
+  const skillName = segments[0];
+
+  if (isSingleSkillFile) {
+    // A module may claim one skill by its SKILL.md; keep the `<name>/SKILL.md`
+    // pair because a bare file is not a discoverable skill.
+    const destination = path.join(targetRoot, 'skills', remapSkillPath(skillName), 'SKILL.md');
+    return [createManagedScaffoldOperation(
+      moduleId,
+      normalizedSourcePath,
+      destination,
+      'preserve-relative-path'
+    )].map(withAntigravityStatePathRewrite);
+  }
+
+  if (segments.length > 1) {
+    // A support file inside a skill (script, reference) is not a skill. Project
+    // it into the owning skill's directory, keeping its relative path.
+    const destination = path.join(
+      targetRoot,
+      'skills',
+      remapSkillPath(skillName),
+      ...segments.slice(1)
+    );
+    return [createManagedOperation({
+      kind: 'copy-file',
+      moduleId,
+      sourceRelativePath: normalizedSourcePath,
+      destinationPath: destination,
+      strategy: 'preserve-relative-path',
+      contentTransform: 'antigravity-state-path-rewrite',
+    })];
+  }
+
+  const destination = path.join(targetRoot, 'skills', remapSkillPath(skillName));
   return [createManagedScaffoldOperation(
     moduleId,
     normalizedSourcePath,
-    path.join(targetRoot, 'skills', remapSkillPath(skillRelativePath)),
+    destination,
     'preserve-relative-path'
-  )];
+  )].map(withAntigravityStatePathRewrite);
+}
+
+// Skills that document the OpenCode state path must be projected onto the agy
+// state path, otherwise an agent reading the projected skill writes OpenCode
+// state. The operation may be a whole directory scaffold, so no extension
+// guard here: plan.js drops the transform for non-Markdown files.
+function withAntigravityStatePathRewrite(operation) {
+  return { ...operation, contentTransform: 'antigravity-state-path-rewrite' };
 }
 
 function planSourcePath(moduleId, normalizedSourcePath, context) {
+  // `.opencode` listed as a whole directory: project both sub-trees.
+  if (normalizedSourcePath === '.opencode') {
+    return [
+      ...planAgentOperations(moduleId, '.opencode/prompts/agents', context),
+      ...planCommandOperations(moduleId, 'commands', { ...context, sourceBase: '.opencode' })
+    ];
+  }
   if (normalizedSourcePath === '.opencode/prompts/agents'
       || normalizedSourcePath.startsWith('.opencode/prompts/agents/')) {
     return planAgentOperations(moduleId, normalizedSourcePath, context);
@@ -307,36 +300,33 @@ function planSourcePath(moduleId, normalizedSourcePath, context) {
   if (normalizedSourcePath === 'skills' || normalizedSourcePath.startsWith('skills/')) {
     return planSkillOperations(moduleId, normalizedSourcePath, context);
   }
-  return [];
-}
-
-/**
- * `agents/<name>.md` and `.opencode/prompts/agents/<name>.txt` can describe the
- * same canonical agent. The rich `agents/*.md` definition wins; the prompt
- * variant only fills gaps. Keeping both would install one over the other.
- */
-function dedupeAgentDestinations(operations) {
-  const isPromptVariant = op => op.contentTransform === 'antigravity-prompt-to-agent';
-  // Identify agent operations by their transform, never by a path substring:
-  // a checkout under `.../ai-agents/...` would otherwise match every operation.
-  const isAgentOp = op =>
-    op.contentTransform === 'antigravity-agent-frontmatter-cli' || isPromptVariant(op);
-  const byDest = new Map();
-  const kept = [];
-  for (const op of operations) {
-    if (!isAgentOp(op)) { kept.push(op); continue; }
-    // APFS/NTFS treat these as the same file; key the same way.
-    const destKey = String(op.destinationPath || '').replace(/\\/g, '/').toLowerCase();
-    const prior = byDest.get(destKey);
-    if (!prior) { byDest.set(destKey, op); kept.push(op); continue; }
-    if (isPromptVariant(prior) && !isPromptVariant(op)) {
-      const index = kept.indexOf(prior);
-      if (index >= 0) kept[index] = op;
-      byDest.set(destKey, op);
-    }
-    // Otherwise drop the duplicate: the richer definition already won.
+  // Runtime scripts keep their relative path under `<root>/scripts/`.
+  if (normalizedSourcePath === '.opencode/scripts'
+      || normalizedSourcePath.startsWith('.opencode/scripts/')) {
+    const relative = normalizedSourcePath.slice('.opencode/scripts'.length).replace(/^\//, '');
+    const files = relative
+      ? [relative]
+      : listRelativeFiles(path.join(context.repoRoot, '.opencode', 'scripts'));
+    return files.map(rel => createManagedOperation({
+      moduleId,
+      sourceRelativePath: path.join('.opencode', 'scripts', rel),
+      destinationPath: path.join(context.targetRoot, 'scripts', rel),
+      strategy: 'preserve-relative-path',
+    }));
   }
-  return kept;
+  if (normalizedSourcePath === 'scripts' || normalizedSourcePath.startsWith('scripts/')) {
+    const relative = normalizedSourcePath.slice('scripts'.length).replace(/^\//, '');
+    const files = relative
+      ? [relative]
+      : listRelativeFiles(path.join(context.repoRoot, 'scripts'));
+    return files.map(rel => createManagedOperation({
+      moduleId,
+      sourceRelativePath: path.join('scripts', rel),
+      destinationPath: path.join(context.targetRoot, 'scripts', rel),
+      strategy: 'preserve-relative-path',
+    }));
+  }
+  return [];
 }
 
 module.exports = createInstallTargetAdapter({
@@ -346,8 +336,15 @@ module.exports = createInstallTargetAdapter({
   rootSegments: ['.agents'],
   installStatePathSegments: ['ecc-install-state.json'],
   supportsModule(module) {
-    const paths = Array.isArray(module && module.paths) ? module.paths : [];
-    return paths.length > 0;
+    // A module can carry no paths of its own and still be installable: its
+    // content may come entirely from its dependencies, which this target also
+    // supports. Rejecting it here skipped whole module families (and their
+    // dependents) just because they are selector modules.
+    if (!module) return false;
+    const paths = Array.isArray(module.paths) ? module.paths : [];
+    if (paths.length > 0) return true;
+    const dependencies = Array.isArray(module.dependencies) ? module.dependencies : [];
+    return dependencies.length > 0;
   },
   planOperations(input, adapter) {
     const modules = Array.isArray(input.modules)
@@ -368,3 +365,4 @@ module.exports = createInstallTargetAdapter({
     return dedupeAgentDestinations(dedupeSkillDestinations(operations));
   },
 });
+

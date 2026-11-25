@@ -15,8 +15,8 @@ const {
   generateReleaseManifest,
   buildOwnershipLedger,
   detectManagedConflicts,
-  installRelease,
-  rollbackRelease,
+  _legacyInstallRelease: installRelease,
+  _legacyRollbackRelease: rollbackRelease,
   A6_CANONICAL_COMMIT
 } = require('../../scripts/lib/eccskills-distribution');
 

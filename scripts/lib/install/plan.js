@@ -104,17 +104,20 @@ function buildCopyFileOperation({
   strategy,
   contentTransform,
 }) {
-  // Agent frontmatter and workflow transforms are textual Markdown projections.
-  // Their directories may also contain binary assets and executable helpers,
-  // which must keep their bytes intact.
-  const applicableTransform = (contentTransform === 'copilot-workflow-paths'
+  // Textual Markdown projections apply only to .md files. Their directories may
+  // also contain binary assets and executable helpers, which must keep their
+  // bytes intact, so the transform is dropped for non-Markdown sources.
+  const isTextualProjection = contentTransform === 'copilot-workflow-paths'
     || contentTransform === 'copilot-agent-frontmatter'
     || contentTransform === 'antigravity-agent-frontmatter'
     || contentTransform === 'antigravity-agent-frontmatter-cli'
     || contentTransform === 'antigravity-command-to-skill'
     || contentTransform === 'antigravity-prompt-to-agent'
-    || contentTransform === 'qwen-agent-frontmatter')
-    && !/\.md$/i.test(sourceRelativePath) ? undefined : contentTransform;
+    || contentTransform === 'antigravity-state-path-rewrite'
+    || contentTransform === 'qwen-agent-frontmatter';
+  const applicableTransform = isTextualProjection && !/\.md$/i.test(sourceRelativePath)
+    ? undefined
+    : contentTransform;
   return {
     kind: 'copy-file',
     moduleId,

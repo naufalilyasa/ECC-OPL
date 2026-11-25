@@ -14,8 +14,8 @@ const path = require('path');
 const {
   generateReleaseManifest,
   buildOwnershipLedger,
-  installRelease,
-  rollbackRelease
+  _legacyInstallRelease: installRelease,
+  _legacyRollbackRelease: rollbackRelease
 } = require('../../scripts/lib/eccskills-distribution');
 const { adaptAntigravityCommandToSkill } = require('../../scripts/lib/install/antigravity-agent');
 

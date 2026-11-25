@@ -1,9 +1,11 @@
 'use strict';
 
 const fs = require('fs');
+const crypto = require('crypto');
 const path = require('path');
 
 const { readInstallState } = require('../install-state');
+const { assertWithinTrustedRoot } = require('../path-safety');
 const { hasEditedCodexUserConfig } = require('./codex-user-config');
 
 function pathExists(filePath) {
@@ -21,6 +23,47 @@ function pathExists(filePath) {
 function comparablePath(filePath) {
   const resolvedPath = path.resolve(filePath);
   return process.platform === 'win32' ? resolvedPath.toLowerCase() : resolvedPath;
+}
+
+// Read the current destination bytes without following a symlink out of the
+// install root, and prove the descriptor still points at the path we checked.
+function readDestinationDigest(plan, destinationPath) {
+  assertWithinTrustedRoot(destinationPath, plan.targetRoot, 'inspect managed file');
+  const flags = fs.constants.O_RDONLY | (fs.constants.O_NOFOLLOW || 0);
+  const descriptor = fs.openSync(destinationPath, flags);
+  try {
+    const opened = fs.fstatSync(descriptor, { bigint: true });
+    const current = fs.lstatSync(destinationPath, { bigint: true });
+    if (!opened.isFile() || !current.isFile() || current.isSymbolicLink()
+      || opened.ino !== current.ino || opened.dev !== current.dev) {
+      throw new Error(`Refusing to inspect changed managed file: ${destinationPath}`);
+    }
+    assertWithinTrustedRoot(destinationPath, plan.targetRoot, 'inspect managed file');
+    return crypto.createHash('sha256').update(fs.readFileSync(descriptor)).digest('hex');
+  } finally {
+    fs.closeSync(descriptor);
+  }
+}
+
+/**
+ * A managed file stays updateable only while its bytes still match the digest
+ * ECC recorded when it wrote them. A missing digest cannot prove that, so it
+ * counts as drift: preserving the user's bytes beats silently refreshing them.
+ */
+function hasDriftedFromRecordedContent(plan, operation, previousOperation) {
+  if (!operation || operation.kind !== 'copy-file' || !operation.destinationPath) {
+    return false;
+  }
+  let digest;
+  try {
+    digest = readDestinationDigest(plan, operation.destinationPath);
+  } catch (error) {
+    if (error && error.code === 'ENOENT') return false;
+    throw error;
+  }
+  const recorded = previousOperation && previousOperation.contentSha256;
+  if (!/^[a-f0-9]{64}$/i.test(recorded || '')) return true;
+  return digest !== recorded.toLowerCase();
 }
 
 /**
@@ -72,19 +115,25 @@ function prepareUserOwnedFileGuard(plan, migration, recordedState) {
   const warnings = [];
   for (const operation of [...plannedOperations, ...retainedOperations]) {
     const previousOperation = previousManagedOperations.get(comparablePath(operation.destinationPath));
+    // Codex user config keeps its dedicated contract; every other target uses
+    // the recorded-content digest so an edited managed file is preserved.
     const editedConfig = previousOperation
       && hasEditedCodexUserConfig(plan, operation, previousOperation);
+    const drifted = !editedConfig && previousOperation
+      && hasDriftedFromRecordedContent(plan, operation, previousOperation);
     if (
       operation
       && operation.kind === 'copy-file'
       && operation.destinationPath
       && pathExists(operation.destinationPath)
-      && (!managedDestinations.has(comparablePath(operation.destinationPath)) || editedConfig)
+      && (!managedDestinations.has(comparablePath(operation.destinationPath)) || editedConfig || drifted)
     ) {
       skippedOperations.push(operation);
       warnings.push(editedConfig
         ? `Preserved user configuration ${operation.destinationPath}: changed or unverifiable since installation. ECC no longer manages this file; apply future configuration updates manually.`
-        : `Skipped user-owned file ${operation.destinationPath}: the existing file is not recorded in ECC install-state.`);
+        : drifted
+          ? `Preserved user-modified managed file ${operation.destinationPath}: bytes differ from the recorded digest, or no digest was recorded. ECC no longer manages this file; apply future updates manually.`
+          : `Skipped user-owned file ${operation.destinationPath}: the existing file is not recorded in ECC install-state.`);
       continue;
     }
   }
@@ -141,6 +190,11 @@ function assertNoNewUserOwnedFile(migration, operation, plan) {
   const previousOperation = migration.previousManagedOperations.get(comparablePath(operation.destinationPath));
   if (plan && hasEditedCodexUserConfig(plan, operation, previousOperation)) {
     throw new Error(`Refusing to overwrite user configuration changed after planning: ${operation.destinationPath}. Rerun to preserve it.`);
+  }
+  // The destination is rechecked here, immediately before the write, so an edit
+  // that landed after preflight is preserved instead of silently replaced.
+  if (plan && previousOperation && hasDriftedFromRecordedContent(plan, operation, previousOperation)) {
+    throw new Error(`Refusing to overwrite a user-modified managed file: ${operation.destinationPath}. Rerun the installer to preserve it.`);
   }
   if (operation.kind !== 'copy-file'
     || migration.managedDestinations.has(comparablePath(operation.destinationPath))

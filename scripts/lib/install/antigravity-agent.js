@@ -197,7 +197,20 @@ function adaptAntigravityAgent(source, label = '<unknown>', options = {}) {
 
 function adaptAntigravityCommandToSkill(source, destinationPath) {
   const skillName = path.basename(path.dirname(destinationPath));
-  const { frontmatter, body, headerEol, trailingFenceEol } = splitFrontmatter(source, destinationPath);
+  // Some OpenCode commands ship as plain Markdown with no YAML frontmatter.
+  // Synthesize one from the destination name instead of failing the install.
+  const hasFrontmatter = /^\uFEFF?---\r?\n/.test(source);
+  const { frontmatter, body, headerEol, trailingFenceEol } = hasFrontmatter
+    ? splitFrontmatter(source, destinationPath)
+    : {
+        frontmatter: {
+          name: skillName,
+          description: `Projected from the canonical command ${path.basename(destinationPath, '.md')}.`,
+        },
+        body: source,
+        headerEol: '\n',
+        trailingFenceEol: '\n',
+      };
   // Spread first, then pin name so frontmatter cannot override the destination-derived name.
   const adapted = {
     ...frontmatter,
@@ -211,6 +224,11 @@ function adaptAntigravityCommandToSkill(source, destinationPath) {
   const projectedBody = body
     .replace(/\.opencode\/workflows(\/active\.json)?/g, '.agents/ecc-opl/workflows$1')
     .replace(/\.opencode\/markers(\/)?/g, '.agents/ecc-opl/markers$1');
+  // Belt and braces: no projected workflow may retain a literal OpenCode state
+  // path, whatever shape the source used (backticks, mkdir, prose).
+  if (/\.opencode\/(workflows|markers)/.test(projectedBody)) {
+    throw new Error(`projected command still references OpenCode state: ${destinationPath}`);
+  }
   const serialized = require('js-yaml')
     .dump(adapted, { lineWidth: -1, noRefs: true })
     .trimEnd()
@@ -240,10 +258,28 @@ function adaptAntigravityPromptToAgent(source, destinationPath) {
   return `---${headerEol}${serialized}${headerEol}---${headerEol}${headerEol}${body}`;
 }
 
+/**
+ * Rewrite OpenCode state paths inside a projected skill document onto the agy
+ * state paths. A skill that still names `.opencode/workflows/active.json` makes
+ * the agent write OpenCode state, which the antigravity-cli target must never
+ * mutate. Fails closed if any literal OpenCode state path survives.
+ */
+function rewriteAntigravityStatePaths(source, destinationPath) {
+  const rewritten = String(source)
+    .replace(/\.opencode\/workflows(\/active\.json)?/g, '.agents/ecc-opl/workflows$1')
+    .replace(/\.opencode\/markers(\/)?/g, '.agents/ecc-opl/markers$1')
+    .replace(/\.opencode\/plans\//g, '.agents/ecc-opl/plans/');
+  if (/\.opencode\/(workflows|markers)/.test(rewritten)) {
+    throw new Error(`projected skill still references OpenCode state: ${destinationPath}`);
+  }
+  return rewritten;
+}
+
 module.exports = {
   adaptAntigravityAgent,
   adaptAntigravityCommandToSkill,
   adaptAntigravityPromptToAgent,
+  rewriteAntigravityStatePaths,
   CANONICAL_CLI_AGENT_TOOLS,
   REVIEW_ROLE_NAMES,
   TOOL_NAMES,

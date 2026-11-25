@@ -148,8 +148,6 @@
         ".zed",
         "mcp-configs",
         "scripts/auto-update.js",
-        "scripts/setup-package-manager.js",
-        "scripts/lib/package-manager.js",
         ".hermes",
         ".openclaw",
         ".kimi",
@@ -161,6 +159,7 @@
         "cursor",
         "copilot",
         "antigravity",
+        "antigravity-cli",
         "codex",
         "gemini",
         "opencode",
@@ -825,7 +824,7 @@
     {
       "id": "ito-compute",
       "kind": "skills",
-      "description": "Authenticated Itô GPU inventory, RFQ, status, device revocation, and explicitly gated node-qualification workflows through the separately installed canonical CLI.",
+      "description": "Authenticated It\u00f4 GPU inventory, RFQ, status, device revocation, and explicitly gated node-qualification workflows through the separately installed canonical CLI.",
       "paths": [
         "skills/ito-compute",
         "skills/ito-inference",
@@ -1523,7 +1522,9 @@
       "paths": [
         "scripts/lib/utils.js",
         "scripts/lib/agent-data-home.js",
-        "scripts/lib/path-safety.js"
+        "scripts/lib/path-safety.js",
+        "scripts/setup-package-manager.js",
+        "scripts/lib/package-manager.js"
       ],
       "targets": [
         "claude",
@@ -1547,6 +1548,40 @@
       "defaultInstall": false,
       "cost": "light",
       "stability": "stable"
+    },
+    {
+      "id": "antigravity-cli-tdd-minimal",
+      "kind": "skills",
+      "description": "Minimal TDD-only Antigravity CLI release: the effective TDD workflow, its orchestrator command, tdd-guide and code-reviewer agents, one language skill, and the runtime files those pieces actually reference. Advanced workflows stay uninstalled.",
+      "paths": [],
+      "targets": [
+        "antigravity-cli"
+      ],
+      "dependencies": [
+        "shared-script-utils"
+      ],
+      "defaultInstall": false,
+      "cost": "light",
+      "stability": "experimental"
+    },
+    {
+      "id": "antigravity-cli-workflows-full",
+      "kind": "commands",
+      "description": "Complete active ECC-OPL engineering workflow suite for Antigravity CLI: every enabled customized workflow entrypoint, its agent and skill dependency closure, and the runtime scripts those workflows actually reference. Advanced gates stay enforced at execution time.",
+      "paths": [
+        "scripts/design-build-v2/section-gate.mjs",
+        ".opencode/scripts/e2e-registry.mjs"
+      ],
+      "targets": [
+        "antigravity-cli"
+      ],
+      "dependencies": [
+        "shared-script-utils",
+        "antigravity-cli-tdd-minimal"
+      ],
+      "defaultInstall": false,
+      "cost": "heavy",
+      "stability": "experimental"
     }
   ]
 }
