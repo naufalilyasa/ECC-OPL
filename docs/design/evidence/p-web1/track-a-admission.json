@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "certificate": "TRACK_A_VISUAL_ADMISSION",
+  "status": "ADMITTED",
+  "source": "chromium-playwright",
+  "fixture": "tests/fixtures/p-web1-rlogic (synthetic disposable stand-in)",
+  "approvedBundleSha256": "b1200df091974e05d13e2623f5c67767a02e444deb9d5604b1303e879446c591",
+  "profileDimensions": {
+    "desktop-1440": [
+      1440,
+      900
+    ],
+    "mobile-390": [
+      390,
+      844
+    ]
+  },
+  "captures": {
+    "desktop-1440": {
+      "reference": "00-topbar-approved-1440.png",
+      "candidate": "00-topbar-repaired-1440.png",
+      "referenceSha256": "0f95660848273f53b4877090f453dd566de47d4de54e627ba36f65db822628e2",
+      "candidateSha256": "0f95660848273f53b4877090f453dd566de47d4de54e627ba36f65db822628e2",
+      "verdict": "PARITY_PASS"
+    },
+    "mobile-390": {
+      "reference": "00-topbar-approved.png",
+      "candidate": "00-topbar-repaired.png",
+      "referenceSha256": "5e2a7440930b8f0dffb900459d34bd4aff6e7d9d504eaf94ac36b47e5823c12a",
+      "candidateSha256": "5e2a7440930b8f0dffb900459d34bd4aff6e7d9d504eaf94ac36b47e5823c12a",
+      "verdict": "PARITY_PASS"
+    }
+  },
+  "gateResults": {
+    "G0_preflight": "PASS",
+    "G1_contract": "PASS",
+    "G2_rendered_fidelity": "PASS",
+    "G3_state_interaction": "PASS"
+  },
+  "gateSequence": [
+    "G0_preflight",
+    "G1_contract",
+    "G2_rendered_fidelity",
+    "G3_state_interaction"
+  ],
+  "renderedEvidence": {
+    "source": "chromium-playwright",
+    "verified": true,
+    "note": "G2 granted only from paired browser-rendered captures per required viewport; source-level regex is triage-only."
+  },
+  "boundaries": {
+    "scope": "disposable fixture only \u2014 NOT a production claim",
+    "enforcement": "COOPERATIVE_NOT_MANDATORY",
+    "deploymentAuthorization": "NOT_GIVEN"
+  }
+}
