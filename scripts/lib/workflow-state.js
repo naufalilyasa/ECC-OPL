@@ -75,12 +75,15 @@ function acquireWorkflowLock(lockPath, { lockTimeoutMs = DEFAULT_LOCK_TIMEOUT_MS
     try {
       // 'wx' flag fails if file exists
       const fd = fs.openSync(lockPath, 'wx');
-      const lockPayload = JSON.stringify({
-        pid: process.pid,
-        createdAt: Date.now(),
-      });
-      fs.writeSync(fd, lockPayload);
-      fs.closeSync(fd);
+      try {
+        const lockPayload = JSON.stringify({
+          pid: process.pid,
+          createdAt: Date.now(),
+        });
+        fs.writeSync(fd, lockPayload);
+      } finally {
+        fs.closeSync(fd);
+      }
       return; // Lock successfully acquired
     } catch (error) {
       if (error.code !== 'EEXIST') {

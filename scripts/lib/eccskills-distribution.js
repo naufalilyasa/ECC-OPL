@@ -21,6 +21,11 @@ function sha256(value) {
   return crypto.createHash('sha256').update(value).digest('hex');
 }
 
+// Ledger keys are POSIX-normalized; backup traversal on Windows yields '\'.
+function toPosixRelative(value) {
+  return String(value || '').replace(/\\/g, '/');
+}
+
 function isIncluded(sourceRelativePath) {
   const normalized = String(sourceRelativePath || '').replace(/\\/g, '/');
   return !EXCLUDED_SOURCE_FRAGMENTS.some(fragment => normalized.includes(fragment));
@@ -153,21 +158,22 @@ function installRelease(manifest, { projectRoot, ledgerPath, backupRoot } = {}) 
   return { installed, backupDir: thisBackup, ledgerPath };
 }
 
-function rollbackRelease({ ledgerPath, backupRoot } = {}) {
+function rollbackRelease({ projectRoot: explicitRoot, ledgerPath, backupRoot } = {}) {
   if (!fs.existsSync(ledgerPath)) return { rolledBack: [] };
   const ledger = JSON.parse(fs.readFileSync(ledgerPath, 'utf8'));
   const backupDir = ledger.backupDir || backupRoot;
-  const projectRoot = ledger.root
-    ? path.resolve(ledger.root)
-    : path.dirname(path.dirname(ledgerPath));
+  const projectRoot = explicitRoot
+    ? path.resolve(explicitRoot)
+    : (ledger.root ? path.resolve(ledger.root) : path.dirname(path.dirname(ledgerPath)));
   const rolledBack = [];
   if (backupDir && fs.existsSync(backupDir)) {
     for (const entry of listFiles(backupDir)) {
-      const target = path.join(projectRoot, entry);
+      const rel = toPosixRelative(entry);
+      const target = path.join(projectRoot, rel);
       // Restore only files the user has not touched since install.
-      if (fs.existsSync(target) && ledger.managed && ledger.managed[entry]) {
-        const current = sha256(fs.readFileSync(target));
-        if (current !== ledger.managed[entry]) {
+      const expected = ledger.managed && ledger.managed[rel];
+      if (expected && fs.existsSync(target)) {
+        if (sha256(fs.readFileSync(target)) !== expected) {
           // User-modified file: preserve it (do not overwrite).
           continue;
         }
@@ -209,5 +215,6 @@ module.exports = {
   buildOwnershipLedger,
   detectManagedConflicts,
   installRelease,
-  rollbackRelease
+  rollbackRelease,
+  toPosixRelative
 };

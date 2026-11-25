@@ -550,11 +550,24 @@ function createPlanCanvasServer({
 
     if (req.method === 'POST' && pathname === '/api/attachments') {
       const body = await readAttachmentBody(req);
+      // Bind every attachment write to a live session and confine sessionDir
+      // to that session's workspace. An unauthenticated client must not be able
+      // to create arbitrary directories on the host.
+      if (!body.sessionKey || typeof body.sessionKey !== 'string') {
+        return sendJson(res, 400, { error: 'sessionKey is required' });
+      }
+      const session = store.get(body.sessionKey);
+      if (!session || session.status === 'ended') {
+        return sendJson(res, 404, { error: 'session not found or ended' });
+      }
       if (!body.sessionDir || typeof body.sessionDir !== 'string') {
         return sendJson(res, 400, { error: 'sessionDir is required' });
       }
-      if (typeof body.workspace !== 'string' || !body.workspace) {
-        return sendJson(res, 400, { error: 'workspace is required for binding' });
+      const resolvedWorkspace = path.resolve(session.workspace || path.dirname(session.file));
+      const resolvedSessionDir = path.resolve(body.sessionDir);
+      if (resolvedSessionDir !== resolvedWorkspace
+        && !resolvedSessionDir.startsWith(resolvedWorkspace + path.sep)) {
+        return sendJson(res, 403, { error: 'sessionDir must be within workspace' });
       }
       const items = Array.isArray(body.items)
         ? body.items.map(item => item && typeof item.data === 'string' && Object.hasOwn(ALLOWED_ATTACHMENT_MIMES, item.mime)
@@ -565,7 +578,7 @@ function createPlanCanvasServer({
         return sendJson(res, 400, { error: 'invalid attachment item' });
       }
       try {
-        const stored = persistAttachments(body.sessionDir, items);
+        const stored = persistAttachments(resolvedSessionDir, items);
         return sendJson(res, 200, { status: 'stored', files: stored });
       } catch (error) {
         return sendJson(res, 400, { error: error.code || error.message });

@@ -12,6 +12,7 @@
 const path = require('path');
 
 const { escapeHtml } = require('./markdown');
+const { computePlanDigest } = require('./verdict-binding');
 
 // Pinned Mermaid ESM build, loaded in the browser only when an artifact
 // actually contains a diagram. Override with a local/vendored URL (e.g. an
@@ -453,8 +454,21 @@ function canvasClientJs() {
   input.addEventListener('keydown', e => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
   });
-  $('approve').addEventListener('click', () => send([{ kind: 'verdict', verdict: 'approve' }]));
-  $('changes').addEventListener('click', () => send([{ kind: 'verdict', verdict: 'request-changes' }]));
+  function makeVerdictItem(verdict) {
+    if (boot.target === 'antigravity-cli') {
+      return {
+        kind: 'verdict',
+        verdict,
+        revisionDigest: boot.revisionDigest,
+        workspace: boot.workspace,
+        session: boot.key,
+        timestamp: new Date().toISOString()
+      };
+    }
+    return { kind: 'verdict', verdict };
+  }
+  $('approve').addEventListener('click', () => send([makeVerdictItem('approve')]));
+  $('changes').addEventListener('click', () => send([makeVerdictItem('request-changes')]));
 
   // --- session controls ------------------------------------------------
   $('reloadBtn').addEventListener('click', reloadArtifact);
@@ -514,10 +528,20 @@ function canvasClientJs() {
 // The chrome page: header bar, artifact iframe, conversation rail.
 function renderCanvasHtml(session, { clientPath = '/client.js', cssPath = '/canvas.css' } = {}) {
   const name = path.basename(session.file);
+  // agy-cli sessions require cryptographically bound verdicts; bootstrap the
+  // binding context so browser clicks produce exactly the payload sessions.js
+  // enforces. Legacy sessions omit these fields and keep the plain path.
+  let revisionDigest = null;
+  if (session.target === 'antigravity-cli') {
+    try { revisionDigest = computePlanDigest(session.file); } catch { revisionDigest = null; }
+  }
   const bootstrap = JSON.stringify({
     key: session.key,
     file: session.file,
     status: session.status,
+    target: session.target || null,
+    workspace: session.workspace || (session.target ? path.dirname(session.file) : undefined),
+    revisionDigest,
     endedBy: session.endedBy || null,
     chat: session.chat
   }).replace(/</g, '\\u003c');

@@ -42,39 +42,37 @@ const COMMAND_TO_SKILL_REMAP = Object.freeze({
   'typography.md': 'opl-typography',
 });
 
+// Single source of truth for canonical opl-* naming across commands, skills,
+// and agents. Aliases cover the few names that differ from their source.
+const SKILL_NAME_ALIASES = Object.freeze({
+  'tdd-workflow': 'opl-tdd',
+  'typography-system': 'opl-typography',
+});
+
+function oplName(baseName) {
+  if (Object.hasOwn(SKILL_NAME_ALIASES, baseName)) return SKILL_NAME_ALIASES[baseName];
+  return baseName.startsWith('opl-') ? baseName : `opl-${baseName}`;
+}
+
 function remapCommandToSkillName(commandRelativePath) {
   if (!commandRelativePath) return '';
   const fileName = path.basename(commandRelativePath);
   if (Object.hasOwn(COMMAND_TO_SKILL_REMAP, fileName)) {
     return COMMAND_TO_SKILL_REMAP[fileName];
   }
-  const baseName = fileName.replace(/\.md$/i, '');
-  return baseName.startsWith('opl-') ? baseName : `opl-${baseName}`;
+  return oplName(fileName.replace(/\.md$/i, ''));
 }
 
 function remapSkillPath(skillRelativePath) {
   if (!skillRelativePath) return '';
   const segments = skillRelativePath.split('/');
-  const skillName = segments[0];
-  let targetSkillName;
-  if (skillName === 'tdd-workflow') {
-    targetSkillName = 'opl-tdd';
-  } else if (skillName === 'typography-system') {
-    targetSkillName = 'opl-typography';
-  } else if (skillName.startsWith('opl-')) {
-    targetSkillName = skillName;
-  } else {
-    targetSkillName = `opl-${skillName}`;
-  }
-  return [targetSkillName, ...segments.slice(1)].join('/');
+  return [oplName(segments[0]), ...segments.slice(1)].join('/');
 }
 
 function remapAgentPath(agentRelativePath) {
   if (!agentRelativePath) return '';
   const segments = agentRelativePath.split('/');
-  const fileName = segments[segments.length - 1];
-  const targetFileName = fileName.startsWith('opl-') ? fileName : `opl-${fileName}`;
-  return [...segments.slice(0, -1), targetFileName].join('/');
+  return [...segments.slice(0, -1), oplName(segments[segments.length - 1])].join('/');
 }
 
 /**
@@ -121,6 +119,107 @@ function dedupeSkillDestinations(operations) {
   return kept;
 }
 
+function planRuleOperations(moduleId, normalizedSourcePath, { repoRoot, targetRoot }) {
+  return createFlatRuleOperations({
+    moduleId,
+    repoRoot,
+    sourceRelativePath: normalizedSourcePath,
+    destinationDir: path.join(targetRoot, 'rules'),
+  }).map(withAntigravityRuleTrigger);
+}
+
+function planCommandOperations(moduleId, normalizedSourcePath, { repoRoot, targetRoot }) {
+  if (normalizedSourcePath === 'commands') {
+    const commandsDir = repoRoot ? path.join(repoRoot, 'commands') : null;
+    if (!commandsDir || !fs.existsSync(commandsDir) || !fs.statSync(commandsDir).isDirectory()) {
+      return [];
+    }
+    return listRelativeFiles(commandsDir)
+      .filter(file => file.endsWith('.md'))
+      .map(relFile => createManagedOperation({
+        moduleId,
+        sourceRelativePath: path.join('commands', relFile),
+        destinationPath: path.join(targetRoot, 'skills', remapCommandToSkillName(relFile), 'SKILL.md'),
+        strategy: 'preserve-relative-path',
+        contentTransform: 'antigravity-command-to-skill',
+      }));
+  }
+  const commandRelativePath = normalizedSourcePath.slice('commands/'.length);
+  return [createManagedOperation({
+    moduleId,
+    sourceRelativePath: normalizedSourcePath,
+    destinationPath: path.join(targetRoot, 'skills', remapCommandToSkillName(commandRelativePath), 'SKILL.md'),
+    strategy: 'preserve-relative-path',
+    contentTransform: 'antigravity-command-to-skill',
+  })];
+}
+
+function planAgentOperations(moduleId, normalizedSourcePath, { repoRoot, targetRoot }) {
+  if (normalizedSourcePath === 'agents') {
+    const agentsDir = repoRoot ? path.join(repoRoot, 'agents') : null;
+    if (!agentsDir || !fs.existsSync(agentsDir) || !fs.statSync(agentsDir).isDirectory()) {
+      return [];
+    }
+    return listRelativeFiles(agentsDir)
+      .filter(file => file.endsWith('.md'))
+      .map(relFile => createManagedOperation({
+        moduleId,
+        sourceRelativePath: path.join('agents', relFile),
+        destinationPath: path.join(targetRoot, 'agents', remapAgentPath(relFile)),
+        strategy: 'preserve-relative-path',
+        contentTransform: 'antigravity-agent-frontmatter-cli',
+      }));
+  }
+  const agentRelativePath = normalizedSourcePath.slice('agents/'.length);
+  return [createManagedOperation({
+    moduleId,
+    sourceRelativePath: normalizedSourcePath,
+    destinationPath: path.join(targetRoot, 'agents', remapAgentPath(agentRelativePath)),
+    strategy: 'preserve-relative-path',
+    contentTransform: 'antigravity-agent-frontmatter-cli',
+  })];
+}
+
+function planSkillOperations(moduleId, normalizedSourcePath, { repoRoot, targetRoot }) {
+  if (normalizedSourcePath === 'skills') {
+    const skillsDir = repoRoot ? path.join(repoRoot, 'skills') : null;
+    if (!skillsDir || !fs.existsSync(skillsDir) || !fs.statSync(skillsDir).isDirectory()) {
+      return [];
+    }
+    return fs.readdirSync(skillsDir, { withFileTypes: true })
+      .filter(entry => entry.isDirectory() && !entry.name.startsWith('.'))
+      .map(entry => createManagedScaffoldOperation(
+        moduleId,
+        path.join('skills', entry.name),
+        path.join(targetRoot, 'skills', remapSkillPath(entry.name)),
+        'preserve-relative-path'
+      ));
+  }
+  const skillRelativePath = normalizedSourcePath.slice('skills/'.length);
+  return [createManagedScaffoldOperation(
+    moduleId,
+    normalizedSourcePath,
+    path.join(targetRoot, 'skills', remapSkillPath(skillRelativePath)),
+    'preserve-relative-path'
+  )];
+}
+
+function planSourcePath(moduleId, normalizedSourcePath, context) {
+  if (normalizedSourcePath === 'rules' || normalizedSourcePath.startsWith('rules/')) {
+    return planRuleOperations(moduleId, normalizedSourcePath, context);
+  }
+  if (normalizedSourcePath === 'commands' || normalizedSourcePath.startsWith('commands/')) {
+    return planCommandOperations(moduleId, normalizedSourcePath, context);
+  }
+  if (normalizedSourcePath === 'agents' || normalizedSourcePath.startsWith('agents/')) {
+    return planAgentOperations(moduleId, normalizedSourcePath, context);
+  }
+  if (normalizedSourcePath === 'skills' || normalizedSourcePath.startsWith('skills/')) {
+    return planSkillOperations(moduleId, normalizedSourcePath, context);
+  }
+  return [];
+}
+
 module.exports = createInstallTargetAdapter({
   id: 'antigravity-cli',
   target: 'antigravity-cli',
@@ -135,153 +234,16 @@ module.exports = createInstallTargetAdapter({
     const modules = Array.isArray(input.modules)
       ? input.modules
       : (input.module ? [input.module] : []);
-    const {
-      repoRoot,
-      projectRoot,
-      homeDir,
-    } = input;
-    const planningInput = {
-      repoRoot,
-      projectRoot,
-      homeDir,
-    };
-    const targetRoot = adapter.resolveRoot(planningInput);
+    const { repoRoot, projectRoot, homeDir } = input;
+    const targetRoot = adapter.resolveRoot({ repoRoot, projectRoot, homeDir });
+    const context = { repoRoot, targetRoot };
 
     const operations = modules.flatMap(module => {
       const paths = Array.isArray(module.paths) ? module.paths : [];
       return paths
         .filter(supportsAntigravityCliSourcePath)
-        .flatMap(sourceRelativePath => {
-          const normalizedSourcePath = normalizeRelativePath(sourceRelativePath);
-
-          if (
-            normalizedSourcePath === 'rules'
-            || normalizedSourcePath.startsWith('rules/')
-          ) {
-            return createFlatRuleOperations({
-              moduleId: module.id,
-              repoRoot,
-              sourceRelativePath: normalizedSourcePath,
-              destinationDir: path.join(targetRoot, 'rules'),
-            }).map(withAntigravityRuleTrigger);
-          }
-
-          if (
-            normalizedSourcePath === 'commands'
-            || normalizedSourcePath.startsWith('commands/')
-          ) {
-            if (normalizedSourcePath === 'commands') {
-              const commandsDir = repoRoot ? path.join(repoRoot, 'commands') : null;
-              if (!commandsDir || !fs.existsSync(commandsDir) || !fs.statSync(commandsDir).isDirectory()) {
-                return [];
-              }
-              const files = listRelativeFiles(commandsDir);
-              return files
-                .filter(f => f.endsWith('.md'))
-                .map(relFile => {
-                  const skillName = remapCommandToSkillName(relFile);
-                  return createManagedOperation({
-                    moduleId: module.id,
-                    sourceRelativePath: path.join('commands', relFile),
-                    destinationPath: path.join(targetRoot, 'skills', skillName, 'SKILL.md'),
-                    strategy: 'preserve-relative-path',
-                    contentTransform: 'antigravity-command-to-skill',
-                  });
-                });
-            }
-
-            const commandRelativePath = normalizedSourcePath.slice('commands/'.length);
-            const skillName = remapCommandToSkillName(commandRelativePath);
-            return [
-              createManagedOperation({
-                moduleId: module.id,
-                sourceRelativePath: normalizedSourcePath,
-                destinationPath: path.join(targetRoot, 'skills', skillName, 'SKILL.md'),
-                strategy: 'preserve-relative-path',
-                contentTransform: 'antigravity-command-to-skill',
-              }),
-            ];
-          }
-
-          if (
-            normalizedSourcePath === 'agents'
-            || normalizedSourcePath.startsWith('agents/')
-          ) {
-            if (normalizedSourcePath === 'agents') {
-              const agentsDir = repoRoot ? path.join(repoRoot, 'agents') : null;
-              if (!agentsDir || !fs.existsSync(agentsDir) || !fs.statSync(agentsDir).isDirectory()) {
-                return [];
-              }
-              const files = listRelativeFiles(agentsDir);
-              return files
-                .filter(f => f.endsWith('.md'))
-                .map(relFile => {
-                  const sourceRelativePath = path.join('agents', relFile);
-                  const remapped = remapAgentPath(relFile);
-                  return createManagedOperation({
-                    moduleId: module.id,
-                    sourceRelativePath,
-                    destinationPath: path.join(targetRoot, 'agents', remapped),
-                    strategy: 'preserve-relative-path',
-                    contentTransform: 'antigravity-agent-frontmatter-cli',
-                  });
-                });
-            }
-
-            const agentRelativePath = normalizedSourcePath === 'agents'
-              ? ''
-              : normalizedSourcePath.slice('agents/'.length);
-            const remappedPath = remapAgentPath(agentRelativePath);
-            return [
-              createManagedOperation({
-                moduleId: module.id,
-                sourceRelativePath: normalizedSourcePath,
-                destinationPath: path.join(targetRoot, 'agents', remappedPath),
-                strategy: 'preserve-relative-path',
-                contentTransform: 'antigravity-agent-frontmatter-cli',
-              }),
-            ];
-          }
-
-          if (
-            normalizedSourcePath === 'skills'
-            || normalizedSourcePath.startsWith('skills/')
-          ) {
-            if (normalizedSourcePath === 'skills') {
-              const skillsDir = repoRoot ? path.join(repoRoot, 'skills') : null;
-              if (!skillsDir || !fs.existsSync(skillsDir) || !fs.statSync(skillsDir).isDirectory()) {
-                return [];
-              }
-              const entries = fs.readdirSync(skillsDir, { withFileTypes: true })
-                .filter(d => d.isDirectory() && !d.name.startsWith('.'));
-              return entries.map(entry => {
-                const sourceRelativePath = path.join('skills', entry.name);
-                const remapped = remapSkillPath(entry.name);
-                return createManagedScaffoldOperation(
-                  module.id,
-                  sourceRelativePath,
-                  path.join(targetRoot, 'skills', remapped),
-                  'preserve-relative-path'
-                );
-              });
-            }
-
-            const skillRelativePath = normalizedSourcePath === 'skills'
-              ? ''
-              : normalizedSourcePath.slice('skills/'.length);
-            const remappedPath = remapSkillPath(skillRelativePath);
-            return [
-              createManagedScaffoldOperation(
-                module.id,
-                normalizedSourcePath,
-                path.join(targetRoot, 'skills', remappedPath),
-                'preserve-relative-path'
-              ),
-            ];
-          }
-
-          return [];
-        });
+        .flatMap(sourceRelativePath =>
+          planSourcePath(module.id, normalizeRelativePath(sourceRelativePath), context));
     });
 
     return dedupeSkillDestinations(operations);

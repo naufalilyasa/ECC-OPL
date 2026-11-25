@@ -40,16 +40,16 @@ Require stack:
 - Exit Code: 0
 - Excerpt:
 ```
-▶ validateAdjustment
-  ✔ accepts valid positive integer quantity and non-empty reason (0.869208ms)
-  ✔ rejects negative quantity (0.147458ms)
-  ✔ rejects fractional quantity (0.069166ms)
-  ✔ rejects missing or empty reason (0.0585ms)
-✔ validateAdjustment (1.558292ms)
-ℹ tests 4
-ℹ suites 1
-ℹ pass 4
-ℹ 
+> validateAdjustment
+  [ok] accepts valid positive integer quantity and non-empty reason (0.869208ms)
+  [ok] rejects negative quantity (0.147458ms)
+  [ok] rejects fractional quantity (0.069166ms)
+  [ok] rejects missing or empty reason (0.0585ms)
+[ok] validateAdjustment (1.558292ms)
+info: tests 4
+info: suites 1
+info: pass 4
+info: 
 ```
 
 ### REFACTOR Phase
@@ -57,16 +57,16 @@ Require stack:
 - Exit Code: 0
 - Excerpt:
 ```
-▶ validateAdjustment
-  ✔ accepts valid positive integer quantity and non-empty reason (0.441333ms)
-  ✔ rejects negative quantity (0.152292ms)
-  ✔ rejects fractional quantity (0.07625ms)
-  ✔ rejects missing or empty reason (0.064708ms)
-✔ validateAdjustment (1.1285ms)
-ℹ tests 4
-ℹ suites 1
-ℹ pass 4
-ℹ f
+> validateAdjustment
+  [ok] accepts valid positive integer quantity and non-empty reason (0.441333ms)
+  [ok] rejects negative quantity (0.152292ms)
+  [ok] rejects fractional quantity (0.07625ms)
+  [ok] rejects missing or empty reason (0.064708ms)
+[ok] validateAdjustment (1.1285ms)
+info: tests 4
+info: suites 1
+info: pass 4
+info: f
 ```
 
 ---
