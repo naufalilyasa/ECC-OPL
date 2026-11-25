@@ -15,6 +15,12 @@ const http = require('http');
 const path = require('path');
 
 const { buildAllowedHostnames, isAllowedHostHeader, isAllowedOrigin } = require('../loopback-guard');
+const {
+  ALLOWED_ATTACHMENT_MIMES,
+  MAX_ATTACHMENT_BYTES,
+  MAX_ATTACHMENTS,
+  persistAttachments
+} = require('./verdict-binding');
 const { escapeHtml, renderMarkdown } = require('./markdown');
 const { artifactSdkJs } = require('./sdk');
 const {
@@ -99,6 +105,34 @@ function sendJson(res, statusCode, payload) {
   const body = JSON.stringify(payload);
   res.writeHead(statusCode, { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' });
   res.end(body);
+}
+
+// Canvas V2 attachment batches are base64 JSON; allow the 5x10MiB payload
+// plus framing overhead, still strictly bounded.
+const MAX_ATTACHMENT_BODY_BYTES = MAX_ATTACHMENTS * MAX_ATTACHMENT_BYTES * 2 + 1024 * 1024;
+
+function readAttachmentBody(req) {
+  return new Promise((resolve, reject) => {
+    let size = 0;
+    const chunks = [];
+    req.on('data', chunk => {
+      size += chunk.length;
+      if (size > MAX_ATTACHMENT_BODY_BYTES) {
+        reject(new Error('attachment batch too large'));
+        req.destroy();
+        return;
+      }
+      chunks.push(chunk);
+    });
+    req.on('end', () => {
+      try {
+        resolve(JSON.parse(Buffer.concat(chunks).toString('utf8')));
+      } catch {
+        reject(new Error('invalid JSON body'));
+      }
+    });
+    req.on('error', reject);
+  });
 }
 
 // Artifact pages render inside a sandboxed iframe (no allow-same-origin) and
@@ -406,7 +440,12 @@ function createPlanCanvasServer({
       if (!fs.existsSync(path.resolve(body.file))) {
         return sendJson(res, 404, { error: `artifact not found: ${body.file}` });
       }
-      const { session, refused } = store.open(body.file, { reopen: Boolean(body.reopen) });
+      const { session, refused } = store.open(body.file, {
+        reopen: Boolean(body.reopen),
+        target: typeof body.target === 'string' ? body.target : null,
+        sessionDir: typeof body.sessionDir === 'string' ? body.sessionDir : null,
+        workspace: typeof body.workspace === 'string' ? body.workspace : null
+      });
       if (refused) {
         return sendJson(res, 409, {
           status: 'user-ended',
@@ -507,6 +546,30 @@ function createPlanCanvasServer({
       if (!session) return sendJson(res, 404, { error: 'no session for that file' });
       endSession(session.key, 'agent');
       return sendJson(res, 200, { status: 'ended', endedBy: 'agent' });
+    }
+
+    if (req.method === 'POST' && pathname === '/api/attachments') {
+      const body = await readAttachmentBody(req);
+      if (!body.sessionDir || typeof body.sessionDir !== 'string') {
+        return sendJson(res, 400, { error: 'sessionDir is required' });
+      }
+      if (typeof body.workspace !== 'string' || !body.workspace) {
+        return sendJson(res, 400, { error: 'workspace is required for binding' });
+      }
+      const items = Array.isArray(body.items)
+        ? body.items.map(item => item && typeof item.data === 'string' && Object.hasOwn(ALLOWED_ATTACHMENT_MIMES, item.mime)
+          ? { mime: item.mime, data: Buffer.from(item.data, 'base64') }
+          : null)
+        : [];
+      if (items.some(item => item === null)) {
+        return sendJson(res, 400, { error: 'invalid attachment item' });
+      }
+      try {
+        const stored = persistAttachments(body.sessionDir, items);
+        return sendJson(res, 200, { status: 'stored', files: stored });
+      } catch (error) {
+        return sendJson(res, 400, { error: error.code || error.message });
+      }
     }
 
     const sessionMatch = pathname.match(/^\/api\/session\/([a-f0-9]{12})\/(feedback|end|reply|typing)$/);

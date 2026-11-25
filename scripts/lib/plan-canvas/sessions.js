@@ -13,6 +13,12 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 
+const {
+  MAX_PROMPT_CHARS,
+  computePlanDigest,
+  validateBoundVerdict
+} = require('./verdict-binding');
+
 const FEEDBACK_KINDS = new Set(['chat', 'annotation', 'verdict']);
 const VERDICTS = new Set(['approve', 'request-changes']);
 
@@ -65,14 +71,14 @@ function sanitizeText(value, maxLength = 4000) {
 // Normalize one browser-submitted feedback item into the shape delivered to
 // the agent. Returns null for unusable input rather than throwing so a
 // malformed item can never wedge the queue.
-function normalizeFeedbackItem(raw, counter) {
+function normalizeFeedbackItem(raw, counter, maxTextLength = 4000) {
   if (!raw || typeof raw !== 'object') return null;
   const kind = FEEDBACK_KINDS.has(raw.kind) ? raw.kind : null;
   if (!kind) return null;
   const item = {
     id: `fb-${counter}`,
     kind,
-    text: sanitizeText(raw.text),
+    text: sanitizeText(raw.text, maxTextLength),
     at: nowIso()
   };
   if (kind === 'verdict') {
@@ -138,7 +144,7 @@ function createSessionStore({ stateDir = resolveStateDir() } = {}) {
   // Open (or resume) a session. A session the *user* ended from the browser
   // is sticky: it refuses a plain reopen so agents do not pop the browser
   // back up uninvited. Pass reopen:true only when the human asked.
-  function open(filePath, { reopen = false } = {}) {
+  function open(filePath, { reopen = false, target = null, sessionDir = null, workspace = null } = {}) {
     const canonical = canonicalizeArtifactPath(filePath);
     const key = sessionKeyFor(canonical);
     const existing = state.sessions[key];
@@ -154,6 +160,9 @@ function createSessionStore({ stateDir = resolveStateDir() } = {}) {
     };
     session.status = 'open';
     delete session.endedBy;
+    if (target) session.target = target;
+    if (sessionDir) session.sessionDir = sessionDir;
+    if (workspace) session.workspace = workspace;
     session.updatedAt = nowIso();
     state.sessions[key] = session;
     persist();
@@ -166,10 +175,36 @@ function createSessionStore({ stateDir = resolveStateDir() } = {}) {
   function queueFeedback(key, rawItems, { endSession = false } = {}) {
     const session = get(key);
     if (!session || session.status === 'ended') return null;
+    // Strict verdict binding applies only to sessions opened for the agy CLI.
+    // Legacy sessions keep the plain-verdict path byte-for-byte compatible.
+    const strict = session.target === 'antigravity-cli';
+    const workspace = session.workspace || path.dirname(session.file);
     const accepted = [];
+    const rejected = [];
     for (const raw of Array.isArray(rawItems) ? rawItems : []) {
       state.feedbackCounter += 1;
-      const item = normalizeFeedbackItem(raw, state.feedbackCounter);
+      if (strict && raw && raw.kind === 'verdict') {
+        let currentDigest = null;
+        try {
+          currentDigest = computePlanDigest(session.file);
+        } catch {
+          currentDigest = null;
+        }
+        const binding = validateBoundVerdict(raw, {
+          workspace,
+          session: key,
+          revisionDigest: currentDigest
+        });
+        if (!binding.ok) {
+          rejected.push({ reason: binding.reason, verdict: raw.verdict });
+          continue;
+        }
+      }
+      const item = normalizeFeedbackItem(
+        raw,
+        state.feedbackCounter,
+        strict ? MAX_PROMPT_CHARS : 4000
+      );
       if (item) accepted.push(item);
     }
     session.pendingFeedback.push(...accepted);
@@ -184,7 +219,7 @@ function createSessionStore({ stateDir = resolveStateDir() } = {}) {
     }
     session.updatedAt = nowIso();
     persist();
-    return { accepted, pending: session.pendingFeedback.length, session };
+    return { accepted, rejected, pending: session.pendingFeedback.length, session };
   }
 
   // Deliver-and-drain: feedback is handed to exactly one await call, after

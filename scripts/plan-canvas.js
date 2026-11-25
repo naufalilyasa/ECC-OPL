@@ -64,6 +64,9 @@ function usage() {
     'Options:',
     '  open:  --no-open      Do not launch a browser window',
     '         --reopen       Reopen a session the user ended from the browser',
+    '         --target <id>  Session target (e.g. antigravity-cli enables strict verdict binding)',
+    '         --workspace <path>  Bound workspace for strict verdicts',
+    '         --session-dir <path>  Canvas V2 attachment/session storage dir',
     '  await: --reply <msg>  Show an agent reply in the canvas chat before waiting',
     '         --timeout-ms <n>  Return {status:"waiting"} after n ms (tests/debug only)',
     '  typing: --state <thinking|typing|idle>  Defaults to typing',
@@ -213,9 +216,15 @@ async function cmdOpen(file, args, { stateDir, port }) {
   if (!file) throw new Error('open requires a file path');
   if (!fs.existsSync(path.resolve(file))) throw new Error(`artifact not found: ${file}`);
   await ensureServer({ stateDir, port });
+  const target = valueAfter(args, '--target');
+  const workspace = valueAfter(args, '--workspace');
+  const sessionDir = valueAfter(args, '--session-dir');
   const res = await request(port, 'POST', '/api/sessions', {
     file: path.resolve(file),
-    reopen: args.includes('--reopen')
+    reopen: args.includes('--reopen'),
+    target: target || undefined,
+    workspace: workspace || undefined,
+    sessionDir: sessionDir || undefined
   });
   if (res.statusCode === 409) return res.body;
   if (res.statusCode !== 200) throw new Error(res.body.error || `open failed (HTTP ${res.statusCode})`);

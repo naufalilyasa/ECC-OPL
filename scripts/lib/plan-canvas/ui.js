@@ -119,8 +119,16 @@ function canvasCss() {
 
   .layout{display:flex;height:calc(100% - 52px)}
   .frame{flex:1;min-width:0;position:relative;background:var(--bg2)}
-  .frame iframe{width:100%;height:100%;border:0;background:#fff}
+  .frame iframe{width:100%;height:100%;border:0;background:#fff;display:block;margin:0 auto;transition:width .15s,box-shadow .15s}
+  .frame[data-viewport] iframe{box-shadow:0 0 0 1px var(--border),var(--shadow-lg)}
   [data-theme] .frame iframe{background:var(--bg2)}
+  .layout[data-panel="hidden"] .panel{display:none}
+
+  .vp{display:flex;align-items:center;gap:6px}
+  .vp select,.vp input{height:28px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-size:11.5px;padding:0 6px;outline:none;transition:all .12s}
+  .vp select:hover,.vp input:hover{border-color:var(--border-light);color:var(--text)}
+  .vp input{width:66px;font-family:var(--mono)}
+  .vp input[hidden]{display:none}
 
   .panel{width:340px;flex:none;display:flex;flex-direction:column;border-left:1px solid var(--border);background:var(--bg2)}
   .panel h2{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);padding:12px 14px 8px}
@@ -232,6 +240,46 @@ function canvasClientJs() {
     theme = theme === 'light' ? 'dark' : 'light';
     writeTheme(theme);
     applyTheme(theme);
+  });
+
+  // --- panel toggle ----------------------------------------------------
+  const layout = document.querySelector('.layout');
+  const panelBtn = $('panelBtn');
+  panelBtn.addEventListener('click', () => {
+    const hidden = layout.getAttribute('data-panel') === 'hidden';
+    if (hidden) layout.removeAttribute('data-panel');
+    else layout.setAttribute('data-panel', 'hidden');
+    panelBtn.setAttribute('aria-pressed', String(hidden));
+    panelBtn.title = hidden ? 'Hide conversation panel' : 'Show conversation panel';
+  });
+
+  // --- artifact viewport width -----------------------------------------
+  const vpSel = $('viewportSel');
+  const vpCustom = $('viewportCustom');
+  const frameEl = $('artifact');
+  function applyViewport(width) {
+    if (width) {
+      const w = Math.min(4096, Math.max(240, width));
+      frameEl.style.width = w + 'px';
+      frameEl.parentElement.setAttribute('data-viewport', '');
+    } else {
+      frameEl.style.width = '';
+      frameEl.parentElement.removeAttribute('data-viewport');
+    }
+  }
+  vpSel.addEventListener('change', () => {
+    if (vpSel.value === 'custom') {
+      vpCustom.hidden = false;
+      vpCustom.focus();
+      applyViewport(Number(vpCustom.value) || 0);
+    } else {
+      vpCustom.hidden = true;
+      applyViewport(Number(vpSel.value) || 0);
+    }
+  });
+  vpCustom.addEventListener('input', () => {
+    const w = Number(vpCustom.value);
+    if (w > 0) applyViewport(w);
   });
 
   // --- annotate mode -------------------------------------------------
@@ -496,6 +544,17 @@ function renderCanvasHtml(session, { clientPath = '/client.js', cssPath = '/canv
   <div id="annotate" class="toggle" role="switch" aria-pressed="true" title="Toggle annotate mode (Cmd/Ctrl+I)">
     <span>Annotate</span><span class="track"><span class="knob"></span></span>
   </div>
+  <div class="vp">
+    <select id="viewportSel" class="icon-btn" title="Artifact viewport width" aria-label="Artifact viewport width">
+      <option value="">Fit</option>
+      <option value="1440">1440</option>
+      <option value="768">768</option>
+      <option value="390">390</option>
+      <option value="custom">Custom&hellip;</option>
+    </select>
+    <input id="viewportCustom" type="number" min="240" max="4096" step="1" placeholder="px" title="Custom viewport width (px)" hidden>
+  </div>
+  <button id="panelBtn" class="icon-btn" type="button" title="Hide conversation panel" aria-pressed="true">Panel</button>
   <button id="themeBtn" class="icon-btn" type="button">light</button>
   <button id="reloadBtn" class="icon-btn" type="button" title="Reload artifact">Reload</button>
   <button id="endBtn" class="icon-btn danger" type="button">End session</button>
