@@ -184,6 +184,7 @@
       "kind": "skills",
       "description": "Core framework, language, and application-engineering skills.",
       "paths": [
+        "skills/a11y",
         "skills/accessibility",
         "skills/android-clean-architecture",
         "skills/angular-developer",

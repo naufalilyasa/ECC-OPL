@@ -1,6 +1,6 @@
 # ECC — Agent Instructions
 
-This is a **production-ready AI coding plugin** providing 72 specialized agents, 379 skills, 103 commands, and automated hook workflows for software development.
+This is a **production-ready AI coding plugin** providing 72 specialized agents, 380 skills, 103 commands, and automated hook workflows for software development.
 
 **Version:** 2.2.3
 
@@ -203,7 +203,7 @@ Troubleshoot failures: check test isolation → verify mocks → fix implementat
 
 ```
 agents/          — 72 specialized subagents
-skills/          — 379 workflow skills and domain knowledge
+skills/          — 380 workflow skills and domain knowledge
 commands/        — 103 slash commands
 hooks/           — Trigger-based automations
 rules/           — Always-follow guidelines (common + per-language)
