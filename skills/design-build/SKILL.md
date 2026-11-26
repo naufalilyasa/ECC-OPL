@@ -399,6 +399,44 @@ it in the plan; if it is not, an animated diagram is the correct fallback.
   source URL, author, license, and the credit reference. Provenance is not
   optional for photographs.
 
+## Two Different Acceptances (do not conflate them)
+
+Two acceptance decisions exist and they answer different questions.
+
+**Release compatibility acceptance (Track A).** Asks whether the design-build
+workflow and its Antigravity CLI adapter still behave correctly as *tooling*.
+It is release-level regression evidence, produced and consumed by the ECC-OPL
+maintainers, and it lives in `scripts/lib/design-build-antigravity-gate.mjs`
+with `scripts/design-build-v2/closure-evidence.mjs`. It is **not** a certificate
+that every application project must create before using this skill, and no
+section in this workflow may require it. A project that never produces a Track A
+certificate is normal and correct.
+
+**Project section acceptance (Canvas verdict).** Asks whether *this section* in
+*this project* may be built. It is the owner's Canvas verdict bound to the sealed
+design reference bundle for one section. This is the acceptance this skill
+enforces, per section, in the section loop.
+
+Because only the second is enforced here, the enforcement this skill provides is
+cooperative at the host level: the agent runs the gate and honours its verdict.
+Do not describe it as host-enforced, and do not add a project-level Track A
+requirement to close that gap.
+
+### What a candidate change invalidates
+
+Owner approval applies to the **sealed design reference bundle** — approved HTML,
+CSS, assets, and the applicable design contract. It does not extend to
+implementation files.
+
+- Implementation change (component, controller, test): rerun candidate parity and
+  refresh the affected verification evidence. The approval stands.
+- Approved reference change (the sealed bundle or the contract): the approval is
+  void. Obtain a fresh Canvas verdict.
+
+Never re-seal new bytes under an old approval, and never manufacture approval
+evidence. When a receipt reports `candidateFileHashMismatch`, the candidate files
+drifted — refresh the candidate hashes and re-render; do not re-approve.
+
 ## Environment Limits
 
 - Canvas serves assets from beneath the artifact directory. Copy a shared asset
