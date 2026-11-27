@@ -65,7 +65,7 @@ function get(base, pathname) {
     const { session } = store.open(file, preview);
     assert.equal(session.previewMode, 'framework-native');
     assert.equal(session.previewUrl, 'http://127.0.0.1:5199/');
-    assert.deepEqual(session.previewMeta, preview.previewMeta);
+    assert.deepEqual(session.previewMeta, { section: '01-app-shell', revision: 'r3' });
 
     const reloaded = createSessionStore({ stateDir }).get(session.key);
     assert.equal(reloaded.previewMode, 'framework-native');
@@ -106,6 +106,47 @@ function get(base, pathname) {
     });
     assert.equal(session.previewMode, 'standalone-html');
     assert.equal('previewUrl' in session, false);
+  });
+
+  await test('credentials in a preview URL are stripped', () => {
+    const stateDir = tempDir();
+    const file = path.join(stateDir, 'section.html');
+    fs.writeFileSync(file, '<p>x</p>');
+    const { session } = createSessionStore({ stateDir }).open(file, {
+      previewMode: 'framework-native',
+      previewUrl: 'http://user:secret@127.0.0.1:5199/'
+    });
+    assert.equal(session.previewUrl, 'http://127.0.0.1:5199/');
+    assert.ok(!JSON.stringify(session).includes('secret'));
+  });
+
+  await test('preview meta keeps only the rendered labels', () => {
+    const stateDir = tempDir();
+    const file = path.join(stateDir, 'section.html');
+    fs.writeFileSync(file, '<p>x</p>');
+    const { session } = createSessionStore({ stateDir }).open(file, {
+      previewMode: 'framework-native',
+      previewUrl: 'http://127.0.0.1:5199/',
+      previewMeta: { section: '02-nav', revision: 'r4', payload: 'x'.repeat(5000) }
+    });
+    assert.deepEqual(session.previewMeta, { section: '02-nav', revision: 'r4' });
+  });
+
+  await test('one oversized feedback item does not reject the batch', () => {
+    const stateDir = tempDir();
+    const file = path.join(stateDir, 'plan.md');
+    fs.writeFileSync(file, '# Plan\n');
+    const store = createSessionStore({ stateDir });
+    const { session } = store.open(file);
+    const result = store.queueFeedback(session.key, [
+      { kind: 'chat', text: 'keep me' },
+      { kind: 'chat', text: 'x'.repeat(100001) }
+    ]);
+    assert.equal(result.accepted.length, 1);
+    assert.equal(result.accepted[0].text, 'keep me');
+    assert.equal(result.rejected.length, 1);
+    assert.ok(result.rejected[0].reason);
+    assert.equal(store.get(session.key).pendingFeedback.length, 1);
   });
 
   await test('native canvas payload carries mode chip and open-separately', () => {

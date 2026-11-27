@@ -136,6 +136,33 @@ function makeTree(files) {
     assert.equal(profile.status, 'unsupported');
   });
 
+  test('a broken symlink inside a workspace glob is skipped, not fatal', () => {
+    const dir = makeTree({
+      'package.json': { private: true, workspaces: ['apps/*'] },
+      'apps/web/package.json': { dependencies: { react: '^18.0.0' }, devDependencies: { vite: '^5.0.0' }, scripts: { dev: 'vite' } },
+      'apps/web/src/main.jsx': '',
+    });
+    fs.symlinkSync(path.join(dir, 'apps', 'gone'), path.join(dir, 'apps', 'dangling'));
+    const profile = detectProject(dir);
+    assert.equal(profile.status, 'detected');
+    assert.equal(profile.appRoot, path.join(dir, 'apps/web'));
+  });
+
+  test('a glob with a suffix after the wildcard only matches real app roots', () => {
+    const dir = makeTree({
+      'package.json': { private: true, workspaces: ['packages/*/app'] },
+      // decoy: has package.json directly under the wildcard but no /app
+      'packages/alpha/package.json': { dependencies: { vue: '^3.4.0' }, devDependencies: { vite: '^5.0.0' } },
+      'packages/beta/app/package.json': { dependencies: { react: '^18.0.0' }, devDependencies: { vite: '^5.0.0' }, scripts: { dev: 'vite' } },
+      'packages/beta/app/vite.config.ts': 'export default {}',
+      'packages/beta/app/src/main.jsx': '',
+    });
+    const profile = detectProject(dir);
+    assert.equal(profile.status, 'detected');
+    assert.equal(profile.appRoot, path.join(dir, 'packages/beta/app'));
+    assert.equal(profile.variant, 'react-vite');
+  });
+
   for (const dir of TEMP_DIRS) fs.rmSync(dir, { recursive: true, force: true });
   console.log(`\nPassed: ${passed}, Failed: ${failed}`);
   if (failed > 0) process.exitCode = 1;

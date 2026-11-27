@@ -32,15 +32,33 @@ const PREVIEW_MODES = new Set(['framework-native', 'standalone-html']);
 
 // A preview URL comes from the agent, and the canvas will embed it. Only an
 // absolute http(s) URL is accepted: anything else (data:, javascript:, file:)
-// would be a way to smuggle content past the artifact CSP.
+// would be a way to smuggle content past the artifact CSP. Credentials are
+// dropped because the URL is rendered as visible text as well as used as a
+// frame src.
 function sanitizePreviewUrl(value) {
   if (typeof value !== 'string') return null;
   try {
     const url = new URL(value);
-    return url.protocol === 'http:' || url.protocol === 'https:' ? url.href : null;
+    if (url.protocol !== 'http:' && url.protocol !== 'https:') return null;
+    url.username = '';
+    url.password = '';
+    return url.href;
   } catch {
     return null;
   }
+}
+
+// Only the two labels the canvas actually renders. Anything else a caller
+// sends is dropped so a large object cannot bloat the session file that every
+// broadcast re-reads.
+function sanitizePreviewMeta(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
+  const meta = {};
+  for (const field of ['section', 'revision']) {
+    const text = value[field];
+    if (typeof text === 'string' && text.length > 0) meta[field] = text.slice(0, 120);
+  }
+  return Object.keys(meta).length > 0 ? meta : null;
 }
 
 // The producer and the SessionStart/Stop hooks must land on one directory. The
@@ -228,9 +246,8 @@ function createSessionStore({ stateDir = resolveStateDir() } = {}) {
       session.previewMode = mode;
       const url = mode === 'framework-native' ? sanitizePreviewUrl(previewUrl) : null;
       if (url) session.previewUrl = url;
-      if (previewMeta && typeof previewMeta === 'object' && !Array.isArray(previewMeta)) {
-        session.previewMeta = previewMeta;
-      }
+      const meta = sanitizePreviewMeta(previewMeta);
+      if (meta) session.previewMeta = meta;
     }
     session.updatedAt = nowIso();
     state.sessions[key] = session;
@@ -269,11 +286,19 @@ function createSessionStore({ stateDir = resolveStateDir() } = {}) {
           continue;
         }
       }
-      const item = normalizeFeedbackItem(
-        raw,
-        state.feedbackCounter,
-        strict ? MAX_PROMPT_CHARS : DEFAULT_MAX_TEXT_CHARS
-      );
+      let item = null;
+      try {
+        item = normalizeFeedbackItem(
+          raw,
+          state.feedbackCounter,
+          strict ? MAX_PROMPT_CHARS : DEFAULT_MAX_TEXT_CHARS
+        );
+      } catch (error) {
+        // One oversized item must not reject the whole batch: the browser sent
+        // several things and the rest is still valid.
+        rejected.push({ reason: error.code || 'INVALID_ITEM' });
+        continue;
+      }
       if (item) accepted.push(item);
     }
     session.pendingFeedback.push(...accepted);

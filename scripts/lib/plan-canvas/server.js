@@ -721,11 +721,16 @@ function createPlanCanvasServer({
     if (!session) return sendHtml(res, 404, '<h1>Unknown session</h1>');
 
     if (session.previewMode === 'framework-native' && session.previewUrl) {
-      if (assetPath) return sendHtml(res, 404, '<h1>No sibling assets in live preview mode</h1>');
-      const origin = new URL(session.previewUrl).origin;
-      return sendHtml(res, 200, renderLivePreviewHtml(session), {
-        csp: `default-src 'none'; style-src 'unsafe-inline'; frame-src ${origin}`
-      });
+      // A hand-edited state file can carry a URL that no longer parses. Fall
+      // through to the artifact file instead of failing the whole request.
+      let origin = null;
+      try { origin = new URL(session.previewUrl).origin; } catch { origin = null; }
+      if (origin) {
+        if (assetPath) return sendHtml(res, 404, '<h1>No sibling assets in live preview mode</h1>');
+        return sendHtml(res, 200, renderLivePreviewHtml(session), {
+          csp: `default-src 'none'; style-src 'unsafe-inline'; frame-src ${origin}`
+        });
+      }
     }
 
     if (!assetPath) {

@@ -18,18 +18,29 @@ function fileIn(dir, names) {
   return names.find((n) => existsSync(join(dir, n))) ?? null
 }
 
-// Expands `apps/*` style workspace globs one level deep; deeper globs are rare
-// in the target projects and an explicit miss is safer than a wrong guess.
+// Expands workspace globs one level deep, keeping any suffix after the
+// wildcard segment (`packages/*/app`). A directory that cannot be stat'ed
+// (broken symlink, permission) is skipped rather than aborting detection.
 function expandWorkspaces(root, patterns) {
   const dirs = []
   for (const pattern of patterns) {
-    const [head, tail] = pattern.split('/')
+    const [head, ...rest] = pattern.split('/')
+    const tail = rest.join('/')
     if (tail && tail.includes('*')) {
       const base = join(root, head)
       if (!existsSync(base)) continue
+      // Everything after the wildcard must exist for the workspace to count;
+      // ignoring it would return a parent dir as if it were the app root.
+      const suffix = rest.slice(1).filter(Boolean)
       for (const name of readdirSync(base)) {
         const dir = join(base, name)
-        if (statSync(dir).isDirectory() && existsSync(join(dir, 'package.json'))) dirs.push(dir)
+        let isDir = false
+        try { isDir = statSync(dir).isDirectory() } catch { continue }
+        if (!isDir) continue
+        // The manifest sits at the end of the pattern, not at the wildcard.
+        const appDir = suffix.length ? join(dir, ...suffix) : dir;
+        if (!existsSync(join(appDir, 'package.json'))) continue;
+        dirs.push(appDir)
       }
     } else if (!pattern.includes('*') && existsSync(join(root, pattern, 'package.json'))) {
       dirs.push(join(root, pattern))

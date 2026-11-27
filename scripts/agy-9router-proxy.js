@@ -96,8 +96,8 @@ function createProxy({ target = DEFAULT_TARGET, apiKey, log = () => {} } = {}) {
     }
 
     const headers = rewriteHeaders(req.headers, apiKey);
-    // The body is forwarded byte-for-byte, so its length must be recomputed for
-    // the rewritten request rather than inherited from the client.
+    // The body is forwarded byte-for-byte; `content-length` is dropped above so
+    // Node frames it with chunked encoding at the real length.
     const options = {
       protocol: targetUrl.protocol,
       hostname: targetUrl.hostname,
