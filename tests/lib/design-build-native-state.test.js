@@ -271,6 +271,18 @@ function runTests() {
     assert.strictEqual(legacy.out.g2.mode, 'standalone-html');
   });
 
+  test('a standalone-html section is never gated as native, even with a design digest', () => {
+    const request = validRequest('standalone-html', 'PARITY_PASS');
+    // A legacy section keeps its own semantics: the digest is not a native claim,
+    // and no reference set is consulted for it.
+    request.active.designDigest = DESIGN;
+    const result = runSectionGate(request);
+    assert.strictEqual(result.code, 0, JSON.stringify(result.out?.checkpoint));
+    assert.strictEqual(result.out.g2.mode, 'standalone-html');
+    assert.strictEqual(result.out.checkpoint.state, 'SECTION_COMPLETE');
+    assert.strictEqual(result.out.receipt.why, undefined);
+  });
+
   test('compare-section refuses native input instead of fabricating an HTML reference', () => {
     const dir = tmp();
     let stdout = '';

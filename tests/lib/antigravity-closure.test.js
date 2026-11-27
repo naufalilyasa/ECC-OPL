@@ -15,6 +15,7 @@ const path = require('path');
 const REPO = path.resolve(__dirname, '..', '..');
 const adapter = require(path.join(REPO, 'scripts/lib/install-targets/antigravity-cli'));
 const { adaptAntigravityAgent } = require(path.join(REPO, 'scripts/lib/install/antigravity-agent'));
+const { transformInstallContent } = require(path.join(REPO, 'scripts/lib/install/content-transform'));
 const workflowState = require(path.join(REPO, 'scripts/lib/workflow-state'));
 
 let passed = 0;
@@ -85,6 +86,27 @@ test('C4b: /opl-design-build still resolves after the two-mode rewrite', () => {
   const source = fs.readFileSync(path.join(REPO, entry.sourceRelativePath), 'utf8');
   assert.ok(/detect-project\.mjs/.test(source), 'projected body must carry the discovery step');
   assert.ok(/framework-native/.test(source), 'projected body must carry the native mode');
+});
+
+test('C4c: both command surfaces and the skill carry the same migration policy', () => {
+  const canonical = fs.readFileSync(path.join(REPO, 'commands/design-build.md'), 'utf8');
+  const mirror = fs.readFileSync(path.join(REPO, '.opencode/commands/design-build.md'), 'utf8');
+  assert.strictEqual(mirror, canonical, 'OpenCode mirror must be byte-identical to the canonical command');
+  for (const text of [canonical, fs.readFileSync(path.join(REPO, 'skills/design-build/SKILL.md'), 'utf8')]) {
+    assert.ok(/never reinterpreted as a native one|never\*\* reinterpreted as a native approval/.test(text),
+      'migration policy must state that an HTML approval is never reinterpreted');
+    assert.ok(/standalone-html/.test(text) && /framework-native/.test(text), 'both modes must be named');
+  }
+  // The AGY projection reads the same canonical body; nothing is duplicated per runtime.
+  const ops = plan(['commands/design-build.md', 'skills/design-build']);
+  const entry = ops.find(op => op.destinationPath.endsWith('.agents/skills/opl-design-build/SKILL.md'));
+  assert.ok(entry, 'opl-design-build entrypoint missing');
+  assert.strictEqual(entry.sourceRelativePath.replace(/\\/g, '/'), 'commands/design-build.md');
+  // Dry run of the transform itself: what AGY would actually install.
+  const projected = transformInstallContent(entry, canonical);
+  assert.strictEqual(projected.split('\n')[0], '---', 'projection must synthesize frontmatter');
+  assert.ok(/Migration: sections already in flight/.test(projected), 'projected body must carry the migration clause');
+  assert.ok(!/\.opencode\/(workflows|markers)/.test(projected), 'projected body must not keep OpenCode state paths');
 });
 
 // --- Area 2: agent adaptation -------------------------------------------

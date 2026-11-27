@@ -122,6 +122,24 @@ signals were found and reported, not silently resolved — ask the owner.
 Approval covers the design decision, not the implementation state. Silently
 re-sealing new design bytes under an old approval is forbidden.
 
+### Migration: sections already in flight
+
+The mode is decided **per section** at discovery time and then recorded. It is
+never re-litigated, and one project may hold both modes at once.
+
+- A section already in progress under `standalone-html` finishes under the legacy
+  HTML → port → parity loop. Do not convert it mid-flight: the approved HTML is
+  the evidence the owner signed.
+- An HTML approval is **never** reinterpreted as a native approval. Rebuilding a
+  legacy section as a component is a new section with a new approval; the old
+  HTML evidence stays on disk untouched.
+- Historical evidence is append-only: existing canvas sessions, receipts,
+  `BUILD-STATE.md` fields and parity records are not rewritten or re-stamped.
+- On resume, the section's recorded `previewMode` wins. Re-run discovery only for
+  sections that have not started; a fresh detection never switches a running
+  section's mode.
+- Projects with no `active.json` are outside this workflow and stay untouched.
+
 ## Workflow State (required)
 
 Write `.opencode/workflows/active.json` at the start and rewrite it at every

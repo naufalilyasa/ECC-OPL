@@ -40,6 +40,10 @@ and the Canvas previews the project dev server. `previewMode: "standalone-html"`
 means the legacy HTML → port → parity loop. `ambiguous` or `unsupported` is a
 report to the owner, never a guess.
 
+Mode is per section. A section already running under `standalone-html` finishes
+there, and an old HTML approval is never reinterpreted as a native one — see
+"Migration: sections already in flight" in the skill.
+
 Then load **only the relevant** framework pattern skill (e.g. `react-patterns`,
 `vue-patterns`, `dart-flutter-patterns`, `compose-multiplatform-patterns`) plus
 its matching `skills/design-build/references/adapter-*.md`. Do not load mobile
