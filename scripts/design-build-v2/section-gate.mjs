@@ -7,7 +7,7 @@
 import { readFileSync } from 'node:fs'
 import { resolve, dirname, isAbsolute } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { verifyReceipt, advanceCheckpoint, sha256 } from './state-machine.mjs'
+import { verifyReceipt, advanceCheckpoint, sha256, nativeShaped } from './state-machine.mjs'
 import { verifyRenderedParity } from './rendered-authority.mjs'
 
 const HERE = dirname(fileURLToPath(import.meta.url))
@@ -37,9 +37,13 @@ const previewMode = req.active?.previewMode ?? 'standalone-html'
 // through to the legacy gate there would complete it silently under a cheaper
 // contract.
 const previewModeDefaulted = req.active?.previewMode === undefined
-const nativeShaped = /^[a-f0-9]{64}$/i.test(req.active?.designDigest ?? '')
-  || req.baselineDesignDigest !== undefined
-if (previewModeDefaulted && nativeShaped) {
+// One shape test, shared with the state machine, so this CLI cannot disagree
+// with the library about what counts as native evidence.
+if (previewModeDefaulted && nativeShaped(req.active, {
+  canvasApproval: req.canvasApproval,
+  nativeReference: req.nativeReference,
+  baselineDesignDigest: req.baselineDesignDigest
+})) {
   process.stderr.write(
     'section-gate: PREVIEW_MODE_LOST — native-shaped section has no active.previewMode\n')
   process.exit(2)

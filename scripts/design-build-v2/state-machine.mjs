@@ -24,6 +24,23 @@ const MEASUREMENT_FIELDS = ['profile', 'state', 'landmark', 'property', 'expecte
 const hasBytes = (v) => Buffer.isBuffer(v) || typeof v === 'string' || v instanceof Uint8Array
 const toBuf = (v) => Buffer.isBuffer(v) ? v : Buffer.from(v)
 
+// A section that carries native-only evidence proves its shape even when the
+// mode field went missing. Defaulting such a section to standalone-html would
+// complete it under the cheaper legacy contract, so the caller must declare the
+// mode explicitly.
+export function nativeShaped(src, context = {}) {
+  const ca = context.canvasApproval
+  return HEX64.test(src?.designDigest || '')
+    || HEX64.test(src?.revisionDigest || '')
+    || HEX64.test(ca?.designDigest || '')
+    || HEX64.test(ca?.revisionDigest || '')
+    || context.nativeReference !== undefined
+    || context.baselineDesignDigest !== undefined
+    // A legacy completion record also carries dataMode:'fixture', so only a
+    // production claim counts as native evidence on its own.
+    || src?.dataMode === 'production'
+}
+
 // Recompute G2 via the SAME authority the command uses (no parallel equality check).
 // Preview mode is taken from authoritative state, never from the receipt.
 //
@@ -69,6 +86,7 @@ export function verifyReceipt(receipt, context) {
     return reject('ACTIVE_IDENTITY_INCOMPLETE')
   }
   if (src.dataMode !== undefined && !DATA_MODES.includes(src.dataMode)) return reject('DATA_MODE_INVALID')
+  if (src.previewMode === undefined && nativeShaped(src, context)) return reject('PREVIEW_MODE_LOST')
   if (src.previewMode !== undefined && !PREVIEW_MODES.includes(src.previewMode)) {
     return reject('PREVIEW_MODE_INVALID', { previewMode: src.previewMode })
   }
@@ -204,6 +222,11 @@ export function advanceCheckpoint(active, receipt, context = {}) {
   if (typeof receipt === 'string') return { ...frozen, code: 'RECEIPT_REQUIRED' }
   if (!active?.sectionId || !active?.revision || !HEX64.test(active?.approvedBundleSha256 || '')) {
     return { ...frozen, code: 'ACTIVE_IDENTITY_INCOMPLETE' }
+  }
+  // Same refusal as verifyReceipt: a direct caller must not complete a native
+  // section whose mode went missing.
+  if (active.previewMode === undefined && nativeShaped(active, context)) {
+    return { ...frozen, code: 'PREVIEW_MODE_LOST' }
   }
   // Active A with receipt/context B is rejected.
   if (receipt?.sectionId !== active.sectionId || receipt?.revision !== active.revision

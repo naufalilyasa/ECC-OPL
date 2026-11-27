@@ -98,7 +98,23 @@ signals were found and reported, not silently resolved — ask the owner.
    in native mode the approved reference and the implementation are the same
    source, so equal source digests are expected, not a conflation.
 3. **Preview is the real component.** Render it through the project's own dev
-   server in the Canvas (`plan-canvas --preview-url … --preview-mode framework-native`).
+   server in the Canvas, naming the reviewed revision:
+
+   ```bash
+   node <ECC>/scripts/plan-canvas.js open <section-file> \
+     --preview-url http://127.0.0.1:<port>/<route> \
+     --preview-mode framework-native \
+     --section <NN>-<slug> --revision <rN> \
+     --revision-digest <sha256> --design-digest <sha256> \
+     --framework <name> --data-mode <fixture|production>
+   ```
+
+   Both digests come from `fingerprintNativeReference()` over the files that shape
+   the render. The approval verdict repeats the same section/revision/digests, and
+   the Canvas rejects one that names a revision it no longer previews
+   (`STALE_REVISION`): re-open on the current revision and ask for a fresh verdict.
+   Never copy `session.previewMeta` onto an empty verdict to satisfy the check.
+
    If the server fails, report the real compiler/dependency/route error. **Never**
    generate an HTML version as a stand-in for a failed native preview, and never
    let a placeholder count as approval evidence.
@@ -106,10 +122,13 @@ signals were found and reported, not silently resolved — ask the owner.
    data may be used to prove the design. A section built on fixtures must say so
    (`dataMode: "fixture"`) in `BUILD-STATE.md` and the completion report, and must
    never claim the backend is connected.
-5. **In-frame annotation is not available in native mode.** The project page is
-   cross-origin from the Canvas, so the annotation SDK cannot be injected without
-   modifying the project. Owner feedback arrives as Canvas chat and the verdict.
-   Report this limitation instead of implying markup-level annotation works.
+5. **In-frame annotation needs the canvas dev-server adapter.** The project page is
+   cross-origin from the Canvas, so the annotation SDK only reaches it when the app's
+   dev server injects it: the Vite plugin `planCanvasAnnotations()` in `vite.config`,
+   or the Blade include `vendor.ecc-plan-canvas.sdk` in the root layout for
+   Laravel/Inertia. Add it temporarily, report it, and remove it after review. Without
+   the adapter the annotate toggle stays disabled and feedback is chat + verdict;
+   report which case applies instead of implying markup-level annotation works.
 
 ### What requires re-approval, and what does not
 
@@ -370,9 +389,13 @@ For each section in the chosen order (or the single section specified by `--sect
    - **Native mode:** the section file is the real component (e.g.
      `resources/js/pages/<NN>-<slug>.tsx`), and the Canvas preview points at the
      project's dev server (`--preview-url … --preview-mode framework-native`) so the
-     owner approves the actual rendered component. There is no HTML artifact and no
-     in-frame annotation; feedback is chat + verdict. A failed dev server is
-     reported as-is, never replaced by an HTML stand-in.
+     owner approves the actual rendered component. There is no HTML artifact. For
+     in-frame annotation, add the canvas dev-server adapter before opening the
+     session — Vite: `planCanvasAnnotations()` from
+     `scripts/lib/plan-canvas/adapters/vite.mjs` in `vite.config`; Laravel/Inertia:
+     `@include('vendor.ecc-plan-canvas.sdk')` in the root Blade layout. Without it
+     the toggle stays disabled and feedback is chat + verdict. A failed dev server
+     is reported as-is, never replaced by an HTML stand-in.
 2. **Approval Verdict:**
    - An approval exists only as a canvas verdict item:
      ```json

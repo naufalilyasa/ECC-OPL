@@ -2,13 +2,14 @@
  * Capture a real section from a running Laravel + Inertia application
  * (not a static HTML imitation).
  *
- * Run with: node scripts/design-build-v2/capture-live-section.mjs \
- *   --base http://127.0.0.1:8000 --out <dir> \
- *   --playwright-dir <dir-with-playwright-installed> \
- *   --email <login> --password <password>
+ * Run with: CAPTURE_EMAIL=<login> CAPTURE_PASSWORD=<password> \
+ *   node scripts/design-build-v2/capture-live-section.mjs \
+ *   --base http://127.0.0.1:8000 --out <dir> --route <path> \
+ *   --playwright-dir <dir-with-playwright-installed>
  *
  * Nothing here is machine- or project-specific: the Playwright install and the
- * credentials always come from the caller.
+ * credentials always come from the caller. Credentials go through the
+ * environment; --email/--password still work but feed argv, which `ps` shows.
  */
 'use strict';
 

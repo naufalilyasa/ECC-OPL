@@ -56,7 +56,10 @@ New assertions:
 
 - `staging/distribution/design-build-v2-manifest.json` — `skills/design-build/SKILL.md`
   (`ec98ae54b5e8` → `503ea2393aee`, 30845 → 31841 bytes), both command mirrors
-  (`6b762ae2da3b` → `5c1ea494961d`, 12099 → 12313). Still 23 files.
+  (`6b762ae2da3b` → `5c1ea494961d`, 12099 → 12313). 23 files. The v1.1
+functional-closure batch added the native-approval runtime (Canvas CLI,
+`scripts/lib/plan-canvas/*`, `detect-project.mjs`, `preview-runtime.mjs`) and
+re-hashed the touched files: 34 entries.
 - `docs/plans/design-build-v2/foundation-manifest.json` — same three entries.
 - `manifests/context-packs/skill-triggers@1.json` — `registryDigest` only
   (`d6d2c775a879…` → `a04b9d9c524c…`). Triggers were not regenerated: the skill's

@@ -87,14 +87,14 @@ function canvasCss() {
   return `${TOKENS_CSS}
   *{margin:0;padding:0;box-sizing:border-box}
   html,body{height:100%}
-  body{font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.4;overflow:hidden}
+  body{font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.4;overflow:hidden;display:flex;flex-direction:column}
   ::selection{background:var(--accent);color:#fff}
   ::-webkit-scrollbar{width:8px;height:8px}
   ::-webkit-scrollbar-track{background:transparent}
   ::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
   button{font-family:var(--font)}
 
-  .bar{display:flex;align-items:center;gap:12px;height:52px;padding:0 16px;background:color-mix(in srgb,var(--bg2) 88%,transparent);border-bottom:1px solid var(--border);backdrop-filter:blur(16px)}
+  .bar{flex:none;display:flex;align-items:center;gap:12px;height:52px;padding:0 16px;background:color-mix(in srgb,var(--bg2) 88%,transparent);border-bottom:1px solid var(--border);backdrop-filter:blur(16px)}
   .brand{display:flex;align-items:center;gap:9px;min-width:0}
   .brand .logo{width:26px;height:26px;flex:none;background:linear-gradient(135deg,var(--accent),var(--pink));border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff}
   .brand .name{font-size:13.5px;font-weight:600;white-space:nowrap}
@@ -120,7 +120,7 @@ function canvasCss() {
   .icon-btn:hover{border-color:var(--border-light);color:var(--text);background:var(--bg4)}
   .icon-btn.danger:hover{border-color:var(--red);color:var(--red);background:var(--red-glow)}
 
-  .layout{display:flex;height:calc(100% - 52px)}
+  .layout{display:flex;flex:1;min-height:0}
   .frame{flex:1;min-width:0;position:relative;background:var(--bg2)}
   .frame iframe{width:100%;height:100%;border:0;background:#fff;display:block;margin:0 auto;transition:width .15s,box-shadow .15s}
   .frame[data-viewport] iframe{box-shadow:0 0 0 1px var(--border),var(--shadow-lg)}
@@ -147,13 +147,14 @@ function canvasCss() {
   .verdict .changes{border:1px solid var(--orange);background:var(--orange-glow);color:var(--orange)}
   .verdict .changes:hover{background:var(--orange);color:#fff}
 
-  .chat{flex:1;overflow-y:auto;padding:10px 14px;display:flex;flex-direction:column;gap:8px}
+  .chat{flex:1;min-height:0;overflow-y:auto;padding:10px 14px;display:flex;flex-direction:column;gap:8px}
   .msg{max-width:92%;padding:7px 10px;border-radius:10px;font-size:12.5px;white-space:pre-wrap;word-break:break-word}
   .msg.user{align-self:flex-end;background:var(--accent-glow);border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);color:var(--text);border-bottom-right-radius:3px}
   .msg.agent{align-self:flex-start;background:var(--bg3);border:1px solid var(--border);color:var(--text);border-bottom-left-radius:3px}
   .msg .meta{display:block;font-size:9.5px;color:var(--text3);margin-top:3px}
   .msg.kind-annotation{border-left:2px solid var(--teal)}
   .msg.kind-verdict{border-left:2px solid var(--green)}
+  .stale-notice{flex:none;padding:6px 14px;font-size:12px;background:var(--orange-glow);color:var(--orange);border-bottom:1px solid var(--border)}
   .chat .empty{color:var(--text3);font-size:12px;text-align:center;margin-top:24px;line-height:1.6}
 
   /* iMessage-style activity bubble: dots while the agent thinks or types. */
@@ -183,7 +184,7 @@ function canvasCss() {
   .pill button{border:none;background:none;color:var(--text3);cursor:pointer;font-size:13px;line-height:1;padding:1px}
   .pill button:hover{color:var(--red)}
 
-  .composer{padding:10px 14px 14px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px}
+  .composer{flex:none;padding:10px 14px 14px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px}
   .composer .hint{font-size:10px;color:var(--text3)}
   .composer textarea{width:100%;min-height:60px;max-height:160px;resize:vertical;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--text);font-size:12.5px;font-family:var(--font);outline:none;transition:all .15s}
   .composer textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
@@ -290,13 +291,28 @@ function canvasClientJs() {
   });
 
   // --- annotate mode -------------------------------------------------
+  // A framework-native preview frames a live app on its own origin, so the
+  // annotation SDK can never be injected there: chat and verdicts only.
+  // A live app only receives the SDK when its dev server runs a canvas
+  // adapter. Until the app greets us, the toggle would be a dead control.
   let annotate = true;
+  let sdkReady = boot.previewMode !== 'framework-native';
+  function renderAnnotate() {
+    const toggle = $('annotate');
+    toggle.setAttribute('aria-pressed', String(sdkReady && annotate));
+    toggle.setAttribute('aria-disabled', String(!sdkReady));
+    toggle.title = sdkReady
+      ? 'Toggle annotate mode (Cmd/Ctrl+I)'
+      : 'Waiting for the annotation SDK in the live app - add the canvas dev-server adapter';
+  }
   function setAnnotate(on) {
+    if (!sdkReady) return;
     annotate = on;
-    $('annotate').setAttribute('aria-pressed', String(on));
+    renderAnnotate();
     postToFrame({ type: 'pc:set-mode', annotate: on });
   }
   $('annotate').addEventListener('click', () => setAnnotate(!annotate));
+  renderAnnotate();
   document.addEventListener('keydown', e => {
     if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'i') {
       e.preventDefault();
@@ -316,6 +332,7 @@ function canvasClientJs() {
     else if (msg.type === 'pc:scroll') lastScroll = { x: msg.x || 0, y: msg.y || 0 };
     else if (msg.type === 'pc:toggle-mode') setAnnotate(!annotate);
     else if (msg.type === 'pc:ready') {
+      if (!sdkReady) { sdkReady = true; renderAnnotate(); }
       postToFrame({ type: 'pc:set-mode', annotate });
       postToFrame({ type: 'pc:restore-scroll', x: lastScroll.x, y: lastScroll.y });
     }
@@ -339,7 +356,11 @@ function canvasClientJs() {
       }
       const txt = document.createElement('span');
       txt.className = 'txt';
-      txt.textContent = item.kind === 'verdict' ? (item.verdict === 'approve' ? 'Approve plan' : 'Request changes') + (item.text ? ': ' + item.text : '') : item.text;
+      txt.textContent = item.kind === 'verdict'
+        ? (item.verdict === 'approve'
+          ? (boot.previewMode === 'framework-native' ? 'Approve design' : 'Approve plan')
+          : 'Request changes') + (item.text ? ': ' + item.text : '')
+        : item.text;
       body.appendChild(txt);
       const rm = document.createElement('button');
       rm.textContent = '\\u00D7';
@@ -439,6 +460,27 @@ function canvasClientJs() {
       });
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const body = await res.json().catch(() => ({}));
+      // A rejection means the batch was not queued, so the draft stays in the
+      // composer for the human to re-send after reloading.
+      const rejection = Array.isArray(body.rejected) ? body.rejected[0] : null;
+      if (rejection) {
+        // A stale verdict is the one rejection the human must understand: the
+        // preview moved on, so this tab's approval was for an older revision.
+        statusEl.textContent = rejection.reason === 'STALE_REVISION' || rejection.reason === 'STALE_DESIGN'
+          ? 'Not approved: the design changed since this tab loaded. Reload the canvas and review the current revision.'
+          : rejection.reason === 'STALE_SECTION'
+            ? 'Not approved: this verdict names a different section. Reload the canvas.'
+            : 'Not sent: ' + rejection.reason + '.';
+        applyPresence(body.presence || 'waiting');
+        // A mixed batch queued its accepted half, so clear that half too;
+        // otherwise the retry sends the same items twice.
+        if (!body.accepted) return;
+        queue = [];
+        persistQueue();
+        renderQueue();
+        input.value = '';
+        return;
+      }
       queue = [];
       persistQueue();
       renderQueue();
@@ -462,12 +504,43 @@ function canvasClientJs() {
   });
   function makeVerdictItem(verdict) {
     if (boot.target === 'antigravity-cli') {
+      const meta = boot.previewMode === 'framework-native' ? boot.previewMeta : null;
+      if (meta && meta.revisionDigest) {
+        // Native: revisionDigest names the preview revision; the plan file
+        // digest travels separately as planDigest.
+        return {
+          kind: 'verdict',
+          verdict,
+          revisionDigest: meta.revisionDigest,
+          planDigest: boot.revisionDigest,
+          section: meta.section,
+          revision: meta.revision,
+          designDigest: meta.designDigest,
+          workspace: boot.workspace,
+          session: boot.key,
+          timestamp: new Date().toISOString()
+        };
+      }
       return {
         kind: 'verdict',
         verdict,
         revisionDigest: boot.revisionDigest,
         workspace: boot.workspace,
         session: boot.key,
+        timestamp: new Date().toISOString()
+      };
+    }
+    const meta = boot.previewMeta && typeof boot.previewMeta === 'object' ? boot.previewMeta : null;
+    if (boot.previewMode === 'framework-native' && meta && meta.revisionDigest) {
+      // Name the exact preview this tab rendered. If the session has moved on,
+      // the server rejects this verdict instead of approving the newer draft.
+      return {
+        kind: 'verdict',
+        verdict,
+        section: meta.section,
+        revision: meta.revision,
+        revisionDigest: meta.revisionDigest,
+        designDigest: meta.designDigest,
         timestamp: new Date().toISOString()
       };
     }
@@ -482,9 +555,23 @@ function canvasClientJs() {
     if (!window.confirm('End this review session?')) return;
     try { await fetch('/api/session/' + key + '/end', { method: 'POST' }); } catch { /* server gone */ }
   });
-  function reloadArtifact() {
+  async function reloadArtifact() {
     const base = frame.getAttribute('data-artifact-src');
     frame.src = base + '?t=' + Date.now();
+    // Refresh the binding too: reloading only the frame leaves boot.previewMeta
+    // stale, so every later verdict is rejected as STALE_REVISION.
+    try {
+      const res = await fetch('/api/sessions');
+      const body = await res.json();
+      const current = (body.sessions || []).filter(s => s.key === key)[0];
+      if (current) {
+        // The mode can change too (native preview replaced by standalone HTML),
+        // and a stale mode makes later verdicts carry the wrong digest.
+        boot.previewMode = current.previewMode || null;
+        boot.previewMeta = current.previewMeta || null;
+        checkStaleRevision((current.previewMeta || {}).revision);
+      }
+    } catch { /* server gone; the iframe reload already happened */ }
   }
   function markEnded(endedBy) {
     ended = true;
@@ -514,10 +601,23 @@ function canvasClientJs() {
     presence.querySelector('.label').textContent = PRESENCE_LABELS[state] || state;
     renderActivity(state);
   }
+  function checkStaleRevision(revision) {
+    if (boot.previewMode !== 'framework-native') return;
+    const notice = document.getElementById('staleNotice');
+    if (!notice) return;
+    const current = boot.previewMeta && boot.previewMeta.revision;
+    if (!revision || !current || revision === current) { notice.hidden = true; return; }
+    notice.textContent = 'The preview moved to ' + revision + ' since this tab loaded. Reload to review the current draft.';
+    notice.hidden = false;
+  }
   function connectEvents() {
     const es = new EventSource('/events/' + key);
     es.addEventListener('chat-sync', e => renderChat(JSON.parse(e.data).chat || []));
-    es.addEventListener('presence', e => applyPresence(JSON.parse(e.data).state));
+    es.addEventListener('presence', e => {
+      const payload = JSON.parse(e.data);
+      applyPresence(payload.state);
+      checkStaleRevision(payload.revision);
+    });
     es.addEventListener('reload', reloadArtifact);
     es.addEventListener('ended', e => { markEnded(JSON.parse(e.data).endedBy); es.close(); });
     es.onerror = () => {
@@ -528,6 +628,28 @@ function canvasClientJs() {
     };
   }
   connectEvents();
+})();`;
+}
+
+// The live-preview wrapper and the reviewed app are separate origins, so the
+// annotation SDK cannot reach the chrome directly. This page is same-origin with
+// the chrome and forwards the pc: protocol both ways; nothing else crosses.
+function liveBridgeJs() {
+  return `'use strict';
+(() => {
+  const frame = document.getElementById('app-frame');
+  if (!frame || window.parent === window) return;
+  const ours = msg => Boolean(msg) && typeof msg.type === 'string' && msg.type.indexOf('pc:') === 0;
+
+  window.addEventListener('message', e => {
+    if (e.source === frame.contentWindow) {
+      if (ours(e.data)) window.parent.postMessage(e.data, '*');
+      return;
+    }
+    if (e.source !== window.parent || !ours(e.data)) return;
+    if (!frame.contentWindow) return;
+    try { frame.contentWindow.postMessage(e.data, '*'); } catch { /* frame gone */ }
+  });
 })();`;
 }
 
@@ -557,8 +679,9 @@ function renderCanvasHtml(session, { clientPath = '/client.js', cssPath = '/canv
   }).replace(/</g, '\\u003c');
   const artifactSrc = `/artifact/${session.key}/`;
   const previewMeta = session.previewMeta && typeof session.previewMeta === 'object' ? session.previewMeta : {};
-  const modeLabel = [session.previewMode, previewMeta.section, previewMeta.revision]
+  const modeLabel = [session.previewMode, previewMeta.framework, previewMeta.section, previewMeta.revision]
     .filter(Boolean).map(String).join(' · ');
+  const nativeApproval = session.previewMode === 'framework-native';
   // Sandbox flags are inherited by nested frames. A live preview wraps another
   // document, so without allow-same-origin that inner document gets an opaque
   // origin and its own module requests come back CORS-blocked. Only our
@@ -606,15 +729,16 @@ ${session.previewMode ? `  <span id="modeChip" class="mode-chip" title="Preview 
   <button id="reloadBtn" class="icon-btn" type="button" title="Reload artifact">Reload</button>
   <button id="endBtn" class="icon-btn danger" type="button">End session</button>
 </header>
+<div id="staleNotice" class="stale-notice" role="status" hidden></div>
 <div class="layout">
   <main class="frame">
     <iframe id="artifact" title="Artifact under review" src="${artifactSrc}" data-artifact-src="${artifactSrc}" sandbox="${frameSandbox}"></iframe>
     <div id="endedOverlay" class="overlay"><div class="card"><h3>Session ended</h3><p id="endedWho"></p></div></div>
   </main>
   <aside class="panel">
-    <h2>Plan verdict</h2>
+    <h2>${nativeApproval ? 'Design verdict' : 'Plan verdict'}</h2>
     <div class="verdict">
-      <button id="approve" class="approve" type="button">Approve plan</button>
+      <button id="approve" class="approve" type="button">${nativeApproval ? 'Approve design' : 'Approve plan'}</button>
       <button id="changes" class="changes" type="button">Request changes</button>
     </div>
     <h2>Conversation</h2>
@@ -728,6 +852,7 @@ ${sessions.length ? `<table><thead><tr><th>Artifact</th><th>Path</th><th>Status<
 module.exports = {
   canvasCss,
   canvasClientJs,
+  liveBridgeJs,
   renderCanvasHtml,
   renderMarkdownArtifactHtml,
   renderSessionListHtml

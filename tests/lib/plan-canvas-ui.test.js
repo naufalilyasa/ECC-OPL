@@ -9,7 +9,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 
-const { renderCanvasHtml, canvasClientJs, canvasCss } = require('../../scripts/lib/plan-canvas/ui');
+const { renderCanvasHtml, canvasClientJs, canvasCss, liveBridgeJs } = require('../../scripts/lib/plan-canvas/ui');
 
 function test(name, fn) {
   try {
@@ -76,6 +76,21 @@ function runTests() {
     assert.ok(js.includes('Math.min(4096, Math.max(240, width))'), 'clamped range');
     assert.ok(js.includes("vpSel.value === 'custom'"), 'custom branch');
     assert.ok(js.includes("vpCustom.addEventListener('input'"), 'live custom input');
+  })) passed++; else failed++;
+
+  if (test('annotate mode waits for the SDK in live previews', () => {
+    assert.ok(js.includes("let sdkReady = boot.previewMode !== 'framework-native';"), 'artifact mode starts ready');
+    assert.ok(js.includes("if (!sdkReady) return;"), 'setAnnotate refused until the app greets the canvas');
+    assert.ok(js.includes("msg.type === 'pc:ready'"), 'readiness handshake handled');
+    assert.ok(js.includes('add the canvas dev-server adapter'), 'toggle explains how to enable it');
+  })) passed++; else failed++;
+
+  if (test('live bridge forwards only the pc: protocol between frame and chrome', () => {
+    const bridge = liveBridgeJs();
+    assert.ok(bridge.includes("msg.type.indexOf('pc:') === 0"), 'protocol filter');
+    assert.ok(bridge.includes('e.source === frame.contentWindow'), 'accepts frame messages only');
+    assert.ok(bridge.includes('e.source !== window.parent'), 'accepts chrome messages only');
+    assert.ok(bridge.includes("getElementById('app-frame')"), 'targets the preview frame');
   })) passed++; else failed++;
 
   console.log('\ncss:');

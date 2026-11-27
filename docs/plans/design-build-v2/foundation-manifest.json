@@ -6,18 +6,18 @@
   "files": [
     {
       "path": "skills/design-build/SKILL.md",
-      "sha256": "503ea2393aee7cb361a820f5c93b4a068a400e49858b178d09e817f81d92aa1e",
-      "bytes": 31841
+      "sha256": "f057169b3950365c6b0ff86ab726142ccdf1cafdba1d354df724f6decad5635d",
+      "bytes": 33106
     },
     {
       "path": "commands/design-build.md",
-      "sha256": "5c1ea494961d3fdec58204ee887eeac8cd3c6ab33b164bd31d6af44e4fd08fb0",
-      "bytes": 12313
+      "sha256": "bb38272a550255c806657e670ba6f3abca31ffc0f6b5593400ebdbf9eac20993",
+      "bytes": 14313
     },
     {
       "path": ".opencode/commands/design-build.md",
-      "sha256": "5c1ea494961d3fdec58204ee887eeac8cd3c6ab33b164bd31d6af44e4fd08fb0",
-      "bytes": 12313
+      "sha256": "bb38272a550255c806657e670ba6f3abca31ffc0f6b5593400ebdbf9eac20993",
+      "bytes": 14313
     },
     {
       "path": "commands/typography.md",

@@ -1,9 +1,9 @@
 {
-  "$comment": "Staged distribution manifest for design-build V2.0. STAGED ONLY — active HOME untouched, deployment NOT_GIVEN.",
+  "$comment": "Distribution manifest for design-build V2.0 plus the v1.1 functional-closure batch, deployed to ~/.config/opencode/ under explicit owner authorization.",
   "algorithm": "sha256",
   "release": "design-build-v2",
-  "owner_deployment_authorization": "NOT_GIVEN",
-  "active_runtime_deployed": false,
+  "owner_deployment_authorization": "GRANTED",
+  "active_runtime_deployed": true,
   "dependencies": {
     "node": ">=18.0.0",
     "playwright": "optional for live browser comparison",
@@ -32,22 +32,10 @@
   "runtime_destination_base": "~/.config/opencode/",
   "files": [
     {
-      "path": "commands/design-build.md",
-      "destination": "commands/design-build.md",
-      "sha256": "5c1ea494961d3fdec58204ee887eeac8cd3c6ab33b164bd31d6af44e4fd08fb0",
-      "bytes": 12313
-    },
-    {
-      "path": "commands/typography.md",
-      "destination": "commands/typography.md",
-      "sha256": "9da53faa33bc1bf5ab089f8290f3fef9afec2b2da50a0543784780d9c38f3a89",
-      "bytes": 5687
-    },
-    {
       "path": ".opencode/commands/design-build.md",
       "destination": "commands/design-build.md",
-      "sha256": "5c1ea494961d3fdec58204ee887eeac8cd3c6ab33b164bd31d6af44e4fd08fb0",
-      "bytes": 12313
+      "sha256": "bb38272a550255c806657e670ba6f3abca31ffc0f6b5593400ebdbf9eac20993",
+      "bytes": 14313
     },
     {
       "path": ".opencode/commands/typography.md",
@@ -56,22 +44,166 @@
       "bytes": 5687
     },
     {
-      "path": "skills/design-build/SKILL.md",
-      "destination": "skills/design-build/SKILL.md",
-      "sha256": "503ea2393aee7cb361a820f5c93b4a068a400e49858b178d09e817f81d92aa1e",
-      "bytes": 31841
+      "path": "commands/design-build.md",
+      "destination": "commands/design-build.md",
+      "sha256": "bb38272a550255c806657e670ba6f3abca31ffc0f6b5593400ebdbf9eac20993",
+      "bytes": 14313
     },
     {
-      "path": "skills/design-contract-system/SKILL.md",
-      "destination": "skills/design-contract-system/SKILL.md",
-      "sha256": "e9ebf32b59d0123c2de2ac931f1b300db5bbea4f0f048f9bba41e28eae50dcb7",
-      "bytes": 13567
+      "path": "commands/typography.md",
+      "destination": "commands/typography.md",
+      "sha256": "9da53faa33bc1bf5ab089f8290f3fef9afec2b2da50a0543784780d9c38f3a89",
+      "bytes": 5687
     },
     {
-      "path": "skills/frontend-scaffold/SKILL.md",
-      "destination": "skills/frontend-scaffold/SKILL.md",
-      "sha256": "254eb0c9315ac83986b19f9a17c86a29b8c2257134c48b2bbe2846dc95c3679b",
-      "bytes": 13676
+      "path": "scripts/design-build-v2/capture-rendered-evidence.mjs",
+      "destination": "scripts/design-build-v2/capture-rendered-evidence.mjs",
+      "sha256": "0c9631b9e1473e4457aa5e7042403e3977dae3809eeb6171d8786c183ad6cad2",
+      "bytes": 2067
+    },
+    {
+      "path": "scripts/design-build-v2/compare-section.mjs",
+      "destination": "scripts/design-build-v2/compare-section.mjs",
+      "sha256": "9b61c5d36455c859fb0b98e34dd637acdf8e3cb448a27a453b3f2679ae818a6b",
+      "bytes": 7725
+    },
+    {
+      "path": "scripts/design-build-v2/detect-project.mjs",
+      "destination": "scripts/design-build-v2/detect-project.mjs",
+      "sha256": "fefd42c9c835c43c33d6895b0f9238648780ffe9430545d939c18afb96b2ae5b",
+      "bytes": 13751
+    },
+    {
+      "path": "scripts/design-build-v2/preview-runtime.mjs",
+      "destination": "scripts/design-build-v2/preview-runtime.mjs",
+      "sha256": "a115d46aec485d72202cd6a27bce667d38ac2adb125b7b618477ff8e9d544090",
+      "bytes": 7580
+    },
+    {
+      "path": "scripts/design-build-v2/render-parity.mjs",
+      "destination": "scripts/design-build-v2/render-parity.mjs",
+      "sha256": "1b201dbb463bcdba45be610c2c098ac7a5fed83398c64b8ee53d4d820313771f",
+      "bytes": 11546
+    },
+    {
+      "path": "scripts/design-build-v2/rendered-authority.mjs",
+      "destination": "scripts/design-build-v2/rendered-authority.mjs",
+      "sha256": "cc47c78c5fe592c1979300f8167b101a84285420715479cae9d6fa9efb95f41a",
+      "bytes": 7363
+    },
+    {
+      "path": "scripts/design-build-v2/section-gate.mjs",
+      "destination": "scripts/design-build-v2/section-gate.mjs",
+      "sha256": "e11395b3000b1ce65f233af7b38b16ba70dfc8fcb2f3de92f525c56be6dd8623",
+      "bytes": 5224
+    },
+    {
+      "path": "scripts/design-build-v2/state-machine.mjs",
+      "destination": "scripts/design-build-v2/state-machine.mjs",
+      "sha256": "3398564aff07cc4e5507e4246d940380cf9c0cbede2a972a538e0c92e4f663bc",
+      "bytes": 23853
+    },
+    {
+      "path": "scripts/lib/loopback-guard.js",
+      "destination": "scripts/lib/loopback-guard.js",
+      "sha256": "3efcc93c9c631876f824e61f97945a8260fba9ad7ea14baffee3de0781b74bcb",
+      "bytes": 1801
+    },
+    {
+      "path": "scripts/lib/plan-canvas/adapters/blade/sdk.blade.php",
+      "destination": "scripts/lib/plan-canvas/adapters/blade/sdk.blade.php",
+      "sha256": "943045acc2b105e6bb43f392d42a07cea78d838f8b9b882a00bf1bf99a46bc5d",
+      "bytes": 708
+    },
+    {
+      "path": "scripts/lib/plan-canvas/adapters/vite.mjs",
+      "destination": "scripts/lib/plan-canvas/adapters/vite.mjs",
+      "sha256": "9cc9ac927141c58821a6f97ebae00adeb806cd232d987a0a9ae179ca84e94913",
+      "bytes": 853
+    },
+    {
+      "path": "scripts/lib/plan-canvas/markdown.js",
+      "destination": "scripts/lib/plan-canvas/markdown.js",
+      "sha256": "bb68dda565690e3830c93c64fb502dc4dc1ecf036c0cfdbd6d38d78022b58d72",
+      "bytes": 9657
+    },
+    {
+      "path": "scripts/lib/plan-canvas/sdk.js",
+      "destination": "scripts/lib/plan-canvas/sdk.js",
+      "sha256": "46fc2036fcb4ac3fd3a83657a9bc48fed3002062aaf37c1e84856d3b7057f0ef",
+      "bytes": 11601
+    },
+    {
+      "path": "scripts/lib/plan-canvas/server.js",
+      "destination": "scripts/lib/plan-canvas/server.js",
+      "sha256": "6b8f3cd9f55d2131876423b644be82f2710996d17193aaea7ef2b8ee113ea658",
+      "bytes": 38408
+    },
+    {
+      "path": "scripts/lib/plan-canvas/sessions.js",
+      "destination": "scripts/lib/plan-canvas/sessions.js",
+      "sha256": "6d93b4547fc39b09b4d91b22f04368a9f0912c6e7a563258d1ab76022de9fc8d",
+      "bytes": 21479
+    },
+    {
+      "path": "scripts/lib/plan-canvas/ui.js",
+      "destination": "scripts/lib/plan-canvas/ui.js",
+      "sha256": "1242269cf1d0c3bbf42c97d34b89745fc9c0ad47300cb79de65d24f43af3356a",
+      "bytes": 44179
+    },
+    {
+      "path": "scripts/lib/plan-canvas/verdict-binding.js",
+      "destination": "scripts/lib/plan-canvas/verdict-binding.js",
+      "sha256": "35cceeb42947ce450382863a1fbafefa19ec0ad307102cc0b4dadde2d9515265",
+      "bytes": 6909
+    },
+    {
+      "path": "scripts/lib/platform-launch.js",
+      "destination": "scripts/lib/platform-launch.js",
+      "sha256": "953683e8c2a7057ac93ae1bc00979665360529431a08d004ba87876dcfee983e",
+      "bytes": 5109
+    },
+    {
+      "path": "scripts/plan-canvas.js",
+      "destination": "scripts/plan-canvas.js",
+      "sha256": "9e06d1dea6e25277123ca7382327aa4052f4d25ca01a431158bd56009860c4f2",
+      "bytes": 18622
+    },
+    {
+      "path": "skills/design-build/references/adapter-astro.md",
+      "destination": "skills/design-build/references/adapter-astro.md",
+      "sha256": "10d851b41dbb1edacd585ea33deb6b651d9314adf358f3fadc0c4cc50c1b4408",
+      "bytes": 563
+    },
+    {
+      "path": "skills/design-build/references/adapter-compose.md",
+      "destination": "skills/design-build/references/adapter-compose.md",
+      "sha256": "54a91a3b368c131f2c983505558293093c498d9abf4d7581f37cc3fe30b12dcb",
+      "bytes": 559
+    },
+    {
+      "path": "skills/design-build/references/adapter-flutter.md",
+      "destination": "skills/design-build/references/adapter-flutter.md",
+      "sha256": "8aa86ede78e6eb4f032fcbb988f8964c78feb7011d62dc23ca9d5f99596a4f1d",
+      "bytes": 518
+    },
+    {
+      "path": "skills/design-build/references/adapter-react.md",
+      "destination": "skills/design-build/references/adapter-react.md",
+      "sha256": "64dd89ca46dda79c04b21a8fa336a6571d6951f536d1184f1d08af0c3e3bf74e",
+      "bytes": 931
+    },
+    {
+      "path": "skills/design-build/references/adapter-svelte.md",
+      "destination": "skills/design-build/references/adapter-svelte.md",
+      "sha256": "b52edb315630bee4008c081f8369e8a2191cf006d022a64171fb274f277c793e",
+      "bytes": 487
+    },
+    {
+      "path": "skills/design-build/references/adapter-vue.md",
+      "destination": "skills/design-build/references/adapter-vue.md",
+      "sha256": "6a805f9794b81160048b7036272ac5dcd6bc4a0e53c73913d2cdd4cfd41d43dd",
+      "bytes": 459
     },
     {
       "path": "skills/design-build/references/bundle-protocol.md",
@@ -80,10 +212,10 @@
       "bytes": 840
     },
     {
-      "path": "skills/design-build/references/adapter-react.md",
-      "destination": "skills/design-build/references/adapter-react.md",
-      "sha256": "64dd89ca46dda79c04b21a8fa336a6571d6951f536d1184f1d08af0c3e3bf74e",
-      "bytes": 931
+      "path": "skills/design-build/references/native-common.md",
+      "destination": "skills/design-build/references/native-common.md",
+      "sha256": "dc04f83ce7762b6ed50bf866afb340cbb3e0924bf3199618b786c77cc4d3e1b7",
+      "bytes": 1367
     },
     {
       "path": "skills/design-build/references/parity-chain.md",
@@ -98,77 +230,23 @@
       "bytes": 1535
     },
     {
-      "path": "skills/design-build/references/native-common.md",
-      "destination": "skills/design-build/references/native-common.md",
-      "sha256": "dc04f83ce7762b6ed50bf866afb340cbb3e0924bf3199618b786c77cc4d3e1b7",
-      "bytes": 1367
+      "path": "skills/design-build/SKILL.md",
+      "destination": "skills/design-build/SKILL.md",
+      "sha256": "f057169b3950365c6b0ff86ab726142ccdf1cafdba1d354df724f6decad5635d",
+      "bytes": 33106
     },
     {
-      "path": "skills/design-build/references/adapter-vue.md",
-      "destination": "skills/design-build/references/adapter-vue.md",
-      "sha256": "6a805f9794b81160048b7036272ac5dcd6bc4a0e53c73913d2cdd4cfd41d43dd",
-      "bytes": 459
+      "path": "skills/design-contract-system/SKILL.md",
+      "destination": "skills/design-contract-system/SKILL.md",
+      "sha256": "e9ebf32b59d0123c2de2ac931f1b300db5bbea4f0f048f9bba41e28eae50dcb7",
+      "bytes": 13567
     },
     {
-      "path": "skills/design-build/references/adapter-svelte.md",
-      "destination": "skills/design-build/references/adapter-svelte.md",
-      "sha256": "b52edb315630bee4008c081f8369e8a2191cf006d022a64171fb274f277c793e",
-      "bytes": 487
-    },
-    {
-      "path": "skills/design-build/references/adapter-astro.md",
-      "destination": "skills/design-build/references/adapter-astro.md",
-      "sha256": "10d851b41dbb1edacd585ea33deb6b651d9314adf358f3fadc0c4cc50c1b4408",
-      "bytes": 563
-    },
-    {
-      "path": "skills/design-build/references/adapter-flutter.md",
-      "destination": "skills/design-build/references/adapter-flutter.md",
-      "sha256": "8aa86ede78e6eb4f032fcbb988f8964c78feb7011d62dc23ca9d5f99596a4f1d",
-      "bytes": 518
-    },
-    {
-      "path": "skills/design-build/references/adapter-compose.md",
-      "destination": "skills/design-build/references/adapter-compose.md",
-      "sha256": "54a91a3b368c131f2c983505558293093c498d9abf4d7581f37cc3fe30b12dcb",
-      "bytes": 559
-    },
-    {
-      "path": "scripts/design-build-v2/state-machine.mjs",
-      "destination": "scripts/design-build-v2/state-machine.mjs",
-      "sha256": "945dc3c38f0e29a7a9c9fc7e3da6760b1489bf7e772ec9dadcf5590beb6a4212",
-      "bytes": 22708
-    },
-    {
-      "path": "scripts/design-build-v2/rendered-authority.mjs",
-      "destination": "scripts/design-build-v2/rendered-authority.mjs",
-      "sha256": "cc47c78c5fe592c1979300f8167b101a84285420715479cae9d6fa9efb95f41a",
-      "bytes": 7363
-    },
-    {
-      "path": "scripts/design-build-v2/section-gate.mjs",
-      "destination": "scripts/design-build-v2/section-gate.mjs",
-      "sha256": "fdad96d92518427099505d625fedaf9e03c11ccdf2627c25d0de731d2e29f1f6",
-      "bytes": 5050
-    },
-    {
-      "path": "scripts/design-build-v2/compare-section.mjs",
-      "destination": "scripts/design-build-v2/compare-section.mjs",
-      "sha256": "9b61c5d36455c859fb0b98e34dd637acdf8e3cb448a27a453b3f2679ae818a6b",
-      "bytes": 7725
-    },
-    {
-      "path": "scripts/design-build-v2/render-parity.mjs",
-      "destination": "scripts/design-build-v2/render-parity.mjs",
-      "sha256": "1b201dbb463bcdba45be610c2c098ac7a5fed83398c64b8ee53d4d820313771f",
-      "bytes": 11546
-    },
-    {
-      "path": "scripts/design-build-v2/capture-rendered-evidence.mjs",
-      "destination": "scripts/design-build-v2/capture-rendered-evidence.mjs",
-      "sha256": "0c9631b9e1473e4457aa5e7042403e3977dae3809eeb6171d8786c183ad6cad2",
-      "bytes": 2067
+      "path": "skills/frontend-scaffold/SKILL.md",
+      "destination": "skills/frontend-scaffold/SKILL.md",
+      "sha256": "254eb0c9315ac83986b19f9a17c86a29b8c2257134c48b2bbe2846dc95c3679b",
+      "bytes": 13676
     }
   ],
-  "modified_utc": "2026-11-27T11:20:00Z"
+  "modified_utc": "2026-11-27T17:11:50Z"
 }

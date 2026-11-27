@@ -16,8 +16,49 @@ const path = require('path');
 const {
   MAX_PROMPT_CHARS,
   computePlanDigest,
-  validateBoundVerdict
+  validateBoundVerdict,
+  validateNativeVerdict
 } = require('./verdict-binding');
+
+// One verdict policy for both the queue and the drain path. A native session is
+// validated against its preview identity; an AGY session additionally binds the
+// workspace, the session and the plan file.
+function validateVerdictSubmission(raw, session, key) {
+  const workspace = session.workspace || path.dirname(session.file);
+  if (session.previewMode === 'framework-native') {
+    const binding = validateNativeVerdict(raw, session.previewMeta);
+    if (!binding.ok) return { ok: false, reason: binding.reason };
+    if (session.target !== 'antigravity-cli') {
+      return { ok: true, identity: binding.identity, planDigest: null };
+    }
+    if (raw.workspace !== workspace) return { ok: false, reason: 'WORKSPACE_MISMATCH' };
+    if (raw.session !== key) return { ok: false, reason: 'SESSION_MISMATCH' };
+    // The plan digest travels separately here: revisionDigest names the preview.
+    if (!/^[0-9a-f]{64}$/.test(raw.planDigest || '')) {
+      return { ok: false, reason: 'MISSING_BINDING' };
+    }
+    const planDigest = planDigestOrNull(session.file);
+    if (raw.planDigest !== planDigest) return { ok: false, reason: 'STALE_PLAN' };
+    return { ok: true, identity: binding.identity, planDigest };
+  }
+  if (session.target !== 'antigravity-cli') return { ok: true, identity: null, planDigest: null };
+  const planDigest = planDigestOrNull(session.file);
+  const binding = validateBoundVerdict(raw, { workspace, session: key, revisionDigest: planDigest });
+  if (!binding.ok) return { ok: false, reason: binding.reason };
+  return { ok: true, identity: null, planDigest };
+}
+
+// A queued verdict is re-checked at drain time, so a preview that changed
+// between the click and takeFeedback cannot be approved retroactively.
+function verdictStillBound(session, item) {
+  if (item.planDigest && item.planDigest !== planDigestOrNull(session.file)) return false;
+  if (session.previewMode === 'framework-native') {
+    const raw = { ...item, kind: 'verdict', timestamp: item.timestamp || item.at };
+    return validateNativeVerdict(raw, session.previewMeta).ok;
+  }
+  return true;
+}
+
 
 // Anchor locators come from the browser, not the human. Truncating one keeps
 // the commentary usable; rejecting it would discard what the user typed.
@@ -29,6 +70,27 @@ const DEFAULT_MAX_TEXT_CHARS = 100000;
 const FEEDBACK_KINDS = new Set(['chat', 'annotation', 'verdict']);
 const VERDICTS = new Set(['approve', 'request-changes']);
 const PREVIEW_MODES = new Set(['framework-native', 'standalone-html']);
+
+// Everything that makes an approval name one specific preview. A queued verdict
+// is only valid while this tuple is unchanged.
+function previewIdentity(session) {
+  const meta = (session && session.previewMeta) || {};
+  return [
+    (session && session.previewMode) || '',
+    meta.section || '',
+    meta.revision || '',
+    meta.revisionDigest || '',
+    meta.designDigest || ''
+  ].join('\u0000');
+}
+
+function planDigestOrNull(file) {
+  try {
+    return computePlanDigest(file);
+  } catch {
+    return null;
+  }
+}
 
 // A preview URL comes from the agent, and the canvas will embed it. Only an
 // absolute http(s) URL is accepted: anything else (data:, javascript:, file:)
@@ -48,13 +110,14 @@ function sanitizePreviewUrl(value) {
   }
 }
 
-// Only the two labels the canvas actually renders. Anything else a caller
-// sends is dropped so a large object cannot bloat the session file that every
-// broadcast re-reads.
+// Only the labels the canvas actually renders. Anything else a caller sends is
+// dropped so a large object cannot bloat the session file that every broadcast
+// re-reads. An invalid digest is dropped rather than stored: a session without
+// a usable digest fails closed at verdict time.
 function sanitizePreviewMeta(value) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
   const meta = {};
-  for (const field of ['section', 'revision']) {
+  for (const field of ['section', 'revision', 'framework']) {
     const text = value[field];
     if (typeof text === 'string' && text.length > 0) meta[field] = text.slice(0, 120);
   }
@@ -139,6 +202,20 @@ function clipAnchorPart(value, maxLength) {
   return { value: value.slice(0, maxLength), truncated: true };
 }
 
+// Numeric anchor fields are browser measurements, so a non-finite entry is
+// dropped rather than turned into null or NaN on the agent side.
+function numericFields(raw, keys) {
+  if (!raw || typeof raw !== 'object') return null;
+  const out = {};
+  for (const key of keys) {
+    const value = Number(raw[key]);
+    if (Number.isFinite(value)) out[key] = Math.round(value * 100) / 100;
+  }
+  return Object.keys(out).length ? out : null;
+}
+
+const STYLE_KEYS = ['display', 'color', 'backgroundColor', 'fontFamily', 'fontSize', 'fontWeight'];
+
 // Normalize one browser-submitted feedback item into the shape delivered to
 // the agent. Returns null for unusable input rather than throwing so a
 // malformed item can never wedge the queue.
@@ -177,6 +254,25 @@ function normalizeFeedbackItem(raw, counter, maxTextLength = DEFAULT_MAX_TEXT_CH
       const textPart = clipAnchorPart(anchor.textRange.text, 1000);
       item.anchor.textRange = { text: textPart.value };
       if (textPart.truncated) item.anchor.truncated = true;
+    }
+    // Element context captured in the live document: enough to re-locate the
+    // target without any data-ecc-id instrumentation in the project.
+    for (const key of ['role', 'testId', 'name']) {
+      const part = clipAnchorPart(anchor[key], 200);
+      if (part.value) item.anchor[key] = part.value;
+      if (part.truncated) item.anchor.truncated = true;
+    }
+    const rect = numericFields(anchor.rect, ['x', 'y', 'w', 'h']);
+    if (rect) item.anchor.rect = rect;
+    const viewport = numericFields(anchor.viewport, ['w', 'h', 'dpr']);
+    if (viewport) item.anchor.viewport = viewport;
+    if (anchor.styles && typeof anchor.styles === 'object') {
+      const styles = {};
+      for (const key of STYLE_KEYS) {
+        const part = clipAnchorPart(anchor.styles[key], 120);
+        if (part.value) styles[key] = part.value;
+      }
+      if (Object.keys(styles).length) item.anchor.styles = styles;
     }
     if (!item.text) return null;
   }
@@ -255,16 +351,63 @@ function createSessionStore({ stateDir = resolveStateDir() } = {}) {
     // legacy session shape, so old sessions and old agents keep working.
     const mode = PREVIEW_MODES.has(previewMode) ? previewMode : null;
     if (mode) {
+      // A queued verdict names exactly one preview. Any change to the mode,
+      // section, revision label or either digest makes it stale, so it is
+      // dropped here instead of being drained as approval of the newer draft.
+      const before = previewIdentity(session);
       session.previewMode = mode;
-      const url = mode === 'framework-native' ? sanitizePreviewUrl(previewUrl) : null;
-      if (url) session.previewUrl = url;
-      const meta = sanitizePreviewMeta(previewMeta);
-      if (meta) session.previewMeta = meta;
+      if (mode === 'framework-native') {
+        const url = sanitizePreviewUrl(previewUrl);
+        if (url) session.previewUrl = url;
+        const meta = sanitizePreviewMeta(previewMeta);
+        if (meta) session.previewMeta = meta;
+        else delete session.previewMeta;
+      } else {
+        // Legacy mode carries no native identity; leftover preview fields would
+        // still render a native frame and a stale-revision banner.
+        delete session.previewUrl;
+        delete session.previewMeta;
+      }
+      if (previewIdentity(session) !== before && Array.isArray(session.pendingFeedback)) {
+        session.pendingFeedback = session.pendingFeedback.filter(item => item.kind !== 'verdict');
+      }
     }
     session.updatedAt = nowIso();
     state.sessions[key] = session;
     persist();
     return { session, refused: false };
+  }
+
+  // One item through the same policy: validate a verdict, then normalize.
+  // Returns the accepted item or the rejection the batch reports.
+  function acceptOneFeedback(raw, session, key, id, limit) {
+    let binding = { ok: true, identity: null, planDigest: null };
+    if (raw && raw.kind === 'verdict') {
+      binding = validateVerdictSubmission(raw, session, key);
+      if (!binding.ok) return { rejected: { reason: binding.reason, verdict: raw.verdict } };
+    }
+    let item;
+    try {
+      item = normalizeFeedbackItem(raw, id, limit);
+    } catch (error) {
+      // One oversized item must not reject the whole batch: the browser sent
+      // several things and the rest is still valid.
+      return { rejected: { reason: error.code || 'INVALID_ITEM' } };
+    }
+    // A malformed item normalizes to null instead of throwing; one bad entry
+    // must not abort the batch.
+    if (!item) return { rejected: { reason: 'INVALID_ITEM' } };
+    if (item.kind === 'verdict' && (binding.identity || binding.planDigest)) {
+      // Keep the reviewed identity on the item, so a later reader can tell which
+      // revision was approved without trusting the current session meta.
+      if (binding.identity) Object.assign(item, binding.identity);
+      if (binding.planDigest) {
+        item.planDigest = binding.planDigest;
+        // No preview identity: pre-native AGY, where revisionDigest names the plan.
+        if (!binding.identity) item.revisionDigest = binding.planDigest;
+      }
+    }
+    return { item };
   }
 
   // Queue feedback from the browser. Chat-shaped items are mirrored into the
@@ -273,45 +416,16 @@ function createSessionStore({ stateDir = resolveStateDir() } = {}) {
   function queueFeedback(key, rawItems, { endSession = false } = {}) {
     const session = get(key);
     if (!session || session.status === 'ended') return null;
-    // Strict verdict binding applies only to sessions opened for the agy CLI.
-    // Legacy sessions keep the plain-verdict path byte-for-byte compatible.
-    const strict = session.target === 'antigravity-cli';
-    const workspace = session.workspace || path.dirname(session.file);
+    // Strict binding applies only to sessions opened for the agy CLI. Legacy
+    // sessions keep the plain-verdict path byte-for-byte compatible.
+    const limit = session.target === 'antigravity-cli' ? MAX_PROMPT_CHARS : DEFAULT_MAX_TEXT_CHARS;
     const accepted = [];
     const rejected = [];
     for (const raw of Array.isArray(rawItems) ? rawItems : []) {
       state.feedbackCounter += 1;
-      if (strict && raw && raw.kind === 'verdict') {
-        let currentDigest = null;
-        try {
-          currentDigest = computePlanDigest(session.file);
-        } catch {
-          currentDigest = null;
-        }
-        const binding = validateBoundVerdict(raw, {
-          workspace,
-          session: key,
-          revisionDigest: currentDigest
-        });
-        if (!binding.ok) {
-          rejected.push({ reason: binding.reason, verdict: raw.verdict });
-          continue;
-        }
-      }
-      let item = null;
-      try {
-        item = normalizeFeedbackItem(
-          raw,
-          state.feedbackCounter,
-          strict ? MAX_PROMPT_CHARS : DEFAULT_MAX_TEXT_CHARS
-        );
-      } catch (error) {
-        // One oversized item must not reject the whole batch: the browser sent
-        // several things and the rest is still valid.
-        rejected.push({ reason: error.code || 'INVALID_ITEM' });
-        continue;
-      }
-      if (item) accepted.push(item);
+      const result = acceptOneFeedback(raw, session, key, state.feedbackCounter, limit);
+      if (result.item) accepted.push(result.item);
+      else rejected.push(result.rejected);
     }
     session.pendingFeedback.push(...accepted);
     for (const item of accepted) {
@@ -328,25 +442,41 @@ function createSessionStore({ stateDir = resolveStateDir() } = {}) {
     return { accepted, rejected, pending: session.pendingFeedback.length, session };
   }
 
-  // Deliver-and-drain: feedback is handed to exactly one await call, after
-  // which the session flips back to open. An ended session keeps reporting
-  // ended (with attribution) so agents know to stop polling.
   function takeFeedback(key) {
     const session = get(key);
     if (!session) return { status: 'missing' };
     if (session.pendingFeedback.length > 0) {
-      const items = session.pendingFeedback;
+      // Re-check every verdict against the session as it is NOW: a preview that
+      // moved on between the click and this drain invalidates the queued one.
+      const rejected = [];
+      const items = session.pendingFeedback.filter(item => {
+        if (item.kind !== 'verdict' || verdictStillBound(session, item)) return true;
+        rejected.push({ reason: 'STALE_REVISION', verdict: item.verdict });
+        return false;
+      });
       session.pendingFeedback = [];
-      const result = { status: 'feedback', items };
-      if (session.status === 'ended') {
-        result.sessionEnded = true;
-        result.endedBy = session.endedBy;
-      } else {
-        session.status = 'open';
+      // Every queued verdict was stale: nothing is waiting any more, so the
+      // session must not stay in the 'feedback' state.
+      if (items.length === 0 && session.status === 'feedback') session.status = 'open';
+      if (items.length > 0) {
+        const result = { status: 'feedback', items };
+        if (rejected.length > 0) result.rejected = rejected;
+        if (session.status === 'ended') {
+          result.sessionEnded = true;
+          result.endedBy = session.endedBy;
+        } else {
+          session.status = 'open';
+        }
+        session.updatedAt = nowIso();
+        persist();
+        return result;
       }
       session.updatedAt = nowIso();
       persist();
-      return result;
+      if (session.status === 'ended') {
+        return { status: 'ended', endedBy: session.endedBy, rejected };
+      }
+      return { status: 'waiting', rejected };
     }
     if (session.status === 'ended') {
       return { status: 'ended', endedBy: session.endedBy };
@@ -381,7 +511,9 @@ function createSessionStore({ stateDir = resolveStateDir() } = {}) {
       status: session.status,
       endedBy: session.endedBy,
       pending: session.pendingFeedback.length,
-      updatedAt: session.updatedAt
+      updatedAt: session.updatedAt,
+      previewMode: session.previewMode,
+      previewMeta: session.previewMeta || null
     }));
   }
 
@@ -392,6 +524,7 @@ function createSessionStore({ stateDir = resolveStateDir() } = {}) {
   return {
     stateDir,
     stateFile,
+    previewModes: PREVIEW_MODES,
     open,
     get,
     findByFile,
@@ -407,7 +540,9 @@ function createSessionStore({ stateDir = resolveStateDir() } = {}) {
 // One-line rendering of a feedback item for the conversation transcript.
 function chatLineFor(item) {
   if (item.kind === 'verdict') {
-    const label = item.verdict === 'approve' ? 'Approved the plan' : 'Requested changes';
+    const label = item.verdict !== 'approve'
+      ? 'Requested changes'
+      : item.designDigest ? 'Approved the design' : 'Approved the plan';
     return item.text ? `${label}: ${item.text}` : label;
   }
   if (item.kind === 'annotation') {
@@ -418,6 +553,7 @@ function chatLineFor(item) {
 }
 
 module.exports = {
+  PREVIEW_MODES,
   canonicalizeArtifactPath,
   createSessionStore,
   normalizeFeedbackItem,

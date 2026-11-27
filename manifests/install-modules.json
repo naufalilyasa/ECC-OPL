@@ -449,7 +449,11 @@
         "skills/tdd-workflow",
         "skills/verification-loop",
         "skills/windows-desktop-e2e",
-        "skills/workflow-state"
+        "skills/workflow-state",
+        "scripts/plan-canvas.js",
+        "scripts/lib/plan-canvas",
+        "scripts/lib/platform-launch.js",
+        "scripts/lib/loopback-guard.js"
       ],
       "targets": [
         "claude",
@@ -1573,7 +1577,16 @@
         ".opencode/scripts/e2e-registry.mjs",
         "scripts/design-build-v2/rendered-authority.mjs",
         "scripts/design-build-v2/section-gate.mjs",
-        "scripts/design-build-v2/state-machine.mjs"
+        "scripts/design-build-v2/state-machine.mjs",
+        "scripts/design-build-v2/detect-project.mjs",
+        "scripts/design-build-v2/preview-runtime.mjs",
+        "scripts/design-build-v2/compare-section.mjs",
+        "scripts/design-build-v2/render-parity.mjs",
+        "scripts/design-build-v2/capture-rendered-evidence.mjs",
+        "scripts/plan-canvas.js",
+        "scripts/lib/plan-canvas",
+        "scripts/lib/platform-launch.js",
+        "scripts/lib/loopback-guard.js"
       ],
       "targets": [
         "antigravity-cli"

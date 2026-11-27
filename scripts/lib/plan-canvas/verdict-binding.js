@@ -29,6 +29,8 @@ function isNonEmptyString(value) {
   return typeof value === 'string' && value.length > 0;
 }
 
+const HEX64 = /^[0-9a-f]{64}$/;
+
 /**
  * Validate a browser-submitted verdict against the exact bound context.
  * Returns `{ok:true, verdict}` or `{ok:false, reason}`. Never accepts chat
@@ -55,6 +57,53 @@ function validateBoundVerdict(raw, ctx = {}) {
   if (raw.session !== ctx.session) return { ok: false, reason: 'SESSION_MISMATCH' };
   if (raw.revisionDigest !== ctx.revisionDigest) return { ok: false, reason: 'STALE_REVISION' };
   return { ok: true, verdict: raw.verdict };
+}
+
+/**
+ * Native preview verdict binding. A framework-native verdict must carry the
+ * identity of the exact preview the owner looked at — section, revision and
+ * both digests — so a verdict drained from an old tab cannot approve a newer
+ * draft. Compared against the *current* session.previewMeta, never the meta the
+ * browser booted with.
+ */
+function validateNativeVerdict(raw, previewMeta) {
+  if (!raw || typeof raw !== 'object' || raw.kind !== 'verdict') {
+    return { ok: false, reason: 'MISSING_BINDING' };
+  }
+  // A session that lost its preview identity cannot bind anything. Failing
+  // closed here is what stops a plain verdict from approving a native draft.
+  if (!previewMeta || typeof previewMeta !== 'object') {
+    return { ok: false, reason: 'MISSING_BINDING' };
+  }
+  if (!isNonEmptyString(previewMeta.section) || !isNonEmptyString(previewMeta.revision)
+    || !HEX64.test(previewMeta.revisionDigest || '')
+    || !HEX64.test(previewMeta.designDigest || '')) {
+    return { ok: false, reason: 'MISSING_BINDING' };
+  }
+  if (raw.verdict !== 'approve' && raw.verdict !== 'request-changes') {
+    return { ok: false, reason: 'UNSUPPORTED_VERDICT' };
+  }
+  if (!isNonEmptyString(raw.timestamp) || !Number.isFinite(Date.parse(raw.timestamp))) {
+    return { ok: false, reason: 'INVALID_TIMESTAMP' };
+  }
+  if (!isNonEmptyString(raw.section) || !isNonEmptyString(raw.revision)
+    || !HEX64.test(raw.revisionDigest || '') || !HEX64.test(raw.designDigest || '')) {
+    return { ok: false, reason: 'MISSING_BINDING' };
+  }
+  if (raw.section !== previewMeta.section) return { ok: false, reason: 'STALE_SECTION' };
+  if (raw.revision !== previewMeta.revision) return { ok: false, reason: 'STALE_REVISION' };
+  if (raw.revisionDigest !== previewMeta.revisionDigest) return { ok: false, reason: 'STALE_REVISION' };
+  if (raw.designDigest !== previewMeta.designDigest) return { ok: false, reason: 'STALE_DESIGN' };
+  return {
+    ok: true,
+    verdict: raw.verdict,
+    identity: {
+      section: raw.section,
+      revision: raw.revision,
+      revisionDigest: raw.revisionDigest,
+      designDigest: raw.designDigest
+    }
+  };
 }
 
 function isValidPromptLength(text) {
@@ -126,5 +175,6 @@ module.exports = {
   isValidPromptLength,
   persistAttachments,
   validateAttachments,
-  validateBoundVerdict
+  validateBoundVerdict,
+  validateNativeVerdict
 };

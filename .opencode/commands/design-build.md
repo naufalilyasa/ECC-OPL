@@ -88,22 +88,65 @@ node ~/ECC/scripts/plan-canvas.js await <file> --reply "..."
 node ~/ECC/scripts/plan-canvas.js end <file>
 ```
 
-`await` blocks: run it as a background task. Accept only an item shaped
-`{"kind":"verdict","verdict":"approve"}`. Server: `127.0.0.1:4517`.
+The first two forms are the **legacy / standalone-html** path: the artifact file is
+the design document, and the verdict is plain
+`{"kind":"verdict","verdict":"approve"}`. Use them only for vanilla projects, or for
+a section whose recorded mode is `standalone-html`. Do not use them to approve a
+framework-native section.
+
+`await` blocks: run it as a background task. Server: `127.0.0.1:4517`.
 
 **Native mode** previews the live component instead of an HTML file:
 
 ```bash
 node ~/ECC/scripts/plan-canvas.js open <section-path> \
   --preview-url http://127.0.0.1:<dev-port>/<route> \
-  --preview-mode framework-native --section <NN>-<slug> --revision <rN>
+  --preview-mode framework-native \
+  --section <NN>-<slug> --revision <rN> \
+  --revision-digest <sha256 of the reviewed reference set> \
+  --design-digest <sha256 of the approved reference set> \
+  --framework <react-vite|laravel-inertia-react|vue-vite> \
+  --data-mode <fixture|production>
 ```
+
+Both digests are required for native mode: the Canvas refuses a native session
+without them, because it cannot bind the owner's approval to the exact preview
+they reviewed. `--data-mode` says which data the preview renders, so nobody
+mistakes a fixture for production.
+
+Derive them from the files that shape the render, not by hand:
+
+```bash
+node --input-type=module -e "
+import { fingerprintNativeReference } from './scripts/design-build-v2/state-machine.mjs';
+console.log(JSON.stringify(fingerprintNativeReference({ files: [
+  { kind: 'component-source', path: 'src/sections/Hero.tsx', sha256: '<sha256>' },
+  { kind: 'design-contract',  path: 'DESIGN.md',             sha256: '<sha256>' }
+]}), null, 2))"
+```
+
+`revisionDigest` covers everything in the reference; `designDigest` covers only the
+visual inputs. Pass them through unchanged.
 
 The Canvas serves a wrapper that frames the project dev server. The preview URL is
 stored only for `framework-native`; `standalone-html` never stores one. In-frame
-annotation is not available in native mode (cross-origin), so feedback is chat +
-verdict. If the dev server is down, report the real error — do not produce an HTML
+annotation in native mode needs the canvas dev-server adapter (Vite plugin
+`planCanvasAnnotations()` or the Blade include `vendor.ecc-plan-canvas.sdk`), added
+temporarily and reported; without it the toggle stays disabled and feedback is chat
++ verdict. If the dev server is down, report the real error — do not produce an HTML
 substitute.
+
+The approval arrives as a verdict naming the reviewed identity:
+
+```json
+{"kind":"verdict","verdict":"approve","section":"<NN>-<slug>","revision":"rN",
+ "revisionDigest":"…","designDigest":"…","timestamp":"…"}
+```
+
+Treat `STALE_REVISION` / `STALE_DESIGN` as "the owner reviewed an older draft":
+re-open the Canvas on the current revision and wait for a fresh verdict. Never
+copy `session.previewMeta` onto a meagre verdict to make it pass — that is exactly
+the stale-approval path the binding exists to block.
 
 ### A1.5 — Live Parity & Scoping Gate (standalone-html only)
 

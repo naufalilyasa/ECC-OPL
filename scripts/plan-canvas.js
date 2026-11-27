@@ -35,7 +35,16 @@ const {
   resolvePort
 } = require('./lib/plan-canvas/server');
 
-const VERSION = require('../package.json').version;
+// A missing package.json must not stop the CLI: an installed copy may ship
+// without it, and the version is only used for the health/status handshake.
+const VERSION = (() => {
+  try {
+    // An installed copy may carry a package.json without a version field.
+    return require('../package.json').version || '0.0.0';
+  } catch {
+    return '0.0.0';
+  }
+})();
 
 const SAFE_REQUEST_PATHS = new Set([
   '/',
@@ -69,6 +78,10 @@ function usage() {
     '         --session-dir <path>  Canvas V2 attachment/session storage dir',
     '         --preview-url <url>   Frame a live dev-server URL instead of the artifact file',
     '         --preview-mode <mode> framework-native | standalone-html (implied by --preview-url)',
+    '         --revision-digest <sha256>  Digest of the previewed revision (required for framework-native)',
+    '         --design-digest <sha256>    Digest of the approved design (required for framework-native)',
+    '         --data-mode <mode>          fixture | production — what data the preview renders',
+    '         --framework <name>          Framework label shown in the Canvas, e.g. react-vite',
     '         --section <slug>      Section label shown in the canvas mode chip',
     '         --revision <rev>      Revision label shown in the canvas mode chip',
     '  await: --reply <msg>  Show an agent reply in the canvas chat before waiting',
@@ -230,6 +243,30 @@ async function cmdOpen(file, args, { stateDir, port }) {
   const previewUrl = valueAfter(args, '--preview-url');
   const section = valueAfter(args, '--section');
   const revision = valueAfter(args, '--revision');
+  const revisionDigest = valueAfter(args, '--revision-digest');
+  const designDigest = valueAfter(args, '--design-digest');
+  const dataMode = valueAfter(args, '--data-mode');
+  const framework = valueAfter(args, '--framework');
+  const meta = {
+    ...(section ? { section } : {}),
+    ...(revision ? { revision } : {}),
+    ...(revisionDigest ? { revisionDigest } : {}),
+    ...(designDigest ? { designDigest } : {}),
+    ...(dataMode ? { dataMode } : {}),
+    ...(framework ? { framework } : {})
+  };
+  if (previewMode === 'framework-native') {
+    // Without the full identity the Canvas cannot bind the approval to what the
+    // owner actually reviewed, so the native session would be unapprovable.
+    const HEX64 = /^[0-9a-f]{64}$/;
+    const missing = !meta.section || !meta.revision
+      || !HEX64.test(meta.revisionDigest || '') || !HEX64.test(meta.designDigest || '');
+    if (missing) {
+      throw new Error('framework-native preview requires --section, --revision, --revision-digest and --design-digest (both 64-char lowercase hex)');
+    }
+  } else if (previewMode && !['framework-native', 'standalone-html'].includes(previewMode)) {
+    throw new Error(`unknown preview mode: ${previewMode}`);
+  }
   const res = await request(port, 'POST', '/api/sessions', {
     file: path.resolve(file),
     reopen: args.includes('--reopen'),
@@ -238,9 +275,7 @@ async function cmdOpen(file, args, { stateDir, port }) {
     sessionDir: sessionDir || undefined,
     previewMode: previewMode || undefined,
     previewUrl: previewUrl || undefined,
-    previewMeta: section || revision
-      ? { ...(section ? { section } : {}), ...(revision ? { revision } : {}) }
-      : undefined
+    previewMeta: Object.keys(meta).length > 0 ? meta : undefined
   });
   if (res.statusCode === 409) return res.body;
   if (res.statusCode !== 200) throw new Error(res.body.error || `open failed (HTTP ${res.statusCode})`);

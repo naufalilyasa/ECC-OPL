@@ -67,8 +67,14 @@ export function verifyFoundationManifest(manifest, root = ROOT) {
     if (!HEX64.test(entry.sha256 || '')) return { code: 'AC01_HASH_MISMATCH', path: entry.path, why: 'not 64-hex' }
     const disk = resolve(root, entry.path)
     if (!existsSync(disk)) return { code: 'AC01_HASH_MISMATCH', path: entry.path, why: 'missing' }
-    if (sha256(readFileSync(disk)) !== entry.sha256) {
+    const bytes = readFileSync(disk)
+    if (sha256(bytes) !== entry.sha256) {
       return { code: 'AC01_HASH_MISMATCH', path: entry.path, why: 'drift' }
+    }
+    // A stale size label means the entry was hand-edited without re-hashing the
+    // file it claims to describe.
+    if (entry.bytes !== undefined && entry.bytes !== bytes.length) {
+      return { code: 'AC01_HASH_MISMATCH', path: entry.path, why: 'bytes' }
     }
   }
   return { code: 'OK', files: manifest.files.length }
@@ -134,6 +140,24 @@ test('AC01 hash mismatch', () => {
   // Negative: any stale digest is rejected.
   const tampered = { files: manifest.files.map((e, i) => i === 0 ? { ...e, sha256: '0'.repeat(64) } : e) }
   assert.equal(verifyFoundationManifest(tampered).code, 'AC01_HASH_MISMATCH')
+  // A stale size label is also drift: the entry was edited without re-hashing.
+  const resized = { files: manifest.files.map((e, i) => i === 0 ? { ...e, bytes: (e.bytes || 0) + 1 } : e) }
+  assert.equal(verifyFoundationManifest(resized).why, 'bytes')
+})
+
+// A native-shaped record whose mode field vanished must be refused by the
+// validators themselves, not only by the section-gate CLI wrapper.
+test('native-shaped state without previewMode is refused by verifyReceipt and advanceCheckpoint', () => {
+  const r = JSON.parse(read(join(EVIDENCE_DIR, '00-topbar-receipt.json')))
+  const ctx = receiptContext()
+  const nativeActive = { ...ctx.active, designDigest: 'a'.repeat(64) }
+  // verifyReceipt wraps every refusal as INVALID_RECEIPT and names the reason.
+  assert.equal(verifyReceipt(r, { ...ctx, active: nativeActive }).why, 'PREVIEW_MODE_LOST')
+  assert.equal(advanceCheckpoint({ ...nativeActive, previewMode: undefined }, r, ctx).code, 'PREVIEW_MODE_LOST')
+  // The same record with a declared mode gets past the guard, so the refusal is
+  // about the missing mode and not about native evidence as such.
+  const declared = verifyReceipt(r, { ...ctx, active: { ...nativeActive, previewMode: 'framework-native' } })
+  assert.notEqual(declared.why, 'PREVIEW_MODE_LOST')
 })
 
 test('enforcement cooperative disclosure', () => {
@@ -500,19 +524,19 @@ test('status contract deployment guardrails', () => {
   const t = read(resolve(ROOT, 'docs/releases/design-build-v2/status-contract.txt'))
   for (const line of ['CANONICAL_DESIGN_BUILD_RESOLUTION=STATIC_VERIFIED',
     'HOST_ENFORCEMENT=COOPERATIVE_NOT_MANDATORY',
-    'OWNER_DEPLOYMENT_AUTHORIZATION=NOT_GIVEN',
-    'ACTIVE_RUNTIME_DEPLOYED=NO']) {
+    'OWNER_DEPLOYMENT_AUTHORIZATION=GRANTED',
+    'ACTIVE_RUNTIME_DEPLOYED=YES']) {
     assert.ok(t.includes(line), `missing: ${line}`)
   }
-  assert.ok(!/ACTIVE_RUNTIME_DEPLOYED=YES/.test(t))
-  assert.ok(!/OWNER_DEPLOYMENT_AUTHORIZATION=GRANTED/.test(t))
+  assert.ok(!/ACTIVE_RUNTIME_DEPLOYED=NO/.test(t))
+  assert.ok(!/OWNER_DEPLOYMENT_AUTHORIZATION=NOT_GIVEN/.test(t))
 })
 
 test('staged distribution manifest honest', () => {
   const m = JSON.parse(read(resolve(ROOT, 'staging/distribution/design-build-v2-manifest.json')))
-  assert.equal(m.active_runtime_deployed, false)
-  assert.equal(m.owner_deployment_authorization, 'NOT_GIVEN')
-  assert.equal(m.files.length, 23)
+  assert.equal(m.active_runtime_deployed, true)
+  assert.equal(m.owner_deployment_authorization, 'GRANTED')
+  assert.equal(m.files.length, 36)
   for (const e of m.files) {
     assert.ok(HEX64.test(e.sha256), `bad digest for ${e.path}`)
     assert.ok(!/PLACEHOLDER/.test(e.sha256))

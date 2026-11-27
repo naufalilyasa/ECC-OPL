@@ -65,7 +65,7 @@ function get(base, pathname) {
     const { session } = store.open(file, preview);
     assert.equal(session.previewMode, 'framework-native');
     assert.equal(session.previewUrl, 'http://127.0.0.1:5199/');
-    assert.deepEqual(session.previewMeta, { section: '01-app-shell', revision: 'r3' });
+    assert.deepEqual(session.previewMeta, { section: '01-app-shell', revision: 'r3', framework: 'react' });
 
     const reloaded = createSessionStore({ stateDir }).get(session.key);
     assert.equal(reloaded.previewMode, 'framework-native');
@@ -156,7 +156,7 @@ function get(base, pathname) {
     const { session } = createSessionStore({ stateDir: dir }).open(file, preview);
     const html = renderCanvasHtml(session);
     assert.ok(html.includes('id="modeChip"'));
-    assert.ok(html.includes('framework-native · 01-app-shell · r3'));
+    assert.ok(html.includes('framework-native · react · 01-app-shell · r3'));
     assert.ok(html.includes('id="openSeparate"'));
     assert.ok(html.includes('href="http://127.0.0.1:5199/"'));
     const boot = bootstrapOf(html);
@@ -197,8 +197,10 @@ function get(base, pathname) {
       const res = await get(base, `/artifact/${native.key}/`);
       assert.equal(res.status, 200);
       assert.equal(res.headers['content-security-policy'],
-        "default-src 'none'; style-src 'unsafe-inline'; frame-src http://127.0.0.1:5199");
+        "default-src 'none'; style-src 'unsafe-inline'; script-src 'self'; frame-src http://127.0.0.1:5199");
       assert.ok(res.body.includes('src="http://127.0.0.1:5199/"'));
+      assert.ok(res.body.includes('id="app-frame"'));
+      assert.ok(res.body.includes('/live-bridge.js'));
       assert.ok(res.body.includes('Open separately'));
       assert.ok(res.body.includes('01-app-shell'));
       assert.ok(!res.body.includes('should not be served'));

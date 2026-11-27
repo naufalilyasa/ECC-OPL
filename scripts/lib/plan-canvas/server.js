@@ -26,6 +26,7 @@ const { artifactSdkJs } = require('./sdk');
 const {
   canvasCss,
   canvasClientJs,
+  liveBridgeJs,
   renderCanvasHtml,
   renderMarkdownArtifactHtml,
   renderSessionListHtml
@@ -309,6 +310,14 @@ function createPlanCanvasServer({
    * The old `working` pill had no expiry and no re-broadcast, so it stuck at
    * "agent working" while nothing at all was listening.
    */
+  // The revision the session currently previews. A tab that booted on an older
+  // one is told so instead of silently approving a draft it never rendered.
+  function currentRevision(key) {
+    const session = store.get(key);
+    const meta = session && session.previewMeta;
+    return meta && typeof meta.revision === 'string' ? meta.revision : null;
+  }
+
   function presenceFor(key, now = Date.now()) {
     const session = store.get(key);
     if (!session || session.status === 'ended') return 'ended';
@@ -330,7 +339,9 @@ function createPlanCanvasServer({
   function broadcastPresence(key) {
     const state = presenceFor(key);
     lastPresence.set(key, state);
-    broadcast(key, 'presence', { state });
+    // The revision travels with presence so a tab that booted on an older
+    // preview can raise its stale banner without a reload.
+    broadcast(key, 'presence', { state, revision: currentRevision(key) });
   }
 
   // Re-broadcast only where an expiry actually changed the answer, so an
@@ -441,6 +452,24 @@ function createPlanCanvasServer({
       }
       if (!fs.existsSync(path.resolve(body.file))) {
         return sendJson(res, 404, { error: `artifact not found: ${body.file}` });
+      }
+      // Reject an unknown mode here rather than letting the store ignore it and
+      // silently open a session nobody can approve.
+      if (body.previewMode !== undefined && body.previewMode !== null
+        && !store.previewModes.has(body.previewMode)) {
+        return sendJson(res, 400, { error: `unknown previewMode: ${body.previewMode}` });
+      }
+      if (body.previewMode === 'framework-native') {
+        const meta = body.previewMeta;
+        const HEX64 = /^[0-9a-f]{64}$/;
+        const complete = meta && typeof meta.section === 'string' && meta.section
+          && typeof meta.revision === 'string' && meta.revision
+          // typeof first: HEX64.test() would stringify a 1-element array and pass.
+          && typeof meta.revisionDigest === 'string' && HEX64.test(meta.revisionDigest)
+          && typeof meta.designDigest === 'string' && HEX64.test(meta.designDigest);
+        if (!complete) {
+          return sendJson(res, 400, { error: 'framework-native requires previewMeta.section, .revision and 64-hex revisionDigest/designDigest' });
+        }
       }
       const { session, refused } = store.open(body.file, {
         reopen: Boolean(body.reopen),
@@ -611,6 +640,7 @@ function createPlanCanvasServer({
         return sendJson(res, 200, {
           status: 'queued',
           accepted: result.accepted.length,
+          rejected: result.rejected,
           pending: result.pending,
           presence: presenceFor(key)
         });
@@ -662,7 +692,7 @@ function createPlanCanvasServer({
       connection: 'keep-alive'
     });
     res.write(`event: chat-sync\ndata: ${JSON.stringify({ chat: session.chat })}\n\n`);
-    res.write(`event: presence\ndata: ${JSON.stringify({ state: presenceFor(key) })}\n\n`);
+    res.write(`event: presence\ndata: ${JSON.stringify({ state: presenceFor(key), revision: currentRevision(key) })}\n\n`);
     if (!sseClients.has(key)) sseClients.set(key, new Set());
     sseClients.get(key).add(res);
     lastPresence.set(key, presenceFor(key));
@@ -690,6 +720,10 @@ function createPlanCanvasServer({
   function renderLivePreviewHtml(session) {
     const meta = session.previewMeta && typeof session.previewMeta === 'object' ? session.previewMeta : {};
     const label = [meta.section, meta.revision].filter(Boolean).map(String).join(' · ');
+    const framework = meta.framework ? `<span class="tag">${escapeHtml(String(meta.framework))}</span>` : '';
+    const dataMode = meta.dataMode
+      ? `<span class="tag" title="Where the previewed data comes from">${meta.dataMode === 'production' ? 'production data' : 'fixture data'}</span>`
+      : '';
     return `<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -707,12 +741,14 @@ function createPlanCanvasServer({
 <div class="bar">
   <span class="tag">live · framework-native</span>
   <span>${escapeHtml(label)}</span>
+  ${framework}${dataMode}
   <span class="url">${escapeHtml(session.previewUrl)}</span>
   <a class="open" href="${escapeHtml(session.previewUrl)}" target="_blank" rel="noopener">Open separately</a>
 </div>
-<iframe src="${escapeHtml(session.previewUrl)}" title="Live project preview"
+<iframe id="app-frame" src="${escapeHtml(session.previewUrl)}" title="Live project preview"
   sandbox="allow-scripts allow-forms allow-popups allow-same-origin"></iframe>
 <div class="hint">Blank frame? The project dev server is not running — start it, then reload.</div>
+<script src="/live-bridge.js"></script>
 </body></html>`;
   }
 
@@ -728,7 +764,7 @@ function createPlanCanvasServer({
       if (origin) {
         if (assetPath) return sendHtml(res, 404, '<h1>No sibling assets in live preview mode</h1>');
         return sendHtml(res, 200, renderLivePreviewHtml(session), {
-          csp: `default-src 'none'; style-src 'unsafe-inline'; frame-src ${origin}`
+          csp: `default-src 'none'; style-src 'unsafe-inline'; script-src 'self'; frame-src ${origin}`
         });
       }
     }
@@ -822,6 +858,10 @@ function createPlanCanvasServer({
         if (req.method === 'GET' && pathname === '/sdk.js') {
           res.writeHead(200, { 'content-type': 'text/javascript; charset=utf-8', 'cache-control': 'no-store' });
           return res.end(artifactSdkJs());
+        }
+        if (req.method === 'GET' && pathname === '/live-bridge.js') {
+          res.writeHead(200, { 'content-type': 'text/javascript; charset=utf-8', 'cache-control': 'no-store' });
+          return res.end(liveBridgeJs());
         }
         const canvasMatch = pathname.match(/^\/canvas\/([a-f0-9]{12})$/);
         if (req.method === 'GET' && canvasMatch) {

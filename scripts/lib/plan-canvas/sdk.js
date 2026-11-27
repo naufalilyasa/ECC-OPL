@@ -16,7 +16,10 @@ function artifactSdkJs() {
   if (window.__eccPlanCanvasSdk) return;
   window.__eccPlanCanvasSdk = true;
 
-  let annotate = true;
+  // Inactive until the canvas chrome answers the ready handshake. A dev server
+  // that serves this script for other reasons stays untouched.
+  let annotate = false;
+  let acked = false;
   let card = null;
 
   const post = msg => window.parent.postMessage(msg, '*');
@@ -88,16 +91,39 @@ function artifactSdkJs() {
   function snippetFor(el) {
     return (el.innerText || el.textContent || '').replace(/\\s+/g, ' ').trim().slice(0, 200);
   }
-  const INTERACTIVE = new Set(['button', 'input', 'select', 'textarea', 'option', 'label', 'summary', 'a']);
-  function isInteractive(el) {
-    let node = el;
-    while (node && node.nodeType === 1) {
-      if (INTERACTIVE.has(node.tagName.toLowerCase()) || node.isContentEditable) return true;
-      node = node.parentElement;
-    }
-    return false;
-  }
+  // Annotation mode owns every click, including controls: selecting a button
+  // must not run the app action underneath. Interact mode is the toggle.
   const isOurs = el => el === host || host.contains(el);
+  function nameFor(el) {
+    const aria = el.getAttribute('aria-label')
+      || (el.getAttribute('aria-labelledby') ? '' : '')
+      || el.getAttribute('title');
+    const text = (el.innerText || el.textContent || '').replace(/\\s+/g, ' ').trim();
+    const fallback = el.getAttribute('placeholder') || el.getAttribute('name') || el.getAttribute('alt') || '';
+    return (aria || text || fallback).slice(0, 120);
+  }
+  function contextFor(el) {
+    const cs = getComputedStyle(el);
+    const rect = el.getBoundingClientRect();
+    return {
+      selector: selectorFor(el),
+      tag: el.tagName.toLowerCase(),
+      role: el.getAttribute('role') || '',
+      testId: el.getAttribute('data-testid') || '',
+      name: nameFor(el),
+      snippet: snippetFor(el),
+      rect: { x: Math.round(rect.x), y: Math.round(rect.y), w: Math.round(rect.width), h: Math.round(rect.height) },
+      viewport: { w: window.innerWidth, h: window.innerHeight, dpr: window.devicePixelRatio || 1 },
+      styles: {
+        display: cs.display,
+        color: cs.color,
+        backgroundColor: cs.backgroundColor,
+        fontFamily: cs.fontFamily,
+        fontSize: cs.fontSize,
+        fontWeight: cs.fontWeight
+      }
+    };
+  }
 
   // --- annotation card ---------------------------------------------------
   function openCard(target) {
@@ -138,7 +164,7 @@ function artifactSdkJs() {
   document.addEventListener('mousemove', e => {
     if (!annotate || card) { hl.style.display = 'none'; return; }
     const el = e.target;
-    if (!el || isOurs(el) || el === document.body || el === document.documentElement || isInteractive(el)) {
+    if (!el || isOurs(el) || el === document.body || el === document.documentElement) {
       hl.style.display = 'none';
       return;
     }
@@ -151,11 +177,10 @@ function artifactSdkJs() {
   }, true);
 
   document.addEventListener('click', e => {
-    if (!annotate) return;
+    if (!annotate || !acked) return;
     const el = e.target;
     if (isOurs(el)) return;
     if (card) { if (!cardEl.contains(e.composedPath()[0])) closeCard(); return; }
-    if (isInteractive(el)) return; // let controls behave natively
     const selection = window.getSelection();
     if (selection && !selection.isCollapsed) return; // handled by selection flow
     if (el === document.body || el === document.documentElement) return;
@@ -164,7 +189,7 @@ function artifactSdkJs() {
     hl.style.display = 'none';
     openCard({
       kindLabel: 'Annotate <' + el.tagName.toLowerCase() + '>',
-      anchor: { selector: selectorFor(el), tag: el.tagName.toLowerCase(), snippet: snippetFor(el) },
+      anchor: contextFor(el),
       x: e.clientX,
       y: e.clientY
     });
@@ -208,6 +233,7 @@ function artifactSdkJs() {
   window.addEventListener('message', e => {
     const msg = e.data || {};
     if (msg.type === 'pc:set-mode') {
+      acked = true;
       annotate = Boolean(msg.annotate);
       if (!annotate) { hl.style.display = 'none'; selhint.style.display = 'none'; closeCard(); }
     } else if (msg.type === 'pc:restore-scroll') {
@@ -215,6 +241,7 @@ function artifactSdkJs() {
     }
   });
   document.addEventListener('keydown', e => {
+    if (!acked) return;
     if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'i') {
       e.preventDefault();
       post({ type: 'pc:toggle-mode' });

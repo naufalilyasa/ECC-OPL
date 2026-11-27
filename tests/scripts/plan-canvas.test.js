@@ -1064,6 +1064,62 @@ async function main(suite = createTestRunner()) {
       assert.strictEqual(res.statusCode, 404);
     });
 
+    await integrationTest('framework-native sessions require the full preview identity', async ({ request }) => {
+      const native = path.join(tmp, 'native.plan.md');
+      fs.writeFileSync(native, '# Native\n');
+      const bad = await request(port, 'POST', '/api/sessions', {
+        body: { file: native, previewMode: 'framework-native', previewMeta: { section: 'hero', revision: 'r1' } }
+      });
+      assert.strictEqual(bad.statusCode, 400);
+      const unknown = await request(port, 'POST', '/api/sessions', {
+        body: { file: native, previewMode: 'iframe-ish' }
+      });
+      assert.strictEqual(unknown.statusCode, 400);
+    });
+
+    await integrationTest('native feedback binds the preview and refuses a stale revision', async ({ request }) => {
+      const native = path.join(tmp, 'native-bound.plan.md');
+      fs.writeFileSync(native, '# Native bound\n');
+      const meta = {
+        section: 'hero', revision: 'r1',
+        revisionDigest: 'a'.repeat(64), designDigest: 'c'.repeat(64), dataMode: 'fixture'
+      };
+      const opened = jsonBody(await request(port, 'POST', '/api/sessions', {
+        body: { file: native, previewMode: 'framework-native', previewMeta: meta }
+      }));
+      const verdict = {
+        kind: 'verdict', verdict: 'approve', section: 'hero', revision: 'r1',
+        revisionDigest: meta.revisionDigest, designDigest: meta.designDigest,
+        timestamp: new Date().toISOString()
+      };
+      const ok = jsonBody(await request(port, 'POST', `/api/session/${opened.key}/feedback`, { body: { items: [verdict] } }));
+      assert.strictEqual(ok.accepted, 1, JSON.stringify(ok.rejected));
+      const stale = jsonBody(await request(port, 'POST', `/api/session/${opened.key}/feedback`, {
+        body: { items: [{ ...verdict, revisionDigest: 'b'.repeat(64) }] }
+      }));
+      assert.strictEqual(stale.accepted, 0);
+      assert.strictEqual(stale.rejected[0].reason, 'STALE_REVISION');
+      await request(port, 'POST', '/api/end', { body: { file: native } });
+    });
+
+    await integrationTest('presence events carry the live revision', async ({ request, openSse }) => {
+      const file = path.join(tmp, 'native-presence.plan.md');
+      fs.writeFileSync(file, '# Native presence\n');
+      const meta = {
+        section: 'hero', revision: 'r1',
+        revisionDigest: 'a'.repeat(64), designDigest: 'c'.repeat(64), dataMode: 'fixture'
+      };
+      const opened = jsonBody(await request(port, 'POST', '/api/sessions', {
+        body: { file, previewMode: 'framework-native', previewMeta: meta }
+      }));
+      const sse = openSse(port, opened.key);
+      await sse.ready;
+      // A presence tick without the revision hides the stale banner on live tabs.
+      await waitFor(() => sse.received.some(e => e.event === 'presence' && e.data.revision === 'r1'));
+      await sse.close();
+      await request(port, 'POST', '/api/end', { body: { file } });
+    });
+
     await integrationTest('GET /canvas/:key serves the ECC chrome with CSP', async ({ request }) => {
       const res = await request(port, 'GET', `/canvas/${key}`);
       assert.strictEqual(res.statusCode, 200);
