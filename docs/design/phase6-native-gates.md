@@ -21,7 +21,9 @@ Date: 2026-11-27 · Plan: `docs/plans/framework-native-design-build.plan.md` (Ph
   per-profile digests, profile dimensions and typed measurement rows. It does **detect**
   native drift: when the baseline and integrated captures hash differently it emits
   `{ viewport, kind: 'PIXEL_DRIFT', referenceSha256, candidateSha256 }` into `driftFindings`,
-  so the finding no longer depends on the caller remembering to supply it.
+  so the finding no longer depends on the caller remembering to supply it. Duplicate
+  rows the capture step also reports are collapsed on `viewport:kind`, so one diff is
+  reported once.
 - The outcome now carries `mode` and `driftFindings`.
 
 ### `scripts/design-build-v2/section-gate.mjs`
@@ -31,7 +33,10 @@ Date: 2026-11-27 · Plan: `docs/plans/framework-native-design-build.plan.md` (Ph
 forwarded into parity together with `approvedReference.designDigest` and
 `evidence.referenceDesignDigest` (the latter from `req.baselineDesignDigest`). The hardcoded
 screenshot-pair shape is now selected by mode. The outcome reports `previewMode` and
-`previewModeDefaulted`, because an absent mode is the one remaining permissive default.
+`previewModeDefaulted`. An absent mode is no longer a silent permissive default: a
+native-shaped request (a 64-hex `active.designDigest`, or a `baselineDesignDigest`) with no
+`active.previewMode` is stopped with `PREVIEW_MODE_LOST` and exit 2, because running it under
+the legacy contract would complete a native section against a cheaper gate.
 
 ### `scripts/design-build-v2/state-machine.mjs`
 
@@ -71,7 +76,7 @@ own record.
 ## Verification
 
 ```
-node tests/lib/design-build-native-state.test.js        → 38 passed, 0 failed
+node tests/lib/design-build-native-state.test.js        → 40 passed, 0 failed
 node tests/design-build-v2-hotfix.test.mjs              → 10 passed, 0 failed
 node tests/design-build-v2-invariants.test.js           → 40 passed, 0 failed
 node tests/lib/design-build-preview-runtime.test.js     → 12 passed, 0 failed
@@ -91,8 +96,11 @@ swap passes (this gate run is the rerun); active state disagreeing with the Canv
 is `APPROVAL_STATE_CONFLICT`; a missing reference set is `NATIVE_REFERENCE_SET_MISSING`;
 differing native captures produce a `PIXEL_DRIFT` finding; two digests for one path are
 `FINGERPRINT_CONFLICT`; a fixture section claiming production completion is `FIXTURE_ONLY`;
-an unknown preview mode fails both the receipt and G2; the legacy standalone-html pair path
-still completes unchanged.
+an unknown preview mode fails both the receipt and G2; a native-shaped section that lost its
+`previewMode` is stopped with `PREVIEW_MODE_LOST` instead of falling back to the legacy gate;
+a drift row reported by both the authority and the capture step is collapsed to one; every
+digest in the distribution manifest is re-hashed against disk; the legacy standalone-html pair
+path still completes unchanged.
 
 ## Known limits (honest status)
 

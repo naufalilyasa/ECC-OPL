@@ -283,6 +283,16 @@ function runTests() {
     assert.strictEqual(result.out.receipt.why, undefined);
   });
 
+  test('native-shaped state with no previewMode is refused, not downgraded to legacy', () => {
+    const request = validRequest('framework-native', 'PARITY_PASS');
+    // Simulate a native section that lost its mode: the digest it carries proves
+    // its shape, so the gate must not run it under the cheaper legacy contract.
+    delete request.active.previewMode;
+    const result = runSectionGate(request);
+    assert.strictEqual(result.code, 2);
+    assert.strictEqual(result.out, null);
+  });
+
   test('compare-section refuses native input instead of fabricating an HTML reference', () => {
     const dir = tmp();
     let stdout = '';
@@ -526,6 +536,8 @@ function runTests() {
   test('native capture drift is detected by the authority, not taken on trust', () => {
     const request = validRequest('framework-native', 'PARITY_PASS');
     request.viewportEvidence[VIEWPORT].candidateScreenshot = PNG2;
+    // The capture step reporting the same row must not duplicate it.
+    request.g2 = { driftFindings: [{ viewport: VIEWPORT, kind: 'PIXEL_DRIFT' }] };
     const result = runSectionGate(request);
     assert.strictEqual(result.out.g2.code, 'PARITY_PASS', JSON.stringify(result.out.g2));
     assert.strictEqual(result.out.g2.driftFindings.length, 1);

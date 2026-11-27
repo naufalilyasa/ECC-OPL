@@ -111,7 +111,17 @@ export function verifyRenderedParity(result, context = {}) {
   return { code: diffs.length ? 'PARITY_FAIL' : 'PARITY_PASS', mode, matched,
     verifiedProfiles, failedProfiles: diffs.map((d) => d.viewport), diffs,
     // Detected drift first, then any findings the capture step contributed.
-    driftFindings: [...drift, ...(result.driftFindings ?? [])],
+    // A caller repeating a row we already detected is the same finding, so
+    // collapse on viewport+kind instead of reporting it twice.
+    driftFindings: (() => {
+      const seen = new Set()
+      return [...drift, ...(result.driftFindings ?? [])].filter((f) => {
+        const key = `${f?.viewport ?? ''}:${f?.kind ?? ''}`
+        if (seen.has(key)) return false
+        seen.add(key)
+        return true
+      })
+    })(),
     requiredViewports: required.slice() }
 }
 

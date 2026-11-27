@@ -46,6 +46,9 @@ const outDir = path.resolve(arg('--out', 'artifacts/live-section'));
 // Credentials are read from the environment too: argv is visible in `ps`.
 const email = requireArg('--email', 'app login; prefer CAPTURE_EMAIL', process.env.CAPTURE_EMAIL);
 const password = requireArg('--password', 'app password; prefer CAPTURE_PASSWORD', process.env.CAPTURE_PASSWORD);
+if (process.argv.includes('--email') || process.argv.includes('--password')) {
+  console.error('capture-live-section: credentials passed on argv are visible to other users; prefer CAPTURE_EMAIL / CAPTURE_PASSWORD.');
+}
 const route = arg('--route', '/');
 
 fs.mkdirSync(outDir, { recursive: true });

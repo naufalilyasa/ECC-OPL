@@ -32,6 +32,18 @@ const bytes = (p) => {
 // Preview mode comes from the ACTIVE-STATE block of the request, never from the
 // receipt, so a caller cannot pick the cheaper gate by claiming a different mode.
 const previewMode = req.active?.previewMode ?? 'standalone-html'
+// A native section always carries a design digest or a baseline claim, so an
+// absent mode with those fields is a LOST mode, not a legacy section. Falling
+// through to the legacy gate there would complete it silently under a cheaper
+// contract.
+const previewModeDefaulted = req.active?.previewMode === undefined
+const nativeShaped = /^[a-f0-9]{64}$/i.test(req.active?.designDigest ?? '')
+  || req.baselineDesignDigest !== undefined
+if (previewModeDefaulted && nativeShaped) {
+  process.stderr.write(
+    'section-gate: PREVIEW_MODE_LOST — native-shaped section has no active.previewMode\n')
+  process.exit(2)
+}
 const ctx = {
   identity: req.identity,
   active: req.active,
@@ -99,9 +111,9 @@ const checkpoint = advanceCheckpoint(req.active, receipt, ctx)
 const outcome = {
   module: 'scripts/design-build-v2/section-gate.mjs',
   previewMode,
-  // An ABSENT mode is the one permissive default left: it takes the legacy path.
-  // Surface it so a native section that lost its mode cannot fail silently.
-  previewModeDefaulted: req.active?.previewMode === undefined,
+  // Reported for callers that read the JSON instead of the exit code. The exit
+  // code already refuses a lost native mode above (PREVIEW_MODE_LOST, exit 2).
+  previewModeDefaulted,
   receipt: verdict,
   g2,
   checkpoint,

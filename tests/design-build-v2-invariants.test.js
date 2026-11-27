@@ -516,5 +516,13 @@ test('staged distribution manifest honest', () => {
   for (const e of m.files) {
     assert.ok(HEX64.test(e.sha256), `bad digest for ${e.path}`)
     assert.ok(!/PLACEHOLDER/.test(e.sha256))
+    // A digest that matches no file on disk makes verification fail closed,
+    // and skipping verification ships an unverifiable artifact.
+    const bytes = readFileSync(resolve(ROOT, e.path))
+    assert.equal(createHash('sha256').update(bytes).digest('hex'), e.sha256,
+      `stale manifest digest for ${e.path}`)
+    if (typeof e.bytes === 'number') {
+      assert.equal(bytes.length, e.bytes, `stale manifest size for ${e.path}`)
+    }
   }
 })
