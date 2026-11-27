@@ -209,6 +209,15 @@ function profileFor(appRoot, root, sourceLabel) {
   const entry = entrypointFor(appRoot, framework, tool)
   evidence.push(`entry: ${entry.evidence}`)
 
+  // Laravel+Inertia needs BOTH processes: PHP pages and Vite assets. A preview
+  // missing either one is not something the owner can approve (DBN-04).
+  const previewServers = laravel
+    ? [
+      { id: 'laravel', command: 'php artisan serve' },
+      ...(devCommand && devCommand !== 'php artisan serve' ? [{ id: 'vite', command: devCommand }] : []),
+    ]
+    : devCommand ? [{ id: 'app', command: devCommand }] : []
+
   const previewMode = variant && NATIVE_VARIANTS.has(variant) ? 'framework-native' : null
   const runner = previewMode ? 'native'
     : framework || laravel ? 'generic'
@@ -224,6 +233,7 @@ function profileFor(appRoot, root, sourceLabel) {
     language: languageFor(appRoot, pkg, framework, entry.entrypoint),
     packageManager,
     devCommand,
+    previewServers,
     entrypoint: entry.entrypoint,
     stylingSystem: styling.stylingSystem,
     componentLibrary,
@@ -305,6 +315,7 @@ export function detectProject(targetDir) {
     language: null,
     packageManager: detectPackageManager(root),
     devCommand: null,
+    previewServers: [],
     entrypoint: null,
     stylingSystem: existsSync(join(root, 'index.html')) ? 'plain-css' : null,
     componentLibrary: null,
