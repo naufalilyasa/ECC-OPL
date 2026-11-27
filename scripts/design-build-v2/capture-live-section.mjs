@@ -1,18 +1,20 @@
 /**
- * Capture the REAL Rlogic WMS receiving/scan section from the running
- * Laravel + Inertia application (not a static HTML imitation).
+ * Capture a real section from a running Laravel + Inertia application
+ * (not a static HTML imitation).
  *
  * Run with: node scripts/design-build-v2/capture-live-section.mjs \
- *   --base http://127.0.0.1:8000 --out <dir>
+ *   --base http://127.0.0.1:8000 --out <dir> \
+ *   --playwright-dir <dir-with-playwright-installed> \
+ *   --email <login> --password <password>
+ *
+ * Nothing here is machine- or project-specific: the Playwright install and the
+ * credentials always come from the caller.
  */
 'use strict';
 
 import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
-
-const PW_DIR = process.env.E2E_PLAYWRIGHT_DIR
-  || '/private/var/folders/xq/22yplbd15tz0jj4hnsr1m11c0000gp/T/opencode/m6-playwright';
 
 const VIEWPORTS = [
   { name: '1440x900', width: 1440, height: 900 },
@@ -27,11 +29,23 @@ function arg(flag, fallback) {
   return i >= 0 && i + 1 < process.argv.length ? process.argv[i + 1] : fallback;
 }
 
+const require_ = (flag, why, fallback) => {
+  const value = arg(flag, fallback);
+  if (!value) {
+    console.error(`capture-live-section: missing ${flag} (${why})`);
+    console.error('Usage: --base <url> --out <dir> --playwright-dir <dir> --email <login> --password <password> [--route <path>]');
+    process.exit(2);
+  }
+  return value;
+};
+
+const PW_DIR = require_('--playwright-dir', 'directory holding a playwright install',
+  process.env.E2E_PLAYWRIGHT_DIR);
 const base = arg('--base', 'http://127.0.0.1:8000');
 const outDir = path.resolve(arg('--out', 'artifacts/live-section'));
-const email = arg('--email', 'operator@nexvora.local');
-const password = arg('--password', 'password');
-const route = arg('--route', '/scan?step=scan:receiving');
+const email = require_('--email', 'app login, no default is baked in');
+const password = require_('--password', 'app password, no default is baked in');
+const route = arg('--route', '/');
 
 fs.mkdirSync(outDir, { recursive: true });
 
