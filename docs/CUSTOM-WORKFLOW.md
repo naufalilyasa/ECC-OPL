@@ -337,4 +337,54 @@ Skill memberikan pengetahuan dan metodologi yang dimuat ke dalam memori agent sa
    - Audit diff via grep kanonik `design-contract-system` untuk menjamin nol hardcoded hex, radius acak, atau spacing non-4px.
 
 ---
+---
+
+## 6. Workspace `.ecc-opl/` — satu work item, satu laporan
+
+Semua workflow ECC-OPL membaca/menulis artifact kerja lewat satu direktori proyek: `.ecc-opl/`.
+
+```
+.ecc-opl/
+  active                 # id work item yang sedang aktif (teks biasa, satu baris)
+  work-items/<WI-ID>/    # manifest.json, progress.json, timeline.jsonl + research/ prd/ plan/
+                         # implementation/ review/ design/ e2e/ audit/ documentation/ evidence/ canvas/
+  runtime/               # pointer handoff antar-runtime (lokal, tidak di-track)
+  archive/<WI-ID>/       # hasil `archive`
+  reports/<WI-ID>.md     # SATU laporan final per work item (di-track)
+```
+
+**Binding.** Presedensi: `--standalone` > `ECC_OPL_STANDALONE=1` > `--work-item <id>` >
+`.ecc-opl/active` > standalone default. Tanpa work item aktif, command berjalan persis seperti
+sebelumnya (path legacy, tanpa tulisan `.ecc-opl/`).
+
+**Helper.** `scripts/lib/work-item/work-item.js` (`resolve|ensure|append|progress|close|archive`).
+Dicari di `$CLAUDE_PLUGIN_ROOT`, `${OPENCODE_CONFIG_DIR:-$HOME/.config/opencode}`, `./.agents`,
+`.`, `${CLAUDE_CONFIG_DIR:-$HOME/.claude}`. Bila tidak ketemu: mode standalone dengan satu baris
+pemberitahuan — tidak pernah menulis `.ecc-opl/` dari inline heredoc.
+
+**Otoritas eksekusi tidak berubah.** `.opencode/workflows/active.json` tetap satu-satunya state
+eksekusi (workflow/phase/gates). `progress.json` hanya indeks turunan dari `timeline.jsonl` dan
+selalu bisa dibangun ulang. `.opencode/markers/` tetap baseline inkremental.
+
+**Git.** Hanya `reports/` dan `work-items/*/manifest.json` yang di-track; seluruh artifact kerja
+lain di-ignore. Alternatif lokal tanpa mengubah `.gitignore`: `.git/info/exclude`. Tidak ada
+commit/push otomatis dari workflow mana pun.
+
+**Laporan final.** `.ecc-opl/reports/<WI-ID>.md`, nama file stabil (id sudah memuat slug).
+Field wajib: `deliveryStatus` (COMPLETED | COMPLETED_WITH_LIMITATIONS | BLOCKED |
+PARTIALLY_COMPLETED | CANCELLED) dan `verificationStatus` (VERIFIED | PARTIAL | UNVERIFIED |
+BLOCKED | NOT_RUN | NOT_SUPPORTED). Bagian yang tidak relevan dihilangkan, bukan diisi placeholder.
+
+**Runtime.** OpenCode dan Antigravity CLI berbagi artifact yang sama tetapi kepemilikan eksekusi
+terpisah: `runtime/opencode.json` / `runtime/antigravity.json` hanya mencatat runtime mana yang
+memegang eksekusi berjalan. Itu pointer, bukan gate. Handoff selalu eksplisit.
+
+**Migrasi.** Tidak ada yang dipindah. Path legacy (`docs/plans/`, `docs/research/`,
+`docs/design/`, `docs/releases/*/*.tdd.md`, `.claude/prds/`) tetap terbaca sebagai arsip.
+Urutan lookup plan: argumen eksplisit → `plan_ref.path` di state file → `plan/` work item →
+legacy. Rollback Stage 1 lewat `git revert`; setelah `reports/` di-track, revert `.gitignore`
+saja tidak menyembunyikan file yang sudah ter-track.
+
+---
+
 *Dokumen ini diperbarui secara lokal di `docs/CUSTOM-WORKFLOW.md` sebagai referensi standar tim pengembang.*

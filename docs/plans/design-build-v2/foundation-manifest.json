@@ -6,28 +6,28 @@
   "files": [
     {
       "path": "skills/design-build/SKILL.md",
-      "sha256": "f057169b3950365c6b0ff86ab726142ccdf1cafdba1d354df724f6decad5635d",
-      "bytes": 33106
+      "sha256": "9f292212ce81921adbd7e15650e1cfc608e27b4b2c7dd95e8a14a61b2a91f5ad",
+      "bytes": 33968
     },
     {
       "path": "commands/design-build.md",
-      "sha256": "bb38272a550255c806657e670ba6f3abca31ffc0f6b5593400ebdbf9eac20993",
-      "bytes": 14313
+      "sha256": "0e4b6c4cd0c582ea32ffbaf28f2b7450e5da106d4456c6198747e89e6d3aa8bc",
+      "bytes": 15351
     },
     {
       "path": ".opencode/commands/design-build.md",
-      "sha256": "bb38272a550255c806657e670ba6f3abca31ffc0f6b5593400ebdbf9eac20993",
-      "bytes": 14313
+      "sha256": "0e4b6c4cd0c582ea32ffbaf28f2b7450e5da106d4456c6198747e89e6d3aa8bc",
+      "bytes": 15351
     },
     {
       "path": "commands/typography.md",
-      "sha256": "9da53faa33bc1bf5ab089f8290f3fef9afec2b2da50a0543784780d9c38f3a89",
-      "bytes": 5687
+      "sha256": "8375422bab06f0b6cdc66dee0a475f3a7995d600354ac4df9fb2ca2a85373279",
+      "bytes": 6068
     },
     {
       "path": ".opencode/commands/typography.md",
-      "sha256": "9da53faa33bc1bf5ab089f8290f3fef9afec2b2da50a0543784780d9c38f3a89",
-      "bytes": 5687
+      "sha256": "8375422bab06f0b6cdc66dee0a475f3a7995d600354ac4df9fb2ca2a85373279",
+      "bytes": 6068
     },
     {
       "path": "skills/design-contract-system/SKILL.md",

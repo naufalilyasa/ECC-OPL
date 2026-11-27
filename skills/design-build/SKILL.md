@@ -21,6 +21,22 @@ each phase delegates to the skill named for it.
 
 Do not use it for a one-shot component edit or a review of an existing page.
 
+## Artifact root (work-item binding)
+
+Every `docs/design/...` path in this skill resolves against `DESIGN_ROOT`:
+
+- standalone (default): `docs/design`
+- bound: `.ecc-opl/work-items/<ITEM>/design`, when `.ecc-opl/active` names a live work item and
+  neither `--standalone` nor `ECC_OPL_STANDALONE=1` is set
+
+The same relative structure applies under either root (`DESIGN.md`, `contracts/`,
+`BUILD-STATE.md`, `ASSETS.md`, `TYPOGRAPHY-MAP.md`, `sections/`, `evidence/`). `--resume` reads
+`$DESIGN_ROOT/BUILD-STATE.md` first and falls back to `docs/design/BUILD-STATE.md`. Canvas state
+stays host-owned in `~/.claude/plan-canvas*/`; a bound run adds a pointer at
+`.ecc-opl/work-items/<ITEM>/canvas/session.json`. Standalone behaviour, including the
+never-reinterpreted rule for an HTML approval across `standalone-html` and `framework-native`
+modes, is unchanged.
+
 ## Layers (one job each)
 
 | Phase | Skill | Produces |

@@ -74,6 +74,16 @@ import { functionName } from '@/module'
 4. Generate markdown maps
 5. Validate links
 
+## Work-item Mode (bound runs)
+
+`docs/CODEMAPS/` is authoritative and stays put. When `.ecc-opl/active` names a work item
+(and neither `--standalone` nor `ECC_OPL_STANDALONE=1` is set), also write the run summary to
+`.ecc-opl/work-items/<ITEM>/documentation/<date>-codemaps.md` and
+`node <helper> append --workflow update-codemaps --artifact summary --path <file>`.
+Resolve the helper across `$CLAUDE_PLUGIN_ROOT`,
+`${OPENCODE_CONFIG_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/opencode}`, `./.agents`, `.`,
+`${CLAUDE_CONFIG_DIR:-$HOME/.claude}`. No bound item: unchanged behaviour.
+
 ---
 
 **TIP**: Keep codemaps updated when adding new modules or significant refactoring.

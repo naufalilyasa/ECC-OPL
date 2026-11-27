@@ -24,6 +24,27 @@ does not carry).
   to build the whole page in one run, which keeps the contract and dealt tokens
   loaded across sections.
 
+## Design root (work-item binding)
+
+Every `docs/design/...` path below and in the skill resolves against `DESIGN_ROOT`:
+
+```bash
+DESIGN_ROOT="docs/design"          # standalone default
+# bound: .ecc-opl/active names a live item, and neither --standalone nor
+# ECC_OPL_STANDALONE=1 is set → DESIGN_ROOT=".ecc-opl/work-items/<ITEM>/design"
+```
+
+Resolve the work item with the shared helper (`scripts/lib/work-item/work-item.js`) probed at
+`$CLAUDE_PLUGIN_ROOT`, `${OPENCODE_CONFIG_DIR:-$HOME/.config/opencode}`, `./.agents`, `.`,
+`${CLAUDE_CONFIG_DIR:-$HOME/.claude}`. No helper or no live item means standalone: no
+`.ecc-opl/` writes and byte-identical legacy behaviour.
+
+`--resume` reads `$DESIGN_ROOT/BUILD-STATE.md` first, then falls back to
+`docs/design/BUILD-STATE.md`, so a build started before binding still resumes. Canvas state stays
+host-owned in `~/.claude/plan-canvas*/` (never moved); a bound run also writes
+`.ecc-opl/work-items/<ITEM>/canvas/session.json` with the canvas key and section paths — a pointer,
+not a gate.
+
 ## Framework detection (conditional skill load)
 
 Detect the target from project manifests (`package.json` → React/Inertia, Vue,

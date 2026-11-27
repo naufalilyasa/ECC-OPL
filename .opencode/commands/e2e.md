@@ -154,6 +154,19 @@ Update **only the matched block**, and only these fields, through the §2a `reco
 moves. If the run FAILed and `State` was `covered`, downgrade it to `unverified` and record the
 failure in `Evidence`.
 
+### 3.5 Bound work-item evidence
+
+When `.ecc-opl/active` names a work item (and neither `--standalone` nor
+`ECC_OPL_STANDALONE=1` is set), write the run evidence — traces, screenshots,
+reconciliation notes — to `.ecc-opl/work-items/<ITEM>/e2e/<flow>-<date>/`, and point the
+matched block's `Evidence` field at that directory, relative to the repo root. Resolve the
+helper across `$CLAUDE_PLUGIN_ROOT`, `${OPENCODE_CONFIG_DIR:-$HOME/.config/opencode}`,
+`./.agents`, `.`, `${CLAUDE_CONFIG_DIR:-$HOME/.claude}`, then
+`node <helper> append --workflow e2e --artifact evidence --path <dir>`.
+
+`TESTS.md` stays the committed registry: evidence is never pasted into it, and the DEC-06
+registry write gate is unchanged. Standalone runs keep writing evidence where they do today.
+
 ## 4. `run --ad-hoc` — unregistered flow, no coverage credit (DEC-05)
 
 Sequence: warning that the flow is unregistered → preflight → isolated execution against an

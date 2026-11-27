@@ -111,3 +111,32 @@ Arm `.opencode/workflows/active.json` before editing documents:
 
 Set `"markerWritten": true, "phase": "done"` after `.opencode/markers/docs-sync.md`
 is written. Schema: `workflow-state` skill.
+
+## Work-item Mode (bound runs)
+
+Resolve the helper across `$CLAUDE_PLUGIN_ROOT`,
+`${OPENCODE_CONFIG_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/opencode}`, `./.agents`, `.`,
+`${CLAUDE_CONFIG_DIR:-$HOME/.claude}` and run `node <helper> resolve`. Skip this whole
+section when the result is `none`, when `--standalone` is passed, or when
+`ECC_OPL_STANDALONE=1` is set — authoritative docs then update exactly as above.
+
+1. **Delta routing.** Write the exploration delta report and run summary to
+   `.ecc-opl/work-items/<ITEM>/documentation/<date>-docs-update.md`, then
+   `node <helper> append --workflow update-docs --artifact delta --path <file>`.
+   Authoritative docs (`README.md`, `docs/CODEMAPS/`, `docs/GUIDES/`) stay where they are.
+   The sync marker stays in `.opencode/markers/docs-sync.md` in both modes; a failed marker
+   write is a warning, never a gate.
+2. **Consolidated report.** On the final phase of a work item, dispatch `doc-updater` with the
+   item's `timeline.jsonl`, `progress.json` and artifact index and write the one report to
+   `.ecc-opl/reports/<ITEM>.md` — a single stable filename, no `final-v2` variants (the id
+   already embeds the slug, so do not append it again). Required, machine-readable fields:
+
+   - `deliveryStatus`: `COMPLETED` | `COMPLETED_WITH_LIMITATIONS` | `BLOCKED` |
+     `PARTIALLY_COMPLETED` | `CANCELLED`
+   - `verificationStatus`: `VERIFIED` | `PARTIAL` | `UNVERIFIED` | `BLOCKED` | `NOT_RUN` |
+     `NOT_SUPPORTED`
+
+   Sections: summary, objective, decisions, artifacts, verification, limitations, next step.
+   Omit any section that would only hold filler; never invent a result. If the `doc-updater`
+   dispatch fails, write the report from timeline plus progress yourself with
+   `verificationStatus: UNVERIFIED`. Never skip the report silently.

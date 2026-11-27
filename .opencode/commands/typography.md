@@ -83,6 +83,11 @@ Post-freeze: VERIFY against TYPOGRAPHY-MAP (default). No redesign. AMEND = appro
 
 ## Output Deliverables
 
+**Design root.** Deliverables written as files land under `DESIGN_ROOT` — `docs/design` standalone,
+`.ecc-opl/work-items/<ITEM>/design` when a work item is bound (`.ecc-opl/active` names a live item
+and neither `--standalone` nor `ECC_OPL_STANDALONE=1` is set). `TYPOGRAPHY-MAP.md` and any
+`contracts/` updates follow the same root. Chat-only output is unchanged in both modes.
+
 1. **Typography Blueprint**:
    - Brand archetype & selected font families (heading, body, mono).
    - Modular type scale table (role, size, line-height, letter-spacing, font-weight).
