@@ -575,9 +575,12 @@ function renderCanvasHtml(session, { clientPath = '/client.js', cssPath = '/canv
   <div class="vp">
     <select id="viewportSel" class="icon-btn" title="Artifact viewport width" aria-label="Artifact viewport width">
       <option value="">Fit</option>
-      <option value="1440">1440</option>
-      <option value="768">768</option>
-      <option value="390">390</option>
+      <option value="1440">1440px desktop</option>
+      <option value="1280">1280px desktop</option>
+      <option value="1024">1024px tablet landscape</option>
+      <option value="768">768px tablet portrait</option>
+      <option value="390">390px mobile</option>
+      <option value="360">360px mobile</option>
       <option value="custom">Custom&hellip;</option>
     </select>
     <input id="viewportCustom" type="number" min="240" max="4096" step="1" placeholder="px" title="Custom viewport width (px)" hidden>

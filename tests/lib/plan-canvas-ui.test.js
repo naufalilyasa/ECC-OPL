@@ -45,11 +45,21 @@ function runTests() {
     assert.ok(header.includes('id="viewportSel"'), 'viewportSel inside <header>');
   })) passed++; else failed++;
 
-  if (test('viewport select offers Fit, 1440, 768, 390 and Custom', () => {
+  if (test('viewport select offers all six breakpoints, Fit and Custom', () => {
     assert.ok(html.includes('<option value="">Fit</option>'), 'Fit option');
-    assert.ok(html.includes('<option value="1440">1440</option>'), '1440 option');
-    assert.ok(html.includes('<option value="768">768</option>'), '768 option');
-    assert.ok(html.includes('<option value="390">390</option>'), '390 option');
+    for (const [value, label] of [
+      ['1440', '1440px desktop'],
+      ['1280', '1280px desktop'],
+      ['1024', '1024px tablet landscape'],
+      ['768', '768px tablet portrait'],
+      ['390', '390px mobile'],
+      ['360', '360px mobile'],
+    ]) {
+      assert.ok(
+        html.includes(`<option value="${value}">${label}</option>`),
+        `${value} option labelled "${label}"`
+      );
+    }
     assert.ok(html.includes('value="custom"'), 'custom option');
     assert.ok(html.includes('id="viewportCustom"'), 'custom width input');
   })) passed++; else failed++;

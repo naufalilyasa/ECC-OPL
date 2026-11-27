@@ -19,6 +19,13 @@ const {
   validateBoundVerdict
 } = require('./verdict-binding');
 
+// Anchor locators come from the browser, not the human. Truncating one keeps
+// the commentary usable; rejecting it would discard what the user typed.
+// Free-form prompt text is the operator's actual message, so the ceiling is
+// generous for every session: a long review brief is legitimate input, and a
+// silent truncation would lose the instruction the agent is meant to follow.
+const DEFAULT_MAX_TEXT_CHARS = 100000;
+
 const FEEDBACK_KINDS = new Set(['chat', 'annotation', 'verdict']);
 const VERDICTS = new Set(['approve', 'request-changes']);
 
@@ -63,7 +70,7 @@ function nowIso() {
   return new Date().toISOString();
 }
 
-function sanitizeText(value, maxLength = 4000) {
+function sanitizeText(value, maxLength = DEFAULT_MAX_TEXT_CHARS) {
   if (typeof value !== 'string') return '';
   // Oversized input is REJECTED by the caller, never silently truncated: a
   // truncated prompt would reach the agent as a different instruction.
@@ -75,8 +82,6 @@ function sanitizeText(value, maxLength = 4000) {
   return value;
 }
 
-// Anchor locators come from the browser, not the human. Truncating one keeps
-// the commentary usable; rejecting it would discard what the user typed.
 function truncate(value, maxLength) {
   if (typeof value !== 'string') return '';
   return value.length > maxLength ? value.slice(0, maxLength) : value;
@@ -93,7 +98,7 @@ function clipAnchorPart(value, maxLength) {
 // Normalize one browser-submitted feedback item into the shape delivered to
 // the agent. Returns null for unusable input rather than throwing so a
 // malformed item can never wedge the queue.
-function normalizeFeedbackItem(raw, counter, maxTextLength = 4000) {
+function normalizeFeedbackItem(raw, counter, maxTextLength = DEFAULT_MAX_TEXT_CHARS) {
   if (!raw || typeof raw !== 'object') return null;
   const kind = FEEDBACK_KINDS.has(raw.kind) ? raw.kind : null;
   if (!kind) return null;
@@ -234,7 +239,7 @@ function createSessionStore({ stateDir = resolveStateDir() } = {}) {
       const item = normalizeFeedbackItem(
         raw,
         state.feedbackCounter,
-        strict ? MAX_PROMPT_CHARS : 4000
+        strict ? MAX_PROMPT_CHARS : DEFAULT_MAX_TEXT_CHARS
       );
       if (item) accepted.push(item);
     }
