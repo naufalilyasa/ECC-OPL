@@ -58,6 +58,14 @@ function sanitizePreviewMeta(value) {
     const text = value[field];
     if (typeof text === 'string' && text.length > 0) meta[field] = text.slice(0, 120);
   }
+  // Phase 5: the preview is stamped with the revision it shows, so a verdict
+  // can be matched against the exact reference the owner reviewed.
+  if (typeof value.revisionDigest === 'string' && /^[0-9a-f]{64}$/.test(value.revisionDigest)) {
+    meta.revisionDigest = value.revisionDigest;
+  }
+  if (value.dataMode === 'fixture' || value.dataMode === 'production') {
+    meta.dataMode = value.dataMode;
+  }
   return Object.keys(meta).length > 0 ? meta : null;
 }
 

@@ -57,6 +57,7 @@ export function verifyReceipt(receipt, context) {
   if (!src?.sectionId || !src?.revision || !HEX64.test(src?.approvedBundleSha256 || '')) {
     return reject('ACTIVE_IDENTITY_INCOMPLETE')
   }
+  if (src.dataMode !== undefined && !DATA_MODES.includes(src.dataMode)) return reject('DATA_MODE_INVALID')
   if (identity && (identity.sectionId !== src.sectionId || identity.revision !== src.revision
       || identity.bundleSha256 !== src.approvedBundleSha256)) return reject('IDENTITY_CONTEXT_CONFLICT')
   if (receipt.sectionId !== src.sectionId) return reject('sectionMismatch')
@@ -204,6 +205,9 @@ export function advanceCheckpoint(active, receipt, context = {}) {
   if (state !== STATES.PARITY_PASS) return { ...frozen, code: 'INVALID_LIFECYCLE_TRANSITION', state }
   if (verified.code !== 'OK') return { ...frozen, code: 'PARITY_NOT_VERIFIED', why: verified.why }
   return { ...active, current: active.current + 1, state: STATES.SECTION_COMPLETE,
+    // Carried on the completion record so nobody downstream can read a fixture
+    // section as production integration.
+    dataMode: DATA_MODES.includes(active.dataMode) ? active.dataMode : 'fixture',
     verifiedReceiptSha256: sha256(JSON.stringify(receipt)) }
 }
 
@@ -219,6 +223,78 @@ export const CANDIDATE_KINDS = ['framework-implementation', 'framework-styles']
 export const NATIVE_APPROVED_REFERENCE_KINDS = ['component-source', 'component-imports',
   'design-contract', 'tokens', 'assets', 'preview-config', 'data-fixture']
 export const NATIVE_CANDIDATE_KINDS = ['component-source', 'component-styles']
+
+// Reference kinds whose change alters what the owner actually reviewed. A
+// `data-fixture` swap changes data, not design, so it does not force a new
+// approval -- it does force verification to rerun.
+export const VISUAL_REFERENCE_KINDS = ['component-source', 'component-styles',
+  'component-imports', 'design-contract', 'tokens', 'assets', 'preview-config']
+
+export const DATA_MODES = Object.freeze(['fixture', 'production'])
+
+// Order-independent digest over `{ path, sha256 }` entries.
+export function computeRevisionFingerprint(entries) {
+  const canonical = [...entries].sort((a, b) => (a.path < b.path ? -1 : a.path > b.path ? 1 : 0))
+  return sha256(JSON.stringify(canonical))
+}
+
+// Native approval reference (DBN-06): the component source plus everything that
+// shapes what it renders. Digests are supplied by the caller -- this module never
+// reads project files, so the same set can be recomputed at acceptance time.
+export function fingerprintNativeReference(reference) {
+  const files = Array.isArray(reference?.files) ? reference.files : null
+  if (!files?.length) return { code: 'NATIVE_REFERENCE_INCOMPLETE', why: 'missingFiles' }
+  const seen = new Map()
+  for (const file of files) {
+    if (!NATIVE_APPROVED_REFERENCE_KINDS.includes(file?.kind)) {
+      return { code: 'UNSUPPORTED_REFERENCE_KIND', kind: file?.kind }
+    }
+    if (typeof file.path !== 'string' || !file.path) return { code: 'NATIVE_REFERENCE_INCOMPLETE', why: 'missingPath' }
+    if (!HEX64.test(file.sha256 || '')) return { code: 'NATIVE_REFERENCE_INCOMPLETE', why: 'invalidDigest', path: file.path }
+    if (seen.has(file.path) && seen.get(file.path) !== file.sha256) {
+      return { code: 'FINGERPRINT_CONFLICT', path: file.path }
+    }
+    seen.set(file.path, file.sha256)
+  }
+  if (!files.some((file) => file.kind === 'component-source')) {
+    return { code: 'NATIVE_REFERENCE_INCOMPLETE', why: 'missingComponentSource' }
+  }
+  const entries = [...seen].map(([path, digest]) => ({ path, sha256: digest }))
+  const visual = files.filter((file) => VISUAL_REFERENCE_KINDS.includes(file.kind))
+  return {
+    code: 'OK',
+    revisionDigest: computeRevisionFingerprint(entries),
+    designDigest: computeRevisionFingerprint(visual.map((file) => ({ path: file.path, sha256: file.sha256 }))),
+    paths: entries.map((entry) => entry.path).sort(),
+  }
+}
+
+// Approval stands only while the design inputs are unchanged. A non-visual change
+// (fixture data swap) keeps the approval but invalidates the previous checks.
+export function verifyApprovalRevision(approval, reference) {
+  const current = fingerprintNativeReference(reference)
+  if (current.code !== 'OK') return current
+  if (!HEX64.test(approval?.revisionDigest || '') || !HEX64.test(approval?.designDigest || '')) {
+    return { code: 'APPROVAL_BINDING_INCOMPLETE' }
+  }
+  if (approval.designDigest !== current.designDigest) {
+    return { code: 'STALE_REVISION', reapprovalRequired: true, why: 'visualReferenceChanged',
+      approvedDesignDigest: approval.designDigest, currentDesignDigest: current.designDigest }
+  }
+  if (approval.revisionDigest !== current.revisionDigest) {
+    return { code: 'VERIFICATION_REQUIRED', reapprovalRequired: false, why: 'nonVisualReferenceChanged',
+      revisionDigest: current.revisionDigest, designDigest: current.designDigest }
+  }
+  return { code: 'OK', revisionDigest: current.revisionDigest, designDigest: current.designDigest }
+}
+
+// A fixture-only section may complete, but it must never be recorded as
+// production integration.
+export function verifyCompletionScope(active, claim = 'production') {
+  const dataMode = DATA_MODES.includes(active?.dataMode) ? active.dataMode : 'fixture'
+  if (claim === 'production' && dataMode !== 'production') return { code: 'FIXTURE_ONLY', dataMode }
+  return { code: 'OK', dataMode }
+}
 
 // Decision D6: one lifecycle vocabulary, mode-dependent meaning. No second set of
 // state names, so resume, gates and receipts stay readable across both modes.

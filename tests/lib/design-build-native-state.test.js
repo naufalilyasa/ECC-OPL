@@ -26,7 +26,12 @@ const {
   NATIVE_APPROVED_REFERENCE_KINDS,
   NATIVE_CANDIDATE_KINDS,
   verifyIdentitySeparation,
-  advanceCheckpoint
+  advanceCheckpoint,
+  computeRevisionFingerprint,
+  fingerprintNativeReference,
+  verifyApprovalRevision,
+  verifyCompletionScope,
+  DATA_MODES
 } = require('../../scripts/design-build-v2/state-machine.mjs');
 
 let passed = 0;
@@ -253,6 +258,143 @@ function runTests() {
     assert.strictEqual(status, 1, 'native input must exit non-zero');
     const out = JSON.parse(stdout.trim());
     assert.strictEqual(out.code, 'LEGACY_ONLY');
+  });
+
+  // ---- Phase 5: approval identity, revision binding & dataMode ----
+
+  const nativeReference = (overrides = {}) => ({
+    files: [
+      { kind: 'component-source', path: 'resources/js/Pages/Inventory.tsx', sha256: sha('component-v1') },
+      { kind: 'component-imports', path: 'resources/js/Components/Table.tsx', sha256: sha('imports') },
+      { kind: 'design-contract', path: 'docs/design/sections/05-inventory/CONTRACT.md', sha256: sha('contract') },
+      { kind: 'tokens', path: 'resources/css/tokens.css', sha256: sha('tokens') },
+      { kind: 'preview-config', path: 'vite.config.ts', sha256: sha('vite') },
+      { kind: 'data-fixture', path: 'resources/js/fixtures/inventory.json', sha256: sha('fixture-v1') },
+    ],
+    ...overrides
+  });
+
+  test('reference fingerprint is stable and order-independent', () => {
+    const a = fingerprintNativeReference(nativeReference());
+    const shuffled = nativeReference({ files: [...nativeReference().files].reverse() });
+    const b = fingerprintNativeReference(shuffled);
+    assert.strictEqual(a.code, 'OK', JSON.stringify(a));
+    assert.strictEqual(a.revisionDigest, b.revisionDigest);
+    assert.strictEqual(a.designDigest, b.designDigest);
+    assert.notStrictEqual(a.revisionDigest, a.designDigest);
+    assert.strictEqual(computeRevisionFingerprint([{ path: 'a', sha256: sha('x') }]).length, 64);
+  });
+
+  test('a native reference without component-source is rejected', () => {
+    const result = fingerprintNativeReference(nativeReference({
+      files: [{ kind: 'tokens', path: 'tokens.css', sha256: sha('tokens') }]
+    }));
+    assert.strictEqual(result.code, 'NATIVE_REFERENCE_INCOMPLETE');
+    assert.strictEqual(result.why, 'missingComponentSource');
+  });
+
+  test('an HTML reference kind cannot be smuggled into a native approval', () => {
+    const result = fingerprintNativeReference(nativeReference({
+      files: [...nativeReference().files, { kind: 'html', path: 'section.html', sha256: sha('html') }]
+    }));
+    assert.strictEqual(result.code, 'UNSUPPORTED_REFERENCE_KIND');
+    assert.strictEqual(result.kind, 'html');
+  });
+
+  test('approval binds to the exact reference digest', () => {
+    const fp = fingerprintNativeReference(nativeReference());
+    const verdict = verifyApprovalRevision(
+      { revisionDigest: fp.revisionDigest, designDigest: fp.designDigest },
+      nativeReference());
+    assert.strictEqual(verdict.code, 'OK');
+  });
+
+  test('source mutation between submit and accept is a stale re-approval', () => {
+    const fp = fingerprintNativeReference(nativeReference());
+    const mutated = nativeReference({
+      files: nativeReference().files.map((file) => file.kind === 'component-source'
+        ? { ...file, sha256: sha('component-v2') } : file)
+    });
+    const verdict = verifyApprovalRevision(
+      { revisionDigest: fp.revisionDigest, designDigest: fp.designDigest }, mutated);
+    assert.strictEqual(verdict.code, 'STALE_REVISION');
+    assert.strictEqual(verdict.reapprovalRequired, true);
+    assert.strictEqual(verdict.why, 'visualReferenceChanged');
+  });
+
+  test('a fixture data swap keeps the approval but forces verification', () => {
+    const fp = fingerprintNativeReference(nativeReference());
+    const swapped = nativeReference({
+      files: nativeReference().files.map((file) => file.kind === 'data-fixture'
+        ? { ...file, sha256: sha('fixture-v2') } : file)
+    });
+    const verdict = verifyApprovalRevision(
+      { revisionDigest: fp.revisionDigest, designDigest: fp.designDigest }, swapped);
+    assert.strictEqual(verdict.code, 'VERIFICATION_REQUIRED');
+    assert.strictEqual(verdict.reapprovalRequired, false, 'fixture data is not design');
+    assert.notStrictEqual(verdict.revisionDigest, fp.revisionDigest);
+    assert.strictEqual(verdict.designDigest, fp.designDigest);
+    assert.notStrictEqual(verdict.code, 'OK', 'the stale checks must rerun');
+    // A rerun that cannot produce a valid receipt cannot reach completion: the
+    // gate order, not the approval check, enforces the verification itself.
+    const stale = advanceCheckpoint({ ...validRequest('framework-native', 'PARITY_PENDING').active },
+      { schemaVersion: 2 });
+    assert.notStrictEqual(stale.state, 'SECTION_COMPLETE');
+  });
+
+  test('missing approval digests are rejected, not defaulted', () => {
+    const verdict = verifyApprovalRevision({}, nativeReference());
+    assert.strictEqual(verdict.code, 'APPROVAL_BINDING_INCOMPLETE');
+  });
+
+  test('a fixture-only section cannot claim production integration', () => {
+    assert.strictEqual(verifyCompletionScope({ dataMode: 'fixture' }, 'production').code, 'FIXTURE_ONLY');
+    assert.strictEqual(verifyCompletionScope({}, 'production').code, 'FIXTURE_ONLY',
+      'an unlabelled section defaults to fixture');
+    assert.strictEqual(verifyCompletionScope({ dataMode: 'production' }, 'production').code, 'OK');
+    assert.strictEqual(verifyCompletionScope({ dataMode: 'fixture' }, 'fixture').code, 'OK');
+    assert.deepStrictEqual(DATA_MODES, ['fixture', 'production']);
+  });
+
+  test('the completion record carries dataMode', () => {
+    const request = validRequest('framework-native', 'PARITY_PASS');
+    request.active.dataMode = 'fixture';
+    const result = runSectionGate(request);
+    assert.strictEqual(result.out.checkpoint.state, 'SECTION_COMPLETE', JSON.stringify(result.out.checkpoint));
+    assert.strictEqual(result.out.checkpoint.dataMode, 'fixture');
+  });
+
+  test('an unknown dataMode value blocks the gate instead of passing', () => {
+    const request = validRequest('framework-native', 'PARITY_PASS');
+    request.active.dataMode = 'synthetic-ish';
+    const result = runSectionGate(request);
+    assert.notStrictEqual(result.out.checkpoint.state, 'SECTION_COMPLETE');
+    assert.strictEqual(result.out.checkpoint.why, 'DATA_MODE_INVALID');
+  });
+
+  test('preview meta carries the revision digest and dataMode, and nothing else', () => {
+    const { createSessionStore } = require('../../scripts/lib/plan-canvas/sessions.js');
+    const dir = tmp();
+    const artifact = path.join(dir, '05-inventory.plan.md');
+    fs.writeFileSync(artifact, '# Inventory\n');
+    const store = createSessionStore({ stateDir: path.join(dir, 'state') });
+    const digest = sha('reference');
+    const { session } = store.open(artifact, {
+      previewMode: 'framework-native',
+      previewUrl: 'http://127.0.0.1:5199/',
+      previewMeta: { section: SECTION, revision: REVISION, revisionDigest: digest,
+        dataMode: 'fixture', injected: '<script>' }
+    });
+    assert.deepStrictEqual(store.get(session.key).previewMeta,
+      { section: SECTION, revision: REVISION, revisionDigest: digest, dataMode: 'fixture' });
+    // A non-digest revision stamp is dropped rather than stored as-is.
+    const second = store.open(artifact, {
+      reopen: true,
+      previewMode: 'framework-native',
+      previewUrl: 'http://127.0.0.1:5199/',
+      previewMeta: { section: SECTION, revisionDigest: 'not-a-digest', dataMode: 'guessed' }
+    });
+    assert.deepStrictEqual(store.get(second.session.key).previewMeta, { section: SECTION });
   });
 
   for (const dir of TEMP_DIRS) {

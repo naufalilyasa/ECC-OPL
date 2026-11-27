@@ -8,6 +8,10 @@
 import { spawn } from 'node:child_process'
 import { setTimeout as sleep } from 'node:timers/promises'
 
+// Revision fingerprint for native approvals lives with the reference kinds it
+// validates; re-exported here because the approval loop imports this module.
+export { computeRevisionFingerprint, fingerprintNativeReference, verifyApprovalRevision } from './state-machine.mjs'
+
 // Any answer below 5xx proves the server accepts requests; a 404 still means
 // the process is up and routing, which is what readiness needs.
 const READY_STATUS_LIMIT = 500

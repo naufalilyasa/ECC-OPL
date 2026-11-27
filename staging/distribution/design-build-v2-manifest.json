@@ -136,8 +136,8 @@
     {
       "path": "scripts/design-build-v2/state-machine.mjs",
       "destination": "scripts/design-build-v2/state-machine.mjs",
-      "sha256": "e6b78933148dd0016a766da79a2a2111737db2b1c9a65257ea72d353683a763f",
-      "bytes": 15974
+      "sha256": "8b040526b38a7ef4c3ac41d9bc9ecb6fa76f4a40d3d53affb8969d852e96c103",
+      "bytes": 20106
     },
     {
       "path": "scripts/design-build-v2/rendered-authority.mjs",
@@ -170,5 +170,5 @@
       "bytes": 2067
     }
   ],
-  "modified_utc": "2026-11-27T08:52:19.453Z"
+  "modified_utc": "2026-11-27T09:18:12Z"
 }
