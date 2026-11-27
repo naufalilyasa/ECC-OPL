@@ -43,7 +43,7 @@ Detection (`detect-project.mjs`): `framework: react`, `variant: react-vite`,
 | change-request lifecycle | Canvas `#changes` + chat message ("add a text filter…") drained as `request-changes` + chat; filter implemented; re-approved as `r2` | VERIFIED |
 | revision-tied approval | `verifyApprovalRevision` → `OK` for the approved revision; append one line → `STALE_REVISION` (`reapprovalRequired: true`); restore → `OK` | VERIFIED |
 | reuse during integration | `frameworkCompleteEvidence.identitySha256` = shipped component digest = approved revision digest | VERIFIED |
-| final build + verification | `npx vite build` exit 0; `npx tsc --noEmit` exit 0 after `@types/react`/`@types/react-dom` were added to the disposable pilot (see gap-closure note; the workflow itself had refused to install them) | VERIFIED |
+| final build + verification | `npx vite build` exit 0 (`step3.json build.code = 0`); `npx tsc --noEmit` exit 0 recorded in `typecheck.json`. `step3.json` itself records the workflow's own pre-install run as `BLOCKED_MISSING_DEV_DEPENDENCY` (exit 2) — the workflow refused to install, the owner added the type packages afterwards | VERIFIED |
 | accessibility (WCAG 2.2 AA) | axe-core 4.10.2, tags `wcag2a/wcag2aa/wcag22aa`, 15 rule groups pass; first scan flagged `color-contrast` on 9 nodes, colours changed `#6b7688 → #55606f` / `#8a94a6 → #5c6675`, rescanned 0 violations | VERIFIED |
 | zero independent HTML | `docs/design/sections/**.html` count = `0` after the native run | VERIFIED |
 | rendered parity gate | `section-gate.mjs` exit 0, `receipt OK`, `G2 PARITY_PASS`, 25 measurement rows matched, 0 drift, `SECTION_COMPLETE` | VERIFIED |
@@ -52,7 +52,7 @@ Detection (`detect-project.mjs`): `framework: react`, `variant: react-vite`,
 Artifacts: `artifacts/phase8/{step1-feedback.json, canvas-desktop.png,
 canvas-mobile.png, canvas-change-request.png, step2.json, canvas-r2.png,
 canvas-r2-approved.png, approved/*.png, candidate/*.png,
-section-gate-request.json, step3.json, a11y.json}`.
+section-gate-request.json, step3.json, a11y.json, typecheck.json}`.
 
 Approved revision after the contrast fix: revisionDigest `960e4e12ef68…`,
 designDigest `ca5a0b4f2751…`, `completionScope: FIXTURE_ONLY`. The pre-fix run
@@ -201,3 +201,33 @@ values: ['wcag2a','wcag2aa','wcag22aa']}})`. Results are written to each pilot's
 
 Pilots require their dev servers; Pilot B's script stops Vite itself before the
 production build and expects the Laravel server to stay up.
+
+## Cross-check of this document (evidence review)
+
+Every numeric claim above was re-derived from the artifact files, not from the
+narrative. What was read and what it returned:
+
+| Claim | Artifact read | Value |
+|---|---|---|
+| Pilot A gate | `step3.json` / `section-gate-request.json` | `receipt OK`, `PARITY_PASS`, `SECTION_COMPLETE`, 25 rows all `PASS`, G0–G3 `PASS`, `build.code 0`, `htmlFiles []`, `imports ["from 'react'"]` |
+| Pilot A approval | `step2.json` | `bound OK`, `stale STALE_REVISION`, `restored OK`, fp `960e4e12ef68…`, design `ca5a0b4f2751…` |
+| Pilot B gate | `pilot-b.json` | `receipt OK`, `PARITY_PASS`, `SECTION_COMPLETE`, 25 rows all `PASS`, `bound OK`, `stale STALE_REVISION`, `restoredBinding OK`, fp `a2a4867fba87…`, design `c37064160349…` |
+| Pilot B production data | `production-adapter.json` | `mode: source: production`, 4 rows, `PO-2099` present, 0 page errors |
+| Pilot C gate | `pilot-c-gate.json` | `receipt OK`, `PARITY_PASS`, `SECTION_COMPLETE`, 25 rows all `PASS`, fp `284afd63f4ee…`, `builtAsset true` / `noViteClient true` |
+| a11y | three `a11y.json` | 0 violations, 15/16/16 rule groups passing |
+| Pilot A type check | `typecheck.json` | exit 0 (post-install run) |
+
+Two corrections were made during this review:
+
+1. The Pilot A type-check row originally claimed VERIFIED without an artifact
+   behind the exit-0 run. `typecheck.json` was written and the row now cites it,
+   while `step3.json` keeps the workflow's own `BLOCKED_MISSING_DEV_DEPENDENCY`
+   record — both are true and both are shown.
+2. Pilot A's per-row measurements are not in `step3.json` (that file carries a
+   boolean `measurementsPass`); the 25 rows live in `section-gate-request.json`.
+   The table above now points at the right file.
+
+Claims this review could not strengthen: the pilot directories are ephemeral, so
+the artifacts vanish with `$TMPDIR`; AC-15 stays PARTIAL without an AGY run; the
+a11y result is an automated axe pass, not a manual screen-reader audit; and Pilot B
+font/component reuse has nothing to reuse in the scaffold, so it cannot rise.
