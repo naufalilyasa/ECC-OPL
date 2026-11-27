@@ -33,7 +33,7 @@ const requireArg = (flag, why, fallback) => {
   const value = arg(flag, fallback);
   if (!value) {
     console.error(`capture-live-section: missing ${flag} (${why})`);
-    console.error('Usage: --base <url> --out <dir> --playwright-dir <dir> --email <login> --password <password> [--route <path>]');
+    console.error('Usage: --base <url> --out <dir> --playwright-dir <dir> [--email <login> --password <password>] [--route <path>]');
     process.exit(2);
   }
   return value;
@@ -44,8 +44,13 @@ const PW_DIR = requireArg('--playwright-dir', 'directory holding a playwright in
 const base = arg('--base', 'http://127.0.0.1:8000');
 const outDir = path.resolve(arg('--out', 'artifacts/live-section'));
 // Credentials are read from the environment too: argv is visible in `ps`.
-const email = requireArg('--email', 'app login; prefer CAPTURE_EMAIL', process.env.CAPTURE_EMAIL);
-const password = requireArg('--password', 'app password; prefer CAPTURE_PASSWORD', process.env.CAPTURE_PASSWORD);
+// They are optional: a project without auth captures as an anonymous visitor.
+const email = arg('--email', process.env.CAPTURE_EMAIL);
+const password = arg('--password', process.env.CAPTURE_PASSWORD);
+const doLogin = Boolean(email && password);
+if (!doLogin) {
+  console.error('capture-live-section: no credentials supplied; capturing without logging in.');
+}
 if (process.argv.includes('--email') || process.argv.includes('--password')) {
   console.error('capture-live-section: credentials passed on argv are visible to other users; prefer CAPTURE_EMAIL / CAPTURE_PASSWORD.');
 }
@@ -72,13 +77,14 @@ const fs = require('node:fs');
     page.on('pageerror', e => report.consoleErrors.push(String(e).slice(0, 200)));
 
     // Log in through the real form so the app issues a real session.
-    await page.goto(${JSON.stringify(base)} + '/login', { waitUntil: 'networkidle' });
+    ${doLogin ? `await page.goto(${JSON.stringify(base)} + '/login', { waitUntil: 'networkidle' });
     await page.fill('input[type="email"]', process.env.CAPTURE_EMAIL);
     await page.fill('input[type="password"]', process.env.CAPTURE_PASSWORD);
     await Promise.all([
       page.waitForNavigation({ waitUntil: 'networkidle' }).catch(() => {}),
       page.click('button[type="submit"]')
     ]);
+` : '// No credentials supplied: treat the section as public.'}
 
     const response = await page.goto(${JSON.stringify(base)} + ${JSON.stringify(route)}, { waitUntil: 'networkidle' });
     await page.waitForTimeout(1200);
