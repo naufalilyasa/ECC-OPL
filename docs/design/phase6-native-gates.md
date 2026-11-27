@@ -10,31 +10,44 @@ Date: 2026-11-27 · Plan: `docs/plans/framework-native-design-build.plan.md` (Ph
   `PARITY_UNVERIFIED / PREVIEW_MODE_INVALID` — never silently downgraded to the legacy path.
 - Native mode compares **the approved revision's own baseline capture** against the
   integrated capture. The baseline must be attributable to the approval: the evidence
-  carries `referenceDesignDigest`, the context carries `approvedReference.designDigest`,
-  and a mismatch returns `PARITY_UNVERIFIED / BASELINE_NOT_BOUND_TO_APPROVAL` instead of
-  accepting any old screenshot.
+  carries `referenceDesignDigest` (from the capture step), the context carries
+  `approvedReference.designDigest` (from active state), and a mismatch returns
+  `PARITY_UNVERIFIED / BASELINE_NOT_BOUND_TO_APPROVAL` instead of accepting any old
+  screenshot. **The two digests come from different inputs on purpose** — a gate that fed
+  both from one field would compare a value with itself and accept anything.
 - A missing baseline capture in native mode reports `BASELINE_CAPTURE_MISSING` (the legacy
   path keeps `SCREENSHOT_PAIR_INCOMPLETE`), so the failure names what is actually absent.
-- No pixel comparison is performed in either mode — the authority checks evidence
-  structure, per-profile digests, profile dimensions and typed measurement rows. Native
-  same-source/different-context differences therefore surface as measurement rows and as
-  `driftFindings` passed through on the result; they cannot masquerade as a pixel failure.
+- No pixel *grading* is performed in either mode — the authority checks evidence structure,
+  per-profile digests, profile dimensions and typed measurement rows. It does **detect**
+  native drift: when the baseline and integrated captures hash differently it emits
+  `{ viewport, kind: 'PIXEL_DRIFT', referenceSha256, candidateSha256 }` into `driftFindings`,
+  so the finding no longer depends on the caller remembering to supply it.
 - The outcome now carries `mode` and `driftFindings`.
 
 ### `scripts/design-build-v2/section-gate.mjs`
 
-`previewMode` is read from `req.active?.previewMode ?? 'standalone-html'` — authoritative
-state, not the receipt or a caller flag — and forwarded into parity together with
-`approvedReference.designDigest` and `evidence.referenceDesignDigest`. The hardcoded
-screenshot-pair shape is now selected by mode.
+`previewMode` is read from the active-state block of the request
+(`req.active?.previewMode ?? 'standalone-html'`) — authoritative state, not the receipt — and
+forwarded into parity together with `approvedReference.designDigest` and
+`evidence.referenceDesignDigest` (the latter from `req.baselineDesignDigest`). The hardcoded
+screenshot-pair shape is now selected by mode. The outcome reports `previewMode` and
+`previewModeDefaulted`, because an absent mode is the one remaining permissive default.
 
 ### `scripts/design-build-v2/state-machine.mjs`
 
-- `verifyReceipt` rejects an unknown `previewMode` on active state (`PREVIEW_MODE_INVALID`)
-  and, in native mode, requires the approved design digest to be present
-  (`NATIVE_REFERENCE_MISSING`) — a native completion cannot be claimed without it.
-- `recomputeG2` passes mode and the approved design digest into the single parity authority,
-  so the receipt-recomputed G2 and the command-reported G2 agree by construction.
+- `verifyReceipt` rejects an unknown `previewMode` (`PREVIEW_MODE_INVALID`) and, in native
+  mode, requires **three independent records to agree**:
+  1. `active.designDigest` exists (`NATIVE_REFERENCE_MISSING`);
+  2. the Canvas approval event carries a digest (`APPROVAL_BINDING_INCOMPLETE`) that equals
+     the active one (`APPROVAL_STATE_CONFLICT`);
+  3. the reference set is supplied (`NATIVE_REFERENCE_SET_MISSING`) and re-fingerprinted now,
+     so a source edit after acceptance is `STALE_REVISION`. `VERIFICATION_REQUIRED` is
+     allowed through — this gate run is the rerun.
+- `recomputeG2` passes mode, the active design digest and `context.baselineDesignDigest`
+  into the single parity authority, so the receipt-recomputed G2 and the command-reported G2
+  agree by construction while the compared values stay independent.
+- `advanceCheckpoint` records `completionScope` (`OK` / `FIXTURE_ONLY`) on the completion
+  record and refuses an explicit `completionClaim: 'production'` for a fixture section.
 
 ### `scripts/lib/plan-canvas/sessions.js`
 
@@ -47,34 +60,48 @@ Phase 5 flows into the state the gate reads.
 |------|------------------|
 | G0 | Unchanged predicate (section identity + real candidate bytes + a real Canvas verdict id). Preview-runtime readiness is proven implicitly: the candidate captures cannot exist without a live server, and Phase 4 owns the runtime. No extra flag is invented. |
 | G1 | Unchanged predicate (approval bound to the bundle + contract checks observed). The native-specific binding — approval's design digest — is enforced at G2, where it is testable. |
-| G2 | Baseline capture vs integrated capture per required profile, both PNG-validated, per-profile digests recomputed from bytes, profile dimensions enforced, typed measurement rows required. Baseline must match the approved design digest. |
+| G2 | Baseline capture vs integrated capture per required profile, both PNG-validated, per-profile digests recomputed from bytes, profile dimensions enforced, typed measurement rows required. The baseline's claimed digest (from the capture step) must equal the digest in active state and in the Canvas approval event. |
 | G3 | Unchanged: real interaction postconditions, `before !== after`, `observed === true`. |
 
 A required gate that fails still blocks `SECTION_COMPLETE` through the existing
-`gateNotVerified` / `verdictDisagreement` path; the native path adds no bypass.
+`gateNotVerified` / `verdictDisagreement` path; the native path adds no bypass. Completion
+also records `completionScope`, so a fixture-backed section carries `FIXTURE_ONLY` on its
+own record.
 
 ## Verification
 
 ```
-node tests/lib/design-build-native-state.test.js   → 30 passed, 0 failed
-node tests/design-build-v2-hotfix.test.mjs         → 10 passed, 0 failed
-node tests/design-build-v2-invariants.test.js      → 40 passed, 0 failed
+node tests/lib/design-build-native-state.test.js        → 38 passed, 0 failed
+node tests/design-build-v2-hotfix.test.mjs              → 10 passed, 0 failed
+node tests/design-build-v2-invariants.test.js           → 40 passed, 0 failed
+node tests/lib/design-build-preview-runtime.test.js     → 12 passed, 0 failed
+node tests/lib/plan-canvas-preview-mode.test.js         → 12 passed, 0 failed
+node tests/lib/plan-canvas-sessions.test.js             → 16 passed, 0 failed
+node tests/lib/plan-canvas-antigravity.test.js          → 13 passed, 0 failed
+node tests/lib/design-build-direction-a11y.test.js      → 10 passed, 0 failed
 ```
 
 New assertions: native G2 passes on baseline-vs-integrated captures of the approved
 revision (`g2.mode === 'framework-native'`, `SECTION_COMPLETE`); a missing baseline capture
 gives `BASELINE_CAPTURE_MISSING` and no completion; a baseline stamped with a different
-design digest is `BASELINE_NOT_BOUND_TO_APPROVAL`; a fabricated digest claim in `g2` is
-rejected against the real bytes and the gate exits non-zero; native mode without an approved
-design digest is `NATIVE_REFERENCE_MISSING`; an unknown preview mode fails both the receipt
-and G2; the legacy standalone-html pair path still completes unchanged.
+design digest is `BASELINE_NOT_BOUND_TO_APPROVAL` **through the pipeline**, not only in a
+direct API call; a fabricated digest claim in `g2` is rejected against the real bytes and the
+gate exits non-zero; a visual change after acceptance is `STALE_REVISION` while a fixture
+swap passes (this gate run is the rerun); active state disagreeing with the Canvas approval
+is `APPROVAL_STATE_CONFLICT`; a missing reference set is `NATIVE_REFERENCE_SET_MISSING`;
+differing native captures produce a `PIXEL_DRIFT` finding; two digests for one path are
+`FINGERPRINT_CONFLICT`; a fixture section claiming production completion is `FIXTURE_ONLY`;
+an unknown preview mode fails both the receipt and G2; the legacy standalone-html pair path
+still completes unchanged.
 
 ## Known limits (honest status)
 
 - Gate mechanics **VERIFIED** by tests. Rendered-integrity *quality* on real apps stays
   **PARTIAL** until Pilot A/B exercise it.
-- The gate trusts `active.designDigest` as the approved revision's digest. It does not
-  re-hash the reference file set from disk at gate time — that remains the approval-time
-  check from Phase 5 (`verifyApprovalRevision`). If a section is edited *after* acceptance
-  and before completion, the gate will not notice on its own.
-- No pixel diffing exists in either mode, by design. Native drift is reported, not graded.
+- The gate re-fingerprints the reference set it is **given**; it does not read project files
+  from disk. A caller that supplies a reference set matching a forged approval would still
+  pass. The trust anchor is the Canvas verdict event: its `designDigest` must equal active
+  state *and* be the digest the reference set reproduces now, so a post-acceptance edit is
+  caught (`STALE_REVISION`). Disk-level re-hashing remains a caller duty.
+- No pixel *grading* exists in either mode, by design. Native drift is detected and reported,
+  never scored.

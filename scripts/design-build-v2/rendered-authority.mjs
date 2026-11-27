@@ -56,12 +56,12 @@ export function verifyRenderedParity(result, context = {}) {
   if (!required.length) return { code: 'PARITY_UNVERIFIED', why: 'REQUIRED_VIEWPORTS_MISSING', mode }
   // One shared digest pair is NOT valid for multiple profiles.
   if (required.length > 1 && !result.evidence?.byProfile) {
-    return { code: 'PARITY_UNVERIFIED', why: 'SHARED_DIGEST_PAIR_INVALID' }
+    return { code: 'PARITY_UNVERIFIED', why: 'SHARED_DIGEST_PAIR_INVALID', mode }
   }
   const pairs = context.screenshotPairs ?? {}
   const vpm = context.viewportMeasurements ?? {}
   const hashes = result.evidence?.byProfile ?? {}
-  const verifiedProfiles = [], diffs = []
+  const verifiedProfiles = [], diffs = [], drift = []
   let matched = 0
   for (const vp of required) {
     const pair = pairs[vp]
@@ -90,6 +90,13 @@ export function verifyRenderedParity(result, context = {}) {
     if (sha(pair.reference) !== h.approved || sha(pair.candidate) !== h.candidate) {
       return { code: 'PARITY_UNVERIFIED', why: 'PROFILE_HASH_MISMATCH', viewport: vp }
     }
+    // Native is single-source: same component, different shell. A differing
+    // capture is a finding, not a failure, so it is REPORTED here rather than
+    // left to the caller to remember to supply.
+    if (mode === 'framework-native' && sha(pair.reference) !== sha(pair.candidate)) {
+      drift.push({ viewport: vp, kind: 'PIXEL_DRIFT',
+        referenceSha256: sha(pair.reference), candidateSha256: sha(pair.candidate) })
+    }
     const rows = vpm[vp]
     if (!Array.isArray(rows) || !rows.length) return { code: 'PARITY_UNVERIFIED', why: 'MEASUREMENTS_MISSING', viewport: vp }
     let profilePass = true
@@ -103,9 +110,8 @@ export function verifyRenderedParity(result, context = {}) {
   }
   return { code: diffs.length ? 'PARITY_FAIL' : 'PARITY_PASS', mode, matched,
     verifiedProfiles, failedProfiles: diffs.map((d) => d.viewport), diffs,
-    // Native drift is reported, not failed on pixels: the same component in a
-    // different shell legitimately differs. Callers surface these as findings.
-    driftFindings: result.driftFindings ?? [],
+    // Detected drift first, then any findings the capture step contributed.
+    driftFindings: [...drift, ...(result.driftFindings ?? [])],
     requiredViewports: required.slice() }
 }
 

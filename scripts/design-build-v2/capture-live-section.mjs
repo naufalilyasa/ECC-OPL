@@ -29,7 +29,7 @@ function arg(flag, fallback) {
   return i >= 0 && i + 1 < process.argv.length ? process.argv[i + 1] : fallback;
 }
 
-const require_ = (flag, why, fallback) => {
+const requireArg = (flag, why, fallback) => {
   const value = arg(flag, fallback);
   if (!value) {
     console.error(`capture-live-section: missing ${flag} (${why})`);
@@ -39,12 +39,13 @@ const require_ = (flag, why, fallback) => {
   return value;
 };
 
-const PW_DIR = require_('--playwright-dir', 'directory holding a playwright install',
+const PW_DIR = requireArg('--playwright-dir', 'directory holding a playwright install',
   process.env.E2E_PLAYWRIGHT_DIR);
 const base = arg('--base', 'http://127.0.0.1:8000');
 const outDir = path.resolve(arg('--out', 'artifacts/live-section'));
-const email = require_('--email', 'app login, no default is baked in');
-const password = require_('--password', 'app password, no default is baked in');
+// Credentials are read from the environment too: argv is visible in `ps`.
+const email = requireArg('--email', 'app login; prefer CAPTURE_EMAIL', process.env.CAPTURE_EMAIL);
+const password = requireArg('--password', 'app password; prefer CAPTURE_PASSWORD', process.env.CAPTURE_PASSWORD);
 const route = arg('--route', '/');
 
 fs.mkdirSync(outDir, { recursive: true });
@@ -69,8 +70,8 @@ const fs = require('node:fs');
 
     // Log in through the real form so the app issues a real session.
     await page.goto(${JSON.stringify(base)} + '/login', { waitUntil: 'networkidle' });
-    await page.fill('input[type="email"]', ${JSON.stringify(email)});
-    await page.fill('input[type="password"]', ${JSON.stringify(password)});
+    await page.fill('input[type="email"]', process.env.CAPTURE_EMAIL);
+    await page.fill('input[type="password"]', process.env.CAPTURE_PASSWORD);
     await Promise.all([
       page.waitForNavigation({ waitUntil: 'networkidle' }).catch(() => {}),
       page.click('button[type="submit"]')
@@ -102,4 +103,8 @@ const fs = require('node:fs');
 })().catch(e => { console.error('CAPTURE FAIL:', e.message); process.exit(1); });
 `;
 
-execFileSync(process.execPath, ['-e', script], { stdio: 'inherit' });
+execFileSync(process.execPath, ['-e', script], {
+  stdio: 'inherit',
+  // Credentials travel via the environment, not the generated script text.
+  env: { ...process.env, CAPTURE_EMAIL: email, CAPTURE_PASSWORD: password }
+});

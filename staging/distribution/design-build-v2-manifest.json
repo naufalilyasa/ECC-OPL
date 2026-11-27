@@ -136,20 +136,20 @@
     {
       "path": "scripts/design-build-v2/state-machine.mjs",
       "destination": "scripts/design-build-v2/state-machine.mjs",
-      "sha256": "2ee735b4c8d491aaf61f8d6818a6733a481a4daff8848edf3bc423d8afd01f4b",
-      "bytes": 20891
+      "sha256": "945dc3c38f0e29a7a9c9fc7e3da6760b1489bf7e772ec9dadcf5590beb6a4212",
+      "bytes": 22708
     },
     {
       "path": "scripts/design-build-v2/rendered-authority.mjs",
       "destination": "scripts/design-build-v2/rendered-authority.mjs",
-      "sha256": "c11ae690c3d4dc702ff695ea062f067f748e20fa5f13c852f025ed4d305be7b5",
-      "bytes": 6606
+      "sha256": "b2ae4f1e4c795ebd61d7286d2f8e9e706a5e830ea5a703f60deba39042248e46",
+      "bytes": 6996
     },
     {
       "path": "scripts/design-build-v2/section-gate.mjs",
       "destination": "scripts/design-build-v2/section-gate.mjs",
-      "sha256": "6264e57789e040c903585fbb9a54efb359775c7a900a13a885d89a998556450d",
-      "bytes": 3791
+      "sha256": "6d738278ac3819ac595556d880c69889472d45a90b30a14c6f05cf5e8e0fd6db",
+      "bytes": 4354
     },
     {
       "path": "scripts/design-build-v2/compare-section.mjs",

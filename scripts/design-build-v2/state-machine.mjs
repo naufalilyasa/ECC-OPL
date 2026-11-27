@@ -26,6 +26,11 @@ const toBuf = (v) => Buffer.isBuffer(v) ? v : Buffer.from(v)
 
 // Recompute G2 via the SAME authority the command uses (no parallel equality check).
 // Preview mode is taken from authoritative state, never from the receipt.
+//
+// Two INDEPENDENT inputs: `approvedReference.designDigest` comes from the approval
+// bound into active state, while `referenceDesignDigest` comes from the capture
+// evidence that produced the baseline screenshots. Feeding both from one field
+// would make the comparison tautological and any old screenshot would pass.
 function recomputeG2(receipt, context, src) {
   const required = context.requiredViewports ?? []
   const mode = src?.previewMode ?? 'standalone-html'
@@ -37,7 +42,7 @@ function recomputeG2(receipt, context, src) {
   }]))
   return verifyRenderedParity(
     { source: 'chromium-playwright',
-      evidence: { verified: true, byProfile, referenceDesignDigest: src?.designDigest },
+      evidence: { verified: true, byProfile, referenceDesignDigest: context.baselineDesignDigest },
       driftFindings: context.driftFindings ?? [] },
     { screenshotPairs: Object.fromEntries(required.map((vp) => [vp, {
         reference: vps[vp]?.screenshot, candidate: vps[vp]?.candidateScreenshot }])),
@@ -67,10 +72,24 @@ export function verifyReceipt(receipt, context) {
   if (src.previewMode !== undefined && !PREVIEW_MODES.includes(src.previewMode)) {
     return reject('PREVIEW_MODE_INVALID', { previewMode: src.previewMode })
   }
-  // Native G2 compares against the approved revision's own baseline, so the
-  // approval's design digest must be present in authoritative state.
-  if (src.previewMode === 'framework-native' && !HEX64.test(src.designDigest || '')) {
-    return reject('NATIVE_REFERENCE_MISSING')
+  // Native G2 compares against the approved revision's own baseline. Three
+  // INDEPENDENT records must agree: active state, the Canvas approval event, and
+  // the reference set re-fingerprinted now (which also catches an edit made
+  // after acceptance but before completion).
+  if (src.previewMode === 'framework-native') {
+    if (!HEX64.test(src.designDigest || '')) return reject('NATIVE_REFERENCE_MISSING')
+    if (!HEX64.test(canvasApproval?.designDigest || '')) return reject('APPROVAL_BINDING_INCOMPLETE')
+    if (canvasApproval.designDigest !== src.designDigest) {
+      return reject('APPROVAL_STATE_CONFLICT',
+        { approvedDesignDigest: canvasApproval.designDigest, activeDesignDigest: src.designDigest })
+    }
+    if (!context.nativeReference) return reject('NATIVE_REFERENCE_SET_MISSING')
+    const revision = verifyApprovalRevision(canvasApproval, context.nativeReference)
+    // VERIFICATION_REQUIRED means only non-visual inputs changed; this gate run
+    // IS the rerun, so it may proceed. Every other verdict stops here.
+    if (revision.code !== 'OK' && revision.code !== 'VERIFICATION_REQUIRED') {
+      return reject(revision.code, { approvedDesignDigest: canvasApproval.designDigest })
+    }
   }
   if (identity && (identity.sectionId !== src.sectionId || identity.revision !== src.revision
       || identity.bundleSha256 !== src.approvedBundleSha256)) return reject('IDENTITY_CONTEXT_CONFLICT')
@@ -218,10 +237,17 @@ export function advanceCheckpoint(active, receipt, context = {}) {
   if (state === STATES.REPAIR_REQUIRED) return { ...active, state: STATES.PARITY_PENDING, code: 'REPAIR_APPLIED' }
   if (state !== STATES.PARITY_PASS) return { ...frozen, code: 'INVALID_LIFECYCLE_TRANSITION', state }
   if (verified.code !== 'OK') return { ...frozen, code: 'PARITY_NOT_VERIFIED', why: verified.why }
+  // A fixture-only section may complete, but the record must never read as
+  // production integration, and an explicit production claim is refused.
+  const scope = verifyCompletionScope(active)
+  if (context.completionClaim === 'production' && scope.code !== 'OK') {
+    return { ...frozen, code: 'FIXTURE_ONLY', dataMode: scope.dataMode }
+  }
   return { ...active, current: active.current + 1, state: STATES.SECTION_COMPLETE,
     // Carried on the completion record so nobody downstream can read a fixture
     // section as production integration.
     dataMode: DATA_MODES.includes(active.dataMode) ? active.dataMode : 'fixture',
+    completionScope: scope.code,
     verifiedReceiptSha256: sha256(JSON.stringify(receipt)) }
 }
 
@@ -268,6 +294,8 @@ export function fingerprintNativeReference(reference) {
     if (seen.has(file.path) && seen.get(file.path) !== file.sha256) {
       return { code: 'FINGERPRINT_CONFLICT', path: file.path }
     }
+    // The same path listed twice with the same digest is a duplicate listing, not
+    // a conflict: collapsing it keeps the fingerprint order-independent.
     seen.set(file.path, file.sha256)
   }
   if (!files.some((file) => file.kind === 'component-source')) {

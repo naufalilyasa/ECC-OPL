@@ -25,6 +25,21 @@ Anything else is dropped, not passed through.
 `scripts/design-build-v2/preview-runtime.mjs` — re-exports the fingerprint helpers so the
 approval loop has one import for preview + revision concerns.
 
+### Wired into the gate (Phase 6 review follow-up)
+
+`verifyApprovalRevision` and `verifyCompletionScope` now have real callers:
+
+- `verifyReceipt` re-fingerprints `context.nativeReference` at gate time and compares it with
+  the Canvas approval event, so an edit made *after* acceptance but before completion is
+  caught (`STALE_REVISION`). `VERIFICATION_REQUIRED` is allowed through because the gate run
+  itself is the rerun.
+- `advanceCheckpoint` records `completionScope` on the completion record and refuses an
+  explicit `completionClaim: 'production'` for a fixture section (`FIXTURE_ONLY`).
+
+Path normalization note: `fingerprintNativeReference` compares paths literally, so
+`a/b.tsx` and `./a/b.tsx` are different entries. Submit-time and acceptance-time callers must
+normalize paths the same way; a mismatch fails closed (digests differ) rather than passing.
+
 ## Verification
 
 ```

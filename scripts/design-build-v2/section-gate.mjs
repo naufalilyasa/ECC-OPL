@@ -29,12 +29,22 @@ const bytes = (p) => {
 // Build context from request. Identity/approval must come from authoritative
 // workflow state supplied by the caller, never from the receipt itself.
 // NO `?? screenshot` fallback: both reference and candidate are distinct and mandatory.
+// Preview mode comes from the ACTIVE-STATE block of the request, never from the
+// receipt, so a caller cannot pick the cheaper gate by claiming a different mode.
+const previewMode = req.active?.previewMode ?? 'standalone-html'
 const ctx = {
   identity: req.identity,
   active: req.active,
   canvasApproval: req.canvasApproval,
   contractChecks: req.contractChecks ?? [],
   profileDimensions: req.profileDimensions ?? {},
+  // Digest claimed by whatever produced the baseline captures. Deliberately a
+  // DIFFERENT input from active/approval designDigest: the authority compares them.
+  baselineDesignDigest: req.baselineDesignDigest,
+  nativeReference: req.nativeReference,
+  // Only a caller that really shipped production data may say 'production'.
+  completionClaim: req.completionClaim,
+  driftFindings: req.g2?.driftFindings ?? [],
   candidateFiles: Object.fromEntries(
     Object.entries(req.candidateFiles ?? {}).map(([p, f]) => [p, bytes(f)])
   ),
@@ -63,14 +73,12 @@ const g2 = verifyRenderedParity(
   {
     source: 'chromium-playwright',
     evidence: { verified: true, byProfile,
-      referenceDesignDigest: req.active?.designDigest },
+      referenceDesignDigest: ctx.baselineDesignDigest },
     diffs: req.g2?.diffs ?? [],
-    driftFindings: req.g2?.driftFindings ?? [],
+    driftFindings: ctx.driftFindings,
   },
   {
-    // Preview mode comes from authoritative state (DBN-11), not from the receipt
-    // or the request, so a caller cannot pick the cheaper mode.
-    previewMode: req.active?.previewMode ?? 'standalone-html',
+    previewMode,
     approvedReference: { designDigest: req.active?.designDigest },
     screenshotPairs: Object.fromEntries(
       Object.entries(ctx.viewportEvidence).map(([vp, v]) => [vp, {
@@ -90,6 +98,10 @@ const checkpoint = advanceCheckpoint(req.active, receipt, ctx)
 
 const outcome = {
   module: 'scripts/design-build-v2/section-gate.mjs',
+  previewMode,
+  // An ABSENT mode is the one permissive default left: it takes the legacy path.
+  // Surface it so a native section that lost its mode cannot fail silently.
+  previewModeDefaulted: req.active?.previewMode === undefined,
   receipt: verdict,
   g2,
   checkpoint,

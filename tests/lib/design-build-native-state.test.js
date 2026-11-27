@@ -62,15 +62,37 @@ const DESIGN = 'd'.repeat(64);
 const VIEWPORT = 'desktop-1440';
 const ROW = { profile: VIEWPORT, state: 'default', landmark: 'root', property: 'display',
   expected: 'block', actual: 'block', verdict: 'PASS' };
+// Same valid PNG with an inserted ancillary chunk: different bytes, same image contract.
+const PNG2 = Buffer.concat([PNG.subarray(0, PNG.length - 12),
+  Buffer.from([0, 0, 0, 4, 0x74, 0x45, 0x58, 0x74, 1, 0, 0, 0]),
+  PNG.subarray(PNG.length - 12)]);
+
+const nativeReference = (overrides = {}) => ({
+  files: [
+    { kind: 'component-source', path: 'resources/js/Pages/Inventory.tsx', sha256: sha('component-v1') },
+    { kind: 'component-imports', path: 'resources/js/Components/Table.tsx', sha256: sha('imports') },
+    { kind: 'design-contract', path: 'docs/design/sections/05-inventory/CONTRACT.md', sha256: sha('contract') },
+    { kind: 'tokens', path: 'resources/css/tokens.css', sha256: sha('tokens') },
+    { kind: 'preview-config', path: 'vite.config.ts', sha256: sha('vite') },
+    { kind: 'data-fixture', path: 'resources/js/fixtures/inventory.json', sha256: sha('fixture-v1') },
+  ],
+  ...overrides
+});
 
 function validRequest(previewMode, state) {
   const source = Buffer.from('export function AppShell() { return null }\n');
+  const native = previewMode === 'framework-native';
+  // The approval, the active state and the baseline capture all carry the digest
+  // of the reference set above, so the gate's cross-checks are satisfied honestly.
+  const fp = fingerprintNativeReference(nativeReference());
   return {
     active: { sectionId: SECTION, revision: REVISION, approvedBundleSha256: BUNDLE,
       state, current: 0, steps: [SECTION, '02-next'], previewMode,
-      ...(previewMode === 'framework-native' ? { designDigest: DESIGN } : {}) },
+      ...(native ? { designDigest: fp.designDigest } : {}) },
     canvasApproval: { verdictId: 'canvas:abc@2026-11-27T00:00:00Z', approved: true,
-      sectionId: SECTION, revision: REVISION, bundleSha256: BUNDLE },
+      sectionId: SECTION, revision: REVISION, bundleSha256: BUNDLE,
+      ...(native ? { revisionDigest: fp.revisionDigest, designDigest: fp.designDigest } : {}) },
+    ...(native ? { baselineDesignDigest: fp.designDigest, nativeReference: nativeReference() } : {}),
     candidateFiles: { 'AppShell.tsx': source },
     frameworkCompleteEvidence: { identitySha256: 'c'.repeat(64) },
     contractChecks: [{ name: 'tokens', observed: true }],
@@ -235,9 +257,7 @@ function runTests() {
     assert.strictEqual(out.current, 0);
   });
 
-  // Tolerance only: section-gate does not read previewMode yet (Phase 6 wires
-  // native G2). Do not cite this as mode-aware gate evidence.
-  test('section-gate tolerates a previewMode field and keeps the completion contract', () => {
+  test('section-gate completes in both modes and reports the mode it used', () => {
     const native = runSectionGate(validRequest('framework-native', 'PARITY_PASS'));
     const legacy = runSectionGate(validRequest('standalone-html', 'PARITY_PASS'));
     for (const result of [native, legacy]) {
@@ -245,7 +265,10 @@ function runTests() {
       assert.strictEqual(result.out.checkpoint.state, 'SECTION_COMPLETE');
       assert.strictEqual(result.out.checkpoint.current, 1);
       assert.strictEqual(result.out.g2.code, 'PARITY_PASS');
+      assert.strictEqual(result.out.previewModeDefaulted, false);
     }
+    assert.strictEqual(native.out.g2.mode, 'framework-native');
+    assert.strictEqual(legacy.out.g2.mode, 'standalone-html');
   });
 
   test('compare-section refuses native input instead of fabricating an HTML reference', () => {
@@ -267,18 +290,6 @@ function runTests() {
   });
 
   // ---- Phase 5: approval identity, revision binding & dataMode ----
-
-  const nativeReference = (overrides = {}) => ({
-    files: [
-      { kind: 'component-source', path: 'resources/js/Pages/Inventory.tsx', sha256: sha('component-v1') },
-      { kind: 'component-imports', path: 'resources/js/Components/Table.tsx', sha256: sha('imports') },
-      { kind: 'design-contract', path: 'docs/design/sections/05-inventory/CONTRACT.md', sha256: sha('contract') },
-      { kind: 'tokens', path: 'resources/css/tokens.css', sha256: sha('tokens') },
-      { kind: 'preview-config', path: 'vite.config.ts', sha256: sha('vite') },
-      { kind: 'data-fixture', path: 'resources/js/fixtures/inventory.json', sha256: sha('fixture-v1') },
-    ],
-    ...overrides
-  });
 
   test('reference fingerprint is stable and order-independent', () => {
     const a = fingerprintNativeReference(nativeReference());
@@ -341,11 +352,35 @@ function runTests() {
     assert.notStrictEqual(verdict.revisionDigest, fp.revisionDigest);
     assert.strictEqual(verdict.designDigest, fp.designDigest);
     assert.notStrictEqual(verdict.code, 'OK', 'the stale checks must rerun');
-    // A rerun that cannot produce a valid receipt cannot reach completion: the
-    // gate order, not the approval check, enforces the verification itself.
-    const stale = advanceCheckpoint({ ...validRequest('framework-native', 'PARITY_PENDING').active },
-      { schemaVersion: 2 });
-    assert.notStrictEqual(stale.state, 'SECTION_COMPLETE');
+    assert.strictEqual(advanceCheckpoint({ ...validRequest('framework-native', 'PARITY_PENDING').active },
+      { schemaVersion: 2 }).state, 'PARITY_PENDING',
+    'a garbage receipt cannot advance the lifecycle');
+  });
+
+  test('a fixture swap is verified by the gate run itself and may complete', () => {
+    const swapped = nativeReference({
+      files: nativeReference().files.map((file) => file.kind === 'data-fixture'
+        ? { ...file, sha256: sha('fixture-v2') } : file)
+    });
+    const request = validRequest('framework-native', 'PARITY_PASS');
+    // Approval still speaks for the old revision digest; only the fixture moved.
+    request.nativeReference = swapped;
+    const result = runSectionGate(request);
+    assert.strictEqual(result.out.receipt.code, 'OK', JSON.stringify(result.out.receipt));
+    assert.strictEqual(result.out.checkpoint.state, 'SECTION_COMPLETE');
+  });
+
+  test('a visual change after acceptance is a stale approval, not a completion', () => {
+    const mutated = nativeReference({
+      files: nativeReference().files.map((file) => file.kind === 'component-source'
+        ? { ...file, sha256: sha('component-v2') } : file)
+    });
+    const request = validRequest('framework-native', 'PARITY_PASS');
+    request.nativeReference = mutated;
+    const result = runSectionGate(request);
+    assert.strictEqual(result.out.receipt.why, 'STALE_REVISION');
+    assert.notStrictEqual(result.out.checkpoint.state, 'SECTION_COMPLETE');
+    assert.strictEqual(result.code, 1);
   });
 
   test('missing approval digests are rejected, not defaulted', () => {
@@ -362,12 +397,27 @@ function runTests() {
     assert.deepStrictEqual(DATA_MODES, ['fixture', 'production']);
   });
 
-  test('the completion record carries dataMode', () => {
+  test('the completion record carries dataMode and its scope, never implying production', () => {
     const request = validRequest('framework-native', 'PARITY_PASS');
     request.active.dataMode = 'fixture';
     const result = runSectionGate(request);
     assert.strictEqual(result.out.checkpoint.state, 'SECTION_COMPLETE', JSON.stringify(result.out.checkpoint));
     assert.strictEqual(result.out.checkpoint.dataMode, 'fixture');
+    assert.strictEqual(result.out.checkpoint.completionScope, 'FIXTURE_ONLY');
+  });
+
+  test('an explicit production claim is refused for a fixture-only section', () => {
+    const request = validRequest('framework-native', 'PARITY_PASS');
+    request.active.dataMode = 'fixture';
+    request.completionClaim = 'production';
+    const out = advanceCheckpoint(request.active, request.receipt, request);
+    assert.strictEqual(out.code, 'FIXTURE_ONLY');
+    assert.notStrictEqual(out.state, 'SECTION_COMPLETE');
+    // A production section may claim production.
+    const real = validRequest('framework-native', 'PARITY_PASS');
+    real.active.dataMode = 'production';
+    real.completionClaim = 'production';
+    assert.strictEqual(advanceCheckpoint(real.active, real.receipt, real).state, 'SECTION_COMPLETE');
   });
 
   test('an unknown dataMode value blocks the gate instead of passing', () => {
@@ -433,6 +483,52 @@ function runTests() {
         viewportMeasurements: { [VIEWPORT]: [{ ...ROW }] } });
     assert.strictEqual(result.code, 'PARITY_UNVERIFIED');
     assert.strictEqual(result.why, 'BASELINE_NOT_BOUND_TO_APPROVAL');
+  });
+
+  test('the pipeline reaches the same verdict: a foreign baseline cannot complete a section', () => {
+    const request = validRequest('framework-native', 'PARITY_PASS');
+    // The capture step claims a different design digest than the one approved.
+    request.baselineDesignDigest = 'e'.repeat(64);
+    const result = runSectionGate(request);
+    assert.strictEqual(result.out.g2.why, 'BASELINE_NOT_BOUND_TO_APPROVAL');
+    assert.strictEqual(result.code, 1);
+    assert.notStrictEqual(result.out.checkpoint.state, 'SECTION_COMPLETE');
+  });
+
+  test('active state and the Canvas approval must agree on the design digest', () => {
+    const request = validRequest('framework-native', 'PARITY_PASS');
+    request.active.designDigest = 'e'.repeat(64);
+    const result = runSectionGate(request);
+    assert.strictEqual(result.out.receipt.why, 'APPROVAL_STATE_CONFLICT');
+    assert.notStrictEqual(result.out.checkpoint.state, 'SECTION_COMPLETE');
+  });
+
+  test('native mode without the reference set cannot complete', () => {
+    const request = validRequest('framework-native', 'PARITY_PASS');
+    delete request.nativeReference;
+    const result = runSectionGate(request);
+    assert.strictEqual(result.out.receipt.why, 'NATIVE_REFERENCE_SET_MISSING');
+    assert.notStrictEqual(result.out.checkpoint.state, 'SECTION_COMPLETE');
+  });
+
+  test('native capture drift is detected by the authority, not taken on trust', () => {
+    const request = validRequest('framework-native', 'PARITY_PASS');
+    request.viewportEvidence[VIEWPORT].candidateScreenshot = PNG2;
+    const result = runSectionGate(request);
+    assert.strictEqual(result.out.g2.code, 'PARITY_PASS', JSON.stringify(result.out.g2));
+    assert.strictEqual(result.out.g2.driftFindings.length, 1);
+    assert.strictEqual(result.out.g2.driftFindings[0].kind, 'PIXEL_DRIFT');
+    assert.strictEqual(result.out.g2.driftFindings[0].viewport, VIEWPORT);
+  });
+
+  test('one path with two different digests is a fingerprint conflict', () => {
+    const conflicted = nativeReference({
+      files: [...nativeReference().files,
+        { kind: 'component-source', path: 'resources/js/Pages/Inventory.tsx', sha256: sha('other') }]
+    });
+    const result = fingerprintNativeReference(conflicted);
+    assert.strictEqual(result.code, 'FINGERPRINT_CONFLICT');
+    assert.strictEqual(result.path, 'resources/js/Pages/Inventory.tsx');
   });
 
   test('a fabricated G2 claim is rejected in favour of the captured bytes', () => {
