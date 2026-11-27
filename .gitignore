@@ -121,3 +121,13 @@ assets/images/security/badrudi-exploit.mp4
 
 # Playwright MCP local state
 .playwright-mcp/
+
+# ECC-OPL engineering workspace — working artifacts are local by default.
+# Ignore the contents, not the directory, so Stage 2 can un-ignore reports.
+.ecc-opl/*
+# !.ecc-opl/reports/          (enabled in Stage 2)
+# !.ecc-opl/work-items/       (enabled in Stage 2, only if manifests are tracked)
+# !.ecc-opl/work-items/*/
+# .ecc-opl/work-items/*/*
+# !.ecc-opl/work-items/*/manifest.json
+# Local-only alternative (never committed): add the same rule to .git/info/exclude

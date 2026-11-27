@@ -11,6 +11,24 @@ You are the Lead Orchestrator handling the `/code-review-quick` command. Your jo
 
 > **Scope note:** this is the *quick* review lane. For deep two-axis reviews (repo standards + spec conformance), use `@code-review` instead.
 
+## Binding (work-item routing)
+
+```bash
+WI=""
+for R in "$CLAUDE_PLUGIN_ROOT" \
+         "${OPENCODE_CONFIG_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/opencode}" \
+         "./.agents" "." "${CLAUDE_CONFIG_DIR:-$HOME/.claude}"; do
+  [ -n "$R" ] && [ -f "$R/scripts/lib/work-item/work-item.js" ] && { WI="$R/scripts/lib/work-item/work-item.js"; break; }
+done
+if [ -z "$WI" ]; then echo "work-item helper not found — running standalone (legacy paths)"; MODE=standalone
+elif [ "$ECC_OPL_STANDALONE" = "1" ] || [ "${1:-}" = "--standalone" ]; then MODE=standalone
+elif [ -n "$EXPLICIT_ID" ]; then ITEM=$(node "$WI" resolve --id "$EXPLICIT_ID") && MODE=bound
+else ITEM=$(node "$WI" resolve); [ "$ITEM" = "none" ] && MODE=standalone || MODE=bound; fi
+```
+
+Precedence: `--standalone` > `$ECC_OPL_STANDALONE=1` > `--work-item <id>` > `.ecc-opl/active` > standalone.
+Standalone is byte-identical to today. Bound runs additionally persist the review report; the marker stays in `.opencode/markers/` untouched in both modes.
+
 ## Step 0 — Scope Negotiation
 
 Determine the review scope before dispatching the review:
@@ -77,3 +95,4 @@ Once the `code-reviewer` subagent returns:
        - <file2>
      ```
 3. If CRITICAL or HIGH issues were found, advise resolving them before merge.
+4. If bound (`MODE=bound`), also persist the report: write it to `.ecc-opl/work-items/<ITEM>/review/<date>-<slug>-run<N>.md` and append `node "$WI" append --workflow code-review-quick --artifact review --path <report>`. The marker above is still written in both modes (it is the incremental baseline, not a gate). If the write fails, say so in one line and keep the chat report.

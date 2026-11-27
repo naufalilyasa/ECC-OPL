@@ -50,6 +50,20 @@ Research only. Do not change application code, dependencies, or configuration as
 part of a research run. Save the report where the skill says to save it
 (`docs/research/<topic-slug>.md` for an explicit `/deep-research` invocation).
 
+**Bound work items.** When `.ecc-opl/active` names a work item (and neither
+`--standalone` nor `ECC_OPL_STANDALONE=1` is set), save to
+`.ecc-opl/work-items/<ITEM>/research/<topic-slug>.md` instead and append
+`node <work-item helper> append --workflow deep-research --artifact research --path <report>`.
+Resolve the helper across `$CLAUDE_PLUGIN_ROOT`,
+`${OPENCODE_CONFIG_DIR:-$HOME/.config/opencode}`, `./.agents`, `.`,
+`${CLAUDE_CONFIG_DIR:-$HOME/.claude}`. No bound item or no helper: keep
+`docs/research/` — the standalone path is unchanged.
+
+**PRD routing is deferred.** This command never writes PRDs. `/plan-prd` is not
+registered in `.opencode/opencode.json`; its only body is the legacy
+`commands/plan-prd.md`. Do not create `.ecc-opl/work-items/<id>/prd/` output
+until that decision is made.
+
 ## 5. Hard stops
 
 - Clarify gate: at most 2 questions.

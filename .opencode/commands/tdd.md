@@ -9,6 +9,24 @@ You are the Lead Orchestrator handling the `/tdd` command. Your job is to gather
 
 **User Arguments**: $ARGUMENTS
 
+## Binding (work-item routing)
+
+```bash
+WI=""
+for R in "$CLAUDE_PLUGIN_ROOT" \
+         "${OPENCODE_CONFIG_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/opencode}" \
+         "./.agents" "." "${CLAUDE_CONFIG_DIR:-$HOME/.claude}"; do
+  [ -n "$R" ] && [ -f "$R/scripts/lib/work-item/work-item.js" ] && { WI="$R/scripts/lib/work-item/work-item.js"; break; }
+done
+if [ -z "$WI" ]; then echo "work-item helper not found — running standalone (legacy paths)"; MODE=standalone
+elif [ "$ECC_OPL_STANDALONE" = "1" ] || [ "${1:-}" = "--standalone" ]; then MODE=standalone
+elif [ -n "$EXPLICIT_ID" ]; then ITEM=$(node "$WI" resolve --id "$EXPLICIT_ID") && MODE=bound
+else ITEM=$(node "$WI" resolve); [ "$ITEM" = "none" ] && MODE=standalone || MODE=bound; fi
+```
+
+Precedence: `--standalone` > `$ECC_OPL_STANDALONE=1` > `--work-item <id>` > `.ecc-opl/active` > standalone.
+Standalone is byte-identical to today; no `.ecc-opl/` writes.
+
 ## Orchestration Workflow
 
 ### 0. Arm the Workflow State (required, do this first)
@@ -37,7 +55,7 @@ Schema and rules: `workflow-state` skill.
 Gather the target specification from the active session:
 - **Target Feature/Function**: If `$ARGUMENTS` is provided, that is your target. If `$ARGUMENTS` is empty, extract the function, component, or bug just discussed in this session.
 - **Interfaces & Types**: Include any schemas, types, or data models established in recent turns.
-- **Plan Artifact**: If `docs/plans/<slug>.plan.md` exists (written by `/plan`), read it. Take each task's Acceptance and its happy + failure QA scenarios as the required test list, and its GAP rows as the behavior to prove. Do not invent a test list the plan already specifies.
+- **Plan Artifact**: resolve the plan in this order and stop at the first hit: explicit path in `$ARGUMENTS` → `plan_ref.path` in `.opencode/workflows/active.json` (read it; do not guess) → `.ecc-opl/work-items/<ITEM>/plan/*.plan.md` when bound → `docs/plans/<slug>.plan.md` (legacy). If it exists, read it. Take each task's Acceptance and its happy + failure QA scenarios as the required test list, and its GAP rows as the behavior to prove. Do not invent a test list the plan already specifies.
 - **Test Runner Context**: Detect the project test runner (npm, Bun, pnpm, Vitest, Jest, pytest, cargo test) and note it.
 
 ### 2. Dispatch TDD-Guide Subagent
@@ -69,6 +87,12 @@ Required tests from the plan's Acceptance + QA:
 
 ### 3. Report to User
 Present the test results, created test files, implementation summary, and coverage stats in the main conversation.
+
+When bound, persist the TDD record instead of leaving it in chat:
+- Record path: `.ecc-opl/work-items/<ITEM>/implementation/<name>.tdd.md` (standalone keeps the legacy record locations from the `tdd-workflow` skill).
+- Append a timeline event at each checkpoint:
+  `node "$WI" append --workflow tdd --artifact red|green|refactor --path <record> [--note "<command + result>"]`.
+- If the helper or the work item is unavailable, continue with the legacy paths and say so in one line — never block the chain.
 
 ### 4. Close the Workflow State
 Rewrite `.opencode/workflows/active.json` with `"phase": "done"` before reporting completion. A stale `red` phase keeps denying production edits in later unrelated work.

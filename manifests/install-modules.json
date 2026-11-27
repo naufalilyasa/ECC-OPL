@@ -1529,7 +1529,9 @@
         "scripts/lib/agent-data-home.js",
         "scripts/lib/path-safety.js",
         "scripts/setup-package-manager.js",
-        "scripts/lib/package-manager.js"
+        "scripts/lib/package-manager.js",
+        "scripts/lib/state-store/file-lock.js",
+        "scripts/lib/work-item/work-item.js"
       ],
       "targets": [
         "claude",
@@ -1537,6 +1539,7 @@
         "cursor",
         "copilot",
         "antigravity",
+        "antigravity-cli",
         "opencode",
         "codebuddy",
         "joycode",

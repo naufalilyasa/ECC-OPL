@@ -220,6 +220,7 @@ function main() {
         "skills/frontend-design-direction/scripts/check-evidence.js",
         "scripts/eval-harness.js",
         "scripts/lib/eval-harness/index.js",
+        "scripts/lib/work-item/work-item.js",
         "examples/eval-harness/run-example.js",
         "examples/eval-harness/gate.config.json",
         "examples/eval-harness/taskset.json",

@@ -44,6 +44,23 @@ Execute comprehensive verification:
 - [ ] No warnings
 - [ ] Bundle size acceptable
 
+## Binding (optional work-item persistence)
+
+```bash
+WI=""
+for R in "$CLAUDE_PLUGIN_ROOT" \
+         "${OPENCODE_CONFIG_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/opencode}" \
+         "./.agents" "." "${CLAUDE_CONFIG_DIR:-$HOME/.claude}"; do
+  [ -n "$R" ] && [ -f "$R/scripts/lib/work-item/work-item.js" ] && { WI="$R/scripts/lib/work-item/work-item.js"; break; }
+done
+if [ -z "$WI" ] || [ "$ECC_OPL_STANDALONE" = "1" ] || [ "${1:-}" = "--standalone" ]; then MODE=standalone
+else ITEM=$(node "$WI" resolve); [ "$ITEM" = "none" ] && MODE=standalone || MODE=bound; fi
+```
+
+Standalone prints the report to chat exactly as below. When bound, also write it to
+`.ecc-opl/work-items/<ITEM>/implementation/verify-<date>.md` and append
+`node "$WI" append --workflow verify --artifact verify --path <report>`.
+
 ## Verification Report
 
 ### Summary
