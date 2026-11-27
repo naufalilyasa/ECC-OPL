@@ -79,6 +79,6 @@ approval but invalidates prior verification, and cleanup leaves no owned process
 
 ## Status
 
-Binding mechanics **VERIFIED** by tests and the slice. Multi-section behaviour on a real
-product repo stays **PARTIAL** until Pilot A/B. `yarn.lock` is still stale relative to
-`package.json` (pre-existing, unrelated to this phase).
+Binding mechanics **VERIFIED** by tests, the slice, and now an actual caller in the completion
+gate (see the wiring subsection). Multi-section behaviour on a real product repo stays
+**PARTIAL** until Pilot A/B.
