@@ -28,6 +28,20 @@ const DEFAULT_MAX_TEXT_CHARS = 100000;
 
 const FEEDBACK_KINDS = new Set(['chat', 'annotation', 'verdict']);
 const VERDICTS = new Set(['approve', 'request-changes']);
+const PREVIEW_MODES = new Set(['framework-native', 'standalone-html']);
+
+// A preview URL comes from the agent, and the canvas will embed it. Only an
+// absolute http(s) URL is accepted: anything else (data:, javascript:, file:)
+// would be a way to smuggle content past the artifact CSP.
+function sanitizePreviewUrl(value) {
+  if (typeof value !== 'string') return null;
+  try {
+    const url = new URL(value);
+    return url.protocol === 'http:' || url.protocol === 'https:' ? url.href : null;
+  } catch {
+    return null;
+  }
+}
 
 // The producer and the SessionStart/Stop hooks must land on one directory. The
 // hooks resolve CLAUDE_CONFIG_DIR (they cannot require this file: managed
@@ -180,7 +194,15 @@ function createSessionStore({ stateDir = resolveStateDir() } = {}) {
   // Open (or resume) a session. A session the *user* ended from the browser
   // is sticky: it refuses a plain reopen so agents do not pop the browser
   // back up uninvited. Pass reopen:true only when the human asked.
-  function open(filePath, { reopen = false, target = null, sessionDir = null, workspace = null } = {}) {
+  function open(filePath, {
+    reopen = false,
+    target = null,
+    sessionDir = null,
+    workspace = null,
+    previewMode = null,
+    previewUrl = null,
+    previewMeta = null
+  } = {}) {
     const canonical = canonicalizeArtifactPath(filePath);
     const key = sessionKeyFor(canonical);
     const existing = state.sessions[key];
@@ -199,6 +221,17 @@ function createSessionStore({ stateDir = resolveStateDir() } = {}) {
     if (target) session.target = target;
     if (sessionDir) session.sessionDir = sessionDir;
     if (workspace) session.workspace = workspace;
+    // Preview fields are opt-in: a caller that passes none gets exactly the
+    // legacy session shape, so old sessions and old agents keep working.
+    const mode = PREVIEW_MODES.has(previewMode) ? previewMode : null;
+    if (mode) {
+      session.previewMode = mode;
+      const url = mode === 'framework-native' ? sanitizePreviewUrl(previewUrl) : null;
+      if (url) session.previewUrl = url;
+      if (previewMeta && typeof previewMeta === 'object' && !Array.isArray(previewMeta)) {
+        session.previewMeta = previewMeta;
+      }
+    }
     session.updatedAt = nowIso();
     state.sessions[key] = session;
     persist();

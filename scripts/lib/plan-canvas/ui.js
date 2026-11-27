@@ -100,6 +100,8 @@ function canvasCss() {
   .brand .name{font-size:13.5px;font-weight:600;white-space:nowrap}
   .brand .file{font-size:11.5px;color:var(--text2);font-family:var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:34vw}
   .bar .spacer{flex:1}
+  .mode-chip{font-size:11px;font-family:var(--mono);color:var(--accent);background:var(--accent-glow);border:1px solid var(--accent-dim);border-radius:99px;padding:2px 9px;white-space:nowrap;max-width:30vw;overflow:hidden;text-overflow:ellipsis}
+  a.icon-btn{text-decoration:none}
 
   .presence{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:500;color:var(--text2);background:var(--bg3);border:1px solid var(--border);border-radius:99px;padding:3px 10px 3px 8px;white-space:nowrap}
   .presence .dot{width:7px;height:7px;border-radius:99px;background:var(--text3)}
@@ -547,9 +549,23 @@ function renderCanvasHtml(session, { clientPath = '/client.js', cssPath = '/canv
     workspace: session.workspace || (session.target ? path.dirname(session.file) : undefined),
     revisionDigest,
     endedBy: session.endedBy || null,
+    // Absent preview fields leave the payload identical to the legacy shape.
+    ...(session.previewMode ? { previewMode: session.previewMode } : {}),
+    ...(session.previewUrl ? { previewUrl: session.previewUrl } : {}),
+    ...(session.previewMeta ? { previewMeta: session.previewMeta } : {}),
     chat: session.chat
   }).replace(/</g, '\\u003c');
   const artifactSrc = `/artifact/${session.key}/`;
+  const previewMeta = session.previewMeta && typeof session.previewMeta === 'object' ? session.previewMeta : {};
+  const modeLabel = [session.previewMode, previewMeta.section, previewMeta.revision]
+    .filter(Boolean).map(String).join(' · ');
+  // Sandbox flags are inherited by nested frames. A live preview wraps another
+  // document, so without allow-same-origin that inner document gets an opaque
+  // origin and its own module requests come back CORS-blocked. Only our
+  // generated wrapper (never a raw artifact) gets the relaxed sandbox.
+  const frameSandbox = session.previewMode === 'framework-native'
+    ? 'allow-scripts allow-forms allow-popups allow-same-origin'
+    : 'allow-scripts allow-forms allow-popups';
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -568,7 +584,7 @@ function renderCanvasHtml(session, { clientPath = '/client.js', cssPath = '/canv
     <span class="file" title="${escapeHtml(session.file)}">${escapeHtml(name)}</span>
   </div>
   <div class="spacer"></div>
-  <div id="presence" class="presence" data-state="waiting"><span class="dot"></span><span class="label">agent not connected</span></div>
+${session.previewMode ? `  <span id="modeChip" class="mode-chip" title="Preview mode">${escapeHtml(modeLabel)}</span>\n` : ''}${session.previewUrl ? `  <a id="openSeparate" class="icon-btn" href="${escapeHtml(session.previewUrl)}" target="_blank" rel="noopener" title="Open the live preview in its own tab">Open separately</a>\n` : ''}  <div id="presence" class="presence" data-state="waiting"><span class="dot"></span><span class="label">agent not connected</span></div>
   <div id="annotate" class="toggle" role="switch" aria-pressed="true" title="Toggle annotate mode (Cmd/Ctrl+I)">
     <span>Annotate</span><span class="track"><span class="knob"></span></span>
   </div>
@@ -592,7 +608,7 @@ function renderCanvasHtml(session, { clientPath = '/client.js', cssPath = '/canv
 </header>
 <div class="layout">
   <main class="frame">
-    <iframe id="artifact" title="Artifact under review" src="${artifactSrc}" data-artifact-src="${artifactSrc}" sandbox="allow-scripts allow-forms allow-popups"></iframe>
+    <iframe id="artifact" title="Artifact under review" src="${artifactSrc}" data-artifact-src="${artifactSrc}" sandbox="${frameSandbox}"></iframe>
     <div id="endedOverlay" class="overlay"><div class="card"><h3>Session ended</h3><p id="endedWho"></p></div></div>
   </main>
   <aside class="panel">

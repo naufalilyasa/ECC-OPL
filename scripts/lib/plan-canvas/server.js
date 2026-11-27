@@ -149,6 +149,8 @@ function sendHtml(res, statusCode, html, { csp = true } = {}) {
   const headers = { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' };
   if (csp === 'artifact') {
     headers['content-security-policy'] = ARTIFACT_CSP;
+  } else if (typeof csp === 'string') {
+    headers['content-security-policy'] = csp;
   } else if (csp) {
     headers['content-security-policy'] =
       "default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; frame-src 'self'";
@@ -444,7 +446,10 @@ function createPlanCanvasServer({
         reopen: Boolean(body.reopen),
         target: typeof body.target === 'string' ? body.target : null,
         sessionDir: typeof body.sessionDir === 'string' ? body.sessionDir : null,
-        workspace: typeof body.workspace === 'string' ? body.workspace : null
+        workspace: typeof body.workspace === 'string' ? body.workspace : null,
+        previewMode: typeof body.previewMode === 'string' ? body.previewMode : null,
+        previewUrl: typeof body.previewUrl === 'string' ? body.previewUrl : null,
+        previewMeta: body.previewMeta && typeof body.previewMeta === 'object' ? body.previewMeta : null
       });
       if (refused) {
         return sendJson(res, 409, {
@@ -678,9 +683,50 @@ function createPlanCanvasServer({
     });
   }
 
+  // Framework-native sessions render the project's own dev server: the wrapper
+  // only frames it (no proxying, so assets/HMR keep their real origin) and
+  // names what is being previewed. The hint stays visible instead of guessing
+  // reachability: a blank frame means the dev server is down.
+  function renderLivePreviewHtml(session) {
+    const meta = session.previewMeta && typeof session.previewMeta === 'object' ? session.previewMeta : {};
+    const label = [meta.section, meta.revision].filter(Boolean).map(String).join(' · ');
+    return `<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${escapeHtml(label || 'Live preview')}</title>
+<style>
+  html,body{margin:0;height:100%;font-family:ui-sans-serif,system-ui,sans-serif;background:#0f1115;color:#c9ced8}
+  body{display:flex;flex-direction:column}
+  .bar{display:flex;gap:10px;align-items:center;padding:8px 12px;font-size:11.5px;border-bottom:1px solid #262b36;background:#151922}
+  .tag{padding:1px 7px;border-radius:999px;background:#1d2433;border:1px solid #2b3446;color:#8fb0ff}
+  .url{font-family:ui-monospace,monospace;color:#7d879b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .open{margin-left:auto;color:#8fb0ff;text-decoration:none;border:1px solid #2b3446;border-radius:6px;padding:3px 9px;white-space:nowrap}
+  iframe{flex:1;width:100%;border:0;background:#fff}
+  .hint{padding:5px 12px;font-size:11px;color:#6f7a8d;border-top:1px solid #262b36}
+</style></head><body>
+<div class="bar">
+  <span class="tag">live · framework-native</span>
+  <span>${escapeHtml(label)}</span>
+  <span class="url">${escapeHtml(session.previewUrl)}</span>
+  <a class="open" href="${escapeHtml(session.previewUrl)}" target="_blank" rel="noopener">Open separately</a>
+</div>
+<iframe src="${escapeHtml(session.previewUrl)}" title="Live project preview"
+  sandbox="allow-scripts allow-forms allow-popups allow-same-origin"></iframe>
+<div class="hint">Blank frame? The project dev server is not running — start it, then reload.</div>
+</body></html>`;
+  }
+
   function serveArtifact(res, key, assetPath) {
     const session = store.get(key);
     if (!session) return sendHtml(res, 404, '<h1>Unknown session</h1>');
+
+    if (session.previewMode === 'framework-native' && session.previewUrl) {
+      if (assetPath) return sendHtml(res, 404, '<h1>No sibling assets in live preview mode</h1>');
+      const origin = new URL(session.previewUrl).origin;
+      return sendHtml(res, 200, renderLivePreviewHtml(session), {
+        csp: `default-src 'none'; style-src 'unsafe-inline'; frame-src ${origin}`
+      });
+    }
 
     if (!assetPath) {
       let content;

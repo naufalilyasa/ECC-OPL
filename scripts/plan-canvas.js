@@ -67,6 +67,10 @@ function usage() {
     '         --target <id>  Session target (e.g. antigravity-cli enables strict verdict binding)',
     '         --workspace <path>  Bound workspace for strict verdicts',
     '         --session-dir <path>  Canvas V2 attachment/session storage dir',
+    '         --preview-url <url>   Frame a live dev-server URL instead of the artifact file',
+    '         --preview-mode <mode> framework-native | standalone-html (implied by --preview-url)',
+    '         --section <slug>      Section label shown in the canvas mode chip',
+    '         --revision <rev>      Revision label shown in the canvas mode chip',
     '  await: --reply <msg>  Show an agent reply in the canvas chat before waiting',
     '         --timeout-ms <n>  Return {status:"waiting"} after n ms (tests/debug only)',
     '  typing: --state <thinking|typing|idle>  Defaults to typing',
@@ -219,12 +223,24 @@ async function cmdOpen(file, args, { stateDir, port }) {
   const target = valueAfter(args, '--target');
   const workspace = valueAfter(args, '--workspace');
   const sessionDir = valueAfter(args, '--session-dir');
+  // Native preview: the artifact file still anchors the session, but the
+  // canvas frames the project's own dev server instead of serving it.
+  const previewMode = valueAfter(args, '--preview-mode')
+    || (valueAfter(args, '--preview-url') ? 'framework-native' : null);
+  const previewUrl = valueAfter(args, '--preview-url');
+  const section = valueAfter(args, '--section');
+  const revision = valueAfter(args, '--revision');
   const res = await request(port, 'POST', '/api/sessions', {
     file: path.resolve(file),
     reopen: args.includes('--reopen'),
     target: target || undefined,
     workspace: workspace || undefined,
-    sessionDir: sessionDir || undefined
+    sessionDir: sessionDir || undefined,
+    previewMode: previewMode || undefined,
+    previewUrl: previewUrl || undefined,
+    previewMeta: section || revision
+      ? { ...(section ? { section } : {}), ...(revision ? { revision } : {}) }
+      : undefined
   });
   if (res.statusCode === 409) return res.body;
   if (res.statusCode !== 200) throw new Error(res.body.error || `open failed (HTTP ${res.statusCode})`);
