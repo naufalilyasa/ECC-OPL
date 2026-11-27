@@ -1,5 +1,5 @@
 {
-  "$comment": "Staged distribution manifest for design-build V2.0. STAGED ONLY \u2014 active HOME untouched, deployment NOT_GIVEN.",
+  "$comment": "Staged distribution manifest for design-build V2.0. STAGED ONLY — active HOME untouched, deployment NOT_GIVEN.",
   "algorithm": "sha256",
   "release": "design-build-v2",
   "owner_deployment_authorization": "NOT_GIVEN",
@@ -34,8 +34,8 @@
     {
       "path": "commands/design-build.md",
       "destination": "commands/design-build.md",
-      "sha256": "5b08b619a0faf0414ffb059a62f969cca7e3475a1c6090ad4620df885cdc04b8",
-      "bytes": 10419
+      "sha256": "6b762ae2da3b166bfc79e4a2441367496dbd233d3e9973536a4d8243a68b6b1c",
+      "bytes": 12099
     },
     {
       "path": "commands/typography.md",
@@ -46,8 +46,8 @@
     {
       "path": ".opencode/commands/design-build.md",
       "destination": "commands/design-build.md",
-      "sha256": "5b08b619a0faf0414ffb059a62f969cca7e3475a1c6090ad4620df885cdc04b8",
-      "bytes": 10419
+      "sha256": "6b762ae2da3b166bfc79e4a2441367496dbd233d3e9973536a4d8243a68b6b1c",
+      "bytes": 12099
     },
     {
       "path": ".opencode/commands/typography.md",
@@ -58,8 +58,8 @@
     {
       "path": "skills/design-build/SKILL.md",
       "destination": "skills/design-build/SKILL.md",
-      "sha256": "8b7a86470f6a70db44baae47d012fd93195e143e19570830810767af991e38c7",
-      "bytes": 23390
+      "sha256": "ec98ae54b5e8173e2c53ba34db9bf46cd0992843252440d641b3f20d20e00b98",
+      "bytes": 30845
     },
     {
       "path": "skills/design-contract-system/SKILL.md",
@@ -136,8 +136,8 @@
     {
       "path": "scripts/design-build-v2/state-machine.mjs",
       "destination": "scripts/design-build-v2/state-machine.mjs",
-      "sha256": "6c00646e0af5b0ba78f914c7e12aef6fd589cf0088325cdc86cd82ece73355e6",
-      "bytes": 14228
+      "sha256": "e6b78933148dd0016a766da79a2a2111737db2b1c9a65257ea72d353683a763f",
+      "bytes": 15974
     },
     {
       "path": "scripts/design-build-v2/rendered-authority.mjs",
@@ -154,14 +154,14 @@
     {
       "path": "scripts/design-build-v2/compare-section.mjs",
       "destination": "scripts/design-build-v2/compare-section.mjs",
-      "sha256": "a13498050510f555bad548e35b4bdd0e56d5b9d39766219438fc8aae7b3af77e",
-      "bytes": 7343
+      "sha256": "9b61c5d36455c859fb0b98e34dd637acdf8e3cb448a27a453b3f2679ae818a6b",
+      "bytes": 7725
     },
     {
       "path": "scripts/design-build-v2/render-parity.mjs",
       "destination": "scripts/design-build-v2/render-parity.mjs",
-      "sha256": "a4cfc2cc5e1bb7f565520ee4e4efde77aa29e0eefc427d051501de6b455a9007",
-      "bytes": 5274
+      "sha256": "1b201dbb463bcdba45be610c2c098ac7a5fed83398c64b8ee53d4d820313771f",
+      "bytes": 11546
     },
     {
       "path": "scripts/design-build-v2/capture-rendered-evidence.mjs",
@@ -170,5 +170,5 @@
       "bytes": 2067
     }
   ],
-  "modified_utc": "2026-11-25T06:47:22.920139+00:00"
+  "modified_utc": "2026-11-27T08:52:19.453Z"
 }

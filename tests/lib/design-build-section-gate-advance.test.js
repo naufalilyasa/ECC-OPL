@@ -19,8 +19,9 @@ const { execFileSync } = require('child_process');
 
 const REPO = path.resolve(__dirname, '..', '..');
 const GATE = path.join(REPO, 'scripts/design-build-v2/section-gate.mjs');
-const PW_DIR = process.env.E2E_PLAYWRIGHT_DIR
-  || '/private/var/folders/xq/22yplbd15tz0jj4hnsr1m11c0000gp/T/opencode/m6-playwright';
+// Playwright resolves from the repo's own devDependency unless a scratch
+// install is pointed at explicitly.
+const PW_DIR = process.env.E2E_PLAYWRIGHT_DIR || path.resolve(__dirname, '..', '..');
 
 let passed = 0;
 let failed = 0;

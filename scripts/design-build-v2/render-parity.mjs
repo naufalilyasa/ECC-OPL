@@ -10,8 +10,10 @@ import { fileURLToPath } from 'node:url'
 
 const HERE = dirname(fileURLToPath(import.meta.url))
 export const ROOT = resolve(HERE, '../..')
-export const PW_DIR = resolve(process.env.E2E_PLAYWRIGHT_DIR
-  || '/private/var/folders/xq/22yplbd15tz0jj4hnsr1m11c0000gp/T/opencode/m6-playwright')
+// Playwright resolves from E2E_PLAYWRIGHT_DIR when that is set (the original
+// scratch install), otherwise from this repo's own node_modules. The scratch
+// workaround must not be the only way these scripts can run.
+export const PW_DIR = resolve(process.env.E2E_PLAYWRIGHT_DIR || ROOT)
 const require = createRequire(join(PW_DIR, 'package.json'))
 const { chromium } = require('playwright')
 

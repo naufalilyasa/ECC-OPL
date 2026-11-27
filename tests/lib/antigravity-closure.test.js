@@ -75,6 +75,18 @@ test('C4: plan-reviewer (Momus+Oracle) is projected from its canonical prompt', 
   assert.ok(paths.some(p => p.includes('planner')), 'planner missing');
 });
 
+test('C4b: /opl-design-build still resolves after the two-mode rewrite', () => {
+  // The design-build command is projected, never duplicated. Editing its body for
+  // native mode must not change the projected entrypoint name.
+  const ops = plan(['commands/design-build.md', '.opencode/commands/design-build.md', 'skills/design-build']);
+  const entry = ops.find(op => op.destinationPath.endsWith('.agents/skills/opl-design-build/SKILL.md'));
+  assert.ok(entry, `opl-design-build entrypoint missing; got: ${dests(ops).join(', ')}`);
+  assert.strictEqual(entry.contentTransform, 'antigravity-command-to-skill');
+  const source = fs.readFileSync(path.join(REPO, entry.sourceRelativePath), 'utf8');
+  assert.ok(/detect-project\.mjs/.test(source), 'projected body must carry the discovery step');
+  assert.ok(/framework-native/.test(source), 'projected body must carry the native mode');
+});
+
 // --- Area 2: agent adaptation -------------------------------------------
 
 function agentSource(model, tools, name) {

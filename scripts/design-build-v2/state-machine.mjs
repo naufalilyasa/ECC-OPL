@@ -208,11 +208,32 @@ export function advanceCheckpoint(active, receipt, context = {}) {
 }
 
 // Approved reference (immutable consent) vs candidate framework identity.
+// standalone-html: the approved artifact is HTML and the candidate is a translation
+// of it, so sharing bytes or paths means the translation never happened.
 export const APPROVED_REFERENCE_KINDS = ['html', 'css', 'fonts', 'assets',
   'design-contract', 'shared-shell', 'capture-profile', 'state-fixtures']
 export const CANDIDATE_KINDS = ['framework-implementation', 'framework-styles']
 
-export function verifyIdentitySeparation(approved, candidate) {
+// framework-native: the owner approves the component that ships. The reference and
+// the candidate are the SAME source, so identical digests are the contract.
+export const NATIVE_APPROVED_REFERENCE_KINDS = ['component-source', 'component-imports',
+  'design-contract', 'tokens', 'assets', 'preview-config', 'data-fixture']
+export const NATIVE_CANDIDATE_KINDS = ['component-source', 'component-styles']
+
+// Decision D6: one lifecycle vocabulary, mode-dependent meaning. No second set of
+// state names, so resume, gates and receipts stay readable across both modes.
+export const MODE_STATE_SEMANTICS = Object.freeze({
+  'standalone-html': Object.freeze({
+    PORT_IN_PROGRESS: 'porting approved HTML into a framework component',
+    PARITY_PENDING: 'standalone-HTML-vs-served-application parity pending',
+  }),
+  'framework-native': Object.freeze({
+    PORT_IN_PROGRESS: 'INTEGRATING: wiring the approved component into the app',
+    PARITY_PENDING: 'rendered-integrity verification pending (no HTML reference exists)',
+  }),
+})
+
+export function verifyIdentitySeparation(approved, candidate, previewMode = 'standalone-html') {
   if (!approved?.referenceSha256 || !HEX64.test(approved.referenceSha256)
       || !candidate?.implementationSha256 || !HEX64.test(candidate.implementationSha256)) {
     return { code: 'IDENTITY_INVALID', why: 'missingOrInvalidDigest' }
@@ -220,6 +241,16 @@ export function verifyIdentitySeparation(approved, candidate) {
   const aFiles = Array.isArray(approved.files) ? approved.files : null
   const cFiles = Array.isArray(candidate.files) ? candidate.files : null
   if (!aFiles?.length || !cFiles?.length) return { code: 'IDENTITY_INVALID', why: 'missingManifests' }
+  if (previewMode === 'framework-native') {
+    // Single source: the approved component source IS the implementation. Equal
+    // digests and shared paths are expected here, and any divergence is drift.
+    if (approved.referenceSha256 !== candidate.implementationSha256) {
+      return { code: 'IDENTITY_DRIFT', why: 'nativeSourceDivergedFromApproval' }
+    }
+    return { code: 'OK', singleSource: true,
+      referenceSha256: approved.referenceSha256,
+      sharedPaths: aFiles.filter((p) => cFiles.includes(p)) }
+  }
   if (approved.referenceSha256 === candidate.implementationSha256) return { code: 'IDENTITY_CONFLATED' }
   const overlap = aFiles.filter((p) => cFiles.includes(p))
   if (overlap.length) return { code: 'IDENTITY_CONFLATED', why: 'sharedPath', overlap }

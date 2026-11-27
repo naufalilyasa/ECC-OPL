@@ -62,7 +62,65 @@ Three orderings are deliberate and must not be reverted:
 - **Parity verification inside each section loop iteration.** Approving a section
   in canvas only validates the standalone HTML preview. Porting that markup into a
   framework component is lossy unless verified 1:1 against the served application
-  before advancing to the next section.
+  before advancing to the next section. **This applies to `standalone-html` only**
+  — see the two preview modes below.
+
+## Two Preview Modes (discovery first)
+
+Discover the mode before choosing how to preview or port. Never assume HTML.
+
+```bash
+node scripts/design-build-v2/detect-project.mjs <project-root>
+```
+
+It returns a profile (`status`, `framework`, `variant`, `language`, `entrypoint`,
+`devCommand`, `packageManager`, `stylingSystem`, `componentLibrary`,
+`dependencies`, `previewMode`, `evidence`). An `ambiguous` status means conflicting
+signals were found and reported, not silently resolved — ask the owner.
+
+- **`framework-native`** (React, Vue, Svelte, Next, Nuxt, Angular, Laravel+Inertia):
+  the section IS a real component in the project. Approve that component.
+- **`standalone-html`** (static pages, Flutter, Kotlin Compose, unknown stacks):
+  the legacy HTML preview → port → parity loop, unchanged.
+- A project that is `unsupported` or `ambiguous` gets an explicit report, not a
+  guess and not a silent fallback to HTML.
+
+### Native mode rules (binding)
+
+1. **Inspect before generating.** Read the project's existing components, inputs,
+   tokens, styling system and primitives first (DBN-03). Generate a component that
+   follows the conventions already in the project rather than a parallel design
+   vocabulary. Reuse installed dependencies; never add or replace one without the
+   owner's authorization.
+2. **Single source.** The generated component file is the thing the owner reviews
+   AND the thing that ships. There is no HTML substitute and no second artifact to
+   keep in sync. `verifyIdentitySeparation()` is scoped to `standalone-html`;
+   in native mode the approved reference and the implementation are the same
+   source, so equal source digests are expected, not a conflation.
+3. **Preview is the real component.** Render it through the project's own dev
+   server in the Canvas (`plan-canvas --preview-url … --preview-mode framework-native`).
+   If the server fails, report the real compiler/dependency/route error. **Never**
+   generate an HTML version as a stand-in for a failed native preview, and never
+   let a placeholder count as approval evidence.
+4. **Fixture-only is not completed backend integration.** Representative fixture
+   data may be used to prove the design. A section built on fixtures must say so
+   (`dataMode: "fixture"`) in `BUILD-STATE.md` and the completion report, and must
+   never claim the backend is connected.
+5. **In-frame annotation is not available in native mode.** The project page is
+   cross-origin from the Canvas, so the annotation SDK cannot be injected without
+   modifying the project. Owner feedback arrives as Canvas chat and the verdict.
+   Report this limitation instead of implying markup-level annotation works.
+
+### What requires re-approval, and what does not
+
+| Change | Re-approval? | Verification |
+|--------|--------------|--------------|
+| Approved design: layout, contract, tokens, styling system, typography, assets | **Yes** | rerun the affected gate |
+| Backend connection, controller fix, tests, refactor with identical rendering | No | parity/rendered-integrity still reruns |
+| Fixture → production data with no design change | No | still reruns; record the `dataMode` change |
+
+Approval covers the design decision, not the implementation state. Silently
+re-sealing new design bytes under an old approval is forbidden.
 
 ## Workflow State (required)
 
@@ -92,6 +150,11 @@ dcp-compress, `/aside`, and long sessions:
   modules `scripts/design-build-v2/state-machine.mjs` (`advanceCheckpoint`,
   `verifyReceipt` with MANDATORY context) and `scripts/design-build-v2/rendered-authority.mjs`
   (`verifyRenderedParity` with actual screenshot bytes + per-viewport measurements).
+- **Native mode reuses the same state names** (decision D6) with mode-dependent
+  meaning: `PORT_IN_PROGRESS` = `INTEGRATING` (wiring the approved component into the
+  app, not translating HTML), and `PARITY_PENDING` = rendered-integrity verification
+  of the single source in its real context. A missing approval before the Canvas
+  stage returns `CANVAS_APPROVAL_REQUIRED` — normal progress, not a startup blocker.
 - A source-level verdict (`kind:"verdict", verdict:"approve"`) is not rendered evidence;
   it cannot advance the checkpoint. G2 authority is the browser measurement artifact
   (`docs/design/evidence/p-web1/rendered-parity.json` for P-WEB1).
@@ -286,6 +349,12 @@ For each section in the chosen order (or the single section specified by `--sect
 1. **Preview & Annotation (Canvas):**
    - Write or update `docs/design/sections/<NN>-<slug>.html`.
    - Open and await feedback via `plan-canvas`. Apply annotations to preview HTML.
+   - **Native mode:** the section file is the real component (e.g.
+     `resources/js/pages/<NN>-<slug>.tsx`), and the Canvas preview points at the
+     project's dev server (`--preview-url … --preview-mode framework-native`) so the
+     owner approves the actual rendered component. There is no HTML artifact and no
+     in-frame annotation; feedback is chat + verdict. A failed dev server is
+     reported as-is, never replaced by an HTML stand-in.
 2. **Approval Verdict:**
    - An approval exists only as a canvas verdict item:
      ```json
@@ -299,7 +368,11 @@ For each section in the chosen order (or the single section specified by `--sect
    - If feedback contradicts the frozen contract, revise the contract first, then
      the section, and invalidate approvals the change affects.
 3. **Framework Porting & Scoping:**
-   - Immediately upon verdict approval, integrate the approved markup into target component(s).
+   - **Native mode:** there is no port. The approved component is already in the
+     app; this step is integration — wire routing, data, and shared shell, reusing
+     the approved source verbatim (DBN-09). Skip the scoping/asset-remapping advice
+     below, which exists to survive an HTML→framework translation.
+   - **Standalone HTML mode:** immediately upon verdict approval, integrate the approved markup into target component(s).
    - **Compiler Scoping & Dynamic DOM:**
      - For elements created dynamically at runtime by client JS (`document.createElement`,
        rotating log rows, dynamic badge chips, modal inserts), ensure styles survive compiler scoping.
@@ -313,6 +386,13 @@ For each section in the chosen order (or the single section specified by `--sect
      - Remap canvas-relative paths (`./assets/...`) to framework asset roots (`public/images/`,
        `public/assets/`, or module imports). Verify no asset returns HTTP 404 in the live app.
 4. **Live Parity Verification (Dev Server vs Canvas Preview):**
+   - **Native mode:** there is no canvas HTML to compare against. Verify
+     rendered integrity instead: the integrated component rendered in its real
+     context, against the approved baseline captures and the approved source
+     digest, across the required responsive profiles. Same-source drift (CSS
+     inheritance, app layout, real data) is reported as a meaningful finding, not
+     a hard pixel failure.
+   - **Standalone HTML mode:** verify the approved HTML against the served app as below.
    - **Server Readiness & Discovery:** Discover the running dev server port (e.g. `localhost:4321`).
      If offline, make one startup attempt with a 10s readiness timeout. If unreachable, record
      `status: blocked (dev server offline)` in `BUILD-STATE.md` and stop — never pass parity blindly.
@@ -451,6 +531,12 @@ drifted — refresh the candidate hashes and re-render; do not re-approve.
 ## Anti-Patterns
 
 - Approving a preview before the shared shell and its assets exist.
+- Defaulting to HTML preview when the project already has a framework. Discovery
+  decides the mode; do not assume.
+- Generating an HTML stand-in after a native preview fails, then approving the
+  stand-in.
+- Claiming "backend integrated" for a section running on fixture data.
+- Keeping an HTML artifact and a component in sync as two sources of truth.
 - Letting scaffold or contract defaults override the dealt tokens.
 - Treating `deal` output as the final system.
 - Treating chat text or a terminal "ok" as approval.

@@ -8,6 +8,14 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs'
 import { join, extname, resolve } from 'node:path'
 import { createHash } from 'node:crypto'
 
+// Native-mode sections are single-sourced: no HTML reference exists to compare
+// against, so producing one would manufacture evidence. Refuse explicitly.
+if (process.env.DB2_PREVIEW_MODE === 'framework-native') {
+  console.log(JSON.stringify({ code: 'LEGACY_ONLY',
+    why: 'framework-native sections have no HTML reference; verify with section-gate.mjs' }))
+  process.exit(1)
+}
+
 const [worktreeArg, outArg] = process.argv.slice(2)
 const W = resolve(worktreeArg ?? process.env.DB2_WORKTREE ?? '.')
 const OUT = resolve(outArg ?? process.env.DB2_EVIDENCE_DIR ?? 'docs/design/evidence/html-react')

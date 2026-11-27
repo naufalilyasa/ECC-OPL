@@ -26,13 +26,21 @@ does not carry).
 
 ## Framework detection (conditional skill load)
 
-Detect the target from project manifests before loading framework pattern skills:
+Detect the target from project manifests (`package.json` → React/Inertia, Vue,
+Svelte, or Astro; `pubspec.yaml` → Flutter; `build.gradle.kts` → Kotlin Jetpack
+Compose) and by running the discovery profile. Discovery decides the **preview
+mode**, and the mode decides the whole section loop:
 
-- `package.json` → React/Inertia, Vue, Svelte, or Astro (inspect dependencies).
-- `pubspec.yaml` → Flutter.
-- `build.gradle.kts` → Kotlin Jetpack Compose.
+```bash
+node ./scripts/design-build-v2/detect-project.mjs <project-root>
+```
 
-Load **only the relevant** framework pattern skill (e.g. `react-patterns`,
+`previewMode: "framework-native"` means the section is a real project component
+and the Canvas previews the project dev server. `previewMode: "standalone-html"`
+means the legacy HTML → port → parity loop. `ambiguous` or `unsupported` is a
+report to the owner, never a guess.
+
+Then load **only the relevant** framework pattern skill (e.g. `react-patterns`,
 `vue-patterns`, `dart-flutter-patterns`, `compose-multiplatform-patterns`) plus
 its matching `skills/design-build/references/adapter-*.md`. Do not load mobile
 skills for a web target (or vice versa). If a needed skill is absent, continue
@@ -56,7 +64,7 @@ exists. Routing policy is in the skill; this shim only carries the invocations.
 
 ```
 0 Brief → 0.5 Escalate → 1 Material → 2 Taste → 3 Prerequisites → 4 Freeze
-       → 5 Scaffold shell → 6 Section loop (Preview → Approval → Port → Parity Gate)
+       → 5 Scaffold shell → 6 Section loop (Preview → Approval → Port/Integrate → Parity Gate)
        → 7 Assemble → 8 Gate → 9 Harden
 ```
 
@@ -79,10 +87,29 @@ node ~/ECC/scripts/plan-canvas.js end <file>
 `await` blocks: run it as a background task. Accept only an item shaped
 `{"kind":"verdict","verdict":"approve"}`. Server: `127.0.0.1:4517`.
 
-### A1.5 — Live Parity & Scoping Gate (inside Section Loop)
+**Native mode** previews the live component instead of an HTML file:
 
-Canvas approval validates only the standalone HTML preview. Immediately after
-porting approved markup into target framework components (`.astro`, `.tsx`, `.vue`):
+```bash
+node ~/ECC/scripts/plan-canvas.js open <section-path> \
+  --preview-url http://127.0.0.1:<dev-port>/<route> \
+  --preview-mode framework-native --section <NN>-<slug> --revision <rN>
+```
+
+The Canvas serves a wrapper that frames the project dev server. The preview URL is
+stored only for `framework-native`; `standalone-html` never stores one. In-frame
+annotation is not available in native mode (cross-origin), so feedback is chat +
+verdict. If the dev server is down, report the real error — do not produce an HTML
+substitute.
+
+### A1.5 — Live Parity & Scoping Gate (standalone-html only)
+
+Canvas approval validates only the standalone HTML preview, so this adapter exists
+to survive the HTML→framework port. **Native mode skips it entirely** — the
+approved component is already the implementation and step 3 is integration, not
+translation.
+
+In `standalone-html` mode, immediately after porting approved markup into target
+framework components (`.astro`, `.tsx`, `.vue`):
 
 1. **Compiler Scoping & DOM**: Ensure client-generated dynamic elements use narrowly
    anchored scoped selectors (`:global(.dynamic-class)` in Astro, `:deep()` in Vue)
@@ -113,7 +140,10 @@ node "$GATE" <request.json>
 the current workflow state, project-relative candidate and screenshot FILE paths,
 `frameworkCompleteEvidence`, `contractChecks`, `profileDimensions`,
 `requiredViewports`, per-viewport PNG pairs + measurements, real interaction
-checks, and the receipt. Omitting context is a rejection. The entrypoint runs
+checks, and the receipt. Omitting context is a rejection. `active.previewMode`
+selects the input shape: `framework-native` compares integrated rendering against
+the approved baseline captures (there is no HTML reference pair); `standalone-html`
+keeps the approved-vs-candidate pair path. The entrypoint runs
 `verifyReceipt`, `verifyRenderedParity` (G2) and `advanceCheckpoint`; `current`
 increments once only on verified completion. Capture the command/session evidence
 in `docs/design/evidence/`.
@@ -228,6 +258,9 @@ overrides a failed G0–G3 gate.
 ## Do not
 
 - Restate the skill's policy here instead of reading it.
+- Assume HTML preview without running discovery.
+- Generate an HTML substitute for a native section whose dev server failed.
+- Claim completed backend integration for a fixture-only section.
 - Approve a preview before the shell and prerequisite assets exist.
 - Treat `deal` output, chat text, or a terminal "ok" as the final system or an
   approval.

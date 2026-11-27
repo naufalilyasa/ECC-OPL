@@ -30,8 +30,9 @@ function sha(buf) { return crypto.createHash('sha256').update(buf).digest('hex')
 
 // Minimal decodable PNGs at two distinct sizes, mirroring real evidence.
 // Playwright lives in the E2E scratch dir, not the repo's node_modules.
-const PW_DIR = process.env.E2E_PLAYWRIGHT_DIR
-  || '/private/var/folders/xq/22yplbd15tz0jj4hnsr1m11c0000gp/T/opencode/m6-playwright';
+// Playwright resolves from the repo's own devDependency unless a scratch
+// install is pointed at explicitly.
+const PW_DIR = process.env.E2E_PLAYWRIGHT_DIR || path.resolve(__dirname, '..', '..');
 
 function png(width, height) {
   const { execFileSync } = require('child_process');
