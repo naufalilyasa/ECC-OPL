@@ -163,6 +163,28 @@ http.createServer((req, res) => { res.writeHead(200); res.end('ok'); })
     assert.strictEqual(registry.entries().length, 0);
   });
 
+  await asyncTest('a slow but live server is reused instead of double-spawned', async () => {
+    // Cold Laravel boot / first Vite optimize can exceed the old 500ms poll,
+    // which used to be read as "not running" and race a second process onto
+    // the same port.
+    const { server } = await stub(200);
+    const port = server.address().port;
+    const slow = http.createServer((req, res) => {
+      setTimeout(() => { res.writeHead(200); res.end('slow'); }, 900);
+    });
+    await new Promise((resolve) => slow.listen(port + 1, '127.0.0.1', resolve));
+    SERVERS.push(slow);
+    const registry = createOwnershipRegistry();
+    const result = await ensurePreviewServer({
+      urls: [`http://127.0.0.1:${port + 1}/`],
+      command: 'this-command-must-never-run',
+      registry,
+      spawnImpl: () => { throw new Error('spawn must not be called'); },
+    });
+    assert.strictEqual(result.reused, true, JSON.stringify(result));
+    assert.strictEqual(registry.entries().length, 0);
+  });
+
   await asyncTest('a started server is tracked and cleanup stops it', async () => {
     const port = await freePort();
     const url = `http://127.0.0.1:${port}/`;
@@ -185,6 +207,35 @@ http.createServer((req, res) => { res.writeHead(200); res.end('ok'); })
     assert.strictEqual(cleaned.killed[0].pid, result.pid);
     const after = await probe(url, { timeoutMs: 1000 });
     assert.strictEqual(after.ready, false, 'the owned server must actually be gone');
+  });
+
+  await asyncTest('a chatty server cannot block on an unread stdout pipe', async () => {
+    const port = await freePort();
+    const url = `http://127.0.0.1:${port}/`;
+    const dir = tmp();
+    // `php artisan serve` logs every request to stdout; 1MB of it used to fill
+    // the pipe buffer and hang the server before it ever answered.
+    const script = path.join(dir, 'chatty.js');
+    fs.writeFileSync(script, `
+const http = require('http');
+const port = Number(process.argv[2]);
+process.stdout.write('x'.repeat(1024 * 1024));
+http.createServer((req, res) => { process.stdout.write('GET /\\n'); res.writeHead(200); res.end('ok'); })
+  .listen(port, '127.0.0.1', () => console.log('ready'));
+`);
+    const registry = createOwnershipRegistry();
+    const result = await ensurePreviewServer({
+      urls: [url],
+      command: `${JSON.stringify(process.execPath)} ${JSON.stringify(script)} ${port}`,
+      cwd: dir,
+      registry,
+      timeoutMs: 15000,
+      intervalMs: 100,
+    });
+    assert.strictEqual(result.started, true, JSON.stringify(result));
+    const page = await fetch(url);
+    assert.strictEqual(page.status, 200);
+    registry.cleanup();
   });
 
   await asyncTest('a failing command reports its real stderr and leaves no owned PID', async () => {

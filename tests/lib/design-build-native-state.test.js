@@ -224,7 +224,9 @@ function runTests() {
     assert.strictEqual(out.current, 0);
   });
 
-  test('section-gate accepts previewMode and keeps the same completion contract', () => {
+  // Tolerance only: section-gate does not read previewMode yet (Phase 6 wires
+  // native G2). Do not cite this as mode-aware gate evidence.
+  test('section-gate tolerates a previewMode field and keeps the completion contract', () => {
     const native = runSectionGate(validRequest('framework-native', 'PARITY_PASS'));
     const legacy = runSectionGate(validRequest('standalone-html', 'PARITY_PASS'));
     for (const result of [native, legacy]) {

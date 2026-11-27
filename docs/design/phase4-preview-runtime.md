@@ -22,15 +22,28 @@ Date: 2026-11-27 · Plan: `docs/plans/framework-native-design-build.plan.md` (Ph
 ## Verification
 
 ```
-node tests/lib/design-build-preview-runtime.test.js   → 10 passed, 0 failed
+node tests/lib/design-build-preview-runtime.test.js   → 12 passed, 0 failed
 node tests/lib/design-build-project-discovery.test.js → 9 passed, 0 failed
 ```
 
 The suite covers: live/closed/5xx probes, a server that starts late, dual-server
 Laravel shape with the missing URL named, refusal to stop a foreign PID, cleanup
-that only touches owned PIDs, reuse-without-spawn, a real spawned process that is
-tracked and then actually gone after cleanup, and a failing command whose stderr
-(`Cannot find module @vitejs/plugin-react`) is reported with nothing left tracked.
+that only touches owned PIDs, reuse-without-spawn (including a server slower than
+the old 500 ms poll), a real spawned process that is tracked and then actually
+gone after cleanup, a chatty server that writes 1 MB to stdout before answering,
+and a failing command whose stderr (`Cannot find module @vitejs/plugin-react`) is
+reported with nothing left tracked.
+
+## Review fixes applied
+
+- stdout is no longer piped: `php artisan serve` logs every request there, and an
+  unconsumed pipe blocks the server once the ~64 KB buffer fills.
+- `PREVIEW_TRACK_FAILED` now kills the child it spawned instead of leaking it.
+- Reuse pre-check is one probe round, not a 500 ms poll, so a live-but-warming
+  server is not double-spawned on the same port.
+- `cleanup()` uses a local `stop` closure instead of `this`.
+- `stop`/`cleanup` collapsed to one branch; a process already gone is not reported
+  as a failure.
 
 ## Phase 2 slice re-validated through the helper
 

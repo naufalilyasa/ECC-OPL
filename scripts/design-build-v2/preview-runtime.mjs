@@ -59,11 +59,42 @@ export function createOwnershipRegistry() {
   // Servers are spawned detached so one PID covers its whole process group
   // (`npm run dev` is a shell plus a real server). Only owned PIDs ever reach
   // this function.
+  // shortcut: win32 has no process groups, so `stop` may leave a grandchild
+  // server alive. Only matters if this workflow runs on Windows.
   const defaultKill = (pid) => {
     if (process.platform !== 'win32') {
       try { process.kill(-pid, 'SIGTERM'); return } catch (error) { if (error.code === 'EPERM') throw error }
     }
     process.kill(pid, 'SIGTERM')
+  }
+  // Refuses anything it did not start: a dev server the owner already had
+  // running must survive the workflow.
+  function stop(pid, { killImpl = defaultKill } = {}) {
+    if (!owedBy(pid)) return { code: 'NOT_OWNED', pid }
+    const meta = owned.get(pid)
+    try {
+      killImpl(pid)
+      owned.delete(pid)
+      return { code: 'STOPPED', pid, meta }
+    } catch (error) {
+      // ESRCH means the process is already gone: the intent is satisfied.
+      if (error?.code === 'ESRCH') {
+        owned.delete(pid)
+        return { code: 'ALREADY_GONE', pid, meta }
+      }
+      return { code: 'STOP_FAILED', pid, reason: error?.code ?? 'KILL_FAILED' }
+    }
+  }
+  function owedBy(pid) { return owned.has(pid) }
+  function cleanup(options = {}) {
+    const killed = []
+    const skipped = []
+    for (const pid of [...owned.keys()]) {
+      const result = stop(pid, options)
+      if (result.code === 'STOPPED') killed.push(result.meta)
+      else if (result.code !== 'ALREADY_GONE') skipped.push({ pid, reason: result.reason ?? result.code })
+    }
+    return { killed, skipped }
   }
   return {
     track(pid, meta = {}) {
@@ -71,38 +102,11 @@ export function createOwnershipRegistry() {
       owned.set(pid, { ...meta, pid })
       return true
     },
-    owns(pid) { return owned.has(pid) },
+    owns: owedBy,
     release(pid) { return owned.delete(pid) },
     entries() { return [...owned.values()] },
-    // Refuses anything it did not start: a dev server the owner already had
-    // running must survive the workflow.
-    stop(pid, { killImpl = defaultKill } = {}) {
-      if (!owned.has(pid)) return { code: 'NOT_OWNED', pid }
-      const meta = owned.get(pid)
-      try {
-        killImpl(pid)
-        owned.delete(pid)
-        return { code: 'STOPPED', pid, meta }
-      } catch (error) {
-        // ESRCH means the process is already gone: the intent is satisfied.
-        if (error?.code === 'ESRCH') {
-          owned.delete(pid)
-          return { code: 'ALREADY_GONE', pid, meta }
-        }
-        return { code: 'STOP_FAILED', pid, reason: error?.code ?? 'KILL_FAILED' }
-      }
-    },
-    cleanup(options = {}) {
-      const killed = []
-      const skipped = []
-      for (const pid of [...owned.keys()]) {
-        const result = this.stop(pid, options)
-        if (result.code === 'STOPPED' || result.code === 'ALREADY_GONE') {
-          if (result.code === 'STOPPED') killed.push(result.meta)
-        } else skipped.push({ pid, reason: result.reason ?? result.code })
-      }
-      return { killed, skipped }
-    },
+    stop,
+    cleanup,
   }
 }
 
@@ -119,13 +123,21 @@ export async function ensurePreviewServer({
   if (!command) return { code: 'PREVIEW_NO_COMMAND' }
   if (!registry) return { code: 'PREVIEW_NO_REGISTRY' }
 
-  const already = await waitForReady(targets, { timeoutMs: 500, intervalMs: 100, fetchImpl, sleepImpl })
-  if (already.ready) return { started: false, reused: true, pid: null, urls: targets }
+  // One probe round, not a poll: a server that is alive but still warming up
+  // must not be judged absent, or a duplicate spawn races it for the port.
+  const already = (await Promise.all(targets.map((target) => probe(target, { fetchImpl }))))
+    .every((result) => result.ready)
+  if (already) return { started: false, reused: true, pid: null, urls: targets }
 
   let child
   try {
     child = spawnImpl(command, {
-      cwd, env, shell: true, stdio: ['ignore', 'pipe', 'pipe'],
+      cwd,
+      env,
+      shell: true,
+      // stdout stays unread on purpose: `php artisan serve` logs every request
+      // to it, and an unconsumed pipe blocks the server once the buffer fills.
+      stdio: ['ignore', 'ignore', 'pipe'],
       detached: process.platform !== 'win32',
     })
   } catch (error) {
@@ -141,7 +153,9 @@ export async function ensurePreviewServer({
   child.on?.('error', (error) => { spawnError = error?.code ?? 'SPAWN_FAILED' })
   child.on?.('exit', (code) => { if (code) spawnError = `EXIT_${code}` })
 
-  if (!registry?.track(child.pid, { command, urls: targets })) {
+  if (!registry.track(child.pid, { command, urls: targets })) {
+    // A spawned child nobody tracks is a leak: kill it before bailing out.
+    try { process.kill(child.pid, 'SIGTERM') } catch { /* never started */ }
     return { code: 'PREVIEW_TRACK_FAILED', pid: child.pid, reason: 'INVALID_PID' }
   }
 
