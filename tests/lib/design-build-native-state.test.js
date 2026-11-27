@@ -57,6 +57,8 @@ const PNG = Buffer.from(
 const SECTION = '01-app-shell';
 const REVISION = 'r1';
 const BUNDLE = 'a'.repeat(64);
+// Phase 6: the design digest of the approved native reference.
+const DESIGN = 'd'.repeat(64);
 const VIEWPORT = 'desktop-1440';
 const ROW = { profile: VIEWPORT, state: 'default', landmark: 'root', property: 'display',
   expected: 'block', actual: 'block', verdict: 'PASS' };
@@ -65,7 +67,8 @@ function validRequest(previewMode, state) {
   const source = Buffer.from('export function AppShell() { return null }\n');
   return {
     active: { sectionId: SECTION, revision: REVISION, approvedBundleSha256: BUNDLE,
-      state, current: 0, steps: [SECTION, '02-next'], previewMode },
+      state, current: 0, steps: [SECTION, '02-next'], previewMode,
+      ...(previewMode === 'framework-native' ? { designDigest: DESIGN } : {}) },
     canvasApproval: { verdictId: 'canvas:abc@2026-11-27T00:00:00Z', approved: true,
       sectionId: SECTION, revision: REVISION, bundleSha256: BUNDLE },
     candidateFiles: { 'AppShell.tsx': source },
@@ -96,9 +99,12 @@ function runSectionGate(request) {
   // The entrypoint reads bytes from project-relative FILE paths, so materialize
   // every in-memory buffer the validators need.
   const materialize = (bytes, name) => {
+    // A missing buffer stays missing so the gate sees absent evidence, not a
+    // file that happens to contain something else.
+    if (bytes === undefined) return undefined;
     const file = path.join(dir, name);
     fs.writeFileSync(file, bytes);
-    return name;
+    return file;
   };
   const req = JSON.parse(JSON.stringify(request));
   req.projectRoot = dir;
@@ -395,6 +401,73 @@ function runTests() {
       previewMeta: { section: SECTION, revisionDigest: 'not-a-digest', dataMode: 'guessed' }
     });
     assert.deepStrictEqual(store.get(second.session.key).previewMeta, { section: SECTION });
+  });
+
+  // ---- Phase 6: native G2 compares the approved baseline, not a foreign pair ----
+
+  test('native G2 passes on baseline-vs-integrated captures of the approved revision', () => {
+    const result = runSectionGate(validRequest('framework-native', 'PARITY_PASS'));
+    assert.strictEqual(result.out.g2.code, 'PARITY_PASS', JSON.stringify(result.out.g2));
+    assert.strictEqual(result.out.g2.mode, 'framework-native');
+    assert.strictEqual(result.out.checkpoint.state, 'SECTION_COMPLETE');
+  });
+
+  test('native G2 refuses a missing baseline capture', () => {
+    const request = validRequest('framework-native', 'PARITY_PASS');
+    delete request.viewportEvidence[VIEWPORT].screenshot;
+    const result = runSectionGate(request);
+    assert.strictEqual(result.out.g2.code, 'PARITY_UNVERIFIED');
+    assert.strictEqual(result.out.g2.why, 'BASELINE_CAPTURE_MISSING');
+    assert.notStrictEqual(result.out.checkpoint.state, 'SECTION_COMPLETE');
+  });
+
+  test('a baseline from a different revision cannot pass as the approved one', () => {
+    const { verifyRenderedParity } = require('../../scripts/design-build-v2/rendered-authority.mjs');
+    const result = verifyRenderedParity(
+      { source: 'chromium-playwright',
+        evidence: { verified: true, referenceDesignDigest: 'e'.repeat(64),
+          byProfile: { [VIEWPORT]: { approved: sha(PNG), candidate: sha(PNG) } } } },
+      { previewMode: 'framework-native', approvedReference: { designDigest: DESIGN },
+        requiredViewports: [VIEWPORT],
+        screenshotPairs: { [VIEWPORT]: { reference: PNG, candidate: PNG } },
+        viewportMeasurements: { [VIEWPORT]: [{ ...ROW }] } });
+    assert.strictEqual(result.code, 'PARITY_UNVERIFIED');
+    assert.strictEqual(result.why, 'BASELINE_NOT_BOUND_TO_APPROVAL');
+  });
+
+  test('a fabricated G2 claim is rejected in favour of the captured bytes', () => {
+    const request = validRequest('framework-native', 'PARITY_PASS');
+    request.g2 = { byProfile: { [VIEWPORT]: { approved: 'f'.repeat(64), candidate: 'f'.repeat(64) } } };
+    const result = runSectionGate(request);
+    // The claimed digests do not match the bytes, so the reported G2 outcome fails
+    // and the gate exits non-zero, while completion still rests on the real bytes.
+    assert.strictEqual(result.out.g2.code, 'PARITY_UNVERIFIED');
+    assert.strictEqual(result.out.g2.why, 'PROFILE_HASH_MISMATCH');
+    assert.strictEqual(result.code, 1, 'a failing G2 must not exit 0');
+  });
+
+  test('native mode without an approved design digest cannot reach completion', () => {
+    const request = validRequest('framework-native', 'PARITY_PASS');
+    delete request.active.designDigest;
+    const result = runSectionGate(request);
+    assert.strictEqual(result.out.receipt.why, 'NATIVE_REFERENCE_MISSING');
+    assert.notStrictEqual(result.out.checkpoint.state, 'SECTION_COMPLETE');
+  });
+
+  test('an unknown preview mode is rejected, never silently treated as legacy', () => {
+    const request = validRequest('standalone-html', 'PARITY_PASS');
+    request.active.previewMode = 'hybrid-ish';
+    const result = runSectionGate(request);
+    assert.strictEqual(result.out.receipt.why, 'PREVIEW_MODE_INVALID');
+    assert.strictEqual(result.out.g2.why, 'PREVIEW_MODE_INVALID');
+    assert.notStrictEqual(result.out.checkpoint.state, 'SECTION_COMPLETE');
+  });
+
+  test('legacy standalone-html requests keep the pair path unchanged', () => {
+    const result = runSectionGate(validRequest('standalone-html', 'PARITY_PASS'));
+    assert.strictEqual(result.out.g2.code, 'PARITY_PASS');
+    assert.strictEqual(result.out.g2.mode, 'standalone-html');
+    assert.strictEqual(result.out.checkpoint.state, 'SECTION_COMPLETE');
   });
 
   for (const dir of TEMP_DIRS) {

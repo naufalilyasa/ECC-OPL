@@ -62,10 +62,16 @@ const byProfile = req.g2?.byProfile ?? Object.fromEntries(
 const g2 = verifyRenderedParity(
   {
     source: 'chromium-playwright',
-    evidence: { verified: true, byProfile },
+    evidence: { verified: true, byProfile,
+      referenceDesignDigest: req.active?.designDigest },
     diffs: req.g2?.diffs ?? [],
+    driftFindings: req.g2?.driftFindings ?? [],
   },
   {
+    // Preview mode comes from authoritative state (DBN-11), not from the receipt
+    // or the request, so a caller cannot pick the cheaper mode.
+    previewMode: req.active?.previewMode ?? 'standalone-html',
+    approvedReference: { designDigest: req.active?.designDigest },
     screenshotPairs: Object.fromEntries(
       Object.entries(ctx.viewportEvidence).map(([vp, v]) => [vp, {
         reference: v.screenshot,

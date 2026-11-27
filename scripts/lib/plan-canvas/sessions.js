@@ -63,6 +63,10 @@ function sanitizePreviewMeta(value) {
   if (typeof value.revisionDigest === 'string' && /^[0-9a-f]{64}$/.test(value.revisionDigest)) {
     meta.revisionDigest = value.revisionDigest;
   }
+  // The design digest is what native gates bind the baseline capture to.
+  if (typeof value.designDigest === 'string' && /^[0-9a-f]{64}$/.test(value.designDigest)) {
+    meta.designDigest = value.designDigest;
+  }
   if (value.dataMode === 'fixture' || value.dataMode === 'production') {
     meta.dataMode = value.dataMode;
   }

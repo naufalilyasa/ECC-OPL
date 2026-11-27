@@ -4,7 +4,9 @@
 import { createHash } from 'node:crypto'
 const HEX64 = /^[0-9a-f]{64}$/
 const sha = (b) => createHash('sha256').update(Buffer.isBuffer(b) ? b : Buffer.from(b)).digest('hex')
+export const PREVIEW_MODES = Object.freeze(['standalone-html', 'framework-native'])
 export const SOURCE_HINT_ONLY = Object.freeze({ classification: 'SOURCE_LEVEL_HINT', rendered: false })
+
 
 // Minimal real PNG validation from bytes (no new dependency): magic + IHDR dims + IDAT + IEND.
 // Minimum plausible PNG is 57 bytes (8-byte header + 25-byte IHDR + 12-byte IDAT + 12-byte IEND).
@@ -30,11 +32,28 @@ const validRow = (r) => {
 }
 
 export function verifyRenderedParity(result, context = {}) {
+  const mode = context.previewMode ?? 'standalone-html'
+  if (!PREVIEW_MODES.includes(mode)) {
+    return { code: 'PARITY_UNVERIFIED', why: 'PREVIEW_MODE_INVALID', mode }
+  }
   if (!result || result.source !== 'chromium-playwright') {
-    return { code: 'PARITY_UNVERIFIED', why: 'NOT_RENDERED_EVIDENCE' }
+    return { code: 'PARITY_UNVERIFIED', why: 'NOT_RENDERED_EVIDENCE', mode }
+  }
+  // Native: the same component is approved and shipped, so the comparison is
+  // baseline capture vs integrated capture of THAT revision. The baseline must
+  // be attributable to the approval, otherwise any old screenshot would do.
+  if (mode === 'framework-native') {
+    const approved = context.approvedReference?.designDigest
+    if (!HEX64.test(approved || '')) {
+      return { code: 'PARITY_UNVERIFIED', why: 'APPROVED_REFERENCE_REQUIRED', mode }
+    }
+    if (result.evidence?.referenceDesignDigest !== approved) {
+      return { code: 'PARITY_UNVERIFIED', why: 'BASELINE_NOT_BOUND_TO_APPROVAL', mode,
+        approvedDesignDigest: approved, evidenceDesignDigest: result.evidence?.referenceDesignDigest ?? null }
+    }
   }
   const required = context.requiredViewports ?? []
-  if (!required.length) return { code: 'PARITY_UNVERIFIED', why: 'REQUIRED_VIEWPORTS_MISSING' }
+  if (!required.length) return { code: 'PARITY_UNVERIFIED', why: 'REQUIRED_VIEWPORTS_MISSING', mode }
   // One shared digest pair is NOT valid for multiple profiles.
   if (required.length > 1 && !result.evidence?.byProfile) {
     return { code: 'PARITY_UNVERIFIED', why: 'SHARED_DIGEST_PAIR_INVALID' }
@@ -48,7 +67,9 @@ export function verifyRenderedParity(result, context = {}) {
     const pair = pairs[vp]
     // Both actual images are MANDATORY — no `?? screenshot` fallback anywhere.
     if (!pair || !Buffer.isBuffer(pair.reference) || !Buffer.isBuffer(pair.candidate)) {
-      return { code: 'PARITY_UNVERIFIED', why: 'SCREENSHOT_PAIR_INCOMPLETE', viewport: vp }
+      return { code: 'PARITY_UNVERIFIED', mode,
+        why: mode === 'framework-native' && !Buffer.isBuffer(pair?.reference)
+          ? 'BASELINE_CAPTURE_MISSING' : 'SCREENSHOT_PAIR_INCOMPLETE', viewport: vp }
     }
     const ri = pngInfo(pair.reference), ci = pngInfo(pair.candidate)
     if (!ri || !ci) return { code: 'PARITY_UNVERIFIED', why: 'INVALID_PNG', viewport: vp }
@@ -80,8 +101,11 @@ export function verifyRenderedParity(result, context = {}) {
     if (!profilePass) continue
     verifiedProfiles.push(vp)
   }
-  return { code: diffs.length ? 'PARITY_FAIL' : 'PARITY_PASS', matched,
+  return { code: diffs.length ? 'PARITY_FAIL' : 'PARITY_PASS', mode, matched,
     verifiedProfiles, failedProfiles: diffs.map((d) => d.viewport), diffs,
+    // Native drift is reported, not failed on pixels: the same component in a
+    // different shell legitimately differs. Callers surface these as findings.
+    driftFindings: result.driftFindings ?? [],
     requiredViewports: required.slice() }
 }
 

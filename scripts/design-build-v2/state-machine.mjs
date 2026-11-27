@@ -7,7 +7,7 @@
 import { createHash } from 'node:crypto'
 import { readFileSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
-import { verifyRenderedParity, pngInfo } from './rendered-authority.mjs'
+import { verifyRenderedParity, pngInfo, PREVIEW_MODES } from './rendered-authority.mjs'
 
 export const HEX64 = /^[0-9a-f]{64}$/
 export const sha256 = (b) => createHash('sha256').update(Buffer.from(b)).digest('hex')
@@ -25,8 +25,10 @@ const hasBytes = (v) => Buffer.isBuffer(v) || typeof v === 'string' || v instanc
 const toBuf = (v) => Buffer.isBuffer(v) ? v : Buffer.from(v)
 
 // Recompute G2 via the SAME authority the command uses (no parallel equality check).
-function recomputeG2(receipt, context) {
+// Preview mode is taken from authoritative state, never from the receipt.
+function recomputeG2(receipt, context, src) {
   const required = context.requiredViewports ?? []
+  const mode = src?.previewMode ?? 'standalone-html'
   const vps = context.viewportEvidence ?? {}
   // Independent digest pair PER PROFILE. No shared pair, no `?? screenshot` fallback.
   const byProfile = Object.fromEntries(required.map((vp) => [vp, {
@@ -34,10 +36,14 @@ function recomputeG2(receipt, context) {
     candidate: sha256(toBuf(vps[vp]?.candidateScreenshot ?? Buffer.alloc(0))),
   }]))
   return verifyRenderedParity(
-    { source: 'chromium-playwright', evidence: { verified: true, byProfile } },
+    { source: 'chromium-playwright',
+      evidence: { verified: true, byProfile, referenceDesignDigest: src?.designDigest },
+      driftFindings: context.driftFindings ?? [] },
     { screenshotPairs: Object.fromEntries(required.map((vp) => [vp, {
         reference: vps[vp]?.screenshot, candidate: vps[vp]?.candidateScreenshot }])),
       requiredViewports: required,
+      previewMode: mode,
+      approvedReference: { designDigest: src?.designDigest },
       profileDimensions: context.profileDimensions,
       viewportMeasurements: Object.fromEntries(required.map((vp) => [vp, vps[vp]?.measurements ?? []])) })
 }
@@ -58,6 +64,14 @@ export function verifyReceipt(receipt, context) {
     return reject('ACTIVE_IDENTITY_INCOMPLETE')
   }
   if (src.dataMode !== undefined && !DATA_MODES.includes(src.dataMode)) return reject('DATA_MODE_INVALID')
+  if (src.previewMode !== undefined && !PREVIEW_MODES.includes(src.previewMode)) {
+    return reject('PREVIEW_MODE_INVALID', { previewMode: src.previewMode })
+  }
+  // Native G2 compares against the approved revision's own baseline, so the
+  // approval's design digest must be present in authoritative state.
+  if (src.previewMode === 'framework-native' && !HEX64.test(src.designDigest || '')) {
+    return reject('NATIVE_REFERENCE_MISSING')
+  }
   if (identity && (identity.sectionId !== src.sectionId || identity.revision !== src.revision
       || identity.bundleSha256 !== src.approvedBundleSha256)) return reject('IDENTITY_CONTEXT_CONFLICT')
   if (receipt.sectionId !== src.sectionId) return reject('sectionMismatch')
@@ -133,7 +147,7 @@ export function verifyReceipt(receipt, context) {
   }
 
   // G2 recomputed via the single authority; G3 from real interaction postconditions.
-  const g2 = recomputeG2(receipt, context)
+  const g2 = recomputeG2(receipt, context, src)
   gates.G2_rendered_fidelity = g2.code === 'PARITY_PASS' ? 'PASS' : 'FAIL'
   if (!Array.isArray(interactionChecks) || !interactionChecks.length) return reject('interactionEvidenceMissing')
   for (const c of interactionChecks) {

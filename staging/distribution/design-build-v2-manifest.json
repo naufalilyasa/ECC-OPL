@@ -136,20 +136,20 @@
     {
       "path": "scripts/design-build-v2/state-machine.mjs",
       "destination": "scripts/design-build-v2/state-machine.mjs",
-      "sha256": "8b040526b38a7ef4c3ac41d9bc9ecb6fa76f4a40d3d53affb8969d852e96c103",
-      "bytes": 20106
+      "sha256": "2ee735b4c8d491aaf61f8d6818a6733a481a4daff8848edf3bc423d8afd01f4b",
+      "bytes": 20891
     },
     {
       "path": "scripts/design-build-v2/rendered-authority.mjs",
       "destination": "scripts/design-build-v2/rendered-authority.mjs",
-      "sha256": "daaba861afa9372f6960d9e721c0a063b97c5c781d8092a210326e03166b41dc",
-      "bytes": 5268
+      "sha256": "c11ae690c3d4dc702ff695ea062f067f748e20fa5f13c852f025ed4d305be7b5",
+      "bytes": 6606
     },
     {
       "path": "scripts/design-build-v2/section-gate.mjs",
       "destination": "scripts/design-build-v2/section-gate.mjs",
-      "sha256": "0f0d5e2d12a2fea853c73502cebcb4b8c831b7f1565ae2527460fe4f77060d62",
-      "bytes": 3411
+      "sha256": "6264e57789e040c903585fbb9a54efb359775c7a900a13a885d89a998556450d",
+      "bytes": 3791
     },
     {
       "path": "scripts/design-build-v2/compare-section.mjs",
@@ -170,5 +170,5 @@
       "bytes": 2067
     }
   ],
-  "modified_utc": "2026-11-27T09:18:12Z"
+  "modified_utc": "2026-11-27T09:35:45Z"
 }
