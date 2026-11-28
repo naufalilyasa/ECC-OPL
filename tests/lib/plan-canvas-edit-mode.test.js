@@ -52,8 +52,11 @@ function runTests() {
     assert.ok(js.includes('markConflict(msg.prop'), 'records the conflict');
     assert.ok(js.includes('another rule wins'), 'explains the cascade conflict');
     // The SDK drops the declaration that did not render and reconciles the
-    // pending list, so a bad value can never hide a good one.
-    assert.ok(sdk.includes('records.pop()'), 'ineffective record rolled back');
+    // pending list, so a bad value can never hide a good one. It splices by
+    // identity, because a second override or a reset can run inside the
+    // two-frame read-back window.
+    assert.ok(sdk.includes('records.indexOf(record)'), 'ineffective record removed by identity');
+    assert.ok(sdk.includes('after !== before'), 'a rendered value that did not move is not an edit');
     assert.ok(!js.includes('editIneffective'), 'no hidden-key set in the chrome');
   })) passed++; else failed++;
 
@@ -84,7 +87,7 @@ function runTests() {
   if (test('the SDK reads the cascade back instead of assuming success', () => {
     assert.ok(sdk.includes('function effectivelyApplied'), 'read-back exists');
     assert.ok(sdk.includes('getComputedStyle(el)'), 'computed style read');
-    assert.ok(sdk.includes('const effective = effectivelyApplied(prop, value, el)'), 'effective is measured, not inferred');
+    assert.ok(sdk.includes('after !== before && effectivelyApplied(prop, value, el)'), 'effective is measured, not inferred');
     assert.ok(sdk.includes('effective: false, error: error || null'), 'failures never claim success');
   })) passed++; else failed++;
 
@@ -193,7 +196,7 @@ function runTests() {
   if (test('a coincidental match stays token:null until the owner confirms', () => {
     assert.ok(js.includes("c.origin === 'authored'"), 'only authored chips are clickable');
     assert.ok(js.includes('not an authored token'), 'coincidence is named as such');
-    assert.ok(js.includes("editTokens.set(key, { name: c.name, origin: 'authored' })"), 'tokens only set from a chip');
+    assert.ok(js.includes("{ name: c.name, origin: 'authored' })"), 'tokens only set from a chip');
     assert.ok(js.includes('token: tok ? tok.name : null'), 'token carries the name');
     assert.ok(js.includes('tokenOrigin: tok ? tok.origin : null'), 'token origin travels too');
   })) passed++; else failed++;
@@ -201,7 +204,7 @@ function runTests() {
   if (test('a token override is read back through the resolved var()', () => {
     assert.ok(sdk.includes('function resolveVar'), 'resolver exists');
     assert.ok(sdk.includes('resolveVar(value, el)'), 'comparison uses the resolved value');
-    assert.ok(js.includes("value: 'var(' + c.name + ')'"), 'chip submits var()');
+    assert.ok(js.includes("'var(' + c.name + ')'"), 'chip submits var()');
   })) passed++; else failed++;
 
   if (test('shared-component scope needs an explicit owner confirmation', () => {
@@ -226,6 +229,28 @@ function runTests() {
     assert.ok(js.includes('editInFlight += 1'), 'input blur counts as in flight');
     assert.ok(js.includes('if (!editPending.length && !editInFlight) return;'), 'verdict waits for it');
     assert.ok(js.includes('editInFlight > 0) { setStatus('), 'submit waits for it too');
+  })) passed++; else failed++;
+
+  if (test('a late override reply settles even after the selection moved', () => {
+    // Selecting another element used to discard the reply and leave the
+    // in-flight counter above zero, locking Apply and the verdicts until reload.
+    assert.ok(js.includes('const selected = Boolean(editTarget && msg.targetId === editTarget.targetId)'),
+      'selection decides the conflict display, not the bookkeeping');
+    assert.ok(js.indexOf('editInFlight -= 1') < js.indexOf('const selected = Boolean('),
+      'the counter settles before the selection test');
+    assert.ok(js.includes('if (selected) markConflict('), 'only the selected element shows a conflict');
+  })) passed++; else failed++;
+
+  if (test('token metadata is pruned, not wiped, when records change', () => {
+    assert.ok(!js.includes('editTokens.clear();\n        if (!msg.records'),
+      'a state echo no longer wipes every token');
+    assert.ok(js.includes("alive.get(k) !== 'var(' + tok.name + ')'"), 'token survives only while its var() record does');
+  })) passed++; else failed++;
+
+  if (test('every override path shares one guard', () => {
+    assert.ok(js.includes('function applyEdit(targetId, prop, value)'), 'single entry point');
+    assert.ok(js.includes('if (submitting || stale) return false;'), 'it honours the submission guards');
+    assert.ok(js.includes('if (!applyEdit(msg.targetId, msg.prop'), 'chips go through it');
   })) passed++; else failed++;
 
   if (test('submission freezes its id and survives later state changes', () => {

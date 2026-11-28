@@ -37,7 +37,6 @@ function artifactSdkJs() {
   let editSeq = 0;
   let overlaySheet = null;
   let overlayStyleEl = null;
-  let probeEl = null;
   let internalUntil = 0;
   const editTargets = new Map();   // targetId -> { targetId, el, selector, identity }
   const records = [];              // applied overrides, in order; last wins
@@ -61,7 +60,6 @@ function artifactSdkJs() {
     'border-color': ['border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color'],
     'border-radius': ['border-top-left-radius', 'border-top-right-radius', 'border-bottom-right-radius', 'border-bottom-left-radius']
   };
-  const PROBE_CSS = 'position:absolute;left:-9999px;top:0;width:1px;height:1px;visibility:hidden;pointer-events:none';
 
   const post = msg => window.parent.postMessage(msg, '*');
 
@@ -220,14 +218,6 @@ function artifactSdkJs() {
     if (overlaySheet && typeof overlaySheet.replaceSync === 'function') overlaySheet.replaceSync(css);
     else if (overlayStyleEl) overlayStyleEl.textContent = css;
   }
-  function probe() {
-    if (!probeEl || !probeEl.isConnected) {
-      probeEl = document.createElement('div');
-      (document.body || document.documentElement).appendChild(probeEl);
-    }
-    probeEl.style.cssText = PROBE_CSS;
-    return probeEl;
-  }
   function readValues(prop, el) {
     const props = READBACK[prop] || [prop];
     const cs = getComputedStyle(el);
@@ -237,16 +227,26 @@ function artifactSdkJs() {
   // what the renderer reports. Units, colours and functions all normalize the
   // same way they would on the target, and an invalid declaration is caught
   // because the browser refuses it (the probe keeps no value).
-  // shortcut: the probe inherits from body, so a relative unit can normalize
-  // differently on a target with another font context; upgrade to a probe
-  // cloned beside the target if that shows up as a false negative.
+  // Canonical form of a declaration: apply it to the target itself with
+  // !important, read what the renderer reports, put the inline style back.
+  // A detached probe got border-width wrong (no border-style there, so every
+  // border computed 0px) and resolved %/auto sizes against its own box.
   function canonical(prop, value, el) {
-    const p = probe();              // cssText reset clears the previous value
+    if (!el || !el.isConnected) return null;
     const longhands = READBACK[prop] || [prop];
-    try { p.style.setProperty(prop, resolveVar(value, el)); } catch (err) { return null; }
-    if (!p.style.getPropertyValue(prop)) return null;
-    const cs = getComputedStyle(p);
-    return longhands.map(x => cs.getPropertyValue(x).trim()).join('|');
+    const saved = el.style.getPropertyValue(prop);
+    const priority = el.style.getPropertyPriority(prop);
+    try {
+      el.style.setProperty(prop, resolveVar(value, el), 'important');
+      if (!el.style.getPropertyValue(prop)) return null;
+      const cs = getComputedStyle(el);
+      return longhands.map(x => cs.getPropertyValue(x).trim()).join('|');
+    } catch (err) {
+      return null;
+    } finally {
+      if (saved) el.style.setProperty(prop, saved, priority);
+      else el.style.removeProperty(prop);
+    }
   }
   // Honest read-back: true only when the rendered value is the requested one.
   // A rule that beats the override is reported as ineffective, never success.
@@ -293,27 +293,40 @@ function artifactSdkJs() {
     if (!t || !el || !el.isConnected) return reportApplied(targetId, prop, value, null, 'STALE_TARGET');
     if (!EDIT_PROPS.has(prop)) return reportApplied(targetId, prop, value, null, 'INVALID_PROP');
     if (!safeValue(value)) return reportApplied(targetId, prop, value, null, 'INVALID_VALUE');
-    records.push({ targetId: targetId, prop: prop, value: value });
+    // What the property rendered as before this declaration. A declaration that
+    // leaves it where it was is not an edit, whatever the canonical form says
+    // (border-width on a borderless element, a value the cascade already set).
+    const before = readValues(prop, el);
+    const record = { targetId: targetId, prop: prop, value: value };
+    records.push(record);
     if (records.length > MAX_LOCAL_RECORDS) records.splice(0, records.length - MAX_LOCAL_RECORDS);
     renderOverrides();
+    // Splice by identity. undo, reset or a second override can run inside the
+    // two-frame window below, and popping by position then drops a good record.
+    const drop = () => {
+      const at = records.indexOf(record);
+      if (at < 0) return false;
+      records.splice(at, 1);
+      renderOverrides();
+      return true;
+    };
     // A freshly adopted stylesheet only takes effect on the next rendering
     // lifecycle in Chromium, so reading computed styles in the same task reports
     // the old value on large sheets (Tailwind) and turns a good edit into a fake
     // cascade conflict. Read back after two frames instead.
     const finalize = () => {
-      if (!el.isConnected) { records.pop(); renderOverrides(); post({ type: 'pc:override-state', records: records.slice(), redo: redo.length }); return reportApplied(targetId, prop, value, null, 'STALE_TARGET'); }
-      const after = readValues(prop, el);
-      const effective = effectivelyApplied(prop, value, el);
+      const live = el.isConnected;
+      const after = live ? readValues(prop, el) : null;
+      // A declaration that did not render is not a pending edit. Keeping it
+      // would let a bad value sit on top of a good one for the same property
+      // and hide it from the pending list, or make undo restore junk.
+      const effective = live && after !== before && effectivelyApplied(prop, value, el);
       if (!effective) {
-        // A declaration that did not render is not a pending edit. Keeping it
-        // would let a bad value sit on top of a good one for the same property
-        // and hide it from the pending list, or make undo restore junk.
-        records.pop();
-        renderOverrides();
-        post({ type: 'pc:override-state', records: records.slice(), redo: redo.length });
+        if (drop()) post({ type: 'pc:override-state', records: records.slice(), redo: redo.length });
       } else {
         redo.length = 0;
       }
+      if (!live) return reportApplied(targetId, prop, value, null, 'STALE_TARGET');
       const rect = el.getBoundingClientRect();
       const rendered = SIZE_PROPS.has(prop) ? Math.round(prop === 'width' ? rect.width : rect.height) : null;
       post({

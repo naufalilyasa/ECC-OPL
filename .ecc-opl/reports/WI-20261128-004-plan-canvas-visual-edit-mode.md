@@ -99,6 +99,8 @@ column. Roll-up:
 - `evidence/phase7-acceptance-gaps.md` — rows 17, 18, 19, 20, 21, 12 with the live status strings.
 - `evidence/phase7-row11-shared-component.md` — row 11: two instances of one template, instance
   isolation, one-element selector, owner-confirmed component scope, sibling re-render.
+- `evidence/phase7-review2-high-fixes.md` — the four HIGH findings from quick review run 2, each
+  with the live status strings that prove the fix.
 
 Owner-app changes (authorized section only, `nexvora-hris`):
 
@@ -130,6 +132,8 @@ Pre-existing, unrelated failures in this repo are unchanged and not caused by th
 - Svelte, Next, Nuxt and Angular hosts are unverified. DEC-01 makes none of them a requirement,
   but no claim should be made about them.
 - The Laravel `X-Frame-Options` change is live in the owner app and awaits owner sign-off.
+- Review run 2 returned BLOCK on four HIGH findings; all four are fixed and re-proven in a browser
+  (`evidence/phase7-review2-high-fixes.md`). The review's MEDIUM and LOW items were not addressed.
 - The Plan Canvas session store is in-memory: restarting the canvas server discards sessions. This
   is why failed-submission retry was proven by mutating the session digest rather than killing the
   server.

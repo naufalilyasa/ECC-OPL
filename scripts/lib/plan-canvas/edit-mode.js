@@ -123,12 +123,9 @@ function editModeClientJs() {
         input.value = (values && values[field.prop]) || '';
         input.disabled = stale || submitting;
         input.addEventListener('change', () => {
-          if (submitting) return;
           const value = input.value.trim();
-          if (!value || !editTarget) return;
-          ackNotice = '';
-          editInFlight += 1;
-          postToFrame({ type: 'pc:override', targetId: editTarget.targetId, prop: field.prop, value: value });
+          if (!value) return;
+          if (!applyEdit(editTarget.targetId, field.prop, value)) return;
           editTokens.delete(editKey(editTarget.targetId, field.prop));
           // Raw values are looked up against the real stylesheets, so the
           // owner can pick the authored token instead of a literal.
@@ -161,9 +158,8 @@ function editModeClientJs() {
         b.textContent = c.name;
         b.title = 'Use this design token';
         b.addEventListener('click', () => {
-          const key = editKey(msg.targetId, msg.prop);
-          editTokens.set(key, { name: c.name, origin: 'authored' });
-          postToFrame({ type: 'pc:override', targetId: msg.targetId, prop: msg.prop, value: 'var(' + c.name + ')' });
+          if (!applyEdit(msg.targetId, msg.prop, 'var(' + c.name + ')')) return;
+          editTokens.set(editKey(msg.targetId, msg.prop), { name: c.name, origin: 'authored' });
         });
         chips.appendChild(b);
       });
@@ -245,6 +241,17 @@ function editModeClientJs() {
         });
       });
       return targets;
+    }
+    // Every override goes through here: an input blur, a token chip click and
+    // anything added later. A chip used to post directly and skipped both the
+    // in-flight counter and the stale/submitting guards.
+    function applyEdit(targetId, prop, value) {
+      if (submitting || stale) return false;
+      if (!editTarget || targetId !== editTarget.targetId) return false;
+      ackNotice = '';
+      editInFlight += 1;
+      postToFrame({ type: 'pc:override', targetId: targetId, prop: prop, value: value });
+      return true;
     }
     function refreshApply() {
       if (!applyBtn) return;
@@ -359,18 +366,20 @@ function editModeClientJs() {
         if (!editTarget || msg.targetId !== editTarget.targetId) return;
         renderCandidates(msg);
       } else if (msg.type === 'pc:applied') {
-        if (!editTarget || msg.targetId !== editTarget.targetId) return;
+        // A reply can land after the owner selected another element. Settle the
+        // counter and the record anyway, or Apply stays locked for good.
         if (editInFlight > 0) editInFlight -= 1;
         const key = editKey(msg.targetId, msg.prop);
         editApplied.set(key, msg);
+        const selected = Boolean(editTarget && msg.targetId === editTarget.targetId);
         if (msg.error) {
-          markConflict(msg.prop, 'Could not apply ' + msg.prop + ': ' + msg.error + '.');
+          if (selected) markConflict(msg.prop, 'Could not apply ' + msg.prop + ': ' + msg.error + '.');
         } else if (!msg.effective) {
           // The SDK rolled the failed declaration back; the pending list is
           // reconciled by the pc:override-state that follows.
-          markConflict(msg.prop, msg.prop + ' stays at ' + msg.computed + ' - another rule wins.');
+          if (selected) markConflict(msg.prop, msg.prop + ' stays at ' + msg.computed + ' - another rule wins.');
         } else {
-          clearConflict(msg.prop);
+          if (selected) clearConflict(msg.prop);
           const existing = editPending.filter(r => editKey(r.targetId, r.prop) !== key);
           existing.push({ targetId: msg.targetId, prop: msg.prop, value: msg.requested });
           editPending = existing;
@@ -379,9 +388,12 @@ function editModeClientJs() {
         refreshApply();
       } else if (msg.type === 'pc:override-state') {
         editPending = (msg.records || []).map(r => ({ targetId: r.targetId, prop: r.prop, value: r.value }));
-        // The record list is authoritative: a token origin that belonged to a
-        // record that is gone must not survive onto a later literal value.
-        editTokens.clear();
+        // The record list is authoritative: token metadata survives only while a
+        // record with that key still carries the same var() value.
+        const alive = new Map(editPending.map(r => [editKey(r.targetId, r.prop), r.value]));
+        editTokens.forEach((tok, k) => {
+          if (alive.get(k) !== 'var(' + tok.name + ')') editTokens.delete(k);
+        });
         if (!msg.records || !msg.records.length) editApplied.clear();
         if (!stale) renderList();
         if (editTarget) {
