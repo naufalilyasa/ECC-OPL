@@ -661,7 +661,6 @@ function runTests() {
     assert.strictEqual(result.code, 1, 'Should fail when cross-harness counts drift');
     const output = result.stdout + result.stderr;
     assert.ok(output.includes('SOUL.md'), 'Should report SOUL.md mismatches');
-    assert.ok(output.includes('.gemini/GEMINI.md'), 'Should report GEMINI.md mismatches');
     cleanupTestDir(testDir);
   })) passed++; else failed++;
 
@@ -803,9 +802,7 @@ function runTests() {
     assert.ok(pluginJson.includes('1 agents, 1 skills, 1 legacy command shims'), 'Should sync plugin manifest catalog description');
     assert.ok(marketplaceJson.includes('1 agents, 1 skills, 1 legacy command shims'), 'Should sync marketplace plugin catalog description');
     const soul = fs.readFileSync(soulPath, 'utf8');
-    const gemini = fs.readFileSync(geminiPath, 'utf8');
     assert.ok(soul.includes('with 1 specialized agents, 1 skills, 1 commands'), 'Should sync SOUL.md catalog summary');
-    assert.ok(gemini.includes('with 1 specialized agents, 1 skills, and 1 commands'), 'Should sync .gemini/GEMINI.md catalog summary');
 
     cleanupTestDir(testDir);
   })) passed++; else failed++;

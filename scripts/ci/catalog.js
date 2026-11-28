@@ -19,7 +19,6 @@ const ROOT = path.join(__dirname, '../..');
 const README_PATH = path.join(ROOT, 'README.md');
 const AGENTS_PATH = path.join(ROOT, 'AGENTS.md');
 const SOUL_PATH = path.join(ROOT, 'SOUL.md');
-const GEMINI_PATH = path.join(ROOT, '.gemini', 'GEMINI.md');
 const README_ZH_CN_PATH = path.join(ROOT, 'README.zh-CN.md');
 const DOCS_ZH_CN_README_PATH = path.join(ROOT, 'docs', 'zh-CN', 'README.md');
 const DOCS_ZH_CN_AGENTS_PATH = path.join(ROOT, 'docs', 'zh-CN', 'AGENTS.md');
@@ -641,7 +640,6 @@ function createDocumentSpecs(paths = {}) {
     readmePath = README_PATH,
     agentsPath = AGENTS_PATH,
     soulPath = SOUL_PATH,
-    geminiPath = GEMINI_PATH,
     zhRootReadmePath = README_ZH_CN_PATH,
     zhDocsReadmePath = DOCS_ZH_CN_README_PATH,
     zhDocsAgentsPath = DOCS_ZH_CN_AGENTS_PATH,
@@ -664,11 +662,6 @@ function createDocumentSpecs(paths = {}) {
       filePath: soulPath,
       parseExpectations: content => parseCrossHarnessIdentityExpectations(content, 'SOUL.md'),
       syncContent: (content, catalog) => syncCrossHarnessIdentity(content, catalog, 'SOUL.md'),
-    },
-    {
-      filePath: geminiPath,
-      parseExpectations: content => parseCrossHarnessIdentityExpectations(content, '.gemini/GEMINI.md'),
-      syncContent: (content, catalog) => syncCrossHarnessIdentity(content, catalog, '.gemini/GEMINI.md'),
     },
     {
       filePath: zhRootReadmePath,
@@ -723,7 +716,6 @@ function createDocumentSpecsForRoot(root) {
     readmePath: path.join(root, 'README.md'),
     agentsPath: path.join(root, 'AGENTS.md'),
     soulPath: path.join(root, 'SOUL.md'),
-    geminiPath: path.join(root, '.gemini', 'GEMINI.md'),
     zhRootReadmePath: path.join(root, 'README.zh-CN.md'),
     zhDocsReadmePath: path.join(root, 'docs', 'zh-CN', 'README.md'),
     zhDocsAgentsPath: path.join(root, 'docs', 'zh-CN', 'AGENTS.md'),
@@ -781,7 +773,6 @@ function runCatalogCheck(options = {}) {
     root === ROOT ? DOCUMENT_SPECS : createDocumentSpecsForRoot(root)
   );
   const catalog = buildCatalog(root);
-
   if (writeMode) {
     for (const spec of documentSpecs) {
       const currentContent = readFileOrThrow(spec.filePath);
