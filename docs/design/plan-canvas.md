@@ -118,3 +118,58 @@ The one optional outbound request is the pinned Mermaid library, fetched by the 
 for artifacts that contain a diagram; it renders with `securityLevel: 'strict'`, degrades to
 showing diagram source if unavailable, and can be repointed at a local mirror via
 `ECC_PLAN_CANVAS_MERMAID_URL`. The server itself still makes no network calls.
+
+## Framework-native visual edit mode (opt-in)
+
+An extra mode for reviewing a **running** app section, not markdown: the canvas frames the real
+dev-server page, and the owner edits rendered CSS properties that the agent then applies to
+source. Off unless the session was opened with `--edit-mode`.
+
+```bash
+# standalone HTML / any local page
+node scripts/plan-canvas.js open plan.md --preview-url http://127.0.0.1:8099/page.html \
+  --preview-mode framework-native --framework standalone --section hero --revision r1 \
+  --edit-mode --revision-digest <64-hex> --design-digest <64-hex>
+
+# a Laravel + Inertia app: publish the dev-only SDK partial first
+node scripts/plan-canvas.js vendor ../some-laravel-app
+```
+
+`vendor <app-dir>` writes `resources/views/vendor/ecc-plan-canvas/sdk.blade.php` and is
+idempotent; it refuses a directory with no `artisan`. Reference it from the root Blade view
+behind a dev guard — Inertia serves the root document through Blade, so a Vite
+`transformIndexHtml` plugin never runs there:
+
+```blade
+@env(['local', 'development'])
+  @include('vendor.ecc-plan-canvas.sdk')
+@endenv
+```
+
+React/Vite and Vue/Vite apps get the same SDK through the existing `planCanvasAnnotations()`
+plugin. Nothing is injected into a production build.
+
+### What the owner gets
+
+Three modes in the chrome: **Interact** (the app behaves normally), **Annotate** (`Cmd/Ctrl+I`,
+unchanged), **Edit**. Edit mode adds a per-element inspector: click an element, edit width,
+padding, margin, gap, colours, typography, border-radius; undo, redo, reset. Overrides live in a
+memory-only constructable stylesheet in the frame, so the app's own files stay untouched until
+**Apply to source**.
+
+An override is only recorded when the read-back proves the rendered value actually changed:
+transitions and animations are nulled for registered targets first, the probe reads after two
+animation frames, and a property that still loses the cascade is reported as
+`<prop> stays at <value> - another rule wins.` — never as a success.
+
+**Apply** posts one change set through the ordinary feedback channel (`kind: 'edits'`), with the
+route, preview identity (mode/framework/section/revision + digests), viewport, scope, and one
+`targets[]` entry per element carrying its selector plus `before.computed` / `after` /
+`effective`. The agent applies it to native source (e.g. `mt-4` → `mt-6`) and replies via
+`await`. Overrides are cleared **only after the server acknowledges the change set**; a refused
+or failed submission keeps every pending edit and reuses the frozen change-set id on retry, so a
+retry is a duplicate rather than a second edit.
+
+A DOM node that the app replaces (re-render, HMR, reload) marks the target stale and blocks
+Apply instead of applying to a node that no longer exists; a full reload clears pending
+overrides and says so.
