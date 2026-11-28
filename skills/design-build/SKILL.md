@@ -148,6 +148,33 @@ signals were found and reported, not silently resolved — ask the owner.
    Laravel/Inertia. Add it temporarily, report it, and remove it after review. Without
    the adapter the annotate toggle stays disabled and feedback is chat + verdict;
    report which case applies instead of implying markup-level annotation works.
+6. **Visual edit mode is opt-in and still ends in source.** Open with `--edit-mode`
+   when the owner wants to adjust the live component rather than describe the change:
+
+   ```bash
+   node <ECC>/scripts/plan-canvas.js open <section-file> \
+     --preview-url ... --preview-mode framework-native --edit-mode ...
+   ```
+
+   The owner selects an element, changes a property, and presses **Apply to source**.
+   That posts one `kind: "edits"` change set over the existing feedback endpoint
+   (route, viewport, per-element target identity, before/after per property). The
+   preview-side overrides are memory only: they are cleared the moment the server
+   acknowledges the change set, before you touch source. Then:
+
+   - read the change set from the session transcript, apply it to the real component
+     with the project's own styling system, and keep the change at instance scope
+     unless the owner explicitly asked for the shared primitive;
+   - never infer a breakpoint name or a design token from a computed value: a
+     coincidental CSS match is not an authored token reference;
+   - after the edit lands, let HMR replace the element and verify the actual
+     source-rendered output with no overrides applied. A server acknowledgment is
+     not implementation success;
+   - if an element was replaced by HMR before Apply, its target is stale — ask the
+     owner to reselect instead of reattaching by position.
+
+   `standalone-html` sections keep the legacy annotate/verdict loop. Edit mode is
+   unavailable there and the toggle is simply absent.
 
 ### What requires re-approval, and what does not
 

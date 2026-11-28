@@ -13,6 +13,7 @@ const path = require('path');
 
 const { escapeHtml } = require('./markdown');
 const { computePlanDigest } = require('./verdict-binding');
+const { editModeClientJs } = require('./edit-mode');
 
 // Pinned Mermaid ESM build, loaded in the browser only when an artifact
 // actually contains a diagram. Override with a local/vendored URL (e.g. an
@@ -118,6 +119,10 @@ function canvasCss() {
   .toggle .knob{position:absolute;top:1px;left:1px;width:13px;height:13px;border-radius:99px;background:var(--text2);transition:transform .15s,background .15s}
   .toggle[aria-pressed="true"] .track{background:var(--accent);border-color:var(--accent-dim)}
   .toggle[aria-pressed="true"] .knob{transform:translateX(13px);background:#fff}
+  .mode-group{display:flex;align-items:center;gap:2px;padding:2px;border:1px solid var(--border);border-radius:8px;background:var(--bg3)}
+  .mode-group button{font:inherit;font-size:11.5px;color:var(--text2);background:none;border:0;border-radius:6px;padding:4px 9px;cursor:pointer}
+  .mode-group button[aria-pressed="true"]{background:var(--bg4);color:var(--text)}
+  .mode-group button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 
   .icon-btn{height:28px;padding:0 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);cursor:pointer;font-size:11.5px;display:flex;align-items:center;gap:5px;transition:all .12s}
   .icon-btn:hover{border-color:var(--border-light);color:var(--text);background:var(--bg4)}
@@ -141,6 +146,29 @@ function canvasCss() {
 
   .layout[data-panel="hidden"] .panel{display:none}
   .panel{width:340px;flex:none;display:flex;flex-direction:column;border-left:1px solid var(--border);background:var(--bg2)}
+  .inspector{width:300px;flex:none;display:flex;flex-direction:column;border-right:1px solid var(--border);background:var(--bg2);overflow-y:auto;padding:12px 14px}
+  .inspector h2{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text2);margin:0 0 8px}
+  .edit-target{font-family:var(--mono);font-size:11.5px;color:var(--text);word-break:break-all;margin-bottom:10px}
+  .edit-actions{display:flex;gap:6px;margin-bottom:12px}
+  .edit-actions .icon-btn{font-size:11.5px;padding:4px 9px}
+  .edit-body{flex:1;min-height:40px}
+  .edit-empty{color:var(--text3);font-size:12px;line-height:1.5}
+  .edit-group{margin-bottom:10px}
+  .edit-group-title{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:5px}
+  .edit-row{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+  .edit-row span{flex:none;width:88px;font-size:11.5px;color:var(--text2)}
+  .edit-row input{flex:1;min-width:0;font:inherit;font-family:var(--mono);font-size:11.5px;color:var(--text);background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:4px 7px}
+  .edit-row input:focus{outline:none;border-color:var(--accent)}
+  .edit-row.conflict input{border-color:#c9556e;background:rgba(201,85,110,.08)}
+  .edit-list{list-style:none;margin:0 0 8px;padding:0;font-family:var(--mono);font-size:11.5px;color:var(--text2)}
+  .edit-list li{padding:3px 0;border-bottom:1px solid var(--border)}
+  .edit-chips{display:flex;flex-wrap:wrap;gap:4px;margin:2px 0 6px 96px;min-height:0}
+  .edit-chip{font:inherit;font-family:var(--mono);font-size:10.5px;color:var(--accent);background:none;border:1px solid var(--border);border-radius:10px;padding:1px 7px;cursor:pointer}
+  .edit-chip:hover{border-color:var(--accent)}
+  .edit-chip-note{font-size:10.5px;color:var(--text3);line-height:1.4}
+  .edit-scope{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--text2);margin-bottom:12px}
+  .edit-scope select{font:inherit;font-size:11.5px;color:var(--text);background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:3px 6px}
+  .status.bad{color:#e08a9b}
   .panel h2{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);padding:12px 14px 8px}
 
   .verdict{display:flex;gap:8px;padding:0 14px 12px;border-bottom:1px solid var(--border)}
@@ -293,33 +321,54 @@ function canvasClientJs() {
     if (w > 0) applyViewport(w);
   });
 
-  // --- annotate mode -------------------------------------------------
+  // --- interaction mode -------------------------------------------------
   // A framework-native preview frames a live app on its own origin, so the
   // annotation SDK can never be injected there: chat and verdicts only.
   // A live app only receives the SDK when its dev server runs a canvas
-  // adapter. Until the app greets us, the toggle would be a dead control.
-  let annotate = true;
+  // adapter. Until the app greets us, the control would be dead.
+  //
+  // Three modes exist only for sessions opened with --edit-mode. Every other
+  // session keeps the plain annotate switch, byte for byte.
   let sdkReady = boot.previewMode !== 'framework-native';
+  let mode = 'annotate';
+  const modeGroup = $('modeGroup');
   function renderAnnotate() {
+    if (modeGroup) {
+      modeGroup.querySelectorAll('button[data-mode]').forEach(btn => {
+        btn.setAttribute('aria-pressed', String(sdkReady && btn.dataset.mode === mode));
+        btn.setAttribute('aria-disabled', String(!sdkReady));
+      });
+      modeGroup.title = sdkReady
+        ? 'Interaction mode'
+        : 'Waiting for the annotation SDK in the live app - add the canvas dev-server adapter';
+      return;
+    }
     const toggle = $('annotate');
-    toggle.setAttribute('aria-pressed', String(sdkReady && annotate));
+    toggle.setAttribute('aria-pressed', String(sdkReady && mode === 'annotate'));
     toggle.setAttribute('aria-disabled', String(!sdkReady));
     toggle.title = sdkReady
       ? 'Toggle annotate mode (Cmd/Ctrl+I)'
       : 'Waiting for the annotation SDK in the live app - add the canvas dev-server adapter';
   }
-  function setAnnotate(on) {
+  function setMode(next) {
     if (!sdkReady) return;
-    annotate = on;
+    mode = next === 'interact' || next === 'edit' ? next : 'annotate';
     renderAnnotate();
-    postToFrame({ type: 'pc:set-mode', annotate: on });
+    postToFrame({ type: 'pc:set-mode', mode });
   }
-  $('annotate').addEventListener('click', () => setAnnotate(!annotate));
+  if (modeGroup) {
+    modeGroup.addEventListener('click', e => {
+      const btn = e.target.closest('button[data-mode]');
+      if (btn) setMode(btn.dataset.mode);
+    });
+  } else {
+    $('annotate').addEventListener('click', () => setMode(mode === 'annotate' ? 'interact' : 'annotate'));
+  }
   renderAnnotate();
   document.addEventListener('keydown', e => {
     if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'i') {
       e.preventDefault();
-      setAnnotate(!annotate);
+      setMode(mode === 'annotate' ? 'interact' : 'annotate');
     }
   }, true);
 
@@ -333,10 +382,10 @@ function canvasClientJs() {
     if (msg.type === 'pc:queue' && msg.item) addToQueue(msg.item);
     else if (msg.type === 'pc:queue-and-send' && msg.item) { addToQueue(msg.item); send(); }
     else if (msg.type === 'pc:scroll') lastScroll = { x: msg.x || 0, y: msg.y || 0 };
-    else if (msg.type === 'pc:toggle-mode') setAnnotate(!annotate);
+    else if (msg.type === 'pc:toggle-mode') setMode(mode === 'annotate' ? 'interact' : 'annotate');
     else if (msg.type === 'pc:ready') {
       if (!sdkReady) { sdkReady = true; renderAnnotate(); }
-      postToFrame({ type: 'pc:set-mode', annotate });
+      postToFrame({ type: 'pc:set-mode', mode });
       postToFrame({ type: 'pc:restore-scroll', x: lastScroll.x, y: lastScroll.y });
     }
   });
@@ -631,7 +680,7 @@ function canvasClientJs() {
     };
   }
   connectEvents();
-})();`;
+${editModeClientJs()}})();`;
 }
 
 // The live-preview wrapper and the reviewed app are separate origins, so the
@@ -678,6 +727,7 @@ function renderCanvasHtml(session, { clientPath = '/client.js', cssPath = '/canv
     ...(session.previewMode ? { previewMode: session.previewMode } : {}),
     ...(session.previewUrl ? { previewUrl: session.previewUrl } : {}),
     ...(session.previewMeta ? { previewMeta: session.previewMeta } : {}),
+    ...(session.editMode ? { editMode: true } : {}),
     chat: session.chat
   }).replace(/</g, '\\u003c');
   const artifactSrc = `/artifact/${session.key}/`;
@@ -712,9 +762,13 @@ function renderCanvasHtml(session, { clientPath = '/client.js', cssPath = '/canv
   <div class="spacer"></div>
 ${session.previewMode ? `  <span id="modeChip" class="mode-chip" title="Preview mode">${escapeHtml(modeLabel)}</span>\n` : ''}${session.previewUrl ? `  <a id="previewUrl" class="url-chip" href="${escapeHtml(session.previewUrl)}" target="_blank" rel="noopener" title="Live preview URL">${escapeHtml(session.previewUrl)}</a>\n` : ''}  <div class="actions">
   <div id="presence" class="presence" data-state="waiting"><span class="dot"></span><span class="label">agent not connected</span></div>
-  <div id="annotate" class="toggle" role="switch" aria-pressed="true" title="Toggle annotate mode (Cmd/Ctrl+I)">
+${session.editMode ? `  <div id="modeGroup" class="mode-group" role="group" aria-label="Interaction mode">
+    <button type="button" data-mode="interact" aria-pressed="false" title="Interact with the preview">Interact</button>
+    <button type="button" data-mode="annotate" aria-pressed="true" title="Annotate the preview (Cmd/Ctrl+I)">Annotate</button>
+    <button type="button" data-mode="edit" aria-pressed="false" title="Edit styles visually">Edit</button>
+  </div>\n` : `  <div id="annotate" class="toggle" role="switch" aria-pressed="true" title="Toggle annotate mode (Cmd/Ctrl+I)">
     <span>Annotate</span><span class="track"><span class="knob"></span></span>
-  </div>
+  </div>\n`}
   <div class="vp">
     <select id="viewportSel" class="icon-btn" title="Artifact viewport width" aria-label="Artifact viewport width">
       <option value="">Fit</option>
@@ -741,7 +795,28 @@ ${session.previewMode ? `  <span id="modeChip" class="mode-chip" title="Preview 
     <iframe id="artifact" title="Artifact under review" src="${artifactSrc}" data-artifact-src="${artifactSrc}" sandbox="${frameSandbox}"></iframe>
     <div id="endedOverlay" class="overlay"><div class="card"><h3>Session ended</h3><p id="endedWho"></p></div></div>
   </main>
-  <aside class="panel">
+${session.editMode ? `  <aside id="inspector" class="inspector" aria-label="Visual edit inspector">
+    <h2>Visual edit</h2>
+    <div id="editTargetName" class="edit-target">Nothing selected</div>
+    <div class="edit-actions">
+      <button id="editUndo" class="icon-btn" type="button">Undo</button>
+      <button id="editRedo" class="icon-btn" type="button">Redo</button>
+      <button id="editReset" class="icon-btn danger" type="button">Reset</button>
+    </div>
+    <div class="edit-actions">
+      <button id="editApply" class="icon-btn" type="button" disabled>Apply to source</button>
+    </div>
+    <label class="edit-scope">Scope
+      <select id="editScope">
+        <option value="instance">This instance</option>
+        <option value="component">Shared component</option>
+      </select>
+    </label>
+    <div id="inspectorBody" class="edit-body"></div>
+    <h2>Pending</h2>
+    <ul id="editList" class="edit-list"></ul>
+    <div id="editStatus" class="status" role="status" aria-live="polite"></div>
+  </aside>\n` : ''}  <aside class="panel" aria-label="Verdict and conversation">
     <h2>${nativeApproval ? 'Design verdict' : 'Plan verdict'}</h2>
     <div class="verdict">
       <button id="approve" class="approve" type="button">${nativeApproval ? 'Approve design' : 'Approve plan'}</button>

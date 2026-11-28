@@ -78,6 +78,7 @@ function usage() {
     '         --session-dir <path>  Canvas V2 attachment/session storage dir',
     '         --preview-url <url>   Frame a live dev-server URL instead of the artifact file',
     '         --preview-mode <mode> framework-native | standalone-html (implied by --preview-url)',
+    '         --edit-mode           Opt in to the three-mode canvas (interact | annotate | edit)',
     '         --revision-digest <sha256>  Digest of the previewed revision (required for framework-native)',
     '         --design-digest <sha256>    Digest of the approved design (required for framework-native)',
     '         --data-mode <mode>          fixture | production — what data the preview renders',
@@ -275,6 +276,7 @@ async function cmdOpen(file, args, { stateDir, port }) {
     sessionDir: sessionDir || undefined,
     previewMode: previewMode || undefined,
     previewUrl: previewUrl || undefined,
+    editMode: args.includes('--edit-mode') || undefined,
     previewMeta: Object.keys(meta).length > 0 ? meta : undefined
   });
   if (res.statusCode === 409) return res.body;

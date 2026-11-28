@@ -130,7 +130,8 @@ node ~/ECC/scripts/plan-canvas.js open <section-path> \
   --revision-digest <sha256 of the reviewed reference set> \
   --design-digest <sha256 of the approved reference set> \
   --framework <react-vite|laravel-inertia-react|vue-vite> \
-  --data-mode <fixture|production>
+  --data-mode <fixture|production> \
+  --edit-mode
 ```
 
 Both digests are required for native mode: the Canvas refuses a native session

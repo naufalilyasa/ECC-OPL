@@ -19,6 +19,7 @@ const {
   validateBoundVerdict,
   validateNativeVerdict
 } = require('./verdict-binding');
+const { normalizeEditItem, summarizeEdit } = require('./change-set');
 
 // One verdict policy for both the queue and the drain path. A native session is
 // validated against its preview identity; an AGY session additionally binds the
@@ -67,7 +68,7 @@ function verdictStillBound(session, item) {
 // silent truncation would lose the instruction the agent is meant to follow.
 const DEFAULT_MAX_TEXT_CHARS = 100000;
 
-const FEEDBACK_KINDS = new Set(['chat', 'annotation', 'verdict']);
+const FEEDBACK_KINDS = new Set(['chat', 'annotation', 'verdict', 'edits']);
 const VERDICTS = new Set(['approve', 'request-changes']);
 const PREVIEW_MODES = new Set(['framework-native', 'standalone-html']);
 
@@ -219,7 +220,7 @@ const STYLE_KEYS = ['display', 'color', 'backgroundColor', 'fontFamily', 'fontSi
 // Normalize one browser-submitted feedback item into the shape delivered to
 // the agent. Returns null for unusable input rather than throwing so a
 // malformed item can never wedge the queue.
-function normalizeFeedbackItem(raw, counter, maxTextLength = DEFAULT_MAX_TEXT_CHARS) {
+function normalizeFeedbackItem(raw, counter, maxTextLength = DEFAULT_MAX_TEXT_CHARS, session = null) {
   if (!raw || typeof raw !== 'object') return null;
   const kind = FEEDBACK_KINDS.has(raw.kind) ? raw.kind : null;
   if (!kind) return null;
@@ -232,6 +233,14 @@ function normalizeFeedbackItem(raw, counter, maxTextLength = DEFAULT_MAX_TEXT_CH
   if (kind === 'verdict') {
     if (!VERDICTS.has(raw.verdict)) return null;
     item.verdict = raw.verdict;
+  }
+  if (kind === 'edits') {
+    // Structural rules live in change-set.js and throw a coded error, so the
+    // batch can report which item was refused and why instead of a generic
+    // failure. Text is optional here; a summary keeps the transcript readable.
+    item.changeSet = normalizeEditItem(raw, session);
+    if (!item.text) item.text = summarizeEdit(item.changeSet);
+    return item;
   }
   if (kind === 'annotation') {
     const anchor = raw.anchor && typeof raw.anchor === 'object' ? raw.anchor : null;
@@ -327,7 +336,8 @@ function createSessionStore({ stateDir = resolveStateDir() } = {}) {
     workspace = null,
     previewMode = null,
     previewUrl = null,
-    previewMeta = null
+    previewMeta = null,
+    editMode = false
   } = {}) {
     const canonical = canonicalizeArtifactPath(filePath);
     const key = sessionKeyFor(canonical);
@@ -347,6 +357,10 @@ function createSessionStore({ stateDir = resolveStateDir() } = {}) {
     if (target) session.target = target;
     if (sessionDir) session.sessionDir = sessionDir;
     if (workspace) session.workspace = workspace;
+    // The visual editor is opt-in per session. Without the flag the chrome
+    // renders exactly the legacy control set, so ordinary plan review and old
+    // sessions are untouched.
+    if (editMode) session.editMode = true;
     // Preview fields are opt-in: a caller that passes none gets exactly the
     // legacy session shape, so old sessions and old agents keep working.
     const mode = PREVIEW_MODES.has(previewMode) ? previewMode : null;
@@ -380,23 +394,44 @@ function createSessionStore({ stateDir = resolveStateDir() } = {}) {
 
   // One item through the same policy: validate a verdict, then normalize.
   // Returns the accepted item or the rejection the batch reports.
-  function acceptOneFeedback(raw, session, key, id, limit) {
+  function acceptOneFeedback(raw, session, key, id, limit, batchHasEdits) {
+    // The browser knows a change set by its own id before submission; a
+    // rejected item never gets an fb-<n>. Echo clientId so the chrome can tell
+    // which queued entry failed in a mixed batch.
+    const clientId = raw && typeof raw.clientId === 'string' ? raw.clientId.slice(0, 128) : undefined;
+    const reject = (reason, extra) => ({ rejected: { reason, ...(clientId ? { id: clientId } : {}), ...extra } });
+
     let binding = { ok: true, identity: null, planDigest: null };
     if (raw && raw.kind === 'verdict') {
+      // A verdict must describe source output. An override that only lives in
+      // the preview (in this batch or still queued) has not reached source yet.
+      const undrained = (session.pendingFeedback || []).some(item => item.kind === 'edits');
+      if (batchHasEdits || undrained) return reject('PENDING_EDITS', { verdict: raw.verdict });
       binding = validateVerdictSubmission(raw, session, key);
-      if (!binding.ok) return { rejected: { reason: binding.reason, verdict: raw.verdict } };
+      if (!binding.ok) return reject(binding.reason, { verdict: raw.verdict });
+    }
+    if (raw && raw.kind === 'edits') {
+      const changeSetId = raw.changeSet && typeof raw.changeSet.id === 'string' ? raw.changeSet.id.trim() : '';
+      // Retry must be safe: the same frozen set submitted twice is one change.
+      if (changeSetId && (session.seenChangeSetIds || []).includes(changeSetId)) {
+        return reject('DUPLICATE_CHANGE_SET');
+      }
     }
     let item;
     try {
-      item = normalizeFeedbackItem(raw, id, limit);
+      item = normalizeFeedbackItem(raw, id, limit, session);
     } catch (error) {
-      // One oversized item must not reject the whole batch: the browser sent
-      // several things and the rest is still valid.
-      return { rejected: { reason: error.code || 'INVALID_ITEM' } };
+      // One oversized or malformed item must not reject the whole batch: the
+      // browser sent several things and the rest is still valid. The code is
+      // reported verbatim so the owner sees why the value was refused.
+      return reject(error.code || 'INVALID_ITEM');
     }
     // A malformed item normalizes to null instead of throwing; one bad entry
     // must not abort the batch.
-    if (!item) return { rejected: { reason: 'INVALID_ITEM' } };
+    if (!item) return reject('INVALID_ITEM');
+    // Echo the caller's own id on success too. The chrome clears the matching
+    // overrides from this list; without it a mixed batch is uncorrelatable.
+    if (clientId) item.clientId = clientId;
     if (item.kind === 'verdict' && (binding.identity || binding.planDigest)) {
       // Keep the reviewed identity on the item, so a later reader can tell which
       // revision was approved without trusting the current session meta.
@@ -421,11 +456,22 @@ function createSessionStore({ stateDir = resolveStateDir() } = {}) {
     const limit = session.target === 'antigravity-cli' ? MAX_PROMPT_CHARS : DEFAULT_MAX_TEXT_CHARS;
     const accepted = [];
     const rejected = [];
-    for (const raw of Array.isArray(rawItems) ? rawItems : []) {
+    const rawList = Array.isArray(rawItems) ? rawItems : [];
+    // A batch that carries both edits and a verdict would certify overrides
+    // that only exist in the preview. The verdict is rejected below.
+    const batchHasEdits = rawList.some(item => item && item.kind === 'edits');
+    for (const raw of rawList) {
       state.feedbackCounter += 1;
-      const result = acceptOneFeedback(raw, session, key, state.feedbackCounter, limit);
-      if (result.item) accepted.push(result.item);
-      else rejected.push(result.rejected);
+      const result = acceptOneFeedback(raw, session, key, state.feedbackCounter, limit, batchHasEdits);
+      if (result.item) {
+        accepted.push(result.item);
+        // Recorded now, so a duplicate inside the same batch is caught too.
+        if (result.item.kind === 'edits' && result.item.changeSet) {
+          session.seenChangeSetIds = session.seenChangeSetIds || [];
+          session.seenChangeSetIds.push(result.item.changeSet.id);
+          if (session.seenChangeSetIds.length > 1000) session.seenChangeSetIds.shift();
+        }
+      } else rejected.push(result.rejected);
     }
     session.pendingFeedback.push(...accepted);
     for (const item of accepted) {
@@ -548,6 +594,10 @@ function chatLineFor(item) {
   if (item.kind === 'annotation') {
     const where = item.anchor.snippet || item.anchor.selector;
     return `[${where}] ${item.text}`;
+  }
+  if (item.kind === 'edits') {
+    // item.text already carries summarizeEdit() when the owner left no note.
+    return item.text || summarizeEdit(item.changeSet);
   }
   return item.text;
 }

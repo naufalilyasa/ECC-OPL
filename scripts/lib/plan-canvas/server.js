@@ -478,7 +478,8 @@ function createPlanCanvasServer({
         workspace: typeof body.workspace === 'string' ? body.workspace : null,
         previewMode: typeof body.previewMode === 'string' ? body.previewMode : null,
         previewUrl: typeof body.previewUrl === 'string' ? body.previewUrl : null,
-        previewMeta: body.previewMeta && typeof body.previewMeta === 'object' ? body.previewMeta : null
+        previewMeta: body.previewMeta && typeof body.previewMeta === 'object' ? body.previewMeta : null,
+        editMode: body.editMode === true
       });
       if (refused) {
         return sendJson(res, 409, {
@@ -640,6 +641,10 @@ function createPlanCanvasServer({
         return sendJson(res, 200, {
           status: 'queued',
           accepted: result.accepted.length,
+          // Additive: lets the chrome know exactly which change sets landed so
+          // it can clear only those overrides. `accepted` stays a number.
+          acceptedIds: result.accepted.map(item =>
+            item.clientId || (item.changeSet && item.changeSet.id) || item.id),
           rejected: result.rejected,
           pending: result.pending,
           presence: presenceFor(key)

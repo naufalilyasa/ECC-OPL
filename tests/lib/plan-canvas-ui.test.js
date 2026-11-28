@@ -85,6 +85,30 @@ function runTests() {
     assert.ok(js.includes('add the canvas dev-server adapter'), 'toggle explains how to enable it');
   })) passed++; else failed++;
 
+  console.log('\nthree-mode control:');
+
+  if (test('ordinary sessions keep the annotate switch and no edit mode', () => {
+    assert.ok(html.includes('id="annotate"'), 'legacy switch rendered');
+    assert.ok(!html.includes('id="modeGroup"'), 'no segmented control without --edit-mode');
+    assert.ok(js.includes("$('annotate').addEventListener"), 'legacy click path kept');
+  })) passed++; else failed++;
+
+  if (test('--edit-mode sessions render the three-way control instead', () => {
+    const editHtml = renderCanvasHtml({ key: 'abc123def456', file, status: 'open', chat: [], editMode: true });
+    assert.ok(editHtml.includes('id="modeGroup"'), 'segmented control rendered');
+    assert.ok(!editHtml.includes('id="annotate"'), 'legacy switch replaced');
+    for (const m of ['interact', 'annotate', 'edit']) {
+      assert.ok(editHtml.includes(`data-mode="${m}"`), `${m} button`);
+    }
+    assert.ok(editHtml.includes('"editMode":true'), 'boot payload exposes the flag');
+  })) passed++; else failed++;
+
+  if (test('the segmented control posts the mode and keeps annotate shortcut', () => {
+    assert.ok(js.includes("postToFrame({ type: 'pc:set-mode', mode })"), 'posts mode');
+    assert.ok(js.includes("e.key.toLowerCase() === 'i'"), 'Cmd/Ctrl+I still toggles annotate');
+    assert.ok(js.includes("btn.dataset.mode === mode"), 'active button follows the mode');
+  })) passed++; else failed++;
+
   if (test('live bridge forwards only the pc: protocol between frame and chrome', () => {
     const bridge = liveBridgeJs();
     assert.ok(bridge.includes("msg.type.indexOf('pc:') === 0"), 'protocol filter');

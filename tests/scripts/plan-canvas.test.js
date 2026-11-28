@@ -1259,6 +1259,49 @@ async function main(suite = createTestRunner()) {
       await sse.close();
     });
 
+    await integrationTest('an edits batch is accepted and its client id is echoed', async ({ request }) => {
+      const editArtifact = path.join(tmp, 'edits.plan.md');
+      fs.writeFileSync(editArtifact, '# Plan: Edits\n');
+      const opened = jsonBody(await request(port, 'POST', '/api/sessions', {
+        body: { file: editArtifact, editMode: true }
+      }));
+      assert.strictEqual(opened.status, 'open');
+
+      const changeSet = id => ({
+        id,
+        version: 1,
+        session: opened.key,
+        route: 'http://127.0.0.1:5199/pricing',
+        preview: { mode: 'standalone-html' },
+        viewport: { w: 1440, h: 900, dpr: 1 },
+        scope: 'instance',
+        targets: [{
+          targetId: 'e1',
+          selector: 'main > article:nth-of-type(1)',
+          tag: 'article',
+          rect: { x: 10, y: 20, w: 300, h: 400 },
+          edits: [{ prop: 'padding', before: { computed: '8px 16px 8px 16px' }, after: '12px 20px' }]
+        }]
+      });
+
+      const first = await request(port, 'POST', `/api/session/${opened.key}/feedback`, {
+        body: { items: [{ kind: 'edits', text: '', clientId: 'c-1', changeSet: changeSet('cs-1') }] }
+      });
+      const firstBody = jsonBody(first);
+      assert.strictEqual(firstBody.accepted, 1);
+      assert.deepStrictEqual(firstBody.acceptedIds, ['c-1']);
+
+      // A retried submission of the same set is refused, and the refusal names
+      // the id the chrome queued so it can stop retrying.
+      const retry = await request(port, 'POST', `/api/session/${opened.key}/feedback`, {
+        body: { items: [{ kind: 'edits', text: '', clientId: 'c-2', changeSet: changeSet('cs-1') }] }
+      });
+      const retryBody = jsonBody(retry);
+      assert.strictEqual(retryBody.accepted, 0);
+      assert.strictEqual(retryBody.rejected[0].reason, 'DUPLICATE_CHANGE_SET');
+      assert.strictEqual(retryBody.rejected[0].id, 'c-2');
+    });
+
     // Regression: feedback sent with nobody parked on `await` used to leave the
     // pill claiming "agent working" while the message sat undelivered forever.
     await integrationTest('feedback with no listener reports queued, not working', async ({ request, openSse }) => {
