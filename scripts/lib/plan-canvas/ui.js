@@ -145,6 +145,7 @@ function canvasCss() {
   .vp .icon-btn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent);background:var(--accent-glow)}
 
   .layout[data-panel="hidden"] .panel{display:none}
+  .layout[data-inspector="hidden"] .inspector{display:none}
   .panel{width:340px;flex:none;display:flex;flex-direction:column;border-left:1px solid var(--border);background:var(--bg2)}
   .inspector{width:320px;flex:none;display:flex;flex-direction:column;border-right:1px solid var(--border);background:var(--bg2);overflow:hidden;min-height:0}
   .inspector h2,.edit-pending h2{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text2);margin:0 0 6px}
@@ -331,6 +332,18 @@ function canvasClientJs() {
     panelBtn.setAttribute('aria-pressed', String(hidden));
     panelBtn.title = hidden ? 'Hide conversation panel' : 'Show conversation panel';
   });
+
+  // --- inspector toggle (edit mode only) -------------------------------
+  const inspectorBtn = $('inspectorBtn');
+  if (inspectorBtn) {
+    inspectorBtn.addEventListener('click', () => {
+      const hidden = layout.getAttribute('data-inspector') === 'hidden';
+      if (hidden) layout.removeAttribute('data-inspector');
+      else layout.setAttribute('data-inspector', 'hidden');
+      inspectorBtn.setAttribute('aria-pressed', String(hidden));
+      inspectorBtn.title = hidden ? 'Hide edit inspector' : 'Show edit inspector';
+    });
+  }
 
   // --- artifact viewport width -----------------------------------------
   const vpSel = $('viewportSel');
@@ -846,6 +859,7 @@ ${session.editMode ? `  <div id="modeGroup" class="mode-group" role="group" aria
     <input id="viewportCustom" type="number" min="240" max="4096" step="1" placeholder="px" title="Custom viewport width (px)" hidden>
   </div>
   ${session.previewUrl ? `<a id="openSeparate" class="icon-btn" href="${escapeHtml(session.previewUrl)}" target="_blank" rel="noopener" title="Open the live preview in its own tab">Open separately</a>` : ''}
+  ${session.editMode ? `<button id="inspectorBtn" class="icon-btn" type="button" title="Hide edit inspector" aria-pressed="true">Inspector</button>` : ''}
   <button id="panelBtn" class="icon-btn" type="button" title="Hide conversation panel" aria-pressed="true">Panel</button>
   <button id="themeBtn" class="icon-btn" type="button">light</button>
   <button id="reloadBtn" class="icon-btn" type="button" title="Reload artifact">Reload</button>

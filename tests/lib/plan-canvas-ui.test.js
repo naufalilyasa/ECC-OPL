@@ -109,6 +109,16 @@ function runTests() {
     assert.ok(js.includes("btn.dataset.mode === mode"), 'active button follows the mode');
   })) passed++; else failed++;
 
+  if (test('the inspector toggle only exists in edit mode and collapses the column', () => {
+    const editHtml = renderCanvasHtml({ key: 'abc123def456', file, status: 'open', chat: [], editMode: true });
+    assert.ok(!html.includes('id="inspectorBtn"'), 'absent outside edit mode');
+    assert.ok(editHtml.includes('id="inspectorBtn"'), 'present in edit mode');
+    assert.ok(editHtml.includes('aria-pressed="true"'), 'starts expanded');
+    assert.ok(js.includes("layout.setAttribute('data-inspector', 'hidden')"), 'hides inspector');
+    assert.ok(js.includes("layout.removeAttribute('data-inspector')"), 'shows inspector');
+    assert.ok(css.includes('.layout[data-inspector="hidden"] .inspector{display:none}'), 'hide rule');
+  })) passed++; else failed++;
+
   if (test('live bridge forwards only the pc: protocol between frame and chrome', () => {
     const bridge = liveBridgeJs();
     assert.ok(bridge.includes("msg.type.indexOf('pc:') === 0"), 'protocol filter');
