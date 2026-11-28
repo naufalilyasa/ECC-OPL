@@ -1,7 +1,7 @@
 # WI-20261128-004 — Plan Canvas framework-native visual edit mode
 
 deliveryStatus: COMPLETED_WITH_LIMITATIONS
-verificationStatus: PARTIAL (real browser runs on React/Vite, Vue/Vite, Laravel+Inertia; rows 11 unreached; Svelte/Next/Nuxt/Angular unverified)
+verificationStatus: PARTIAL (real browser runs on React/Vite, Vue/Vite, Laravel+Inertia and a two-instance shared-component page; Svelte/Next/Nuxt/Angular unverified)
 
 ## Summary
 
@@ -86,7 +86,7 @@ column. Roll-up:
 | revision-aware approval | 13 | suite-only (`tests/scripts/plan-canvas.test.js`) |
 | legacy standalone HTML + ordinary plan review unchanged | 22 | suite-only |
 | OpenCode/AGY install closure intact | 23 | suite-only (`validate-commands`, catalog check) |
-| shared-component instance isolation | 11 | **not exercised** — no page with two instances of one component was built |
+| shared-component instance isolation | 11 | proven — two clones of one template; editing one leaves the sibling at `15px`, the selector matches one element, component scope is owner-confirmed |
 
 ## Evidence
 
@@ -97,6 +97,8 @@ column. Roll-up:
 - `evidence/phase7-nexvora-auth.md` — owner-authorized section: `mt-4` → `mt-6` change set
   `cs-mx08ox43-arst3v`, undo/redo/reset, mobile width, the transition root cause.
 - `evidence/phase7-acceptance-gaps.md` — rows 17, 18, 19, 20, 21, 12 with the live status strings.
+- `evidence/phase7-row11-shared-component.md` — row 11: two instances of one template, instance
+  isolation, one-element selector, owner-confirmed component scope, sibling re-render.
 
 Owner-app changes (authorized section only, `nexvora-hris`):
 
@@ -125,8 +127,6 @@ Pre-existing, unrelated failures in this repo are unchanged and not caused by th
 
 ## Limitations
 
-- **Row 11 (shared-component instance isolation)** is not exercised. Editing one instance of a
-  shared component and proving a sibling stays untouched needs a purpose-built page; not built.
 - Svelte, Next, Nuxt and Angular hosts are unverified. DEC-01 makes none of them a requirement,
   but no claim should be made about them.
 - The Laravel `X-Frame-Options` change is live in the owner app and awaits owner sign-off.
@@ -138,6 +138,6 @@ Pre-existing, unrelated failures in this repo are unchanged and not caused by th
 
 ## Next permitted step
 
-Owner review of this report and of the `nexvora-hris` `SecurityHeaders.php` change. Row 11 can be
-closed later with a purpose-built two-instance page; no other work is required for the accepted
-architecture.
+Owner review of this report and of the `nexvora-hris` `SecurityHeaders.php` change. Every row of
+the functional matrix is now either proven in a browser or covered by the suite; no open row
+remains for the accepted architecture.
