@@ -1,7 +1,7 @@
 # WI-20261128-001-unified-workflow-workspace-stage-1 — Unified workflow workspace
 
 deliveryStatus: COMPLETED_WITH_LIMITATIONS
-verificationStatus: PARTIAL
+verificationStatus: VERIFIED
 
 ## Summary
 
@@ -56,7 +56,10 @@ execution engine, new agents, or destructive migration.
 | Bound run in consumer project `cc-reminder` | PASS — bind, artifact routing, `progress.json` rebuild, report, close |
 | `cc-reminder` `node --test` during that run | 27/30 pass; 3 failures are an incomplete `googleapis` install, not code |
 | `cc-reminder` after `npm ci` | `node --test` 57/57 pass, exit 0 |
-| Bound `/design-build` Phase 0 in `cc-reminder` | PASS — `DESIGN_ROOT` resolved to `work-items/WI-20261128-002-.../design`, brief + `BUILD-STATE.md` written there, stops at `BRIEF_PENDING` |
+| Bound `/security-audit` in `cc-reminder` | PASS — `RUN_DIR` stayed in `~/security-audit-runs/`, pointer written to `work-items/WI-20261128-002-.../audit/run-1.md`, all three validators PASS |
+| Bound `/design-build` Phase 0 in `cc-reminder` | PASS — `DESIGN_ROOT` resolved to `work-items/WI-20261128-002-.../design`, brief + `BUILD-STATE.md` written there |
+| Bound `/design-build` full run in `cc-reminder` | PASS — brief → taste → contract freeze → 3 sections previewed, owner-approved, ported; runtime gate passed via bound `/e2e` |
+| Bound `/e2e` in `cc-reminder` | PASS — 8 flows, Chromium, fresh scratch DB, 0 console errors; `PASS_AD_HOC_UNREGISTERED` (project has no `TESTS.md`); evidence in `work-items/WI-20261128-002-.../e2e/dashboard-states-2026-11-28/` |
 
 `npm test` aborts in its first step, `scripts/ci/check-unicode-safety.js`, on 48 violations
 that already exist at HEAD (`docs/e2e-v2/**`, `docs/design/phase2-slice.md`, local
@@ -96,16 +99,16 @@ the `shared-script-utils` install module so the installer ships them. Regression
 - Consumer projects must add `.ecc-opl/*` to their own `.gitignore`; the installer does not.
 - `.ecc-opl/runtime/` stays local (pointer contract documented in `docs/CUSTOM-WORKFLOW.md` §6),
   so its `README.md` template is written but not tracked.
-- `design-build` was executed bound only through Phase 0 (brief); taste, contract freeze,
-  scaffold and the section loop are unrun, so their routing is still untested.
-- A bound `security-audit` or `e2e` run has not been executed; only their documented contracts
-  are verified.
+- Bound `design-build` was exercised end to end in `standalone-html` preview mode only. The
+  React/Next and Laravel/Inertia Vue preview adapters remain unrun.
+- The bound `e2e` run is ad hoc: `cc-reminder` has no `TESTS.md`, so the outcome is
+  `PASS_AD_HOC_UNREGISTERED` and the run is not repeatable by a second person without
+  re-deriving the steps.
 - `tests/scripts/npm-publish-surface.test.js` fails on a large pre-existing drift between
   `package.json#files` and the install-module graph; identical at HEAD.
 
 ## Next step
 
-Owner answers the three brief questions in cc-reminder's
-`.ecc-opl/work-items/WI-20261128-002-.../design/brief.md` and runs `/design-build --resume`;
-that exercises contract freeze and the section loop. A bound `/e2e` or `/security-audit` run
-remains the last untested surface.
+No surface from the follow-up list is unrun. Promoting the ad hoc e2e run to a repeatable
+suite needs a `TESTS.md` entry plus a committed Playwright spec in the consumer project,
+which is a registry change requiring its own approval.
