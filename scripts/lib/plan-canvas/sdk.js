@@ -203,12 +203,15 @@ function artifactSdkJs() {
       byTarget.get(r.targetId).push(r);
     });
     let css = '';
-    byTarget.forEach((list, targetId) => {
-      const t = editTargets.get(targetId);
+    editTargets.forEach((t, targetId) => {
       if (!t || !t.el || !t.el.isConnected) return;
       t.el.setAttribute('data-ecc-edit', targetId);
       const sel = '[data-ecc-edit="' + targetId + '"]';
-      list.forEach(r => {
+      // Transitions and animations outrank even !important declarations, so a
+      // target with transition-all reports every override as ineffective while
+      // the change animates, and each probe restarts the transition.
+      css += sel + '{transition:none !important;animation:none !important}\\n';
+      (byTarget.get(targetId) || []).forEach(r => {
         if (EDIT_PROPS.has(r.prop) && safeValue(r.value)) {
           css += sel + '{' + r.prop + ':' + r.value + ' !important}\\n';
         }
@@ -264,6 +267,9 @@ function artifactSdkJs() {
       identity: { testId: ctx.testId, name: ctx.name, tag: ctx.tag }
     };
     editTargets.set(id, t);
+    // Register the quieting rule now, so the baseline probe reads a settled
+    // value instead of a mid-transition one.
+    renderOverrides();
     return t;
   }
   function selectAt(el) {
@@ -290,24 +296,33 @@ function artifactSdkJs() {
     records.push({ targetId: targetId, prop: prop, value: value });
     if (records.length > MAX_LOCAL_RECORDS) records.splice(0, records.length - MAX_LOCAL_RECORDS);
     renderOverrides();
-    const after = readValues(prop, el);
-    const effective = effectivelyApplied(prop, value, el);
-    if (!effective) {
-      // A declaration that did not render is not a pending edit. Keeping it
-      // would let a bad value sit on top of a good one for the same property
-      // and hide it from the pending list, or make undo restore junk.
-      records.pop();
-      renderOverrides();
-      post({ type: 'pc:override-state', records: records.slice(), redo: redo.length });
-    } else {
-      redo.length = 0;
-    }
-    const rect = el.getBoundingClientRect();
-    const rendered = SIZE_PROPS.has(prop) ? Math.round(prop === 'width' ? rect.width : rect.height) : null;
-    post({
-      type: 'pc:applied', targetId: targetId, prop: prop, requested: value,
-      computed: after, declared: value, rendered: rendered, effective: effective
-    });
+    // A freshly adopted stylesheet only takes effect on the next rendering
+    // lifecycle in Chromium, so reading computed styles in the same task reports
+    // the old value on large sheets (Tailwind) and turns a good edit into a fake
+    // cascade conflict. Read back after two frames instead.
+    const finalize = () => {
+      if (!el.isConnected) { records.pop(); renderOverrides(); post({ type: 'pc:override-state', records: records.slice(), redo: redo.length }); return reportApplied(targetId, prop, value, null, 'STALE_TARGET'); }
+      const after = readValues(prop, el);
+      const effective = effectivelyApplied(prop, value, el);
+      if (!effective) {
+        // A declaration that did not render is not a pending edit. Keeping it
+        // would let a bad value sit on top of a good one for the same property
+        // and hide it from the pending list, or make undo restore junk.
+        records.pop();
+        renderOverrides();
+        post({ type: 'pc:override-state', records: records.slice(), redo: redo.length });
+      } else {
+        redo.length = 0;
+      }
+      const rect = el.getBoundingClientRect();
+      const rendered = SIZE_PROPS.has(prop) ? Math.round(prop === 'width' ? rect.width : rect.height) : null;
+      post({
+        type: 'pc:applied', targetId: targetId, prop: prop, requested: value,
+        computed: after, declared: value, rendered: rendered, effective: effective
+      });
+    };
+    if (typeof requestAnimationFrame === 'function') requestAnimationFrame(() => requestAnimationFrame(finalize));
+    else finalize();
   }
   function undoLast() {
     const r = records.pop();
@@ -328,7 +343,8 @@ function artifactSdkJs() {
     redo.length = 0;
     internalUntil = Date.now() + 200;
     renderOverrides();
-    editTargets.forEach(t => { if (t.el && t.el.removeAttribute) t.el.removeAttribute('data-ecc-edit'); });
+    // Keep data-ecc-edit: the attribute carries the transition:none quieting
+    // rule, and dropping it makes the reset read-back land mid-transition.
     editCurrent = null;
     post({ type: 'pc:override-state', records: [], redo: 0 });
   }
@@ -337,14 +353,23 @@ function artifactSdkJs() {
     if (!t || !t.el || !t.el.isConnected) {
       return post({ type: 'pc:probe-result', targetId: targetId, values: null, error: 'STALE_TARGET' });
     }
-    const cs = getComputedStyle(t.el);
-    const values = {};
-    (Array.isArray(props) ? props : []).forEach(p => {
-      if (!EDIT_PROPS.has(p)) return;
-      const longhands = READBACK[p] || [p];
-      values[p] = longhands.map(x => cs.getPropertyValue(x).trim()).join(' ');
-    });
-    post({ type: 'pc:probe-result', targetId: targetId, values: values, rect: contextFor(t.el).rect });
+    // Same rendering-lifecycle lag as apply: a probe that lands right after the
+    // sheet is rewritten would report the previous value.
+    const read = () => {
+      if (!t.el || !t.el.isConnected) {
+        return post({ type: 'pc:probe-result', targetId: targetId, values: null, error: 'STALE_TARGET' });
+      }
+      const cs = getComputedStyle(t.el);
+      const values = {};
+      (Array.isArray(props) ? props : []).forEach(p => {
+        if (!EDIT_PROPS.has(p)) return;
+        const longhands = READBACK[p] || [p];
+        values[p] = longhands.map(x => cs.getPropertyValue(x).trim()).join(' ');
+      });
+      post({ type: 'pc:probe-result', targetId: targetId, values: values, rect: contextFor(t.el).rect });
+    };
+    if (typeof requestAnimationFrame === 'function') requestAnimationFrame(() => requestAnimationFrame(read));
+    else read();
   }
   function revalidate(ids) {
     const list = Array.isArray(ids) && ids.length ? ids : Array.from(editTargets.keys());

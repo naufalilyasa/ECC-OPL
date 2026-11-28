@@ -100,10 +100,18 @@ function runTests() {
     assert.ok(sdk.includes("reason: 'missing'"), 'missing targets marked stale');
   })) passed++; else failed++;
 
-  if (test('reset removes every rule and target attribute', () => {
+  if (test('reset removes every rule and keeps the quieting target attribute', () => {
     assert.ok(sdk.includes('records.length = 0'), 'records cleared');
-    assert.ok(sdk.includes("removeAttribute('data-ecc-edit')"), 'attributes removed');
+    const resetBody = sdk.slice(sdk.indexOf('function resetAll'), sdk.indexOf('function probeTarget'));
+    assert.ok(!resetBody.includes("removeAttribute('data-ecc-edit')"), 'attribute retained so reset reads a settled value');
     assert.ok(sdk.includes("type: 'pc:override-state'"), 'state reported');
+  })) passed++; else failed++;
+
+  if (test('edited targets suppress transitions and animations', () => {
+    assert.ok(sdk.includes('transition:none !important;animation:none !important'), 'quieting rule emitted');
+    const register = sdk.slice(sdk.indexOf('function targetFor'), sdk.indexOf('function selectAt'));
+    assert.ok(register.includes('renderOverrides()'), 'registered target is quieted before the baseline probe');
+    assert.ok(sdk.includes('requestAnimationFrame(() => requestAnimationFrame(read))'), 'probe reads after the sheet settles');
   })) passed++; else failed++;
 
   if (test('clear-overrides waits for the chrome and is the only reset path', () => {
