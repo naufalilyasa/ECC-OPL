@@ -361,6 +361,10 @@ sebelumnya (path legacy, tanpa tulisan `.ecc-opl/`).
 Dicari di `$CLAUDE_PLUGIN_ROOT`, `${OPENCODE_CONFIG_DIR:-$HOME/.config/opencode}`, `./.agents`,
 `.`, `${CLAUDE_CONFIG_DIR:-$HOME/.claude}`. Bila tidak ketemu: mode standalone dengan satu baris
 pemberitahuan — tidak pernah menulis `.ecc-opl/` dari inline heredoc.
+Helper ini CommonJS: bila disalin manual ke proyek ber-`"type": "module"` di `package.json`,
+sertakan juga `scripts/lib/work-item/package.json` dan `scripts/lib/state-store/package.json`
+(isi `{"type":"commonjs"}`), kalau tidak Node menganggap `.js` sebagai ESM dan gagal dengan
+`require is not defined`.
 
 **Otoritas eksekusi tidak berubah.** `.opencode/workflows/active.json` tetap satu-satunya state
 eksekusi (workflow/phase/gates). `progress.json` hanya indeks turunan dari `timeline.jsonl` dan

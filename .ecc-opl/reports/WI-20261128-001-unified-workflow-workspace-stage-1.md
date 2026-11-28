@@ -41,7 +41,7 @@ execution engine, new agents, or destructive migration.
 
 | Check | Result |
 |---|---|
-| `tests/scripts/work-item.test.js` | PASS 6/6 |
+| `tests/scripts/work-item.test.js` | PASS 7/7 (includes the `type: module` host regression) |
 | `tests/lib/antigravity-closure.test.js` | PASS 13/13 (root and `.opencode/` bodies byte-identical) |
 | `tests/design-build-v2-invariants.test.js` | PASS (manifest digests re-verified) |
 | `tests/lib/design-build-direction-a11y.test.js` | PASS 10/10 |
@@ -53,6 +53,10 @@ execution engine, new agents, or destructive migration.
 | `node tests/run-all.js` (HEAD baseline, same tree) | 7897 passed, 141 failed |
 | Failure-set diff (HEAD vs Stage 2) | 0 new, 0 fixed — identical sets |
 | `npm run catalog:check` / `command-registry:check` | PASS (no doc-table drift: no new command) |
+| Bound run in consumer project `cc-reminder` | PASS — bind, artifact routing, `progress.json` rebuild, report, close |
+| `cc-reminder` `node --test` during that run | 27/30 pass; 3 failures are an incomplete `googleapis` install, not code |
+| `cc-reminder` after `npm ci` | `node --test` 57/57 pass, exit 0 |
+| Bound `/design-build` Phase 0 in `cc-reminder` | PASS — `DESIGN_ROOT` resolved to `work-items/WI-20261128-002-.../design`, brief + `BUILD-STATE.md` written there, stops at `BRIEF_PENDING` |
 
 `npm test` aborts in its first step, `scripts/ci/check-unicode-safety.js`, on 48 violations
 that already exist at HEAD (`docs/e2e-v2/**`, `docs/design/phase2-slice.md`, local
@@ -61,18 +65,47 @@ skills, skill-host-compat, hooks, hooks-schema-keys and carrier-closure pass; in
 context-profiles and no-personal-paths fail identically at HEAD (verified by stashing the Stage 2
 tree and re-running the same validators).
 
+## Consumer-project bound run (`cc-reminder`)
+
+First run outside the ECC repo, on `/Users/ctp-itdev2/Documents/my-project/cc-reminder`
+(Node 24, `"type": "module"`, not a git repo, pre-existing `.agents/` install).
+
+| Step | Result |
+|---|---|
+| `work-item.js resolve` before binding | `none`, exit 0 |
+| `ensure --slug unified-workflow-workspace-bound-verification` | created `WI-20261128-001-...`, wrote `.ecc-opl/active` |
+| artifact dirs | all 11 created (`research` … `canvas`) |
+| `append --workflow verify --artifact evidence` | timeline event recorded |
+| `progress` | `progress.json` rebuilt from the timeline |
+| consolidated report | `.ecc-opl/reports/<WI-ID>.md` written |
+| `close` | pointer cleared, directory kept, `manifest.json` `status: closed` |
+| `node --test` | 27 pass / 3 fail; all 3 fail on a missing `googleapis/build`, not code |
+
+Defect found and fixed: the helper is CommonJS, but a project with `"type": "module"`
+makes `.js` files ESM, so it died with `require is not defined`. Fix is the standard
+per-directory format marker — `scripts/lib/work-item/package.json` and
+`scripts/lib/state-store/package.json` containing `{"type":"commonjs"}` — both added to
+the `shared-script-utils` install module so the installer ships them. Regression test:
+`tests/scripts/work-item.test.js` now runs `ensure` inside a `type: module` host.
+
 ## Limitations
 
-- Command bodies are LLM instructions; bound routing was proven through the helper, not by a
-  headless run of `/plan`, `/design-build` or the escape hatches.
+- Command bodies are LLM instructions; the bound run executed the documented `/verify`
+  steps directly, not through a headless command runner.
 - The Laravel/Inertia Vue Canvas adapter is still untested live (no such project available).
 - Consumer projects must add `.ecc-opl/*` to their own `.gitignore`; the installer does not.
 - `.ecc-opl/runtime/` stays local (pointer contract documented in `docs/CUSTOM-WORKFLOW.md` §6),
   so its `README.md` template is written but not tracked.
-- A bound `security-audit`/`e2e`/`design-build` run has not been executed end to end; only the
-  documented contract and helper behaviour are verified.
+- `design-build` was executed bound only through Phase 0 (brief); taste, contract freeze,
+  scaffold and the section loop are unrun, so their routing is still untested.
+- A bound `security-audit` or `e2e` run has not been executed; only their documented contracts
+  are verified.
+- `tests/scripts/npm-publish-surface.test.js` fails on a large pre-existing drift between
+  `package.json#files` and the install-module graph; identical at HEAD.
 
 ## Next step
 
-Owner runs one real bound `/design-build` (or `/e2e`) in a project with `.ecc-opl/*` present and
-reports the outcome; that closes the command-execution gap.
+Owner answers the three brief questions in cc-reminder's
+`.ecc-opl/work-items/WI-20261128-002-.../design/brief.md` and runs `/design-build --resume`;
+that exercises contract freeze and the section loop. A bound `/e2e` or `/security-audit` run
+remains the last untested surface.

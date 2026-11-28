@@ -81,6 +81,15 @@ test('unknown id and unknown subcommand exit 1', () => withProject((dir) => {
   assert.strictEqual(run(dir, ['bogus']).code, 1);
 }));
 
+// Regression: a project with "type": "module" once made the CommonJS helper
+// unloadable ("require is not defined"). The per-directory format markers fix it.
+test('runs inside a project whose package.json declares "type": "module"', () => withProject((dir) => {
+  fs.writeFileSync(path.join(dir, 'package.json'), '{"type":"module"}');
+  const result = run(dir, ['ensure', '--slug', 'esm host']);
+  assert.strictEqual(result.code, 0, result.err);
+  assert.match(result.out, /^WI-\d{8}-001-esm-host$/);
+}));
+
 let passed = 0;
 let failed = 0;
 for (const t of tests) {

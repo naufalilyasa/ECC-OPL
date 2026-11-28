@@ -1531,7 +1531,9 @@
         "scripts/setup-package-manager.js",
         "scripts/lib/package-manager.js",
         "scripts/lib/state-store/file-lock.js",
-        "scripts/lib/work-item/work-item.js"
+        "scripts/lib/state-store/package.json",
+        "scripts/lib/work-item/work-item.js",
+        "scripts/lib/work-item/package.json"
       ],
       "targets": [
         "claude",
