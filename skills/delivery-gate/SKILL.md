@@ -42,7 +42,7 @@ From the ECC repository root:
 
 ```bash
 mkdir -p ~/.claude/scripts
-cp skills/delivery-gate/hooks/quality-gate.py ~/.claude/scripts/
+cp skills/delivery-gate/hooks/verify.py ~/.claude/scripts/
 ```
 
 Add to `~/.claude/settings.json`:
@@ -52,7 +52,7 @@ Add to `~/.claude/settings.json`:
     "Stop": [{
       "hooks": [{
         "type": "command",
-        "command": "python3 ~/.claude/scripts/quality-gate.py",
+        "command": "python3 ~/.claude/scripts/verify.py",
         "timeout": 5
       }]
     }]

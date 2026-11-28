@@ -8,7 +8,7 @@ metadata:
 # orch-fix-defect
 
 Actor · action · target: **orch · fix · defect**. Thin wrapper over the shared
-engine in [`orch-pipeline`](../orch-pipeline/SKILL.md).
+engine in [`orch-pipeline`](..`orch-pipeline` skill/SKILL.md).
 
 ## When to Use
 
@@ -30,7 +30,7 @@ engine in [`orch-pipeline`](../orch-pipeline/SKILL.md).
 
 1. Run the `orch-pipeline` engine with the settings above.
 2. If the root cause is unclear, scope it with `code-explorer` before the red
-   test; escalate build breaks to `build-error-resolver` / `/build-fix`.
+   test; escalate build breaks to `build-error-resolver` / `build-error-resolver`.
 3. Stop at **Gate 1** (only if a plan was produced) and **Gate 2** (pre-commit).
 4. Add `security-reviewer` if the defect sits in a security-sensitive path.
 

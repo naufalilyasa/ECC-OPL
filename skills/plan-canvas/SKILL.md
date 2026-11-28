@@ -25,7 +25,7 @@ ECC-native around the `/plan` confirmation gate, with zero dependencies.
   reports, or any local `.md` / `.html` artifact.
 - The user asks for `/plan-canvas`, a visual review, or "open it in the browser".
 
-Do NOT use for: code review of diffs (`/code-review`), running web apps, or
+Do NOT use for: code review of diffs (`/code-review-quick`), running web apps, or
 remote URLs. The canvas serves local artifact files only.
 
 ## How It Works

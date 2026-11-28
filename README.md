@@ -141,13 +141,13 @@ Instead of rebuilding that process in every prompt, you install it once and make
 
 ECC is MIT-licensed open source. It works best with Claude Code today, has native Codex and Qoder plugin paths, and provides capability-limited adapters for Cursor, OpenCode, Gemini, Zed, GitHub Copilot, Antigravity, Qwen, and other harnesses. See the [support status matrix](#platform-support) before assuming feature parity.
 
-Access to 72 agents, 380 skills, and 103 legacy command shims, plus hooks, rules, memory, continuous learning, and AgentShield security scanning. The agents are specialized for planning, review, build repair, security, architecture, and domain work.
+Access to 72 agents, 380 skills, and 7 legacy command shims, plus hooks, rules, memory, continuous learning, and AgentShield security scanning. The agents are specialized for planning, review, build repair, security, architecture, and domain work.
 
 | Included         |       Count | What it gives you                                                                    |
 | ---------------- | ----------: | ------------------------------------------------------------------------------------ |
 | Agents           |   72 agents | Planning, review, build repair, security, architecture, and domain work              |
 | Skills           |  380 skills | TDD, research, security, docs, frontend, data, ML, operations, and more              |
-| Commands         | 103 commands | Convenient entry points while ECC moves to a skills-first surface                    |
+| Commands         | 7 commands | Convenient entry points while ECC moves to a skills-first surface                    |
 | Hooks and memory |     Runtime | Enforcement, session summaries, continuous learning, instincts, and context controls |
 | Rules            |   Selective | Always-loaded standards you choose by language or project                            |
 | AgentShield      |    Included | Scanning for prompts, hooks, MCP config, permissions, secrets, and agent files       |
@@ -537,6 +537,7 @@ cp commands/*.md ~/.claude/commands/
 ```
 
 Retired shims live in `legacy-command-shims/`. Copy individual files from there only if you still need old names such as `/tdd`.
+
 </details>
 
 <details>
@@ -620,27 +621,6 @@ ECC-managed install and Codex sync flows will skip or remove those bundled serve
 </details>
 
 <details>
-<summary><strong>Multi-model commands require additional setup</strong></summary>
-
-`multi-*` commands are **not** covered by the base plugin/rules install.
-
-To use `/multi-plan`, `/multi-execute`, `/multi-backend`, `/multi-frontend`, and `/multi-workflow`, you must also install the `ccg-workflow` runtime. Choose and review an exact release using the [upstream CCG installation guide](https://github.com/fengshao1227/ccg-workflow#readme), then initialize that installed runtime. ECC does not bundle CCG or attest to a compatible, audited CCG release; this guide does not bootstrap an unspecified registry version.
-
-That runtime provides the external dependencies these commands expect, including:
-
-- `~/.claude/bin/codeagent-wrapper`
-- `~/.claude/.ccg/prompts/*`
-
-Without `ccg-workflow`, these `multi-*` commands will not run correctly.
-</details>
-
-<details>
-<summary><strong>Astra review requires the Codex CLI</strong></summary>
-
-`/astra-review` sends Claude-written code to GPT-6-Astra for an independent cross-provider review. It runs the locally installed [Codex CLI](https://github.com/openai/codex) with your ChatGPT login (`codex login`); no OpenAI API key is needed, and API keys in your environment are not forwarded. Invoking the command is your consent to send that diff to OpenAI. Setup, scopes, push gating, and troubleshooting are in the [Astra Review Guide](docs/ASTRA-REVIEW-GUIDE.md).
-</details>
-
-<details>
 <summary><strong>Reset, repair, or uninstall</strong></summary>
 
 ### Reset / Uninstall ECC
@@ -690,16 +670,13 @@ Start with the workflow you need, not the full catalog.
 
 | What you are doing | Start here |
 |---|---|
-| Building a feature | `/ecc:plan "describe the feature"`, then `tdd-workflow` |
-| Fixing a bug | Reproduce it with a failing test, then use `tdd-workflow` |
-| Reviewing new code | `/code-review` for a fresh-context review |
-| Triaging a GitHub issue | `/ecc:issue-review <number>` (plugin) or `/issue-review <number>` (manual install) to verify it against the code and draft a reply |
-| Repairing a build | `/build-fix` |
+| Building a feature | `/ecc:plan "describe the feature"`, then `/tdd` |
+| Writing requirements first | `/plan-prd`, then `/plan` |
+| Fixing a bug | Reproduce it with a failing test, then use `/tdd` |
+| Reviewing new code | `/code-review-quick` for a fresh-context review |
 | Cleaning a codebase | `/refactor-clean` |
-| Checking context pressure | `/context-budget` |
-| Ending a long session | `/save-session` or `/learn-eval` |
-| Resuming later | `/resume-session` |
-| Auditing agent config | `/security-scan` with a reviewed scanner, or installed `agentshield scan --path .` |
+| Signing off on a change | `/verify` |
+| Auditing agent config | installed `agentshield scan --path .`, or the `security-scan` skill |
 
 <details>
 <summary><strong>Plugin commands and manual commands</strong></summary>
@@ -732,16 +709,13 @@ Skills are the canonical workflow surface; maintained slash entries stay availab
 |--------------|-----------------|------------|
 | Plan a new feature | `/ecc:plan "Add auth"` | planner |
 | Design system architecture | `/ecc:plan` + architect agent | architect |
-| Write code with tests first | `tdd-workflow` skill | tdd-guide |
-| Review code I just wrote | `/code-review` | code-reviewer |
-| Review a GitHub issue | `/ecc:issue-review` (plugin), `/issue-review` (manual install) | — (issue-review skill) |
-| Fix a failing build | `/build-fix` | build-error-resolver |
-| Run end-to-end tests | `e2e-testing` skill | e2e-runner |
-| Find security vulnerabilities | `/security-scan` | security-reviewer |
+| Write code with tests first | `/tdd` | tdd-guide |
+| Review code I just wrote | `/code-review-quick` | code-reviewer |
+| Run end-to-end tests | `/e2e` | e2e-runner |
+| Find security vulnerabilities | `/security-audit` | security-reviewer |
 | Remove dead code | `/refactor-clean` | refactor-cleaner |
 | Update documentation | `/update-docs` | doc-updater |
-| Review Go code | `/go-review` | go-reviewer |
-| Review Python code | `/python-review` | python-reviewer |
+| Plan and build a UI section by section | `/design-build` | — (design-build skill) |
 | Review F# code | *(invoke `fsharp-reviewer` directly)* | fsharp-reviewer |
 | Review TypeScript/JavaScript code | *(invoke `typescript-reviewer` directly)* | typescript-reviewer |
 | Develop HarmonyOS apps | *(invoke `harmonyos-app-resolver` directly)* | harmonyos-app-resolver |
@@ -753,28 +727,28 @@ Skills are the canonical workflow surface; maintained slash entries stay availab
 <details>
 <summary><strong>Common workflows</strong></summary>
 
-Slash forms below are shown where they remain part of the maintained command surface. Retired short-name shims such as `/tdd` and `/eval` live in `legacy-command-shims/` for explicit opt-in only.
+Slash forms below are shown where they remain part of the maintained command surface. The `legacy-command-shims/` archive holds retired short-name shims and is opt-in only.
 
 **Starting a new feature:**
 ```
 /ecc:plan "Add user authentication with OAuth"
                                               -> planner creates implementation blueprint
 tdd-workflow skill                            -> tdd-guide enforces write-tests-first
-/code-review                                  -> code-reviewer checks your work
+/code-review-quick                            -> code-reviewer checks your work
 ```
 
 **Fixing a bug:**
 ```
 tdd-workflow skill                            -> tdd-guide: write a failing test that reproduces it
                                               -> implement the fix, verify test passes
-/code-review                                  -> code-reviewer: catch regressions
+/code-review-quick                            -> code-reviewer: catch regressions
 ```
 
 **Preparing for production:**
 ```
-/security-scan                                -> security-reviewer: OWASP Top 10 audit
-e2e-testing skill                             -> e2e-runner: critical user flow tests
-/test-coverage                                -> verify 80%+ coverage
+/security-audit                               -> security-reviewer: OWASP Top 10 audit
+/e2e                                          -> e2e-runner: critical user flow tests
+/verify                                       -> verification-loop: coverage and diff sign-off
 ```
 </details>
 
@@ -862,15 +836,24 @@ Stable graduation of the 2.0 line: control-pane substrate, worktree lifecycle se
 ECC/
 |-- agents/           # 72 specialized subagents for delegation
 |-- skills/           # 380 reusable workflows loaded on demand
-|-- commands/         # 103 maintained slash-command shims
-|-- rules/            # opt-in common and language standards
-|-- hooks/            # runtime automation and enforcement
-|-- scripts/          # install, repair, sync, orchestration, and checks
-|-- .claude-plugin/   # Claude Code marketplace manifest
-|-- .codex/           # Codex reference configuration and agent roles
-|-- .opencode/        # OpenCode plugin, commands, and instructions
-|-- .cursor/          # Cursor rules and hook adapter
-|-- docs/             # public setup, architecture, and operating guides
+|-- commands/         # 7 maintained slash-command shims
+|   |-- plan.md             # /plan - Implementation planning
+|   |-- plan-prd.md         # /plan-prd - Lean PRD before planning
+|   |-- plan-canvas.md      # /plan-canvas - Browser review canvas with annotate and approve
+|   |-- design-build.md     # /design-build - Section-by-section build with an owner approval loop
+|   |-- typography.md       # /typography - Type contract for design-build
+|   |-- refactor-clean.md   # /refactor-clean - Dead code removal
+|   |-- update-docs.md      # /update-docs - Documentation sync and codemaps
+|-- legacy-command-shims/   # Opt-in archive for retired short-name shims
+|   |-- tdd.md              # /tdd - Prefer the tdd-workflow skill
+|   |-- e2e.md              # /e2e - Prefer the e2e-testing skill
+|   |-- eval.md             # /eval - Prefer the eval-harness skill
+|   |-- verify.md           # /verify - Prefer the verification-loop skill
+|   |-- design-build.md     # /design-build - Section-by-section build with an owner approval loop
+|   |-- typography.md       # /typography - Type contract for design-build
+|   |-- refactor-clean.md   # /refactor-clean - Dead code removal
+|   |-- update-docs.md      # /update-docs - Documentation sync and codemaps
+|   |-- orchestrate.md      # /orchestrate - Prefer dmux-workflows or multi-workflow
 ```
 
 The root is the source of truth. Platform adapters package or map these same workflows instead of maintaining separate copies.
@@ -992,105 +975,24 @@ ECC/
 |   |-- codehealth-mcp/             # Optional CodeScene Code Health MCP skill (opt-in)
 |   |-- docs/examples/project-guidelines-template.md  # Template for project-specific skills
 |
-|-- commands/         # Maintained slash-entry compatibility; prefer skills/
+|-- commands/         # 7 maintained slash-command shims
 |   |-- plan.md             # /plan - Implementation planning
-|   |-- code-review.md      # /code-review - Quality review
-|   |-- issue-review.md     # /issue-review - GitHub issue review
-|   |-- build-fix.md        # /build-fix - Fix build errors
+|   |-- plan-prd.md         # /plan-prd - Lean PRD before planning
+|   |-- plan-canvas.md      # /plan-canvas - Browser review canvas with annotate and approve
+|   |-- design-build.md     # /design-build - Section-by-section build with an owner approval loop
+|   |-- typography.md       # /typography - Type contract for design-build
 |   |-- refactor-clean.md   # /refactor-clean - Dead code removal
-|   |-- quality-gate.md     # /quality-gate - Verification gate
-|   |-- learn.md            # /learn - Extract patterns mid-session (Longform Guide)
-|   |-- learn-eval.md       # /learn-eval - Extract, evaluate, and save patterns
-|   |-- checkpoint.md       # /checkpoint - Save verification state (Longform Guide)
-|   |-- setup-pm.md         # /setup-pm - Configure package manager
-|   |-- go-review.md        # /go-review - Go code review
-|   |-- go-test.md          # /go-test - Go TDD workflow
-|   |-- go-build.md         # /go-build - Fix Go build errors
-|   |-- skill-create.md     # /skill-create - Generate skills from git history
-|   |-- instinct-status.md  # /instinct-status - View learned instincts
-|   |-- instinct-import.md  # /instinct-import - Import instincts
-|   |-- instinct-export.md  # /instinct-export - Export instincts
-|   |-- evolve.md           # /evolve - Cluster instincts into skills
-|   |-- prune.md            # /prune - Delete expired pending instincts
-|   |-- pm2.md              # /pm2 - PM2 service lifecycle management
-|   |-- multi-plan.md       # /multi-plan - Multi-agent task decomposition
-|   |-- multi-execute.md    # /multi-execute - Orchestrated multi-agent workflows
-|   |-- multi-backend.md    # /multi-backend - Backend multi-service orchestration
-|   |-- multi-frontend.md   # /multi-frontend - Frontend multi-service orchestration
-|   |-- multi-workflow.md   # /multi-workflow - General multi-service workflows
-|   |-- sessions.md         # /sessions - Session history management
-|   |-- test-coverage.md    # /test-coverage - Test coverage analysis
-|   |-- update-docs.md      # /update-docs - Update documentation
-|   |-- update-codemaps.md  # /update-codemaps - Update codemaps
-|   |-- python-review.md    # /python-review - Python code review
-|-- legacy-command-shims/   # Opt-in archive for retired shims such as /tdd and /eval
+|   |-- update-docs.md      # /update-docs - Documentation sync and codemaps
+|-- legacy-command-shims/   # Opt-in archive for retired short-name shims
 |   |-- tdd.md              # /tdd - Prefer the tdd-workflow skill
 |   |-- e2e.md              # /e2e - Prefer the e2e-testing skill
 |   |-- eval.md             # /eval - Prefer the eval-harness skill
 |   |-- verify.md           # /verify - Prefer the verification-loop skill
+|   |-- design-build.md     # /design-build - Section-by-section build with an owner approval loop
+|   |-- typography.md       # /typography - Type contract for design-build
+|   |-- refactor-clean.md   # /refactor-clean - Dead code removal
+|   |-- update-docs.md      # /update-docs - Documentation sync and codemaps
 |   |-- orchestrate.md      # /orchestrate - Prefer dmux-workflows or multi-workflow
-|
-|-- rules/            # Always-follow guidelines (copy to ~/.claude/rules/ecc/)
-|   |-- README.md            # Structure overview and installation guide
-|   |-- common/              # Language-agnostic principles
-|   |   |-- coding-style.md    # Immutability, file organization
-|   |   |-- git-workflow.md    # Commit format, PR process
-|   |   |-- testing.md         # TDD, 80% coverage requirement
-|   |   |-- performance.md     # Model selection, context management
-|   |   |-- patterns.md        # Design patterns, skeleton projects
-|   |   |-- hooks.md           # Hook architecture, TodoWrite
-|   |   |-- agents.md          # When to delegate to subagents
-|   |   |-- security.md        # Mandatory security checks
-|   |-- typescript/          # TypeScript/JavaScript specific
-|   |-- python/              # Python specific
-|   |-- golang/              # Go specific
-|   |-- swift/               # Swift specific
-|   |-- php/                 # PHP specific
-|   |-- arkts/               # HarmonyOS / ArkTS specific
-|
-|-- hooks/            # Trigger-based automations
-|   |-- README.md                 # Hook documentation, recipes, and customization guide
-|   |-- hooks.json                # All hooks config (PreToolUse, PostToolUse, Stop, etc.)
-|   |-- memory-persistence/       # Session lifecycle hooks (Longform Guide)
-|   |-- strategic-compact/        # Compaction suggestions (Longform Guide)
-|
-|-- scripts/          # Cross-platform Node.js scripts
-|   |-- lib/                     # Shared utilities
-|   |   |-- utils.js             # Cross-platform file/path/system utilities
-|   |   |-- package-manager.js   # Package manager detection and selection
-|   |-- hooks/                   # Hook implementations
-|   |   |-- session-start.js     # Load context on session start
-|   |   |-- session-end.js       # Save state on session end
-|   |   |-- pre-compact.js       # Pre-compaction state saving
-|   |   |-- suggest-compact.js   # Strategic compaction suggestions
-|   |   |-- evaluate-session.js  # Extract patterns from sessions
-|   |-- setup-package-manager.js # Interactive PM setup
-|
-|-- tests/            # Test suite
-|   |-- lib/                     # Library tests
-|   |-- hooks/                   # Hook tests
-|   |-- run-all.js               # Run all tests
-|
-|-- contexts/         # Dynamic system prompt injection contexts (Longform Guide)
-|   |-- dev.md              # Development mode context
-|   |-- review.md           # Code review mode context
-|   |-- research.md         # Research/exploration mode context
-|
-|-- examples/         # Example configurations and sessions
-|   |-- CLAUDE.md             # Example project-level config
-|   |-- user-CLAUDE.md        # Example user-level config
-|   |-- saas-nextjs-CLAUDE.md   # Real-world SaaS (Next.js + Supabase + Stripe)
-|   |-- go-microservice-CLAUDE.md # Real-world Go microservice (gRPC + PostgreSQL)
-|   |-- django-api-CLAUDE.md      # Real-world Django REST API (DRF + Celery)
-|   |-- laravel-api-CLAUDE.md     # Real-world Laravel API (PostgreSQL + Redis)
-|   |-- rust-api-CLAUDE.md        # Real-world Rust API (Axum + SQLx + PostgreSQL)
-|
-|-- mcp-configs/      # MCP server configurations
-|   |-- mcp-servers.json    # GitHub, Supabase, Vercel, Railway, etc.
-|
-|-- ecc_dashboard.py  # Desktop GUI dashboard (Tkinter)
-|
-|-- marketplace.json  # Self-hosted marketplace config (for /plugin marketplace add)
 ```
 </details>
 
@@ -1363,7 +1265,6 @@ node scripts/setup-package-manager.js --project bun
 node scripts/setup-package-manager.js --detect
 ```
 
-Or use the `/setup-pm` command.
 </details>
 
 <details>
@@ -1982,7 +1883,7 @@ agentshield scan --path .
 ```
 
 - **Report a vulnerability.** Use the private process in [SECURITY.md](SECURITY.md) (GitHub private vulnerability reporting). Please do not open public issues for security reports.
-- **Built-in guardrails.** GateGuard gates destructive shell commands (including `rm`, force/path `git checkout`, and destructive `find -exec`) before they run; the supply-chain IOC scanner runs in CI; and AgentShield audits your own agent, hook, MCP, permission, and secret surfaces (`/security-scan`).
+- **Built-in guardrails.** GateGuard gates destructive shell commands (including `rm`, force/path `git checkout`, and destructive `find -exec`) before they run; the supply-chain IOC scanner runs in CI; and AgentShield audits your own agent, hook, MCP, permission, and secret surfaces (the `security-scan` skill).
 
 <details>
 <summary><strong>Hooks, MCP servers, and context controls</strong></summary>
@@ -2014,11 +1915,11 @@ Two ways to generate skills from your repository:
 
 ### Option A: Local Analysis (Built-in)
 
-Use the `/skill-create` command for local analysis without external services:
+Use the `skill-creator` skill for local analysis without external services:
 
 ```bash
-/skill-create                    # Analyze current repo
-/skill-create --instincts        # Also generate instincts for continuous-learning-v2
+node scripts/skill-create-output.js            # Analyze current repo
+node scripts/skill-create-output.js --instincts # Also generate instincts for continuous-learning-v2
 ```
 
 This analyzes your git history locally and generates SKILL.md files.
@@ -2048,7 +1949,7 @@ Both options create:
 Scan your agent configuration for vulnerabilities, misconfigurations, and injection risks.
 
 <a id="agentshield-runner-provenance"></a>
-**Runner provenance:** these commands require an already installed, reviewed AgentShield binary from `ecc-agentshield`. The [official package](https://www.npmjs.com/package/ecc-agentshield) documents the `agentshield` CLI. Record the selected release, reviewed source and verified package integrity in your installation record. Registry publication alone does not establish an audit; ECC does not supply an audited AgentShield pin here. Do not substitute an unversioned one-shot download. `/security-scan` is workflow guidance and has the same runner prerequisite.
+**Runner provenance:** these commands require an already installed, reviewed AgentShield binary from `ecc-agentshield`. The [official package](https://www.npmjs.com/package/ecc-agentshield) documents the `agentshield` CLI. Record the selected release, reviewed source and verified package integrity in your installation record. Registry publication alone does not establish an audit; ECC does not supply an audited AgentShield pin here. Do not substitute an unversioned one-shot download. The `security-scan` skill is workflow guidance and has the same runner prerequisite.
 
 ```bash
 # Scan only the intended project directory
@@ -2070,7 +1971,7 @@ agentshield init
 
 **Output formats:** Terminal (color-graded A-F), JSON (CI pipelines), Markdown, HTML. Exit code 2 on critical findings for build gates.
 
-Use `/security-scan` in Claude Code to run it, or add to CI with the [GitHub Action](https://github.com/affaan-m/agentshield).
+Run the `security-scan` skill, or add AgentShield to CI with the [GitHub Action](https://github.com/affaan-m/agentshield).
 
 [GitHub](https://github.com/affaan-m/agentshield) | [npm](https://www.npmjs.com/package/ecc-agentshield)
 </details>
@@ -2081,10 +1982,10 @@ Use `/security-scan` in Claude Code to run it, or add to CI with the [GitHub Act
 The instinct-based learning system automatically learns your patterns:
 
 ```bash
-/instinct-status        # Show learned instincts with confidence
-/instinct-import <file> # Import instincts from others
-/instinct-export        # Export your instincts for sharing
-/evolve                 # Cluster related instincts into skills
+python3 skills/continuous-learning-v2/scripts/instinct-cli.py status         # Show learned instincts with confidence
+python3 skills/continuous-learning-v2/scripts/instinct-cli.py import <file>  # Import instincts from others
+python3 skills/continuous-learning-v2/scripts/instinct-cli.py export         # Export your instincts for sharing
+python3 skills/continuous-learning-v2/scripts/instinct-cli.py evolve         # Cluster related instincts into skills
 ```
 
 See `skills/continuous-learning-v2/` for full documentation. Keep `continuous-learning/` only when you explicitly want the legacy v1 Stop-hook learned-skill flow.

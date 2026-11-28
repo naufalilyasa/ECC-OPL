@@ -222,8 +222,8 @@ function main() {
       const commandsDir = path.join(repoRoot, "commands")
       const commandFiles = fs.readdirSync(commandsDir).filter((name) => name.endsWith(".md"))
       assert.ok(
-        commandFiles.length >= 50,
-        `commands/ must contain at least 50 .md files for Pi's prompt-template format — found ${commandFiles.length}`
+        commandFiles.length >= 7,
+        `commands/ must contain the 7 maintained .md files for Pi's prompt-template format — found ${commandFiles.length}`
       )
 
       const planCommandPath = path.join(commandsDir, "plan.md")

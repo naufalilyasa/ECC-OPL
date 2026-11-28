@@ -247,13 +247,11 @@ After planning:
 - Verify the written plan with the `plan-reviewer` subagent. It runs two passes - executability (references exist, tasks startable, no critical blocker, QA scenarios executable) and adversarial (ideal-state fidelity, scope creep, contradictions, unvalidated assumptions, undefined success) - then returns one verdict, and treats APPROVE with notes as approval. Cap the loop at 3 rounds; later rounds verify accepted blockers and regressions from fixes, never a fresh full review.
 - Use `/plan-canvas` to run the confirmation gate visually in the browser (annotate + approve)
 - Use the `tdd-workflow` skill to implement with test-driven development
-- Use `/build-fix` if build errors occur
-- Use `/code-review` to review completed implementation
-- Use `/pr` or `/prp-pr` to open a pull request
+- Fix build errors as they appear
+- Run a review pass (the `code-reviewer` subagent, or the code-review-quick command where installed)
+- Open a pull request with the project's own git workflow
 
 > **Need requirements first?** Use `/plan-prd` for a lean PRD at `.claude/prds/{name}.prd.md`.
->
-> **Need the legacy PRP flow?** Use `/prp-plan` for deep PRP planning with `.claude/PRPs/` artifacts. Use `/prp-implement` to execute those plans with rigorous validation loops.
 
 ## Optional Planner Agent
 

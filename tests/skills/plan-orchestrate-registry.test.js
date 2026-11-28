@@ -105,14 +105,14 @@ function run() {
       carrying.set(row[1], row[2].trim());
     }
   }
-  assert.ok(carrying.size >= 5, `scope-carrying table parse found ${carrying.size} commands`);
+  assert.ok(carrying.size >= 3, `scope-carrying table parse found ${carrying.size} commands`);
 
   const failClosedSentence = section(markdown, '**Everything else fails closed.**', 'are never emitted.');
   const failClosed = new Set();
   for (const match of failClosedSentence.matchAll(/`\/([a-z][a-z0-9-]*)`/g)) {
     failClosed.add(match[1]);
   }
-  assert.ok(failClosed.size >= 6, `fail-closed sentence parse found ${failClosed.size} commands`);
+  assert.ok(failClosed.size >= 3, `fail-closed sentence parse found ${failClosed.size} commands`);
 
   const catalogueSection = section(markdown, '## Command catalogue', 'Tag resolution rules:');
   const catalogueCommands = new Set();
@@ -122,7 +122,7 @@ function run() {
       catalogueCommands.add(row[1]);
     }
   }
-  assert.ok(catalogueCommands.size >= 10, `catalogue table parse found ${catalogueCommands.size} commands`);
+  assert.ok(catalogueCommands.size >= 6, `catalogue table parse found ${catalogueCommands.size} commands`);
 
   const overlap = [...carrying.keys()].filter(name => failClosed.has(name));
   assert.deepStrictEqual(overlap, [], 'a command cannot be both scope-carrying and fail-closed');

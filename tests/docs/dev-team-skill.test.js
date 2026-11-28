@@ -96,9 +96,8 @@ function runTests() {
       'skills/santa-method/SKILL.md',
       'commands/plan-prd.md',
       'commands/plan.md',
-      'commands/epic-decompose.md',
-      'commands/save-session.md',
-      'commands/code-review.md',
+      'skills/blueprint/SKILL.md',
+      'skills/ck/SKILL.md',
       'agents/architect.md',
       'agents/code-reviewer.md',
     ];

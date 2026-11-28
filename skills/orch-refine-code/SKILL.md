@@ -8,7 +8,7 @@ metadata:
 # orch-refine-code
 
 Actor · action · target: **orch · refine · code**. Thin wrapper over the shared
-engine in [`orch-pipeline`](../orch-pipeline/SKILL.md).
+engine in [`orch-pipeline`](..`orch-pipeline` skill/SKILL.md).
 
 ## When to Use
 

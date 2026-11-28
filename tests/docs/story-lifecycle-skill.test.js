@@ -130,7 +130,6 @@ function runTests() {
       'skills/council/SKILL.md',
       'skills/project-flow-ops/SKILL.md',
       'commands/plan-prd.md',
-      'commands/epic-decompose.md',
       'agents/architect.md',
       'agents/tdd-guide.md',
       'agents/code-reviewer.md',

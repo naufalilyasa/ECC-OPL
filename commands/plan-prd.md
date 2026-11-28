@@ -181,7 +181,7 @@ Next step: /plan <PRD_DIR>/{name}.prd.md
 
 - `/plan <prd-path>` — consume the PRD and produce an implementation plan for the next pending milestone.
 - `tdd-workflow` skill — implement the plan test-first.
-- `/pr` — open a PR that references the PRD and plan.
+- Open a pull request with the project's own git workflow, referencing the PRD and plan.
 
 ## Success criteria
 

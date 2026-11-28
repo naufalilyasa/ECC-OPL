@@ -33,7 +33,7 @@ Use when:
 | Ambiguous go/no-go decision with real tradeoffs | `council` |
 | You want to hand-pick which agents participate | `team-builder` |
 | Single-role deep-dive (e.g. architecture only) | the `architect` agent |
-| Code review | the `code-reviewer` agent or `/code-review` |
+| Code review | the `code-reviewer` agent or `/code-review-quick` |
 | Structured adversarial challenge | `santa-method` |
 
 ## Personas
@@ -162,15 +162,15 @@ After presenting, offer:
 
 - "Go deeper with one role" — re-engage a single persona for more detail
 - "Resolve a tension" — use `council` if a specific tradeoff needs a verdict
-- "Plan the work" — use `/plan` for an implementation plan, or the `epic-*` commands
-  (`/epic-decompose`) for issue-backed breakdown
+- "Plan the work" — use `/plan` for an implementation plan, or the `blueprint`
+  skill for a multi-session, multi-agent breakdown
 
 ## Persistence Rule
 
 Do not write session output to files by default. If the user explicitly asks to save the session:
 
 - save to `docs/team-sessions/team-session-YYYY-MM-DD.md` (append `-2`, `-3` if a file for that date already exists)
-- or use `/save-session`
+- or use the `ck` skill to persist the session
 
 ## Anti-Patterns
 
@@ -200,4 +200,4 @@ Run `dev-team` to shape a proposal, then `council` if a specific decision within
 - `team-builder` — pick-your-own agent team when the preset four roles don't fit
 - `architect` (agent) — deep single-role architecture design
 - `/plan-prd` (command) — product requirements document before the team session
-- `/epic-decompose` (command) — break the outcome into issue-backed work
+- `blueprint` (skill) — break the outcome into PR-sized steps across sessions

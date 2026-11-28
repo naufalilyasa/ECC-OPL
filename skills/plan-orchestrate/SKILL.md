@@ -38,13 +38,11 @@ Every emitted command must carry its step's identity and scope. A command accept
 
 | Command | Documented argument |
 |---|---|
-| `/orch-add-feature` | `<what to add>` |
-| `/orch-fix-defect` | `<what is broken>` |
-| `/orch-change-feature` | `<the new desired behavior>` |
-| `/orch-refine-code` | `<what to restructure>` |
 | `/plan` | `[feature description \| path/to/*.prd.md]` |
+| `/plan-prd` | `[product/feature idea] (blank = start with questions)` |
+| `/typography` | `[--inspect \| --fix \| brief or brand description]` |
 
-**Everything else fails closed.** Commands whose documented arguments cannot carry plan scope — `/build-fix`, `/test-coverage`, `/update-docs` (no argument form at all), `/code-review` (only `[pr-number | pr-url | blank]`), `/security-scan` (`[path]` and format/severity flags only), `/loop-start` (`[pattern]` and `--mode` only) — are never emitted. A step that classifies to one of them is reported as:
+**Everything else fails closed.** Commands whose documented arguments cannot carry plan scope — `/refactor-clean` (an explicit target path only), `/update-docs` (no documented argument form), `/plan-canvas` (a specific artifact path only) — are never emitted. A step that classifies to one of them is reported as:
 
 ```
 BLOCKED — /<command> cannot carry plan scope; run manually if wanted: <exact documented command form>
@@ -72,21 +70,18 @@ Classify each step by its primary tag and map it to the command below. "Carried"
 
 | Tag | Trigger words | Command | Step scope | Why |
 |---|---|---|---|---|
-| `build` | build, compile, lint, CI, or build-failure context | `/build-fix` | fails closed | Fix build/type/lint/CI errors. Use the `build used as a feature verb` special-case override for feature-creation phrasing such as 'Build a new authentication API'. |
-| `fix` | fix, bug, broken, defect, repair, regression | `/orch-fix-defect` | carried | Existing behavior is wrong. |
-| `test` | test, coverage, e2e, integration | `/test-coverage` | fails closed | Add or analyze tests; the command takes no step-scoped argument. |
-| `db` | schema, migration, index, SQL, Postgres, alembic, sqlmodel | `/orch-add-feature` | carried | New schema/migration is a net-new capability in the current codebase; note the schema concern in the task description. |
-| `migration` | migrate, upgrade, rewrite, port | `/orch-change-feature` | carried | Replacing one implementation with another; if behavior must stay identical, classify as `refactor`. |
-| `change` | change, alter, tweak, modify, behavior | `/orch-change-feature` | carried | Existing working behavior should behave differently. |
-| `refactor` | refactor, cleanup, dedupe, split, restructure | `/orch-refine-code` | carried | Behavior-preserving restructure. |
-| `review` | review, audit, verify | `/code-review` | fails closed | Reviews local diffs or PRs via `[pr-number \| pr-url]`; it cannot carry a plan step, so give the manual form (include the PR number/URL when the step names one). |
-| `security` | encrypt, auth, secret, OWASP, PII, audit | `/security-scan` | fails closed | Security scan over documented surfaces; path/flags only, so give the manual form (include `[path]` when the step names a directory). |
-| `impl` | implement, add, create | `/orch-add-feature` | carried | Net-new capability. |
-| `design` | architecture, design, choose, evaluate, RFC | `/plan` | carried | Needs human-approved implementation plan before code. |
-| `plan` | plan, breakdown, milestone | `/plan` | carried | Produces a step-by-step plan for approval. |
-| `lookup` | lookup, reference, API usage | `/plan` | carried | Research/lookup becomes a plan with findings. |
-| `docs` | docs, readme, codemap, changelog | `/update-docs` | fails closed | Syncs documentation from source-of-truth files; takes no argument. |
-| `loop` | loop, autonomous, watchdog | `/loop-start` | fails closed | Starts an autonomous loop via `[pattern]`/`--mode`; give the manual form with the detected pattern (default `sequential`). |
+| `build` | build, compile, lint, CI, or build-failure context | `/plan` | carried | A failing build becomes a plan with a fix step; carry the failure context and acceptance criteria. |
+| `fix` | fix, bug, broken, defect, repair, regression | `/plan` | carried | Existing behavior is wrong; plan the fix with the reproducer carried in the task description. |
+| `test` | test, coverage, e2e, integration | `/plan` | carried | Test work is planned before it is written; carry the target and coverage criteria. |
+| `db` | schema, migration, index, SQL, Postgres, alembic, sqlmodel | `/plan` | carried | New schema/migration is a net-new capability; note the schema concern in the task description. |
+| `change` | change, alter, tweak, modify, behavior | `/plan` | carried | Existing working behavior should behave differently. |
+| `impl` | implement, add, create | `/plan` | carried | Net-new capability. |
+| `design` | architecture, design, choose, evaluate, RFC | `/plan` | carried | Needs a human-approved implementation plan before code. |
+| `prd` | requirements, PRD, scope, spec | `/plan-prd` | carried | Product requirements come before the implementation plan. |
+| `ui` | typography, brand, font, visual | `/typography` | carried | Takes a brand description or a `--inspect`/`--fix` target. |
+| `refactor` | refactor, cleanup, dedupe, split, restructure, dead code | `/refactor-clean` | fails closed | Takes an explicit target path only, so give the manual form with the path from the step. |
+| `docs` | docs, readme, codemap, changelog | `/update-docs` | fails closed | Syncs documentation from the source of truth; takes no argument form. |
+| `artifact` | review plan, annotate, approve artifact | `/plan-canvas` | fails closed | Opens one specific artifact path; give the manual form with that path. |
 
 Tag resolution rules:
 
@@ -96,26 +91,25 @@ Tag resolution rules:
    2. `fix`
    3. `test`
    4. `db`
-   5. `migration`
-   6. `change`
-   7. `refactor`
-   8. `review`
-   9. `security`
-   10. `impl`
-   11. `design`, `plan`, `lookup`
-   12. `docs`
-   13. `loop`
-3. **Special-case overrides** (override the numeric precedence for the stated pairs):
-   - `impl` + `security`: primary is `impl`. The command is `/orch-add-feature`; carry the security concern in the task description so the command's own pipeline can weigh it. This prevents net-new feature work from being reduced to a scan.
-   - `impl` + `test`: if a step matches both `impl` and `test` and explicitly creates a concrete deliverable (for example, "Implement the parser and add integration tests"), primary is `impl` → `/orch-add-feature` with the test criteria carried in the task description. If the step only adds tests to an existing deliverable (for example, "Add tests for the parser"), primary is `test` → `/test-coverage`, which fails closed.
-   - `review` + `security`: if the audited object is a security control (encryption, auth, secrets, PII, OWASP) and the step does **not** also express an explicit `impl` or `fix` intent, primary is `security`; otherwise primary is `review`.
-   - `build` used as a feature verb: if a step matches the `build` tag but does **not** contain an explicit `fix`/`defect`/`repair` marker (`fix`, `bug`, `broken`, `defect`, `repair`, `regression`) and does **not** contain an explicit build-failure word (`failure`, `error`, `fails`, `failing`, `broken`), and does contain a feature-intent marker (`new`, `feature`, `page`, `component`, `ui`, `api`, `service`, `endpoint`) or an `impl` trigger word (`implement`, `add`, `create`), then primary is `impl` and the command is `/orch-add-feature`. This covers feature-creation phrasing such as "Build a new authentication API" and "Create a new lint rule". The terms `compile`, `lint`, and `CI` still route to `build` when a failure or negative context is present (`compile error`, `CI is broken`, `lint failure`), but they do not block the feature-verb override on their own.
+   5. `change`
+   6. `impl`
+   7. `design`
+   8. `prd`
+   9. `ui`
+   10. `refactor`
+   11. `docs`
+   12. `artifact`
+ 3. **Special-case overrides** (override the numeric precedence for the stated pairs):
+   - `impl` + `ui`: if the step builds a UI element, primary is `impl` → `/plan`; carry the typography and brand criteria in the task description. If the step only tunes typography or brand on existing UI, primary is `ui` → `/typography`.
+   - `impl` + `test`: if a step matches both `impl` and `test` and explicitly creates a concrete deliverable (for example, "Implement the parser and add integration tests"), primary is `impl` → `/plan` with the test criteria carried. If the step only adds tests to an existing deliverable, primary is `test` → `/plan` with the coverage criteria carried.
+   - `impl` + `docs`: if a step both ships a capability and documents it, primary is `impl` → `/plan`; the doc update is a sub-step of the plan.
+   - `build` used as a feature verb: if a step matches the `build` tag but does **not** contain an explicit `fix`/`defect`/`repair` marker (`fix`, `bug`, `broken`, `defect`, `repair`, `regression`) and does **not** contain an explicit build-failure word (`failure`, `error`, `fails`, `failing`), and does contain a feature-intent marker (`new`, `feature`, `page`, `component`, `ui`, `api`, `service`, `endpoint`) or an `impl` trigger word (`implement`, `add`, `create`), then primary is `impl`. This covers phrasing such as "Build a new authentication API". The terms `compile`, `lint`, and `CI` still route to `build` when a failure or negative context is present (`compile error`, `CI is broken`, `lint failure`).
 4. **Override tie-breaks**: when more than one special-case override applies, resolve them in this order:
-   - Lifecycle (`impl` or `fix`) + `security` takes precedence over `review` + `security`. A step that both builds/fixes a security control and audits it is treated as implementation or defect repair, not a standalone security review.
+   - Lifecycle (`impl` or `fix`) takes precedence over `ui`. A step that both builds a capability and restyles it is planned as implementation.
    - An explicit `fix`/`defect`/`repair` marker takes precedence over the `build used as feature verb` override.
-5. **Command rationale**: write a one-line rationale when a secondary tag meaningfully changes risk or intent (for example, an `impl,security` step emits `/orch-add-feature` and the rationale notes the security criteria carried in the task description).
-6. **Zero-tag steps**: fail closed — `BLOCKED — no tag matched; classify the step manually (a plain review would be /code-review, run manually)`.
-7. **Step with an explicit agent name**: if the plan text names an agent (for example, `tdd-guide`), map the step to the command that exercises that kind of work. For example, a step that says "add tests with tdd-guide" is a `test` step; a step that says "run python-reviewer over auth" is a `review` step. Do not emit raw agent names as commands — the catalogue above is the authoritative command surface.
+5. **Command rationale**: write a one-line rationale when a secondary tag meaningfully changes risk or intent (for example, an `impl,ui` step emits `/plan` and the rationale notes the typography criteria carried in the task description).
+6. **Zero-tag steps**: fail closed — `BLOCKED — no tag matched; classify the step manually (a plain code review would be /code-review-quick, run manually)`.
+7. **Step with an explicit agent name**: if the plan text names an agent (for example, `tdd-guide`), map the step to the command that exercises that kind of work. For example, a step that says "add tests with tdd-guide" is a `test` step; a step that says "run python-reviewer over auth" is a `fix` step. Do not emit raw agent names as commands — the catalogue above is the authoritative command surface.
 
 ## How It Works
 
@@ -140,7 +134,7 @@ Use the catalogue above. For each step:
 
 1. Resolve the primary tag using the precedence order.
 2. Map the tag to its command.
-3. If the command carries scope, continue to Phase 3. If it fails closed, mark the step `BLOCKED — <command> cannot carry plan scope` and record the exact documented command form (with the PR number/URL/path/pattern from the step, when present) for the manual-use note.
+3. If the command carries scope, continue to Phase 3. If it fails closed, mark the step `BLOCKED — <command> cannot carry plan scope` and record the exact documented command form (with the target path from the step, when present) for the manual-use note.
 
 ### Phase 3 — Compress the task description
 
@@ -162,8 +156,8 @@ Emit Markdown:
 
 | # | Title | Tags | Command | Status |
 |---|---|---|---|---|
-| 1 | ... | impl, security | `/orch-add-feature` | emitted |
-| 2 | ... | test | `/test-coverage` | BLOCKED — cannot carry plan scope |
+| 1 | ... | impl, ui | `/plan` | emitted |
+| 2 | ... | refactor | `/refactor-clean` | BLOCKED — cannot carry plan scope |
 | ... | | | | |
 
 ---
@@ -175,17 +169,17 @@ Emit Markdown:
 **Command rationale**: <why this command; what concern from the step is carried in the task description>
 
 ```bash
-/orch-add-feature "[Plan: docs/foo.md#step-1] <compressed task description>; Acceptance: <1–3 items>; Out of scope: <…>"
+/plan "[Plan: docs/foo.md#step-1] <compressed task description>; Acceptance: <1–3 items>; Out of scope: <…>"
 ```
 
 ## Step 2 — <title> (blocked)
 
 **Intent**: <1–3 sentences>
-**Tags**: test
+**Tags**: refactor
 **Command rationale**: why this step's command cannot carry the plan step
 
 ```text
-BLOCKED — /test-coverage cannot carry plan scope; run manually if wanted: /test-coverage
+BLOCKED — /refactor-clean cannot carry plan scope; run manually if wanted: /refactor-clean src/legacy/
 ```
 ````
 
@@ -211,7 +205,7 @@ Append a final "Batch execution" block aggregating every **emitted** step's comm
 
 ## Examples
 
-### Example 1 — Feature step with security and DB concerns (emitted)
+### Example 1 — Feature step with UI and DB concerns (emitted)
 
 Input:
 
@@ -222,14 +216,14 @@ plan-orchestrate @docs/plan/example-feature.md
 Excerpt of expected output:
 
 ````markdown
-## Step 2 — Encrypt sensitive UserProfile fields
+## Step 2 — Persist and surface encrypted UserProfile fields
 
-**Intent**: Introduce an `EncryptedString` SQLAlchemy type and AES-GCM encrypt `birth_datetime` / `location` before persistence; load the key from an environment variable.
-**Tags**: impl, security, db
-**Command rationale**: `/orch-add-feature` owns the whole build pipeline; the security and schema concerns are carried in the task description so its own review and migration steps weigh them.
+**Intent**: Introduce an `EncryptedString` type, encrypt `birth_datetime` / `location` before persistence, and surface the masked values on the profile page.
+**Tags**: impl, ui, db
+**Command rationale**: `/plan` carries the whole step; the schema and typography criteria travel in the task description so the plan covers both.
 
 ```bash
-/orch-add-feature "[Plan: docs/plan/example-feature.md#step-2] Implement EncryptedString SQLAlchemy type and migrate UserProfile.birth_datetime/location columns; key from ENV APP_DB_KEY; Acceptance: encrypt/decrypt roundtrip tests pass; alembic upgrade/downgrade clean on empty DB; no plaintext in DB after migrate; Out of scope: cross-tenant profile sharing logic"
+/plan "[Plan: docs/plan/example-feature.md#step-2] Implement EncryptedString type and migrate UserProfile.birth_datetime/location; render masked values with the existing typography scale; Acceptance: encrypt/decrypt roundtrip tests pass; migration upgrade/downgrade clean on empty DB; no plaintext in DB after migrate; Out of scope: cross-tenant profile sharing"
 ```
 ````
 
@@ -238,22 +232,22 @@ Excerpt of expected output:
 If a step reads "Fix the poller crash on empty NWS response", it is tagged `fix` and emits:
 
 ```bash
-/orch-fix-defect "[Plan: docs/plan/example-feature.md#step-5] Fix poller crash on empty NWS response; Acceptance: reproduce crash with a failing regression test; fix makes the test pass; review the diff for error-handling gaps"
+/plan "[Plan: docs/plan/example-feature.md#step-5] Fix poller crash on empty NWS response; Acceptance: reproduce crash with a failing regression test; fix makes the test pass; review the diff for error-handling gaps"
 ```
 
-### Example 3 — Test step (fails closed)
+### Example 3 — Refactor step (fails closed)
 
-If a step reads "Add tests for the parser", it is tagged `test` and is **not** emitted — `/test-coverage` takes no step-scoped argument. The step block reads:
+If a step reads "Remove the dead session helpers", it is tagged `refactor` and is **not** emitted — `/refactor-clean` takes an explicit target path only. The step block reads:
 
 ```text
-BLOCKED — /test-coverage cannot carry plan scope; run manually if wanted: /test-coverage
+BLOCKED — /refactor-clean cannot carry plan scope; run manually if wanted: /refactor-clean src/session/
 ```
 
 and the step is excluded from the Batch execution block.
 
 ## Notes
 
-- Generative only. Never invoke `/orch-add-feature`, `/code-review`, or any other command from inside this skill.
+- Generative only. Never invoke `/plan`, `/plan-prd`, `/typography`, or any other command from inside this skill.
 - Argument forms quoted in this skill are derived from the command files; when they drift, fix this skill to match (the registry fixture test enforces it).
 - Match the language of the plan document for task descriptions.
 - Do not insert "Co-Authored-By" lines or emoji in the output unless the user explicitly asks.

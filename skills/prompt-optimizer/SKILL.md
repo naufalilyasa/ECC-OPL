@@ -106,13 +106,13 @@ Map intent + scope + tech stack (from Phase 0) to specific ECC components.
 
 | Intent | Commands | Skills | Agents |
 |--------|----------|--------|--------|
-| New Feature | /plan, /tdd, /code-review, /verify | tdd-workflow, verification-loop | planner, tdd-guide, code-reviewer |
-| Bug Fix | /tdd, /build-fix, /verify | tdd-workflow | tdd-guide, build-error-resolver |
-| Refactor | /refactor-clean, /code-review, /verify | verification-loop | refactor-cleaner, code-reviewer |
+| New Feature | /plan, /tdd, /code-review-quick, /verify | tdd-workflow, verification-loop | planner, tdd-guide, code-reviewer |
+| Bug Fix | /tdd, build-error-resolver, /verify | tdd-workflow | tdd-guide, build-error-resolver |
+| Refactor | /refactor-clean, /code-review-quick, /verify | verification-loop | refactor-cleaner, code-reviewer |
 | Research | /plan | search-first, iterative-retrieval | — |
-| Testing | /tdd, /e2e, /test-coverage | tdd-workflow, e2e-testing | tdd-guide, e2e-runner |
-| Review | /code-review | security-review | code-reviewer, security-reviewer |
-| Documentation | /update-docs, /update-codemaps | — | doc-updater |
+| Testing | /tdd, /e2e, /verify | tdd-workflow, e2e-testing | tdd-guide, e2e-runner |
+| Review | /code-review-quick | security-review | code-reviewer, security-reviewer |
+| Documentation | /update-docs, /update-docs | — | doc-updater |
 | Infrastructure | /plan, /verify | docker-patterns, deployment-patterns, database-migrations | architect |
 | Design (MEDIUM-HIGH) | /plan | — | planner, architect |
 | Design (EPIC) | — | blueprint (invoke as skill) | planner, architect |
@@ -178,7 +178,7 @@ For MEDIUM+ tasks, always start with /plan. For EPIC tasks, use blueprint skill.
 For tasks that exceed a single session, split into sequential prompts:
 - Prompt 1: Research + Plan (use search-first skill, then /plan)
 - Prompt 2-N: Implement one phase per prompt (each ends with /verify)
-- Final Prompt: Integration test + /code-review across all phases
+- Final Prompt: Integration test + /code-review-quick across all phases
 - Use /save-session and /resume-session to preserve context between sessions
 
 ---
@@ -230,13 +230,13 @@ A compact version for experienced ECC users. Vary by intent type:
 
 | Intent | Quick Pattern |
 |--------|--------------|
-| New Feature | `/plan [feature]. /tdd to implement. /code-review. /verify.` |
+| New Feature | `/plan [feature]. /tdd to implement. /code-review-quick. /verify.` |
 | Bug Fix | `/tdd — write failing test for [bug]. Fix to green. /verify.` |
-| Refactor | `/refactor-clean [scope]. /code-review. /verify.` |
+| Refactor | `/refactor-clean [scope]. /code-review-quick. /verify.` |
 | Research | `Use search-first skill for [topic]. /plan based on findings.` |
-| Testing | `/tdd [module]. /e2e for critical flows. /test-coverage.` |
-| Review | `/code-review. Then use security-reviewer agent.` |
-| Docs | `/update-docs. /update-codemaps.` |
+| Testing | `/tdd [module]. /e2e for critical flows. /verify.` |
+| Review | `/code-review-quick. Then use security-reviewer agent.` |
+| Docs | `/update-docs. /update-docs.` |
 | EPIC | `Use blueprint skill for "[objective]". Execute phases with /verify gates.` |
 
 ### Section 5: Enhancement Rationale
@@ -284,7 +284,7 @@ A compact version for experienced ECC users. Vary by intent type:
 1. /plan 先规划组件结构和认证流程，参考现有页面的模式
 2. /tdd 测试先行：编写登录表单的单元测试和认证流程的集成测试
 3. 实现登录页面和认证逻辑
-4. /code-review 审查实现
+4. /code-review-quick 审查实现
 5. /verify 验证所有测试通过且页面正常渲染
 
 安全要求：

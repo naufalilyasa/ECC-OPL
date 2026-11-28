@@ -1,13 +1,13 @@
 ---
 name: issue-review
-description: Review a GitHub issue the way /code-review reviews a PR. Fetches the issue with the gh CLI, checks the report against the current codebase, searches for duplicates and prior fixes, scores completeness, assigns severity, and writes a triage report plus a draft reply. Posting comments or labels is opt-in only. Use when the user asks to check, triage, validate, or review a GitHub issue.
+description: Review a GitHub issue the way /code-review-quick reviews a PR. Fetches the issue with the gh CLI, checks the report against the current codebase, searches for duplicates and prior fixes, scores completeness, assigns severity, and writes a triage report plus a draft reply. Posting comments or labels is opt-in only. Use when the user asks to check, triage, validate, or review a GitHub issue.
 metadata:
   origin: ECC
 ---
 
 # Issue Review
 
-Structured triage of a single GitHub issue: is it valid, is it a duplicate, is it already fixed, what is missing, how severe is it, and what should the maintainer reply. The counterpart of the PR mode in `/code-review`.
+Structured triage of a single GitHub issue: is it valid, is it a duplicate, is it already fixed, what is missing, how severe is it, and what should the maintainer reply. The counterpart of the PR mode in `/code-review-quick`.
 
 ## When to Activate
 
@@ -17,7 +17,7 @@ Structured triage of a single GitHub issue: is it valid, is it a duplicate, is i
 - The user asks whether an issue is a duplicate or whether it was already fixed
 - The user asks for a draft response to an issue
 
-Do not activate for pull requests. If the number resolves to a PR, stop and point to `/code-review`.
+Do not activate for pull requests. If the number resolves to a PR, stop and point to `/code-review-quick`.
 
 ## Untrusted Content Rule
 
@@ -288,7 +288,7 @@ When the decision is NEEDS-INFO, the draft reply lists exactly which template it
 ## Edge Cases
 
 - **No `gh` CLI or not authenticated**: stop and tell the user how to authenticate. Do not fall back to scraping the web page.
-- **Number resolves to a pull request**: stop and point to `/code-review <NUMBER>`.
+- **Number resolves to a pull request**: stop and point to `/code-review-quick <NUMBER>`.
 - **Very long threads**: read every comment, but summarize only the ones that change the facts. Note when a later comment supersedes the original report.
 - **Issue references private or external systems**: report what cannot be verified instead of guessing.
 - **No clean matching target checkout**: use exact target commit blobs through Git or explicitly bound `gh` requests for read-only source/history evidence. Worktree execution remains unverified; if exact target evidence is unavailable, use NEEDS-INFO and explain the limit.
@@ -308,6 +308,6 @@ When the decision is NEEDS-INFO, the draft reply lists exactly which template it
 
 ## Related
 
-- `/code-review`: the pull request counterpart with the same phase structure
+- `/code-review-quick`: the pull request counterpart with the same phase structure
 - `skills/github-ops/SKILL.md`: bulk triage, stale handling, and label conventions
 - `skills/project-flow-ops/SKILL.md`: moving a validated issue into an execution lane

@@ -28,7 +28,7 @@ Structural maintainability feedback for AI-assisted coding. Complements style/li
 - Before editing a **hotspot**, legacy module, or unfamiliar file
 - Before **commit** or **pull request** when you need a maintainability safeguard
 - After a large agent-written diff — verify Code Health did not regress
-- Pair with `verification-loop`, `tdd-workflow`, or `/quality-gate` as a structural check (not a replacement for tests/lint)
+- Pair with `verification-loop`, `tdd-workflow`, or `/verify` as a structural check (not a replacement for tests/lint)
 
 ## When to Activate
 
@@ -151,7 +151,7 @@ Drive-by cleanup across the module
 |------------------|----------------------|
 | `coding-standards` | Style/naming; Code Health = structure/complexity |
 | `plankton-code-quality` | Write-time lint/format; Code Health = pre/post edit structural gate |
-| `verification-loop` / `/quality-gate` | Add structural regression check before "done" |
+| `verification-loop` / `/verify` | Add structural regression check before "done" |
 | `security-review` | Security vs maintainability — use both when relevant |
 | `tdd-workflow` | Tests pass ≠ healthy design — check score after refactors |
 

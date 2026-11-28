@@ -26,7 +26,7 @@ never canonical ECC execution state — see [Authority](#authority) and
 
 | Condition | Use Instead |
 | --- | --- |
-| Work is coordinated through GitHub issues | the `epic-*` commands (`/epic-decompose`, `/epic-claim`, `/epic-sync`, …) |
+| Work is coordinated through GitHub issues | the `project-flow-ops` skill or the GitHub CLI |
 | Team already uses Jira, Linear, or Taiga | `project-flow-ops` or the matching MCP integration |
 | One-off task with no breakdown needed | just do it |
 | Architecture design first | the `architect` agent, then return here |
