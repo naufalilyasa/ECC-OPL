@@ -156,7 +156,8 @@ visual inputs. Pass them through unchanged.
 The Canvas serves a wrapper that frames the project dev server. The preview URL is
 stored only for `framework-native`; `standalone-html` never stores one. In-frame
 annotation in native mode needs the canvas dev-server adapter (Vite plugin
-`planCanvasAnnotations()` or the Blade include `vendor.ecc-plan-canvas.sdk`), added
+`planCanvasAnnotations()`, or `node scripts/plan-canvas.js vendor <app-dir>` plus the
+`vendor.ecc-plan-canvas.sdk` Blade include for Laravel/Inertia), added
 temporarily and reported; without it the toggle stays disabled and feedback is chat
 + verdict. If the dev server is down, report the real error — do not produce an HTML
 substitute.

@@ -439,7 +439,10 @@ For each section in the chosen order (or the single section specified by `--sect
      in-frame annotation, add the canvas dev-server adapter before opening the
      session — Vite: `planCanvasAnnotations()` from
      `scripts/lib/plan-canvas/adapters/vite.mjs` in `vite.config`; Laravel/Inertia:
-     `@include('vendor.ecc-plan-canvas.sdk')` in the root Blade layout. Without it
+     `node scripts/plan-canvas.js vendor <app-dir>` publishes the partial to
+     `resources/views/vendor/ecc-plan-canvas/sdk.blade.php`, then add
+     `@include('vendor.ecc-plan-canvas.sdk')` inside `<head>` of the root Blade layout
+     (it carries its own `@env(['local','development'])` guard). Without it
      the toggle stays disabled and feedback is chat + verdict. A failed dev server
      is reported as-is, never replaced by an HTML stand-in.
 2. **Approval Verdict:**

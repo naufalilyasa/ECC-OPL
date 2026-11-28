@@ -28,6 +28,7 @@ const {
   sessionKeyFor
 } = require('./lib/plan-canvas/sessions');
 const { openBrowser } = require('./lib/platform-launch');
+const { publishBladeAdapter } = require('./lib/plan-canvas/adapters/blade/publish');
 const {
   DEFAULT_HOST,
   createPlanCanvasServer,
@@ -67,6 +68,7 @@ function usage() {
     '  node scripts/plan-canvas.js pending              Show feedback queued for no listener',
     '  node scripts/plan-canvas.js typing <file>        Show a thinking/typing indicator in chat',
     '  node scripts/plan-canvas.js end <file>           End a session as the agent',
+'  node scripts/plan-canvas.js vendor <app-dir>    Publish the Laravel/Inertia Blade partial',
     '  node scripts/plan-canvas.js stop                 Shut down the canvas server',
     '  node scripts/plan-canvas.js server               Run the server in the foreground',
     '',
@@ -362,6 +364,13 @@ async function cmdTyping(file, args, { port }) {
 
 // Report feedback the human sent that no agent has picked up yet. Reads state
 // directly so it answers even when the server has idled out.
+function cmdVendor(appDir) {
+  if (!appDir) {
+    return { status: 'error', error: 'app-dir is required', next_step: 'node scripts/plan-canvas.js vendor ./my-laravel-app' };
+  }
+  return publishBladeAdapter(appDir);
+}
+
 function cmdPending({ stateDir }) {
   const store = createSessionStore({ stateDir });
   const waiting = store
@@ -446,6 +455,7 @@ async function main(argv = process.argv.slice(2)) {
     else if (command === 'pending') output(cmdPending(context));
     else if (command === 'typing') output(await cmdTyping(args[0], args, context));
     else if (command === 'end') output(await cmdEnd(args[0], context));
+    else if (command === 'vendor') output(cmdVendor(args[0]));
     else if (command === 'stop') output(await cmdStop(context));
     else if (command === 'server') await cmdServer(args, context);
     else {

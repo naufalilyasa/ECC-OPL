@@ -991,6 +991,43 @@ async function integrationCleanupTests(test) {
   });
 }
 
+async function bladeAdapterTests(test) {
+  const { publishBladeAdapter, RELATIVE_DEST, INCLUDE_BLOCK } = require('../../scripts/lib/plan-canvas/adapters/blade/publish');
+  const partial = fs.readFileSync(path.join(__dirname, '../../scripts/lib/plan-canvas/adapters/blade/sdk.blade.php'), 'utf8');
+
+  await test('vendor publishes the Blade partial into a Laravel app', () => {
+    const app = fs.mkdtempSync(path.join(os.tmpdir(), 'plan-canvas-blade-'));
+    try {
+      fs.writeFileSync(path.join(app, 'artisan'), '');
+
+      const first = publishBladeAdapter(app);
+      assert.strictEqual(first.status, 'created');
+      assert.strictEqual(first.path, path.join(app, RELATIVE_DEST));
+      assert.strictEqual(fs.readFileSync(first.path, 'utf8'), partial);
+      assert.strictEqual(first.include, INCLUDE_BLOCK);
+
+      // Re-running must refresh the partial, not create a second file.
+      const second = publishBladeAdapter(app);
+      assert.strictEqual(second.status, 'updated');
+      assert.strictEqual(second.path, first.path);
+    } finally {
+      fs.rmSync(app, { recursive: true, force: true });
+    }
+  });
+
+  await test('vendor refuses a directory that is not a Laravel app', () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'plan-canvas-not-laravel-'));
+    try {
+      const result = publishBladeAdapter(dir);
+      assert.strictEqual(result.status, 'error');
+      assert.match(result.error, /not a Laravel app/);
+      assert.strictEqual(fs.existsSync(path.join(dir, RELATIVE_DEST)), false);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+}
+
 async function main(suite = createTestRunner()) {
   console.log('\n=== Testing plan-canvas server ===\n');
 
@@ -998,6 +1035,7 @@ async function main(suite = createTestRunner()) {
   await artifactSecurityTests(test);
   await artifactRaceTests(test);
   await fixtureIsolationTests(test);
+  await bladeAdapterTests(test);
   await integrationCleanupTests(test);
   if (process.argv.includes('--artifact-security-only')) return;
 
