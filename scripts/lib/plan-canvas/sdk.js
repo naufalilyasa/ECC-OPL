@@ -394,7 +394,9 @@ function artifactSdkJs() {
     renderOverrides();
     editCurrent = null;
     post({ type: 'pc:override-state', records: [], redo: 0 });
-    requestAnimationFrame(() => requestAnimationFrame(() => {
+    const nextFrame = typeof requestAnimationFrame === 'function'
+      ? requestAnimationFrame : (fn) => setTimeout(fn, 16);
+    nextFrame(() => nextFrame(() => {
       editTargets.forEach((t, targetId) => {
         quietTargets.delete(targetId);
         if (t && t.el && t.el.getAttribute('data-ecc-edit') === targetId) t.el.removeAttribute('data-ecc-edit');

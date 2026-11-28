@@ -183,9 +183,9 @@ The `// hmr probe` line added during the HMR investigation was removed; the file
 ## Verification
 
 ```
-node tests/run-all.js plan-canvas   334 / 334 passed (16 files)
+node tests/run-all.js plan-canvas   338 / 338 passed (16 files)
 node tests/lib/plan-canvas-visual-edit-closure.test.js   9 / 9 passed
-node tests/lib/plan-canvas-capture.test.js               20 / 20 passed
+node tests/lib/plan-canvas-capture.test.js               22 / 22 passed
 node scripts/ci/validate-commands.js                     7 command files
 npm run command-registry:check                           up to date
 npm run catalog:check                                    72 agents / 7 commands / 380 skills
@@ -201,11 +201,40 @@ pass. The closure work item added a fifteenth file,
 authoritative figure is **313 / 313 (15 files)**. Only the last number is a
 measurement of the current tree.
 
-Phase 8 added `tests/lib/plan-canvas-capture.test.js` with 20 assertions, so the current figure is
-**334 / 334 (16 files)**. The capture assertions cover the viewport presets, state/theme
-declaration rules (undeclared → 409, `value: null` → 409), the batch bound, cancellation on an idle
-session, sha-verified attachment, the evidence path, and the drawer rendering; the browser runs
-behind them are listed in `evidence/phase8-capture-states.md`.
+Phase 8 added `tests/lib/plan-canvas-capture.test.js`, now 22 assertions after the review-run-3
+fixes, so the current figure is **338 / 338 (16 files)**. The capture assertions cover the viewport
+presets, state/theme declaration rules (undeclared → 409, `value: null` → 409), the batch bound,
+batch theme/mode rejection, the drawer's `batchBody` forwarding, the manifest-entry validator,
+`safeSlug` traversal rejection, cancellation on an idle session, sha-verified GET and attachment,
+a non-PNG / traversal refusal, the evidence path, and the drawer rendering; the browser runs behind
+them are listed in `evidence/phase8-capture-states.md`.
+
+### Review run 3 fixes
+
+`/code-review-quick` run 3 returned BLOCK with 4 CRITICAL, 8 HIGH, 8 MEDIUM and 4 LOW findings
+(`.ecc-opl/work-items/WI-20261128-004-plan-canvas-visual-edit-mode/review/2026-11-28-plan-canvas-visual-edit-mode-run3.md`).
+All were addressed:
+
+- **CRITICAL** — `safeSlug` no longer allows a `.`-only segment as a path segment and `within()`
+  bounds every write; capture GET/attach re-reads bytes through the confined sibling-asset reader,
+  requires the PNG magic and re-hashes against the manifest entry; `parsePreviewUrl` /
+  `previewUrlAllowed` confine the preview to loopback unless `ECC_CANVAS_ALLOW_REMOTE_PREVIEW=1`;
+  both POST capture routes require a JSON object and `renderCandidates` only accepts `EDIT_FIELDS`.
+- **HIGH** — navigation failure is a failed capture, not `about:blank`; draft replay reports matched
+  vs. missing selectors; batch validation rejects an undeclared theme (409) / unknown mode (400)
+  up front instead of dropping combos; a concurrent batch is a 409 and holders stop on
+  `endSession`/`close()`; `batchBody` keeps the selector and forwards theme/state; `failed`
+  reopens; the manifest write is temp-file + `renameSync`; `captureOne` decomposed into
+  `captureInContext`/`openPage`/`replayDraft`/`probeLimitations`/`shoot`/`persistCapture`.
+- **MEDIUM** — `captureRootFor` passes `session.workspace`; one shared Chromium per batch with a
+  fresh context per job; attach honours `session.sessionDir` within the workspace; `loadShots()`
+  surfaces non-2xx, `shotDownloadAll` guards re-entry, `reloadArtifact` rebuilds the state/theme
+  options; reset and stale-target handling keep the canvas selection consistent; the live bridge
+  reads the declared `stateParam` and `resetAll` guards `requestAnimationFrame`; initial SSE
+  presence includes `visualEdit`; `--review-meta` rejects a missing value or a non-object.
+- **LOW** — dead `allThemes` and unused destructures removed, duplicated manifest lookup
+  centralised in `findCapture`, empty `label`/non-string `value` sanitising tightened, temp
+  directories cleaned on exit.
 
 Closure suite, all passing:
 
@@ -243,8 +272,10 @@ Pre-existing, unrelated failures in this repo are unchanged and not caused by th
 - Verdict reconciliation. The **external** verdict is ARCHITECTURE ACCEPTED (the eleven closure
   items above are the follow-up). The **internal** quick review run 2 returned BLOCK on four HIGH
   findings; all four are fixed and re-proven in a browser
-  (`evidence/phase7-review2-high-fixes.md`). The review's MEDIUM and LOW items were not addressed,
-  so the internal verdict is "no CRITICAL, no HIGH, MEDIUM/LOW deferred" — not a clean pass.
+  (`evidence/phase7-review2-high-fixes.md`). Run 2's MEDIUM and LOW items were deferred at that
+  time; the later run 3 review re-raised them together with new CRITICAL/HIGH findings and all of
+  run 3's findings are now fixed (see "Review run 3 fixes"). The internal verdict for the current
+  tree is therefore clean on the plan-canvas suite, with the capture browser path unit-tested only.
 - The Plan Canvas session store is in-memory: restarting the canvas server discards sessions. This
   is why failed-submission retry was proven by mutating the session digest rather than killing the
   server.

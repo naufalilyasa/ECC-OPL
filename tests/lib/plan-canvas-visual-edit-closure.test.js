@@ -44,6 +44,8 @@ const DESIGN = sha('design-1');
 
 function tempStore() {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'pc-closure-'));
+  // The suite runs one store per case in the system temp dir; clean up on exit.
+  process.on('exit', () => { try { fs.rmSync(dir, { recursive: true, force: true }); } catch { /* best effort */ } });
   const artifact = path.join(dir, 'demo.plan.md');
   fs.writeFileSync(artifact, '# Plan\n');
   return createSessionStore({ stateDir: path.join(dir, 'state') });

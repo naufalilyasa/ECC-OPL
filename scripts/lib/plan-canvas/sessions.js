@@ -171,10 +171,14 @@ function sanitizePreviewMeta(value) {
   if (Array.isArray(app)) {
     const states = app
       .filter(s => s && typeof s.id === 'string' && s.id.length > 0 && s.id.length <= 40)
+      // A value must be a string, null (declared unavailable) or absent. An
+      // object or number is not a query value; dropping the entry is honest,
+      // coercing it to the id would claim a render the adapter never described.
+      .filter(s => s.value === undefined || s.value === null || typeof s.value === 'string')
       .slice(0, 12)
       .map(s => ({
         id: s.id,
-        label: typeof s.label === 'string' ? s.label.slice(0, 60) : s.id,
+        label: typeof s.label === 'string' && s.label.trim() ? s.label.slice(0, 60) : s.id,
         // An explicit null means "this state cannot be rendered here"; an
         // omitted value means the state id is the value the app expects.
         value: s.value === null ? null
@@ -444,7 +448,7 @@ function createSessionStore({ stateDir = resolveStateDir() } = {}) {
         // arrive. That is the only signal that the submitted edits rendered.
         const live = session.previewMeta || {};
         const visual = session.visualEdits;
-        if (visual && (visual.state === 'submitted' || visual.state === 'applying')
+        if (visual && (visual.state === 'submitted' || visual.state === 'applying' || visual.state === 'failed')
           && live.revisionDigest && live.revisionDigest !== (visual.submittedRevisionDigest || null)) {
           setVisualEdit(session, 'ready', { changeSetId: visual.changeSetId || null });
         }

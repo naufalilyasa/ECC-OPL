@@ -18,13 +18,15 @@ const {
   VIEWPORTS,
   MAX_BATCH,
   draftItemsFromPending,
+  isValidManifestEntry,
   readManifest,
   resolveEvidenceRoot,
+  safeSlug,
   urlWithReviewContext,
   viewportFor
 } = require('../../scripts/lib/plan-canvas/capture');
 const { createSessionStore } = require('../../scripts/lib/plan-canvas/sessions');
-const { renderCanvasHtml } = require('../../scripts/lib/plan-canvas/ui');
+const { renderCanvasHtml, canvasClientJs } = require('../../scripts/lib/plan-canvas/ui');
 const { createPlanCanvasServer } = require('../../scripts/lib/plan-canvas/server');
 
 let passed = 0;
@@ -35,9 +37,19 @@ async function test(name, fn) {
   catch (error) { console.log(`  FAIL ${name}\n    ${error.message.split('\n')[0]}`); failed += 1; }
 }
 
+const tempDirs = [];
 function tempDir() {
-  return fs.mkdtempSync(path.join(os.tmpdir(), 'pc-capture-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'pc-capture-'));
+  tempDirs.push(dir);
+  return dir;
 }
+// The suite creates one temp tree per case; leaving them behind fills the
+// system temp directory over repeated runs.
+process.on('exit', () => {
+  for (const dir of tempDirs) {
+    try { fs.rmSync(dir, { recursive: true, force: true }); } catch { /* best effort */ }
+  }
+});
 
 function request(base, method, pathname, body) {
   return new Promise((resolve, reject) => {
@@ -130,8 +142,30 @@ const HEX = n => String(n).repeat(64).slice(0, 64);
     assert.deepEqual(readManifest(path.join(tempDir(), 'none')), { captures: [] });
   });
 
+  await test('safeSlug cannot survive as a traversal segment', () => {
+    assert.equal(safeSlug('..', 'fallback'), 'fallback');
+    assert.equal(safeSlug('...', 'fallback'), 'fallback');
+    assert.equal(safeSlug('../..', 'fallback'), 'fallback');
+    assert.equal(safeSlug('a/../../b', 'fallback'), 'a-.-.-b');
+    assert.ok(!safeSlug('a/../../b', 'fallback').includes('..'));
+    assert.ok(!safeSlug('..', 'fallback').includes('.'));
+  });
+
+  await test('a manifest entry must be self-consistent before it is used', () => {
+    const sha = 'a'.repeat(64);
+    const good = { id: 'cap-' + sha.slice(0, 12), sha256: sha, relPath: 's/r1/v/x.png' };
+    assert.equal(isValidManifestEntry(good), true);
+    assert.equal(isValidManifestEntry({ ...good, id: 'cap-000000000000' }), false, 'id must address the hash');
+    assert.equal(isValidManifestEntry({ ...good, sha256: 'zz' }), false);
+    assert.equal(isValidManifestEntry({ ...good, relPath: '/etc/passwd' }), false);
+    assert.equal(isValidManifestEntry({ ...good, relPath: '../escape.png' }), false);
+    assert.equal(isValidManifestEntry({ ...good, relPath: 'a/../../escape.png' }), false);
+  });
+
   // --- HTTP contract -------------------------------------------------------
-  const store = createSessionStore({ dir: tempDir() });
+  // stateDir, not dir: a wrong option name silently writes the real
+  // ~/.claude/plan-canvas/sessions.json and pollutes the owner's sessions.
+  const store = createSessionStore({ stateDir: tempDir() });
   const canvas = createPlanCanvasServer({ store, idleTimeoutMs: 0 });
   const { port } = await canvas.listen(0);
   const base = `http://127.0.0.1:${port}`;
@@ -224,11 +258,31 @@ const HEX = n => String(n).repeat(64).slice(0, 64);
     assert.match(res.json.error, new RegExp(String(MAX_BATCH)));
   });
 
+  await test('batch refuses an undeclared theme and an unknown mode up front', async () => {
+    const theme = await request(base, 'POST', `/api/session/${native.key}/capture-batch`, {
+      viewports: ['desktop-1440'], themes: ['neon']
+    });
+    assert.equal(theme.status, 409, 'an undeclared theme is a refusal, not a silent default');
+    const mode = await request(base, 'POST', `/api/session/${native.key}/capture-batch`, {
+      viewports: ['desktop-1440'], modes: ['cropped']
+    });
+    assert.equal(mode.status, 400);
+    const body = await request(base, 'POST', `/api/session/${native.key}/capture-batch`, null);
+    assert.equal(body.status, 400, 'a non-object body is refused before it is read');
+  });
+
+  await test('the drawer batch forwards theme, state and the element selector', () => {
+    const js = canvasClientJs();
+    assert.match(js, /body\.themes = themes/, 'theme reaches the batch');
+    assert.match(js, /body\.states = states/, 'the single selection reaches the batch');
+    assert.match(js, /const themes = extra\.themes/, 'extra.themes is honoured');
+    assert.ok(!/delete body\.selector/.test(js), 'element mode keeps its selector');
+  });
   await test('the capture list starts empty and reports its root', async () => {
     const res = await request(base, 'GET', `/api/session/${native.key}/captures`);
     assert.equal(res.status, 200);
     assert.deepEqual(res.json.captures, []);
-    assert.match(res.json.root, /evidence\/design\/captures$/);
+    assert.ok(res.json.root.endsWith(path.join('evidence', 'design', 'captures')));
   });
 
   await test('cancelling an idle session reports nothing to cancel', async () => {
@@ -258,20 +312,50 @@ const HEX = n => String(n).repeat(64).slice(0, 64);
     const png = Buffer.from('89504e470d0a1a0a0000000d49484452000000010000000108060000001f15c489', 'hex');
     const file = path.join(captures, 'x.png');
     fs.writeFileSync(file, png);
+    const sha = require('crypto').createHash('sha256').update(png).digest('hex');
+    const id = 'cap-' + sha.slice(0, 12);
     fs.writeFileSync(path.join(root, 'evidence', 'design', 'captures', 'manifest.json'), JSON.stringify({
-      captures: [{ id: 'cap-111111111111', file, sha256: require('crypto').createHash('sha256').update(png).digest('hex'), mode: 'viewport' }]
+      captures: [{
+        id,
+        sha256: sha,
+        relPath: path.join('s', 'r1', 'desktop-1440', 'x.png'),
+        mode: 'viewport'
+      }]
     }));
 
-    const ok = await request(base, 'POST', `/api/session/${session.key}/captures/cap-111111111111/attach`);
+    const ok = await request(base, 'POST', `/api/session/${session.key}/captures/${id}/attach`);
     assert.equal(ok.status, 200);
     assert.equal(ok.json.ok, true);
     const stored = path.join(root, 'plan', ok.json.files[0]);
     assert.ok(fs.existsSync(stored), 'attachment lands beside the plan file');
 
+    const served = await request(base, 'GET', `/api/session/${session.key}/captures/${id}`);
+    assert.equal(served.status, 200);
+    assert.equal(served.headers['x-content-type-options'], 'nosniff');
+    assert.equal(served.headers['content-type'], 'image/png');
+
     // A file that no longer hashes to its manifest pointer must not be attached.
     fs.writeFileSync(file, Buffer.from('tampered'));
-    const bad = await request(base, 'POST', `/api/session/${session.key}/captures/cap-111111111111/attach`);
+    const bad = await request(base, 'POST', `/api/session/${session.key}/captures/${id}/attach`);
     assert.equal(bad.status, 409);
+
+    // A manifest entry cannot point outside the capture root, and a file that
+    // is not a PNG is refused even when its hash matches.
+    const outside = path.join(tempDir(), 'escape.png');
+    fs.writeFileSync(outside, png);
+    const sha2 = require('crypto').createHash('sha256').update('notapng').digest('hex');
+    const notPng = Buffer.from('notapng');
+    fs.writeFileSync(file, notPng);
+    fs.writeFileSync(path.join(root, 'evidence', 'design', 'captures', 'manifest.json'), JSON.stringify({
+      captures: [
+        { id, sha256: sha2, relPath: path.join('..', '..', '..', '..', 'escape.png'), mode: 'viewport' },
+        { id: 'cap-' + sha2.slice(0, 12), sha256: sha2, relPath: path.join('s', 'r1', 'desktop-1440', 'x.png'), mode: 'viewport' }
+      ]
+    }));
+    const traversal = await request(base, 'GET', `/api/session/${session.key}/captures/${id}`);
+    assert.equal(traversal.status, 404);
+    const swapped = await request(base, 'GET', `/api/session/${session.key}/captures/cap-${sha2.slice(0, 12)}`);
+    assert.equal(swapped.status, 409, 'a hash-matching non-PNG is still refused');
   });
 
   await test('the drawer offers only declared states and shows the unavailable one disabled', () => {

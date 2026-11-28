@@ -256,16 +256,21 @@ async function cmdOpen(file, args, { stateDir, port }) {
   // under which query parameter, so the Canvas never invents a mechanism.
   const reviewMetaFile = valueAfter(args, '--review-meta');
   let reviewMeta = {};
-  if (reviewMetaFile) {
+  if (args.includes('--review-meta')) {
+    // A flag with no value or a JSON array would otherwise be accepted as "no
+    // declared states", and the canvas would refuse every state at capture time
+    // with no hint that the declaration was never read.
+    if (!reviewMetaFile) throw new Error('--review-meta requires a JSON file path');
     const parsed = JSON.parse(fs.readFileSync(path.resolve(reviewMetaFile), 'utf8'));
-    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-      reviewMeta = {
-        ...(typeof parsed.stateParam === 'string' ? { stateParam: parsed.stateParam } : {}),
-        ...(typeof parsed.themeParam === 'string' ? { themeParam: parsed.themeParam } : {}),
-        ...(Array.isArray(parsed.states) ? { states: parsed.states } : {}),
-        ...(Array.isArray(parsed.themes) ? { themes: parsed.themes } : {})
-      };
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+      throw new Error('--review-meta must contain a JSON object');
     }
+    reviewMeta = {
+      ...(typeof parsed.stateParam === 'string' ? { stateParam: parsed.stateParam } : {}),
+      ...(typeof parsed.themeParam === 'string' ? { themeParam: parsed.themeParam } : {}),
+      ...(Array.isArray(parsed.states) ? { states: parsed.states } : {}),
+      ...(Array.isArray(parsed.themes) ? { themes: parsed.themes } : {})
+    };
   }
   const meta = {
     ...(section ? { section } : {}),

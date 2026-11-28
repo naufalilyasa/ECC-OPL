@@ -30,6 +30,7 @@ const {
   captureBatch,
   captureOne,
   draftItemsFromPending,
+  isValidManifestEntry,
   readManifest,
   resolveEvidenceRoot,
   urlWithReviewContext
@@ -174,6 +175,9 @@ function sendHtml(res, statusCode, html, { csp = true } = {}) {
 // Sibling assets have an explicit 64 MiB resource limit (413 above it), separate
 // from request-body limits. Reads use at most the sampled size plus one sentinel.
 const MAX_ARTIFACT_ASSET_BYTES = 64 * 1024 * 1024;
+// Any bytes served as a capture must start like a PNG; the manifest hash alone
+// would still let a symlink swap in an arbitrary same-length file.
+const CAPTURE_PNG_MAGIC = Buffer.from('89504e470d0a1a0a', 'hex');
 
 function assetReadError(code = 'EARTIFACT_UNSAFE') {
   return Object.assign(new Error('Artifact sibling read refused'), { code });
@@ -454,6 +458,10 @@ function createPlanCanvasServer({
     const session = store.end(key, endedBy);
     if (!session) return null;
     clearAgentActivity(key);
+    // An in-flight batch for an ended session has nowhere to write: stop it
+    // rather than letting it finish against a dead capture root.
+    const holder = captureCancels.get(key);
+    if (holder) { holder.stop = true; captureCancels.delete(key); }
     wake.emit(`wake:${key}`);
     broadcast(key, 'ended', { endedBy: session.endedBy });
     broadcastPresence(key);
@@ -481,7 +489,39 @@ function createPlanCanvasServer({
   const captureCancels = new Map();
 
   function captureRootFor(session) {
-    return resolveEvidenceRoot({ planFile: session.file });
+    return resolveEvidenceRoot({ planFile: session.file, workspace: session.workspace });
+  }
+
+  // Capture bytes are read through the same confined sibling-asset reader the
+  // artifact attachments use. A manifest entry is data, never a path grant, so
+  // `file` is ignored and the bytes are re-hashed before they are served.
+  function readCaptureBytes(root, entry) {
+    if (!isValidManifestEntry(entry)) return { status: 404, error: 'capture not found' };
+    let data;
+    try {
+      ({ data } = readSiblingAsset(root, path.resolve(root, entry.relPath)));
+    } catch (error) {
+      return error.code === 'EARTIFACT_TOO_LARGE'
+        ? { status: 413, error: 'capture exceeds the asset size limit' }
+        : { status: 404, error: 'capture file missing' };
+    }
+    if (data.length < CAPTURE_PNG_MAGIC.length || !data.subarray(0, CAPTURE_PNG_MAGIC.length).equals(CAPTURE_PNG_MAGIC)) {
+      return { status: 409, error: 'capture file is not a PNG' };
+    }
+    if (crypto.createHash('sha256').update(data).digest('hex') !== entry.sha256) {
+      return { status: 409, error: 'capture file no longer matches its manifest entry' };
+    }
+    return { ok: true, data };
+  }
+
+  function jsonObject(body) {
+    return Boolean(body) && typeof body === 'object' && !Array.isArray(body);
+  }
+
+  // Both the byte route and the attach route address a capture the same way.
+  function findCapture(root, id) {
+    const entry = readManifest(root).captures.find(c => c.id === id);
+    return entry ? { root, entry } : null;
   }
 
   function preparedUrl(session, state, theme) {
@@ -549,13 +589,33 @@ function createPlanCanvasServer({
   // Batch is owner-triggered only: every combination is explicit in the body,
   // bounded, and the original preview is re-selected afterwards by the client.
   function expandBatch(session, body) {
-    const viewports = Array.isArray(body.viewports) && body.viewports.length
-      ? body.viewports : ['desktop-1440'];
-    const states = Array.isArray(body.states) && body.states.length ? body.states : [null];
-    const themes = Array.isArray(body.themes) && body.themes.length ? body.themes : [null];
-    const modes = Array.isArray(body.modes) && body.modes.length ? body.modes : ['viewport'];
+    const axis = value => (Array.isArray(value) ? value.filter(v => typeof v === 'string') : []);
+    const pick = (value, fallback) => { const list = axis(value); return list.length ? list : fallback; };
+    // Bound each axis before iterating it: the product check below comes too
+    // late for a request that sends a hundred thousand entries per axis.
+    for (const list of [body.viewports, body.states, body.themes, body.modes]) {
+      if (Array.isArray(list) && list.length > MAX_BATCH) {
+        return { status: 400, error: `batch list exceeds the ${MAX_BATCH} capture limit` };
+      }
+    }
+    const viewports = pick(body.viewports, ['desktop-1440']);
+    const states = pick(body.states, [null]);
+    const themes = pick(body.themes, [null]);
+    const modes = pick(body.modes, ['viewport']);
     for (const v of viewports) {
       if (!VIEWPORTS.some(p => p.id === v)) return { status: 400, error: `unknown viewport: ${v}` };
+    }
+    for (const m of modes) {
+      if (!['viewport', 'full', 'element'].includes(m)) return { status: 400, error: `unknown capture mode: ${m}` };
+    }
+    // Theme and element preconditions are checked once for the whole grid.
+    // Checking them per item and dropping the failures silently is how a batch
+    // came back "complete" while most of the requested combinations were gone.
+    const declaredThemes = (session.previewMeta && session.previewMeta.themes) || null;
+    for (const theme of themes) {
+      if (!theme) continue;
+      if (!declaredThemes) return { status: 409, error: `preview did not declare themes; cannot render "${theme}"` };
+      if (!declaredThemes.includes(theme)) return { status: 409, error: `theme "${theme}" is not declared by this preview` };
     }
     for (const s of states) {
       const check = stateAvailability(session, s);
@@ -569,16 +629,21 @@ function createPlanCanvasServer({
       return { status: 400, error: 'element capture requires a selector' };
     }
     const items = [];
-    viewports.forEach(viewport => states.forEach(state => themes.forEach(theme => modes.forEach(mode => {
-      const prepared = prepareCapture(session, {
-        mode, viewport, state, theme, source: body.source,
-        draftOverrides: body.draftOverrides,
-        selector: body.selector
-      });
-      if (!prepared.error) {
-        items.push(Object.assign({ combo: { viewport, state, theme, mode } }, prepared.options));
+    for (const viewport of viewports) {
+      for (const state of states) {
+        for (const theme of themes) {
+          for (const mode of modes) {
+            const prepared = prepareCapture(session, {
+              mode, viewport, state, theme, source: body.source,
+              draftOverrides: body.draftOverrides,
+              selector: body.selector
+            });
+            if (prepared.error) return { status: prepared.status || 400, error: prepared.error };
+            items.push(Object.assign({ combo: { viewport, state, theme, mode } }, prepared.options));
+          }
+        }
       }
-    }))));
+    }
     return { items };
   }
 
@@ -653,6 +718,7 @@ function createPlanCanvasServer({
       const guard = captureSessionGuard(session);
       if (guard) return sendJson(res, guard.status, { error: guard.error });
       const body = await readJsonBody(req);
+      if (!jsonObject(body)) return sendJson(res, 400, { error: 'request body must be a JSON object' });
       const prepared = prepareCapture(session, body);
       if (prepared.error) return sendJson(res, prepared.status, { error: prepared.error });
       const result = await captureOne(prepared.options);
@@ -661,10 +727,18 @@ function createPlanCanvasServer({
 
     const batchMatch = pathname.match(/^\/api\/session\/([a-f0-9]{12})\/capture-batch$/);
     if (req.method === 'POST' && batchMatch) {
-      const session = store.get(batchMatch[1]);
+      const key = batchMatch[1];
+      const session = store.get(key);
       const guard = captureSessionGuard(session);
       if (guard) return sendJson(res, guard.status, { error: guard.error });
+      // One owner-triggered batch per session: two concurrent batches would
+      // write the same manifest from two processes and interleave their
+      // cancellation holders.
+      if (captureCancels.has(session.key)) {
+        return sendJson(res, 409, { error: 'a capture batch is already running for this session' });
+      }
       const body = await readJsonBody(req);
+      if (!jsonObject(body)) return sendJson(res, 400, { error: 'request body must be a JSON object' });
       const combos = expandBatch(session, body);
       if (combos.error) return sendJson(res, combos.status, { error: combos.error });
       const holder = { stop: false };
@@ -673,7 +747,7 @@ function createPlanCanvasServer({
         const result = await captureBatch(combos.items, () => holder.stop);
         return sendJson(res, 200, result);
       } finally {
-        captureCancels.delete(session.key);
+        if (captureCancels.get(session.key) === holder) captureCancels.delete(session.key);
       }
     }
 
@@ -709,20 +783,17 @@ function createPlanCanvasServer({
       const session = store.get(fileMatch[1]);
       const guard = captureSessionGuard(session);
       if (guard) return sendJson(res, guard.status, { error: guard.error });
-      const manifest = readManifest(captureRootFor(session));
-      const entry = manifest.captures.find(c => c.id === fileMatch[2]);
-      if (!entry) return sendJson(res, 404, { error: 'capture not found' });
-      // Content-addressed: the stored bytes must still hash to the pointer.
-      try {
-        const bytes = fs.readFileSync(entry.file);
-        if (crypto.createHash('sha256').update(bytes).digest('hex') !== entry.sha256) {
-          return sendJson(res, 409, { error: 'capture file no longer matches its manifest entry' });
-        }
-        res.writeHead(200, { 'content-type': 'image/png', 'cache-control': 'no-store' });
-        return res.end(bytes);
-      } catch {
-        return sendJson(res, 404, { error: 'capture file missing' });
-      }
+      const found = findCapture(captureRootFor(session), fileMatch[2]);
+      if (!found) return sendJson(res, 404, { error: 'capture not found' });
+      const read = readCaptureBytes(found.root, found.entry);
+      if (!read.ok) return sendJson(res, read.status, { error: read.error });
+      res.writeHead(200, {
+        'content-type': 'image/png',
+        'content-length': String(read.data.length),
+        'cache-control': 'no-store',
+        'x-content-type-options': 'nosniff'
+      });
+      return res.end(read.data);
     }
 
     const attachMatch = pathname.match(/^\/api\/session\/([a-f0-9]{12})\/captures\/(cap-[a-f0-9]{12})\/attach$/);
@@ -730,17 +801,21 @@ function createPlanCanvasServer({
       const session = store.get(attachMatch[1]);
       const guard = captureSessionGuard(session);
       if (guard) return sendJson(res, guard.status, { error: guard.error });
-      const manifest = readManifest(captureRootFor(session));
-      const entry = manifest.captures.find(c => c.id === attachMatch[2]);
-      if (!entry) return sendJson(res, 404, { error: 'capture not found' });
+      const found = findCapture(captureRootFor(session), attachMatch[2]);
+      if (!found) return sendJson(res, 404, { error: 'capture not found' });
+      const read = readCaptureBytes(found.root, found.entry);
+      if (!read.ok) return sendJson(res, read.status, { error: read.error });
+      // Honour the workspace-relative attachment directory the agent chose for
+      // this session, the way POST /api/attachments does.
+      const workspace = path.resolve(session.workspace || path.dirname(session.file));
+      const target = session.sessionDir ? path.resolve(session.sessionDir) : path.dirname(session.file);
+      if (target !== workspace && !target.startsWith(workspace + path.sep)) {
+        return sendJson(res, 403, { error: 'sessionDir must be within workspace' });
+      }
       // Reuse the Canvas V2 attachment transport so the agent picks the file up
       // from the same place every other conversation attachment lands.
       try {
-        const bytes = fs.readFileSync(entry.file);
-        if (crypto.createHash('sha256').update(bytes).digest('hex') !== entry.sha256) {
-          return sendJson(res, 409, { error: 'capture file no longer matches its manifest entry' });
-        }
-        const files = persistAttachments(path.dirname(session.file), [{ mime: 'image/png', data: bytes }]);
+        const files = persistAttachments(target, [{ mime: 'image/png', data: read.data }]);
         return sendJson(res, 200, { ok: true, files });
       } catch (error) {
         return sendJson(res, 400, { error: error.code || error.message });
@@ -943,7 +1018,7 @@ function createPlanCanvasServer({
       connection: 'keep-alive'
     });
     res.write(`event: chat-sync\ndata: ${JSON.stringify({ chat: session.chat })}\n\n`);
-    res.write(`event: presence\ndata: ${JSON.stringify({ state: presenceFor(key), revision: currentRevision(key) })}\n\n`);
+    res.write(`event: presence\ndata: ${JSON.stringify({ state: presenceFor(key), revision: currentRevision(key), visualEdit: visualEditFor(key) })}\n\n`);
     if (!sseClients.has(key)) sseClients.set(key, new Set());
     sseClients.get(key).add(res);
     lastPresence.set(key, presenceFor(key));
@@ -982,7 +1057,7 @@ function createPlanCanvasServer({
   iframe{flex:1;width:100%;border:0;background:#fff}
   .hint{padding:5px 12px;font-size:11px;color:#6f7a8d;border-top:1px solid #262b36}
 </style></head><body>
-<iframe id="app-frame" src="${escapeHtml(session.previewUrl)}" title="Live project preview"
+<iframe id="app-frame" src="${escapeHtml(session.previewUrl)}" title="Live project preview" data-state-param="${escapeHtml(meta.stateParam || 'state')}"
   sandbox="allow-scripts allow-forms allow-popups allow-same-origin"></iframe>
 <div class="hint">Blank frame? The project dev server is not running — start it, then reload.</div>
 <script src="/live-bridge.js"></script>
@@ -1133,6 +1208,8 @@ function createPlanCanvasServer({
     presenceSweep = null;
     lastPresence.clear();
     for (const key of watchers.keys()) unwatchSession(key);
+    for (const holder of captureCancels.values()) holder.stop = true;
+    captureCancels.clear();
     for (const clients of sseClients.values()) {
       for (const client of clients) client.end();
     }

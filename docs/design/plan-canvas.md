@@ -225,6 +225,11 @@ the default: a screenshot that claims `error` must actually be the error state.
 The app renders each state itself (a `?scenario=` query read in React, Vue or Inertia). The canvas
 never rewrites the DOM, duplicates the markup, or fakes data or permissions.
 
+`--review-meta` must name a JSON object; a missing value or a JSON array is rejected before the
+session opens. The preview URL is confined to loopback unless `ECC_CANVAS_ALLOW_REMOTE_PREVIEW=1`
+is set, because the host browser would otherwise render an internal address and serve the pixels
+back out.
+
 ### Two sources
 
 - `source-rendered` (default) captures the reviewed revision as it renders.

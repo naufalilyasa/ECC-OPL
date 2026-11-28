@@ -702,6 +702,7 @@ function canvasClientJs() {
         boot.previewMode = current.previewMode || null;
         boot.previewMeta = current.previewMeta || null;
         checkStaleRevision((current.previewMeta || {}).revision);
+        if (typeof window.__pcRefreshShotOptions === 'function') window.__pcRefreshShotOptions();
       }
     } catch { /* server gone; the iframe reload already happened */ }
   }
@@ -857,11 +858,19 @@ function captureClientJs() {
     function batchBody(extra) {
       const body = reviewBody();
       if (body.error) return body;
-      delete body.selector;
+      // A batch sends the grid, not the single-shot fields. The selection is
+      // kept: an element batch is meaningless without it.
+      const theme = body.theme;
+      const state = body.state;
       delete body.viewport;
+      delete body.theme;
+      delete body.state;
       body.modes = [body.mode];
       body.viewports = extra.viewports;
-      if (extra.states) body.states = extra.states;
+      const themes = extra.themes && extra.themes.length ? extra.themes : (theme ? [theme] : []);
+      if (themes.length) body.themes = themes;
+      const states = extra.states && extra.states.length ? extra.states : (state ? [state] : []);
+      if (states.length) body.states = states;
       return body;
     }
 
@@ -895,7 +904,6 @@ function captureClientJs() {
     const allViewports = () => Array.from($('shotViewport').options).map(o => o.value);
     const availableStates = () => Array.from($('shotState').options)
       .filter(o => !o.disabled).map(o => o.value).filter(Boolean);
-    const allThemes = () => Array.from($('shotTheme').options).map(o => o.value).filter(Boolean);
 
     $('shotOne').addEventListener('click', captureOne);
     $('shotAllVp').addEventListener('click', () => {
@@ -966,6 +974,7 @@ function captureClientJs() {
       try {
         const res = await fetch(base + '/captures');
         const data = await res.json().catch(() => ({}));
+        if (!res.ok) return setShotStatus(data.error || ('Could not read captures: ' + res.status), true);
         listEl.textContent = '';
         lastShots = data.captures || [];
         const items = lastShots.slice().reverse();
@@ -979,22 +988,61 @@ function captureClientJs() {
       } catch { setShotStatus('Could not read the capture manifest.', true); }
     }
 
+    // A reopened preview can declare a different state/theme set. The options
+    // were rendered server-side at page load, so they are rebuilt here rather
+    // than offering a state the server will now refuse.
+    function refreshShotOptions() {
+      const meta = boot.previewMeta || {};
+      const fill = (id, entries, blank) => {
+        const sel = $(id);
+        if (!sel) return;
+        sel.textContent = '';
+        const def = document.createElement('option');
+        def.value = '';
+        def.textContent = blank;
+        sel.appendChild(def);
+        entries.forEach(entry => {
+          const opt = document.createElement('option');
+          opt.value = entry.value;
+          opt.textContent = entry.label;
+          if (entry.disabled) opt.disabled = true;
+          sel.appendChild(opt);
+        });
+      };
+      fill('shotState', (Array.isArray(meta.states) ? meta.states : []).map(s => ({
+        value: s.id,
+        label: s.value === null ? s.label + ' (unavailable)' : s.label,
+        disabled: s.value === null
+      })), 'Default render');
+      fill('shotTheme', (Array.isArray(meta.themes) ? meta.themes : []).map(t => ({ value: t, label: t })), 'Current theme');
+    }
+    // captureClientJs and canvasClientJs are separate scripts; the reload path
+    // lives in the second one and reaches the rebuild through this handle.
+    window.__pcRefreshShotOptions = refreshShotOptions;
+
     // Browsers rate-limit programmatic downloads, so the batch is spaced out and
     // the count is reported as each file is handed to the browser.
+    let downloadRunning = false;
     $('shotDownloadAll').addEventListener('click', async () => {
-      if (!lastShots.length) { await loadShots(); }
-      const shots = lastShots.slice();
-      if (!shots.length) return setShotStatus('No captures to download yet.', true);
-      setShotStatus('Downloading ' + shots.length + ' file(s)...');
-      for (let i = 0; i < shots.length; i += 1) {
-        const a = document.createElement('a');
-        a.href = shots[i].href;
-        a.download = shots[i].id + '.png';
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        await new Promise(r => setTimeout(r, 400));
-        if (i === shots.length - 1) setShotStatus('Downloaded ' + shots.length + ' file(s)');
+      if (downloadRunning) return;
+      downloadRunning = true;
+      try {
+        if (!lastShots.length) { await loadShots(); }
+        const shots = lastShots.slice();
+        if (!shots.length) return setShotStatus('No captures to download yet.', true);
+        setShotStatus('Downloading ' + shots.length + ' file(s)...');
+        for (let i = 0; i < shots.length; i += 1) {
+          const a = document.createElement('a');
+          a.href = shots[i].href;
+          a.download = shots[i].id + '.png';
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          await new Promise(r => setTimeout(r, 400));
+          if (i === shots.length - 1) setShotStatus('Downloaded ' + shots.length + ' file(s)');
+        }
+      } finally {
+        downloadRunning = false;
       }
     });
   }
@@ -1010,10 +1058,23 @@ function liveBridgeJs() {
   const frame = document.getElementById('app-frame');
   if (!frame || window.parent === window) return;
   const ours = msg => Boolean(msg) && typeof msg.type === 'string' && msg.type.indexOf('pc:') === 0;
+  // A preview that keys its state off its own parameter name (scenario, view,
+  // ...) does not report a state by default. The wrapper knows the declared
+  // name and the URL the app was opened with, so the selection carries it.
+  const stateParam = frame.getAttribute('data-state-param') || 'state';
+  function withState(msg) {
+    if (msg.type !== 'pc:select' || !msg.context || msg.context.state) return msg;
+    try {
+      const src = new URL(frame.getAttribute('src'), window.location.href);
+      const value = src.searchParams.get(stateParam);
+      if (value) msg.context.state = value;
+    } catch { /* unparsable src */ }
+    return msg;
+  }
 
   window.addEventListener('message', e => {
     if (e.source === frame.contentWindow) {
-      if (ours(e.data)) window.parent.postMessage(e.data, '*');
+      if (ours(e.data)) window.parent.postMessage(withState(e.data), '*');
       return;
     }
     if (e.source !== window.parent || !ours(e.data)) return;

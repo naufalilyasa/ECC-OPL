@@ -295,6 +295,9 @@ function editModeClientJs() {
       bodyEl.appendChild(advanced);
     }
     function renderCandidates(msg) {
+      // msg.prop reaches a CSS attribute selector below; anything the field
+      // list does not declare has no row and must not be interpolated.
+      if (!EDIT_FIELDS.some(f => f.prop === msg.prop)) return;
       const row = rows.get(msg.prop);
       const chips = row && row.parentNode
         ? row.parentNode.querySelector('.edit-chips[data-prop="' + msg.prop + '"]')
@@ -587,7 +590,12 @@ function editModeClientJs() {
           editPending = editPending.filter(r => r.targetId !== id);
           dropped += before - editPending.length;
         });
-        if (editTarget && staleTargets.has(editTarget.targetId)) renderTarget();
+        if (editTarget && staleTargets.has(editTarget.targetId)) {
+          // The element is gone; the canvas-wide selection must not keep
+          // pointing at it or an element capture targets a dead selector.
+          window.__pcSelectedTarget = null;
+          renderTarget();
+        }
         if (dropped) {
           renderList();
           setStatus(dropped + ' edit' + (dropped === 1 ? '' : 's') + ' for replaced elements were dropped. Reselect and re-apply them.', true);
@@ -661,7 +669,8 @@ function editModeClientJs() {
       editApplied.clear();
       editTokens.clear();
       editFrozen = null;
-      window.__pcSelectedTarget = null;
+      // Reset clears the overrides, not the selection: the inspector is still
+      // pointing at the same element and an element capture must keep working.
       renderList();
       if (editTarget) postToFrame({ type: 'pc:probe', targetId: editTarget.targetId, props: EDIT_FIELDS.map(f => f.prop) });
     });
