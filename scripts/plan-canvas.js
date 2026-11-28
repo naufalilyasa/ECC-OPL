@@ -84,6 +84,7 @@ function usage() {
     '         --revision-digest <sha256>  Digest of the previewed revision (required for framework-native)',
     '         --design-digest <sha256>    Digest of the approved design (required for framework-native)',
     '         --data-mode <mode>          fixture | production — what data the preview renders',
+    '         --review-meta <file.json>   Content states, themes and their parameter names (merged into previewMeta)',
     '         --framework <name>          Framework label shown in the Canvas, e.g. react-vite',
     '         --section <slug>      Section label shown in the canvas mode chip',
     '         --revision <rev>      Revision label shown in the canvas mode chip',
@@ -250,13 +251,30 @@ async function cmdOpen(file, args, { stateDir, port }) {
   const designDigest = valueAfter(args, '--design-digest');
   const dataMode = valueAfter(args, '--data-mode');
   const framework = valueAfter(args, '--framework');
+  // Declared review context lives in one small file: it is the adapter's own
+  // description of which states and themes the preview can actually render and
+  // under which query parameter, so the Canvas never invents a mechanism.
+  const reviewMetaFile = valueAfter(args, '--review-meta');
+  let reviewMeta = {};
+  if (reviewMetaFile) {
+    const parsed = JSON.parse(fs.readFileSync(path.resolve(reviewMetaFile), 'utf8'));
+    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+      reviewMeta = {
+        ...(typeof parsed.stateParam === 'string' ? { stateParam: parsed.stateParam } : {}),
+        ...(typeof parsed.themeParam === 'string' ? { themeParam: parsed.themeParam } : {}),
+        ...(Array.isArray(parsed.states) ? { states: parsed.states } : {}),
+        ...(Array.isArray(parsed.themes) ? { themes: parsed.themes } : {})
+      };
+    }
+  }
   const meta = {
     ...(section ? { section } : {}),
     ...(revision ? { revision } : {}),
     ...(revisionDigest ? { revisionDigest } : {}),
     ...(designDigest ? { designDigest } : {}),
     ...(dataMode ? { dataMode } : {}),
-    ...(framework ? { framework } : {})
+    ...(framework ? { framework } : {}),
+    ...reviewMeta
   };
   if (previewMode === 'framework-native') {
     // Without the full identity the Canvas cannot bind the approval to what the

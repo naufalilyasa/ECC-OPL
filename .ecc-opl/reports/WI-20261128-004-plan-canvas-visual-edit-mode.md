@@ -1,7 +1,7 @@
 # WI-20261128-004 — Plan Canvas framework-native visual edit mode
 
 deliveryStatus: COMPLETED_WITH_LIMITATIONS
-verificationStatus: PARTIAL (real browser runs on React/Vite, Vue/Vite, Laravel+Inertia, a two-instance shared-component page and a two-instance real React component; Svelte/Next/Nuxt/Angular and an Antigravity CLI canvas runtime unverified)
+verificationStatus: PARTIAL (real browser runs on React/Vite, Vue/Vite, Laravel+Inertia, a two-instance shared-component page, a two-instance real React component, and the phase-8 capture surface incl. an internal-scroll fixture; Svelte/Next/Nuxt/Angular and an Antigravity CLI canvas runtime unverified)
 
 ## Summary
 
@@ -20,6 +20,24 @@ replaces marks the target stale and blocks Apply.
 Proven in real browsers against three hosts: a React/Vite pilot, a Vue/Vite pilot, and the
 owner-authorized `nexvora-hris` `/login` section (Laravel 13.40 + Inertia React 3), where the
 loop ended in a real source edit (`mt-4` → `mt-6`).
+
+Phase 8 adds two surfaces to the same canvas, without a second capture engine:
+
+- **Content-only screenshots.** A drawer captures the current viewport, the full page, the
+  selected element, every configured viewport, or every registered content state as PNG. Bytes
+  come from the host-side Playwright browser re-opening the reviewed URL, so no canvas chrome,
+  marker, handle or inspector can appear in the file, and the real viewport size and DPR are kept.
+- **Content State Explorer.** A preview declares `states`/`themes` through `--review-meta`; the
+  drawer offers exactly those. A state the preview did not declare is refused with 409 instead of
+  silently rendering the default, and a state declared unavailable (`value: null`) is shown
+  disabled. The app renders each state through its own framework — `?scenario=` in React, Vue and
+  Inertia — so nothing is rewritten from outside and no data or role is faked.
+
+Every capture lands under the work item's `evidence/design/captures/` with a manifest entry
+carrying route, viewport, DPR, theme, state, source classification, revision, result and
+limitations. A full-page capture that cannot include an application scroll container says
+`partial` and names the container instead of pretending it is complete.
+
 
 ## Objective
 
@@ -66,6 +84,22 @@ Commits on `main`:
 
 Documentation: `docs/design/plan-canvas.md` gained a "Framework-native visual edit mode" section
 (this change set).
+
+Phase 8 — content-only capture and Content State Explorer:
+
+- `scripts/lib/plan-canvas/capture.js` — viewport presets, `captureOne`, `captureBatch(items,
+  shouldStop)`, draft replay from pending overrides, evidence-root resolution, manifest append,
+  and the full-page scroll/fixed/virtualisation probes with honest `partial` reporting.
+- `scripts/lib/plan-canvas/server.js` — `POST .../capture`, `POST .../capture-batch`,
+  `POST .../capture-cancel`, `GET .../captures`, `GET .../captures/:id` (sha256 re-verified),
+  `POST .../captures/:id/attach` (reuses the Canvas V2 attachment transport). State and theme are
+  validated against what the preview declared.
+- `scripts/lib/plan-canvas/ui.js` — screenshot drawer, gallery with per-file download and attach,
+  batch download, cancellation, and status text that names element crops and limitation counts.
+- `scripts/lib/plan-canvas/sdk.js` — `applyDraft`, `state` in `contextFor()`, retried `pc:ready`.
+- `scripts/lib/plan-canvas/sessions.js` — `sanitizePreviewMeta` accepts state/theme declarations.
+- `scripts/plan-canvas.js` — `--review-meta <file.json>`.
+
 
 ## Acceptance matrix
 
@@ -130,6 +164,11 @@ requirements. The editor was not rebuilt; every change landed in the existing
 - `evidence/phase7-item9-installed-runtime-closure.md` — the installed OpenCode canvas before and
   after the sync, module load map, and the installed server serving on `127.0.0.1:4731`.
 - `evidence/item6-item7/*.png` — seven screenshots referenced by the three items above.
+- `evidence/phase8-capture-states.md` — the 16 capture acceptance points with their live evidence,
+  plus the phase's limitations (open-dialog capture and override carry-over not exercised).
+- `evidence/design/captures/` — the produced PNGs and `manifest.json` (git-ignored).
+- `evidence/design/review-meta.json`, `review-meta-vue.json`, `review-meta-laravel.json` — the
+  state/theme declarations each pilot preview publishes.
 
 Owner-app changes (authorized section only, `nexvora-hris`):
 
@@ -144,8 +183,9 @@ The `// hmr probe` line added during the HMR investigation was removed; the file
 ## Verification
 
 ```
-node tests/run-all.js plan-canvas   313 / 313 passed (15 files)
+node tests/run-all.js plan-canvas   334 / 334 passed (16 files)
 node tests/lib/plan-canvas-visual-edit-closure.test.js   9 / 9 passed
+node tests/lib/plan-canvas-capture.test.js               20 / 20 passed
 node scripts/ci/validate-commands.js                     7 command files
 npm run command-registry:check                           up to date
 npm run catalog:check                                    72 agents / 7 commands / 380 skills
@@ -160,6 +200,12 @@ pass. The closure work item added a fifteenth file,
 `tests/lib/plan-canvas-visual-edit-closure.test.js`, with 9 assertions, so the
 authoritative figure is **313 / 313 (15 files)**. Only the last number is a
 measurement of the current tree.
+
+Phase 8 added `tests/lib/plan-canvas-capture.test.js` with 20 assertions, so the current figure is
+**334 / 334 (16 files)**. The capture assertions cover the viewport presets, state/theme
+declaration rules (undeclared → 409, `value: null` → 409), the batch bound, cancellation on an idle
+session, sha-verified attachment, the evidence path, and the drawer rendering; the browser runs
+behind them are listed in `evidence/phase8-capture-states.md`.
 
 Closure suite, all passing:
 
@@ -177,7 +223,10 @@ Closure suite, all passing:
 
 Real-browser runs behind those assertions: React/Vite inspector session
 `3bee5e31caad` (desktop 1440x900 and narrow 390x844), React component instances
-session `070be98d1f0e`, and the installed-runtime server on `127.0.0.1:4731`.
+session `070be98d1f0e`, and the installed-runtime server on `127.0.0.1:4731`. Phase 8 capture
+runs: React `stat-cards` session `dba9c83591cb` (all modes, 5/5 viewports, 25/25 state×viewport,
+draft replay, attach, cancellation 12/25), Vue `pricing` session `3fa033b6984e`, Laravel/Inertia
+`welcome` session `6dcc9f7050ef`, and the internal-scroll fixture session `6001184a5d29`.
 
 Pre-existing, unrelated failures in this repo are unchanged and not caused by this work item:
 
@@ -213,9 +262,18 @@ Pre-existing, unrelated failures in this repo are unchanged and not caused by th
   anything Figma-shaped stays out of scope.
 - Installed-runtime closure was checked on this machine only, by loading and running the synced
   modules. No other machine or package-manager install was exercised.
+- Capture limitations. Open-dialog capture is not exercised: the capture context is fresh, so it
+  can only show a dialog the state itself renders. Override carry-over onto unrelated elements
+  after a state switch is not exercised negatively. Cancellation acts between jobs, so a capture
+  already running finishes and is counted. The Laravel pilot prints a PHP deprecation notice into
+  the page body, which is visible in those captures and is a pilot-environment issue.
+- State declaration is a per-preview contract (`--review-meta`), not a per-adapter API. The Vite
+  and Blade adapters still only inject the SDK; a project using them must publish its own
+  `states`/`themes` file. No adapter currently ships defaults.
 
 ## Next permitted step
 
-Owner review of this report and of the `nexvora-hris` `SecurityHeaders.php` change. Every row of
-the functional matrix is now either proven in a browser or covered by the suite; no open row
-remains for the accepted architecture.
+Owner review of this report, of the phase-8 capture evidence, and of the `nexvora-hris`
+`SecurityHeaders.php` change. Every row of the functional matrix and every capture acceptance
+point is now either proven in a browser or covered by the suite, with the gaps named above; no
+open row remains for the accepted architecture.

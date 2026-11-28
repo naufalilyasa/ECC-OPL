@@ -152,6 +152,42 @@ function sanitizePreviewMeta(value) {
   if (value.dataMode === 'fixture' || value.dataMode === 'production') {
     meta.dataMode = value.dataMode;
   }
+  // Review context. `state`/`theme` name what the open preview currently shows;
+  // `stateParam`/`themeParam` say how the app already selects them, so a capture
+  // reproduces the reviewed screen instead of inventing a mechanism.
+  for (const field of ['state', 'theme']) {
+    if (typeof value[field] === 'string' && value[field].length > 0 && value[field].length <= 60) {
+      meta[field] = value[field];
+    }
+  }
+  for (const field of ['stateParam', 'themeParam']) {
+    if (typeof value[field] === 'string' && /^[A-Za-z0-9_.-]{1,40}$/.test(value[field])) {
+      meta[field] = value[field];
+    }
+  }
+  // Declared states are what the explorer may offer. A state the adapter does
+  // not declare stays unavailable rather than being shown as success.
+  const app = value.states;
+  if (Array.isArray(app)) {
+    const states = app
+      .filter(s => s && typeof s.id === 'string' && s.id.length > 0 && s.id.length <= 40)
+      .slice(0, 12)
+      .map(s => ({
+        id: s.id,
+        label: typeof s.label === 'string' ? s.label.slice(0, 60) : s.id,
+        // An explicit null means "this state cannot be rendered here"; an
+        // omitted value means the state id is the value the app expects.
+        value: s.value === null ? null
+          : (typeof s.value === 'string' ? s.value.slice(0, 80) : s.id)
+      }));
+    if (states.length) meta.states = states;
+  }
+  if (Array.isArray(value.themes)) {
+    const themes = value.themes
+      .filter(t => typeof t === 'string' && t.length > 0 && t.length <= 40)
+      .slice(0, 8);
+    if (themes.length) meta.themes = themes;
+  }
   return Object.keys(meta).length > 0 ? meta : null;
 }
 

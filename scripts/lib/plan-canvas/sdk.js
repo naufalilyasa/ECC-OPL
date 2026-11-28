@@ -158,6 +158,11 @@ function artifactSdkJs() {
       path: path,
       tag: el.tagName.toLowerCase(),
       role: el.getAttribute('role') || '',
+      // The content state travels with a selection, a change set and a capture.
+      // The app declares it (it already knows which scenario it rendered); the
+      // query fallback keeps a plain ?state= preview working too.
+      state: (typeof window.__eccReviewState === 'string' && window.__eccReviewState)
+        || new URLSearchParams(window.location.search).get('state') || null,
       testId: el.getAttribute('data-testid') || '',
       name: nameFor(el),
       snippet: snippetFor(el),
@@ -440,6 +445,28 @@ function artifactSdkJs() {
     };
     if (typeof requestAnimationFrame === 'function') requestAnimationFrame(() => requestAnimationFrame(read));
     else read();
+  }
+  // --- draft replay --------------------------------------------------------
+  // A visual-draft screenshot runs in its own browser context, so the owner's
+  // click never happened there. Register the target from its recorded selector
+  // and push the same record shape the live path pushes; renderOverrides() then
+  // produces the same sheet and the same marker attribute.
+  function applyDraft(items) {
+    const list = Array.isArray(items) ? items : [];
+    let applied = 0;
+    list.forEach((item, index) => {
+      if (!item || typeof item.selector !== 'string') return;
+      if (!EDIT_PROPS.has(item.prop) || !safeValue(item.value)) return;
+      let el = null;
+      try { el = document.querySelector(item.selector); } catch (_) { el = null; }
+      if (!el || !el.isConnected) return;
+      const id = 'draft-' + index;
+      editTargets.set(id, { targetId: id, el: el, selector: item.selector, identity: {} });
+      records.push({ targetId: id, prop: item.prop, value: String(item.value) });
+      applied += 1;
+    });
+    renderOverrides();
+    return applied;
   }
   function revalidate(ids) {
     const list = Array.isArray(ids) && ids.length ? ids : Array.from(editTargets.keys());
@@ -724,6 +751,11 @@ function artifactSdkJs() {
       revalidate(msg.targetIds);
     } else if (msg.type === 'pc:scan-tokens') {
       scanTokens(msg.targetId, msg.prop, msg.value);
+    } else if (msg.type === 'pc:apply-draft') {
+      // Replays pending overrides into a freshly loaded page for a visual-draft
+      // screenshot. Same override sheet, same marker attribute, same reader;
+      // only the target registration differs because nothing was clicked here.
+      applyDraft(msg.items);
     }
   });
   document.addEventListener('keydown', e => {
@@ -743,7 +775,16 @@ function artifactSdkJs() {
     }, 150);
   }, { passive: true });
 
-  post({ type: 'pc:ready' });
+  // The embedding chrome may still be wiring its listener when this frame
+  // parses, and a lost hello means edit mode never arms. Announce, then keep
+  // announcing until the chrome answers with pc:set-mode.
+  let helloAttempts = 0;
+  (function announce() {
+    post({ type: 'pc:ready' });
+    if (acked || helloAttempts >= 8) return;
+    helloAttempts += 1;
+    setTimeout(announce, 250 * helloAttempts);
+  })();
 })();`;
 }
 

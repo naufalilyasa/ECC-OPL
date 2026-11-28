@@ -14,6 +14,7 @@ const path = require('path');
 const { escapeHtml } = require('./markdown');
 const { computePlanDigest } = require('./verdict-binding');
 const { editModeClientJs } = require('./edit-mode');
+const { VIEWPORTS } = require('./capture');
 
 // Pinned Mermaid ESM build, loaded in the browser only when an artifact
 // actually contains a diagram. Override with a local/vendored URL (e.g. an
@@ -271,6 +272,32 @@ function canvasCss() {
   .overlay .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-lg);padding:26px 32px;text-align:center;max-width:340px}
   .overlay .card h3{font-size:14px;margin-bottom:6px}
   .overlay .card p{font-size:12px;color:var(--text2);line-height:1.5}
+
+  /* Screenshot drawer. Floats over the frame so opening it never resizes the
+     preview the owner is reviewing. */
+  .shot-drawer{position:fixed;right:14px;bottom:14px;width:340px;max-height:70vh;display:flex;flex-direction:column;
+    background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-lg);z-index:60}
+  .shot-drawer[hidden]{display:none}
+  .shot-head{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--border)}
+  .shot-head h2{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text2);margin:0;flex:1}
+  .shot-body{padding:10px 12px;display:flex;flex-direction:column;gap:8px;overflow:auto}
+  .shot-row{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--text2)}
+  .shot-row label{flex:none;width:56px}
+  .shot-row select,.shot-row input{flex:1;min-width:0}
+  .shot-note{font-size:10.5px;color:var(--text3);line-height:1.45}
+  .shot-actions{display:flex;flex-wrap:wrap;gap:6px}
+  .shot-status{font-size:10.5px;color:var(--text3);min-height:14px}
+  .shot-status.bad{color:var(--orange)}
+  .shot-list{list-style:none;display:flex;flex-direction:column;gap:6px;margin-top:4px}
+  .shot-list li{display:flex;gap:8px;align-items:center;border:1px solid var(--border);border-radius:var(--radius-sm);padding:5px 6px}
+  .shot-list img{width:54px;height:36px;object-fit:cover;border-radius:3px;background:var(--bg3);flex:none}
+  .shot-list .meta{flex:1;min-width:0;font-size:10.5px;color:var(--text2);line-height:1.35;overflow:hidden}
+  .shot-list .meta b{display:block;color:var(--text);font-weight:600}
+  .shot-list a.dl{font-size:10.5px;color:var(--accent);text-decoration:none;flex:none}
+  .shot-list button.attach{font-size:10.5px;color:var(--text2);background:none;border:1px solid var(--border);
+    border-radius:3px;padding:1px 5px;cursor:pointer;flex:none}
+  .shot-list button.attach:hover{color:var(--text);border-color:var(--text3)}
+  .shot-list .flag{font-size:9.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--orange)}
   `;
 }
 
@@ -751,7 +778,227 @@ function canvasClientJs() {
     };
   }
   connectEvents();
-${editModeClientJs()}})();`;
+${editModeClientJs()}${captureClientJs()}})();`;
+}
+
+// Screenshot drawer client. The capture itself runs on the host (Playwright),
+// so this only collects the reviewed context and renders the gallery.
+function captureClientJs() {
+  return `
+  // --- screenshots -------------------------------------------------------
+  const shotsBtn = $('shotsBtn');
+  if (shotsBtn) {
+    const drawer = $('shotDrawer');
+    const statusEl = $('shotStatus');
+    const listEl = $('shotList');
+    const base = '/api/session/' + boot.key;
+    let lastShots = [];
+
+    function setShotStatus(text, bad) {
+      statusEl.textContent = text || '';
+      statusEl.classList.toggle('bad', Boolean(bad));
+    }
+    function setOpen(open) {
+      drawer.hidden = !open;
+      shotsBtn.setAttribute('aria-expanded', String(open));
+      if (open) loadShots();
+    }
+    shotsBtn.addEventListener('click', () => setOpen(drawer.hidden));
+    $('shotClose').addEventListener('click', () => setOpen(false));
+
+    function pick(id) { const el = $(id); return el && el.value ? el.value : null; }
+
+    function reviewBody() {
+      const body = {
+        mode: $('shotMode').value,
+        viewport: $('shotViewport').value,
+        state: pick('shotState'),
+        theme: pick('shotTheme'),
+        source: $('shotSource').value,
+        // Pending overrides are read from the inspector, never reset here: the
+        // draft capture must not disturb what the owner has queued.
+        draftOverrides: Array.isArray(window.__pcPendingOverrides) ? window.__pcPendingOverrides : []
+      };
+      if (body.mode === 'element') {
+        const target = window.__pcSelectedTarget;
+        if (!target || !target.selector) return { error: 'Select an element in the preview first.' };
+        body.selector = target.selector;
+      }
+      return body;
+    }
+
+    async function post(path, body) {
+      const res = await fetch(path, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || ('capture failed: ' + res.status));
+      return data;
+    }
+
+    async function captureOne() {
+      const body = reviewBody();
+      if (body.error) return setShotStatus(body.error, true);
+      setShotStatus('Capturing...');
+      try {
+        const out = await post(base + '/capture', body);
+        if (!out.ok) return setShotStatus(out.code || out.why || 'Capture failed', true);
+        const c = out.capture;
+        const size = c.element ? c.element.width + 'x' + c.element.height + ' element'
+          : c.viewport.width + 'x' + c.viewport.height;
+        const notes = c.limitations.length ? ' - ' + c.limitations.length + ' limitation(s)' : '';
+        setShotStatus('Captured ' + size + ' (' + c.result + ')' + notes);
+        loadShots();
+      } catch (error) { setShotStatus(error.message, true); }
+    }
+
+    function batchBody(extra) {
+      const body = reviewBody();
+      if (body.error) return body;
+      delete body.selector;
+      delete body.viewport;
+      body.modes = [body.mode];
+      body.viewports = extra.viewports;
+      if (extra.states) body.states = extra.states;
+      return body;
+    }
+
+    let batchRunning = false;
+
+    async function captureBatch(extra) {
+      const body = batchBody(extra);
+      if (body.error) return setShotStatus(body.error, true);
+      if (batchRunning) return setShotStatus('A batch is already running.', true);
+      batchRunning = true;
+      $('shotCancel').hidden = false;
+      setShotStatus('Capturing ' + body.viewports.length + ' viewport(s)...');
+      try {
+        const out = await post(base + '/capture-batch', body);
+        const tail = out.cancelled ? ' (cancelled)' : '';
+        setShotStatus(out.captured + '/' + out.total + ' captured, ' + out.failed + ' failed' + tail, out.failed > 0 && !out.cancelled);
+        loadShots();
+      } catch (error) { setShotStatus(error.message, true); }
+      finally {
+        batchRunning = false;
+        $('shotCancel').hidden = true;
+      }
+    }
+
+    $('shotCancel').addEventListener('click', async () => {
+      setShotStatus('Cancelling after the running captures finish...');
+      try { await post(base + '/capture-cancel', {}); }
+      catch (error) { setShotStatus(error.message, true); }
+    });
+
+    const allViewports = () => Array.from($('shotViewport').options).map(o => o.value);
+    const availableStates = () => Array.from($('shotState').options)
+      .filter(o => !o.disabled).map(o => o.value).filter(Boolean);
+    const allThemes = () => Array.from($('shotTheme').options).map(o => o.value).filter(Boolean);
+
+    $('shotOne').addEventListener('click', captureOne);
+    $('shotAllVp').addEventListener('click', () => {
+      const extra = { viewports: allViewports() };
+      const theme = pick('shotTheme');
+      if (theme) extra.themes = [theme];
+      captureBatch(extra);
+    });
+    const allStatesBtn = $('shotAllStates');
+    if (allStatesBtn) {
+      allStatesBtn.addEventListener('click', () => {
+        const extra = { viewports: allViewports(), states: availableStates() };
+        const theme = pick('shotTheme');
+        if (theme) extra.themes = [theme];
+        captureBatch(extra);
+      });
+    }
+
+    function shotRow(c) {
+      const li = document.createElement('li');
+      const img = document.createElement('img');
+      img.src = c.href;
+      img.alt = '';
+      img.loading = 'lazy';
+      li.appendChild(img);
+      const meta = document.createElement('div');
+      meta.className = 'meta';
+      const title = document.createElement('b');
+      title.textContent = (c.state || 'default') + ' \\u00b7 ' + c.viewport.width + 'x' + c.viewport.height;
+      meta.appendChild(title);
+      const detail = document.createElement('span');
+      detail.textContent = [c.mode, c.source === 'visual-draft' ? 'draft' : 'rendered',
+        c.theme || null, c.revision || null].filter(Boolean).join(' \\u00b7 ');
+      meta.appendChild(detail);
+      if (c.result === 'partial') {
+        const flag = document.createElement('span');
+        flag.className = 'flag';
+        flag.textContent = ' partial';
+        meta.appendChild(flag);
+      }
+      li.appendChild(meta);
+      const dl = document.createElement('a');
+      dl.className = 'dl';
+      dl.href = c.href;
+      dl.download = c.id + '.png';
+      dl.textContent = 'PNG';
+      li.appendChild(dl);
+      // Attach reuses the Canvas V2 attachment transport, so the agent finds
+      // the shot in the same folder as any other conversation attachment.
+      const attach = document.createElement('button');
+      attach.type = 'button';
+      attach.className = 'attach';
+      attach.textContent = 'Attach';
+      attach.addEventListener('click', async () => {
+        attach.disabled = true;
+        try {
+          const res = await fetch(base + '/captures/' + c.id + '/attach', { method: 'POST' });
+          const data = await res.json().catch(() => ({}));
+          setShotStatus(res.ok ? 'Attached ' + (data.files || []).join(', ') : (data.error || 'Attach failed'), !res.ok);
+        } catch (error) { setShotStatus(error.message, true); }
+        finally { attach.disabled = false; }
+      });
+      li.appendChild(attach);
+      return li;
+    }
+
+    async function loadShots() {
+      try {
+        const res = await fetch(base + '/captures');
+        const data = await res.json().catch(() => ({}));
+        listEl.textContent = '';
+        lastShots = data.captures || [];
+        const items = lastShots.slice().reverse();
+        if (!items.length) {
+          const li = document.createElement('li');
+          li.textContent = 'No captures yet.';
+          listEl.appendChild(li);
+          return;
+        }
+        items.forEach(c => listEl.appendChild(shotRow(c)));
+      } catch { setShotStatus('Could not read the capture manifest.', true); }
+    }
+
+    // Browsers rate-limit programmatic downloads, so the batch is spaced out and
+    // the count is reported as each file is handed to the browser.
+    $('shotDownloadAll').addEventListener('click', async () => {
+      if (!lastShots.length) { await loadShots(); }
+      const shots = lastShots.slice();
+      if (!shots.length) return setShotStatus('No captures to download yet.', true);
+      setShotStatus('Downloading ' + shots.length + ' file(s)...');
+      for (let i = 0; i < shots.length; i += 1) {
+        const a = document.createElement('a');
+        a.href = shots[i].href;
+        a.download = shots[i].id + '.png';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        await new Promise(r => setTimeout(r, 400));
+        if (i === shots.length - 1) setShotStatus('Downloaded ' + shots.length + ' file(s)');
+      }
+    });
+  }
+`;
 }
 
 // The live-preview wrapper and the reviewed app are separate origins, so the
@@ -810,6 +1057,20 @@ function renderCanvasHtml(session, { clientPath = '/client.js', cssPath = '/canv
   const previewMeta = session.previewMeta && typeof session.previewMeta === 'object' ? session.previewMeta : {};
   const modeLabel = [session.previewMode, previewMeta.framework, previewMeta.section, previewMeta.revision]
     .filter(Boolean).map(String).join(' · ');
+
+  // Screenshot drawer options. Only states the preview adapter declares are
+  // offered; a declared-but-unavailable state stays visible and disabled, so
+  // nothing is silently replaced by the default render.
+  const declaredStates = Array.isArray(previewMeta.states) ? previewMeta.states : [];
+  const stateOptions = ['<option value="">Default render</option>']
+    .concat(declaredStates.map(s => (s.value === null
+      ? `<option value="${escapeHtml(s.id)}" disabled>${escapeHtml(s.label)} (unavailable)</option>`
+      : `<option value="${escapeHtml(s.id)}">${escapeHtml(s.label)}</option>`))).join('');
+  const declaredThemes = Array.isArray(previewMeta.themes) ? previewMeta.themes : [];
+  const themeOptions = ['<option value="">Current theme</option>']
+    .concat(declaredThemes.map(t => `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`)).join('');
+  const shotViewportOptions = VIEWPORTS
+    .map(v => `<option value="${escapeHtml(v.id)}">${escapeHtml(v.label)}</option>`).join('');
   const nativeApproval = session.previewMode === 'framework-native';
   // Sandbox flags are inherited by nested frames. A live preview wraps another
   // document, so without allow-same-origin that inner document gets an opaque
@@ -860,6 +1121,7 @@ ${session.editMode ? `  <div id="modeGroup" class="mode-group" role="group" aria
   </div>
   ${session.previewUrl ? `<a id="openSeparate" class="icon-btn" href="${escapeHtml(session.previewUrl)}" target="_blank" rel="noopener" title="Open the live preview in its own tab">Open separately</a>` : ''}
   ${session.editMode ? `<button id="inspectorBtn" class="icon-btn" type="button" title="Hide edit inspector" aria-pressed="true">Inspector</button>` : ''}
+  ${session.previewUrl ? `<button id="shotsBtn" class="icon-btn" type="button" title="Capture screenshots of the live preview" aria-expanded="false">Screenshots</button>` : ''}
   <button id="panelBtn" class="icon-btn" type="button" title="Hide conversation panel" aria-pressed="true">Panel</button>
   <button id="themeBtn" class="icon-btn" type="button">light</button>
   <button id="reloadBtn" class="icon-btn" type="button" title="Reload artifact">Reload</button>
@@ -920,6 +1182,46 @@ ${session.editMode ? `  <aside id="inspector" class="inspector" aria-label="Visu
     </div>
   </aside>
 </div>
+${session.previewUrl ? `<aside id="shotDrawer" class="shot-drawer" aria-label="Screenshot capture" hidden>
+  <div class="shot-head">
+    <h2>Screenshots</h2>
+    <button id="shotClose" class="icon-btn" type="button" title="Close screenshot drawer">Close</button>
+  </div>
+  <div class="shot-body">
+    <div class="shot-row"><label for="shotMode">Mode</label>
+      <select id="shotMode">
+        <option value="viewport">Current viewport</option>
+        <option value="full">Full page</option>
+        <option value="element">Selected element</option>
+      </select>
+    </div>
+    <div class="shot-row"><label for="shotViewport">Viewport</label>
+      <select id="shotViewport">${shotViewportOptions}</select>
+    </div>
+    <div class="shot-row"><label for="shotState">State</label>
+      <select id="shotState">${stateOptions}</select>
+    </div>
+    <div class="shot-row"><label for="shotTheme">Theme</label>
+      <select id="shotTheme">${themeOptions}</select>
+    </div>
+    <div class="shot-row"><label for="shotSource">Source</label>
+      <select id="shotSource">
+        <option value="source-rendered">Rendered source</option>
+        <option value="visual-draft">Pending visual draft</option>
+      </select>
+    </div>
+    <div class="shot-actions">
+      <button id="shotOne" class="icon-btn" type="button">Capture</button>
+      <button id="shotAllVp" class="icon-btn" type="button">All viewports</button>${declaredStates.length ? `
+      <button id="shotAllStates" class="icon-btn" type="button">All states &times; viewports</button>` : ''}
+      <button id="shotCancel" class="icon-btn" type="button" hidden>Cancel</button>
+      <button id="shotDownloadAll" class="icon-btn" type="button">Download all</button>
+    </div>
+    <div id="shotStatus" class="shot-status" role="status" aria-live="polite"></div>
+    <div class="shot-note">Stored beside the work item. A draft capture is evidence of the unapplied draft only, never of the final design.</div>
+    <ul id="shotList" class="shot-list"></ul>
+  </div>
+</aside>` : ''}
 <script src="${clientPath}"></script>
 </body>
 </html>`;

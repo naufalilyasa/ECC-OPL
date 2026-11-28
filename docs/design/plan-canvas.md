@@ -173,3 +173,80 @@ retry is a duplicate rather than a second edit.
 A DOM node that the app replaces (re-render, HMR, reload) marks the target stale and blocks
 Apply instead of applying to a node that no longer exists; a full reload clears pending
 overrides and says so.
+
+## Content-only screenshots and the Content State Explorer
+
+A design-preview session gets a **Screenshots** drawer in the chrome. It captures PNGs of the
+current viewport, the full page, the selected element, every configured viewport, or every
+registered content state.
+
+Capture does not rasterise the canvas page: the preview is a cross-origin frame, so the canvas
+re-opens the reviewed URL in the host-side Playwright browser and writes those bytes. No canvas
+chrome (toolbar, inspector, conversation, annotation markers, handles) can appear in a file, and
+the viewport size and DPR are the real ones from the presets
+(`desktop-1440`, `desktop-1280`, `tablet-768`, `mobile-390`, `mobile-360`; DPR 2 on the phones).
+
+A full-page capture probes for application-level scroll containers and fixed elements. It reports
+`partial` with the container's `scrollHeight`/`clientHeight`/hidden pixels instead of silently
+cropping the content it could not include.
+
+### Declaring content states
+
+The preview declares what it can show; the drawer offers exactly that and nothing else:
+
+```bash
+node scripts/plan-canvas.js open plan.md \
+  --preview-mode framework-native --preview-url http://127.0.0.1:5173/ \
+  --section pricing --revision r3 --framework vue-vite \
+  --revision-digest <64-hex> --design-digest <64-hex> \
+  --review-meta evidence/design/review-meta.json
+```
+
+```json
+{
+  "stateParam": "scenario",
+  "themeParam": "theme",
+  "states": [
+    { "id": "loading" },
+    { "id": "empty" },
+    { "id": "error" },
+    { "id": "success" },
+    { "id": "permission", "value": null }
+  ],
+  "themes": ["light"]
+}
+```
+
+`value` is what the app expects in the URL; omitted means the state id. `value: null` means the
+section cannot render that state — it shows disabled in the drawer and the capture route refuses
+it. A state or theme the preview never declared is refused with 409 rather than quietly rendering
+the default: a screenshot that claims `error` must actually be the error state.
+
+The app renders each state itself (a `?scenario=` query read in React, Vue or Inertia). The canvas
+never rewrites the DOM, duplicates the markup, or fakes data or permissions.
+
+### Two sources
+
+- `source-rendered` (default) captures the reviewed revision as it renders.
+- `visual-draft` replays the inspector's **pending** overrides inside the capture context and
+  labels the file and manifest entry as a draft. Pending edits are never cleared by a capture, and
+  a draft capture is evidence of the editing preview, never of the final revision.
+
+### Where the bytes go
+
+```
+<work-item>/evidence/design/captures/
+  manifest.json
+  <section>/<revision>/<viewport>/<state>__<theme>__<mode>__<source>.png
+```
+
+Each manifest entry records route, resolved URL, viewport id/size/DPR, theme, state, mode, source,
+section, revision, `result` (`complete` or `partial`), `limitations`, `consoleErrors`, `sha256` and
+`capturedAt`. Files are content-addressed (`cap-<sha12>`), served back only when the bytes still
+hash to the manifest, and ignored by git. No screenshot is ever written into application source.
+
+The drawer can download one file, download the batch, or attach a capture to the agent
+conversation, which reuses the existing Canvas V2 attachment transport — no separate media service.
+
+Batches are owner-triggered only. They are bounded (40 captures per request, concurrency 2), and
+**Cancel** stops the queue between jobs while the running captures finish and are counted.

@@ -102,6 +102,12 @@ function editModeClientJs() {
       // Read by the verdict guard above; a resolved change set must land
       // before the owner can approve the design it produced.
       window.__pcPendingEdits = count;
+      // The screenshot drawer replays these into its own browser context for a
+      // visual-draft capture. Selectors travel, not styling rules.
+      window.__pcPendingOverrides = Array.from(last.values()).map(r => {
+        const ctx = (editSnapshots.get(r.targetId) || {}).context || {};
+        return { targetId: r.targetId, selector: ctx.selector || null, prop: r.prop, value: String(r.value) };
+      }).filter(r => r.selector);
       // The SDK echoes state after an ack; that echo must not erase the "sent"
       // message the owner just saw.
       if (ackNotice) setStatus(ackNotice, false);
@@ -503,6 +509,14 @@ function editModeClientJs() {
       const msg = e.data || {};
       if (msg.type === 'pc:select') {
         editTarget = { targetId: msg.targetId, context: msg.context || {} };
+        // The screenshot drawer captures the selected element by its recorded
+        // selector; the selection itself stays inside the frame.
+        window.__pcSelectedTarget = {
+          targetId: msg.targetId,
+          selector: (msg.context || {}).selector || null,
+          label: [(msg.context || {}).tag, (msg.context || {}).testId, (msg.context || {}).name]
+            .filter(Boolean).join(' ') || msg.targetId
+        };
         editSnapshots.set(msg.targetId, { context: msg.context || {}, values: {} });
         // Selecting a live target clears only its own stale mark.
         staleTargets.delete(msg.targetId);
@@ -600,6 +614,7 @@ function editModeClientJs() {
         editInFlight = 0;
         staleTargets.clear();
         editTarget = null;
+        window.__pcSelectedTarget = null;
         rows = new Map();
         ackNotice = '';
         renderTarget();
@@ -646,6 +661,7 @@ function editModeClientJs() {
       editApplied.clear();
       editTokens.clear();
       editFrozen = null;
+      window.__pcSelectedTarget = null;
       renderList();
       if (editTarget) postToFrame({ type: 'pc:probe', targetId: editTarget.targetId, props: EDIT_FIELDS.map(f => f.prop) });
     });

@@ -10,6 +10,7 @@
  */
 
 const { EventEmitter } = require('events');
+const crypto = require('crypto');
 const fs = require('fs');
 const http = require('http');
 const path = require('path');
@@ -23,6 +24,16 @@ const {
 } = require('./verdict-binding');
 const { escapeHtml, renderMarkdown } = require('./markdown');
 const { artifactSdkJs } = require('./sdk');
+const {
+  MAX_BATCH,
+  VIEWPORTS,
+  captureBatch,
+  captureOne,
+  draftItemsFromPending,
+  readManifest,
+  resolveEvidenceRoot,
+  urlWithReviewContext
+} = require('./capture');
 const {
   canvasCss,
   canvasClientJs,
@@ -452,6 +463,125 @@ function createPlanCanvasServer({
 
   // --- request handlers -------------------------------------------------------
 
+  // --- capture helpers -----------------------------------------------------
+
+  // Only a framework-native preview has an addressable URL. A legacy HTML
+  // artifact is rendered from the file itself and is already screenshottable by
+  // the browser, so the host capture path deliberately refuses it.
+  function captureSessionGuard(session) {
+    if (!session || session.status === 'ended') return { status: 404, error: 'session not found or ended' };
+    if (session.previewMode !== 'framework-native' || !session.previewUrl) {
+      return { status: 409, error: 'capture requires a framework-native preview with a live URL' };
+    }
+    return null;
+  }
+
+  // In-flight batch cancellation, keyed by session. A batch is owner-triggered,
+  // so one slot per session is enough.
+  const captureCancels = new Map();
+
+  function captureRootFor(session) {
+    return resolveEvidenceRoot({ planFile: session.file });
+  }
+
+  function preparedUrl(session, state, theme) {
+    const meta = session.previewMeta || {};
+    return urlWithReviewContext(session.previewUrl, {
+      state,
+      theme,
+      stateParam: meta.stateParam || 'state',
+      themeParam: meta.themeParam || 'theme'
+    });
+  }
+
+  // A state the adapter did not declare is not a state this session can show.
+  // Declaring it with a null value means the same thing: unavailable, not
+  // silently replaced with the default render.
+  function stateAvailability(session, state) {
+    if (!state) return { ok: true, value: null };
+    const declared = (session.previewMeta && session.previewMeta.states) || null;
+    if (!declared) {
+      return { ok: false, error: `preview did not declare content states; cannot render "${state}"` };
+    }
+    const entry = declared.find(s => s.id === state);
+    if (!entry) return { ok: false, error: `state "${state}" is not declared by this preview` };
+    if (entry.value === null) return { ok: false, error: `state "${state}" is declared unavailable for this section` };
+    return { ok: true, value: entry.value || entry.id };
+  }
+
+  function prepareCapture(session, body) {
+    const mode = ['viewport', 'full', 'element'].includes(body.mode) ? body.mode : 'viewport';
+    const source = body.source === 'visual-draft' ? 'visual-draft' : 'source-rendered';
+    const viewport = body.viewport || 'desktop-1440';
+    if (!VIEWPORTS.some(v => v.id === viewport)) {
+      return { status: 400, error: `unknown viewport: ${viewport}` };
+    }
+    const stateCheck = stateAvailability(session, body.state || null);
+    if (!stateCheck.ok) return { status: 409, error: stateCheck.error };
+    // A theme the preview never declared would silently render the default one,
+    // which is exactly the substitution this capture path must not do.
+    const themes = (session.previewMeta && session.previewMeta.themes) || null;
+    if (body.theme) {
+      if (!themes) return { status: 409, error: `preview did not declare themes; cannot render "${body.theme}"` };
+      if (!themes.includes(body.theme)) return { status: 409, error: `theme "${body.theme}" is not declared by this preview` };
+    }
+    if (mode === 'element' && !(typeof body.selector === 'string' && body.selector)) {
+      return { status: 400, error: 'element capture requires a selector' };
+    }
+    const meta = session.previewMeta || {};
+    return {
+      options: {
+        url: preparedUrl(session, stateCheck.value, body.theme || null),
+        mode,
+        viewport,
+        state: body.state || null,
+        theme: body.theme || null,
+        selector: typeof body.selector === 'string' ? body.selector : null,
+        source,
+        draftOverrides: source === 'visual-draft' ? draftItemsFromPending(body.draftOverrides) : [],
+        evidenceRoot: captureRootFor(session),
+        section: meta.section || null,
+        revision: meta.revision || null
+      }
+    };
+  }
+
+  // Batch is owner-triggered only: every combination is explicit in the body,
+  // bounded, and the original preview is re-selected afterwards by the client.
+  function expandBatch(session, body) {
+    const viewports = Array.isArray(body.viewports) && body.viewports.length
+      ? body.viewports : ['desktop-1440'];
+    const states = Array.isArray(body.states) && body.states.length ? body.states : [null];
+    const themes = Array.isArray(body.themes) && body.themes.length ? body.themes : [null];
+    const modes = Array.isArray(body.modes) && body.modes.length ? body.modes : ['viewport'];
+    for (const v of viewports) {
+      if (!VIEWPORTS.some(p => p.id === v)) return { status: 400, error: `unknown viewport: ${v}` };
+    }
+    for (const s of states) {
+      const check = stateAvailability(session, s);
+      if (!check.ok) return { status: 409, error: check.error };
+    }
+    const total = viewports.length * states.length * themes.length * modes.length;
+    if (total > MAX_BATCH) {
+      return { status: 400, error: `batch of ${total} exceeds the ${MAX_BATCH} capture limit` };
+    }
+    if (modes.includes('element') && !(typeof body.selector === 'string' && body.selector)) {
+      return { status: 400, error: 'element capture requires a selector' };
+    }
+    const items = [];
+    viewports.forEach(viewport => states.forEach(state => themes.forEach(theme => modes.forEach(mode => {
+      const prepared = prepareCapture(session, {
+        mode, viewport, state, theme, source: body.source,
+        draftOverrides: body.draftOverrides,
+        selector: body.selector
+      });
+      if (!prepared.error) {
+        items.push(Object.assign({ combo: { viewport, state, theme, mode } }, prepared.options));
+      }
+    }))));
+    return { items };
+  }
+
   async function handleApi(req, res, url) {
     const { pathname } = url;
 
@@ -510,6 +640,111 @@ function createPlanCanvasServer({
 
     if (req.method === 'GET' && pathname === '/api/sessions') {
       return sendJson(res, 200, { sessions: store.list() });
+    }
+
+    // --- screenshot capture -------------------------------------------------
+    // The canvas never rasterises the preview in the browser: it is a
+    // cross-origin iframe. Capture therefore replays the reviewed URL in the
+    // host-side Playwright browser the design-build evidence scripts already
+    // use, and stores bytes beside the work item's other evidence.
+    const captureMatch = pathname.match(/^\/api\/session\/([a-f0-9]{12})\/capture$/);
+    if (req.method === 'POST' && captureMatch) {
+      const session = store.get(captureMatch[1]);
+      const guard = captureSessionGuard(session);
+      if (guard) return sendJson(res, guard.status, { error: guard.error });
+      const body = await readJsonBody(req);
+      const prepared = prepareCapture(session, body);
+      if (prepared.error) return sendJson(res, prepared.status, { error: prepared.error });
+      const result = await captureOne(prepared.options);
+      return sendJson(res, result.ok ? 200 : 422, result);
+    }
+
+    const batchMatch = pathname.match(/^\/api\/session\/([a-f0-9]{12})\/capture-batch$/);
+    if (req.method === 'POST' && batchMatch) {
+      const session = store.get(batchMatch[1]);
+      const guard = captureSessionGuard(session);
+      if (guard) return sendJson(res, guard.status, { error: guard.error });
+      const body = await readJsonBody(req);
+      const combos = expandBatch(session, body);
+      if (combos.error) return sendJson(res, combos.status, { error: combos.error });
+      const holder = { stop: false };
+      captureCancels.set(session.key, holder);
+      try {
+        const result = await captureBatch(combos.items, () => holder.stop);
+        return sendJson(res, 200, result);
+      } finally {
+        captureCancels.delete(session.key);
+      }
+    }
+
+    // Cancellation is per session: a batch is owner-triggered and one at a time.
+    const cancelMatch = pathname.match(/^\/api\/session\/([a-f0-9]{12})\/capture-cancel$/);
+    if (req.method === 'POST' && cancelMatch) {
+      const holder = captureCancels.get(cancelMatch[1]);
+      if (holder) holder.stop = true;
+      return sendJson(res, 200, { ok: true, cancelling: Boolean(holder) });
+    }
+
+    const listMatch = pathname.match(/^\/api\/session\/([a-f0-9]{12})\/captures$/);
+    if (req.method === 'GET' && listMatch) {
+      const session = store.get(listMatch[1]);
+      const guard = captureSessionGuard(session);
+      if (guard) return sendJson(res, guard.status, { error: guard.error });
+      const root = captureRootFor(session);
+      const manifest = readManifest(root);
+      return sendJson(res, 200, {
+        root,
+        captures: manifest.captures.map(c => ({
+          ...c,
+          href: `/api/session/${session.key}/captures/${c.id}`,
+          // An absolute path is only useful to the agent, which already knows
+          // the work item; the browser never needs it.
+          file: undefined
+        }))
+      });
+    }
+
+    const fileMatch = pathname.match(/^\/api\/session\/([a-f0-9]{12})\/captures\/(cap-[a-f0-9]{12})$/);
+    if (req.method === 'GET' && fileMatch) {
+      const session = store.get(fileMatch[1]);
+      const guard = captureSessionGuard(session);
+      if (guard) return sendJson(res, guard.status, { error: guard.error });
+      const manifest = readManifest(captureRootFor(session));
+      const entry = manifest.captures.find(c => c.id === fileMatch[2]);
+      if (!entry) return sendJson(res, 404, { error: 'capture not found' });
+      // Content-addressed: the stored bytes must still hash to the pointer.
+      try {
+        const bytes = fs.readFileSync(entry.file);
+        if (crypto.createHash('sha256').update(bytes).digest('hex') !== entry.sha256) {
+          return sendJson(res, 409, { error: 'capture file no longer matches its manifest entry' });
+        }
+        res.writeHead(200, { 'content-type': 'image/png', 'cache-control': 'no-store' });
+        return res.end(bytes);
+      } catch {
+        return sendJson(res, 404, { error: 'capture file missing' });
+      }
+    }
+
+    const attachMatch = pathname.match(/^\/api\/session\/([a-f0-9]{12})\/captures\/(cap-[a-f0-9]{12})\/attach$/);
+    if (req.method === 'POST' && attachMatch) {
+      const session = store.get(attachMatch[1]);
+      const guard = captureSessionGuard(session);
+      if (guard) return sendJson(res, guard.status, { error: guard.error });
+      const manifest = readManifest(captureRootFor(session));
+      const entry = manifest.captures.find(c => c.id === attachMatch[2]);
+      if (!entry) return sendJson(res, 404, { error: 'capture not found' });
+      // Reuse the Canvas V2 attachment transport so the agent picks the file up
+      // from the same place every other conversation attachment lands.
+      try {
+        const bytes = fs.readFileSync(entry.file);
+        if (crypto.createHash('sha256').update(bytes).digest('hex') !== entry.sha256) {
+          return sendJson(res, 409, { error: 'capture file no longer matches its manifest entry' });
+        }
+        const files = persistAttachments(path.dirname(session.file), [{ mime: 'image/png', data: bytes }]);
+        return sendJson(res, 200, { ok: true, files });
+      } catch (error) {
+        return sendJson(res, 400, { error: error.code || error.message });
+      }
     }
 
     if (req.method === 'GET' && pathname === '/api/await') {
