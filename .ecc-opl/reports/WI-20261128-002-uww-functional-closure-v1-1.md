@@ -95,9 +95,12 @@ existence or event count, and a later run appends rather than overwriting earlie
   completing it requires the owner's approval, which is not something this run can produce.
 - No framework-native Canvas session was opened. cc-reminder's pilot remains `standalone-html`; the
   Vue and React/Next adapters have still never executed live.
-- `~/.config/opencode/commands/plan.md` is a diverged user-modified copy that ECC no longer manages,
-  so a consumer project without its own `.opencode/commands/` resolves the older command body. Only
-  projects carrying the project-local commands (or fresh installs) get the new binding.
+- Installer-managed drift: `~/.config/opencode/commands/{plan,tdd,verify,code-review-quick,design-build,plan-prd}.md`
+  were user-modified copies the installer refuses to overwrite. They were force-synced from
+  `.opencode/commands/` on 2026-11-28 with backups in `~/.config/opencode/backups-commands-20261128/`,
+  and the helper was installed to `~/.config/opencode/scripts/lib/work-item/` plus
+  `cc-reminder/.agents/scripts/lib/work-item/`. A future `ecc install` will still report them as
+  preserved drift until they are re-adopted as managed.
 - The local Guardian Angel hook intermittently refuses to execute
   `tests/scripts/work-item.test.js` because the suite creates a throwaway `.git/info`. The 17/0 run
   above used an identical copy at another path.

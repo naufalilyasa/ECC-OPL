@@ -9,6 +9,31 @@ Produces a **Product Requirements Document** — the requirements-phase artifact
 
 **Input**: `$ARGUMENTS`
 
+## Binding (work-item routing)
+
+Resolve the workspace helper, then decide bound vs standalone. Precedence:
+`--standalone` > `$ECC_OPL_STANDALONE=1` > `--work-item <id>` > exact `TASK_SLUG` match > new work item.
+A missing pointer is not an opt-out: the helper binds the item whose slug matches this task and creates
+one when none matches. If you cannot name this task in one slug, ask the owner instead of reusing the
+node that happens to be active.
+
+```bash
+WI=""
+for R in "$CLAUDE_PLUGIN_ROOT" \
+         "${OPENCODE_CONFIG_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/opencode}" \
+         "./.agents" "." "${CLAUDE_CONFIG_DIR:-$HOME/.claude}"; do
+  [ -n "$R" ] && [ -f "$R/scripts/lib/work-item/work-item.js" ] && { WI="$R/scripts/lib/work-item/work-item.js"; break; }
+done
+# TASK_SLUG is this task's identity, not the last active pointer.
+TASK_SLUG="<kebab-slug-of-this-task>"
+if [ -z "$WI" ]; then echo "work-item helper not found — running standalone (legacy paths)"; MODE=standalone
+elif [ "$ECC_OPL_STANDALONE" = "1" ] || [ "${1:-}" = "--standalone" ]; then echo "legacy paths (explicit opt-out)"; MODE=standalone
+elif [ -n "$EXPLICIT_ID" ]; then ITEM=$(node "$WI" bind --id "$EXPLICIT_ID") || exit 1; MODE=bound
+else ITEM=$(node "$WI" bind --slug "$TASK_SLUG") || exit 1; MODE=bound; fi
+```
+
+`PRD_DIR` is `.ecc-opl/work-items/<ITEM>/prd` when bound, `.claude/prds` under the explicit opt-outs.
+
 ## Scope of this command
 
 | This command does | This command does NOT do |
@@ -16,7 +41,7 @@ Produces a **Product Requirements Document** — the requirements-phase artifact
 | Frame the problem and users | Design the architecture |
 | Capture success criteria and scope | Pick files or write patterns |
 | List open questions and risks | Enumerate implementation tasks |
-| Write `.claude/prds/{name}.prd.md` | Produce an implementation plan — that's `/plan` |
+| Write the PRD into `PRD_DIR` | Produce an implementation plan — that's `/plan` |
 
 If you find yourself writing implementation detail, stop and cut it. It belongs in `/plan`.
 
@@ -69,10 +94,17 @@ Wait for responses.
 Create the directory if needed, write the PRD, and report.
 
 ```bash
-mkdir -p .claude/prds
+mkdir -p "<PRD_DIR>"
 ```
 
-**Output path**: `.claude/prds/{kebab-case-name}.prd.md`
+**Output path**: `<PRD_DIR>/{kebab-case-name}.prd.md`
+
+If bound, record the artifact before reporting:
+
+```bash
+node "$WI" append --workflow plan-prd --artifact prd --path "<PRD_DIR>/<kebab-name>.prd.md" \
+  --run "<run-id>" --outcome pending_approval
+```
 
 #### PRD Template
 
@@ -128,7 +160,7 @@ We'll know we're right when **{measurable outcome}**.
 #### Report to user
 
 ```
-PRD created: .claude/prds/{name}.prd.md
+PRD created: <PRD_DIR>/{name}.prd.md
 
 Problem:    {one line}
 Hypothesis: {one line}
@@ -141,7 +173,7 @@ Validation status:
 
 Open questions: {count}
 
-Next step: /plan .claude/prds/{name}.prd.md
+Next step: /plan <PRD_DIR>/{name}.prd.md
   → /plan will pick the next pending milestone and produce an implementation plan.
 ```
 
