@@ -152,6 +152,16 @@ function canvasCss() {
   .edit-actions{display:flex;gap:6px;margin-bottom:12px}
   .edit-actions .icon-btn{font-size:11.5px;padding:4px 9px}
   .edit-body{flex:1;min-height:40px}
+  /* Below 760px a 300px inspector plus a 340px panel leave the preview at zero
+     width. Stack instead of shrinking: preview first, inspector and panel under it. */
+  @media (max-width:760px){
+    .bar .actions{flex-wrap:wrap;min-width:0;max-width:100%}
+    .layout{flex-direction:column}
+    .frame{order:1;min-width:0;min-height:180px}
+    .inspector{order:2;width:auto;max-height:45%;border-right:0;border-bottom:1px solid var(--border)}
+    .panel{order:3;width:auto;max-height:35%;border-left:0;border-top:1px solid var(--border)}
+  }
+
   .edit-empty{color:var(--text3);font-size:12px;line-height:1.5}
   .edit-group{margin-bottom:10px}
   .edit-group-title{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:5px}
