@@ -1,7 +1,0 @@
-interface:
-  display_name: "Retail Merchandising Analytics"
-  short_description: "Sell-through, GMROI, and margin KPI vocabulary"
-  brand_color: "#F59E0B"
-  default_prompt: "Use $retail-merchandising-analytics to define sell-through, GMROI, and markdown metrics before building a retail dashboard."
-policy:
-  allow_implicit_invocation: true

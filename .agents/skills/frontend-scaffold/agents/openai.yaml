@@ -1,7 +1,0 @@
-interface:
-  display_name: "Frontend Scaffold"
-  short_description: "Scaffold frontends from frozen design contracts"
-  brand_color: "#8B5CF6"
-  default_prompt: "Use $frontend-scaffold to generate a frontend skeleton from a design contract with tokens and states wired."
-policy:
-  allow_implicit_invocation: true

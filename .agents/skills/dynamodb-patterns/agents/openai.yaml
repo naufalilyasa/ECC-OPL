@@ -1,7 +1,0 @@
-interface:
-  display_name: "DynamoDB Patterns"
-  short_description: "DynamoDB single-table design and key patterns"
-  brand_color: "#3B82F6"
-  default_prompt: "Use $dynamodb-patterns to design or review DynamoDB tables, keys, and access patterns."
-policy:
-  allow_implicit_invocation: true

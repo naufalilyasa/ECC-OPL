@@ -1,7 +1,0 @@
-interface:
-  display_name: "Insurance Operations Analytics"
-  short_description: "Loss ratio, claims, and conversion KPI vocabulary"
-  brand_color: "#0EA5E9"
-  default_prompt: "Use $insurance-operations-analytics to define loss ratio, claims, and quote-to-bind metrics before building an insurance dashboard."
-policy:
-  allow_implicit_invocation: true

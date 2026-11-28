@@ -1,7 +1,0 @@
-interface:
-  display_name: "People Analytics"
-  short_description: "HR and workforce KPI vocabulary for dashboards"
-  brand_color: "#8B5CF6"
-  default_prompt: "Use $people-analytics to define attrition, hiring funnel, and compensation metrics before building an HR dashboard."
-policy:
-  allow_implicit_invocation: true

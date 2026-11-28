@@ -1,7 +1,0 @@
-interface:
-  display_name: "MongoDB Patterns"
-  short_description: "MongoDB schema design and query patterns"
-  brand_color: "#10B981"
-  default_prompt: "Use $mongodb-patterns to design or review MongoDB collections, indexes, and schemas."
-policy:
-  allow_implicit_invocation: true

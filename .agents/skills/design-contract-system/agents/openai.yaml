@@ -1,7 +1,0 @@
-interface:
-  display_name: "Design Contract System"
-  short_description: "Anti-slop design contracts from visual mockups"
-  brand_color: "#3B82F6"
-  default_prompt: "Use $design-contract-system to extract design tokens and build contracts from the reference."
-policy:
-  allow_implicit_invocation: true
