@@ -14,24 +14,27 @@
 function editModeClientJs() {
   return `
   // --- visual edit inspector ---------------------------------------------
+  // kind: 'length' gets slider + exact input + unit select, 'number' a slider
+  // and an exact input, 'color' a picker plus a text field for rgb()/keywords,
+  // 'select' a fixed option list, 'text' the raw value only.
   const EDIT_FIELDS = [
-    { prop: 'width', label: 'Width', group: 'Size' },
-    { prop: 'height', label: 'Height', group: 'Size' },
-    { prop: 'padding', label: 'Padding', group: 'Spacing' },
-    { prop: 'margin', label: 'Margin', group: 'Spacing' },
-    { prop: 'gap', label: 'Gap', group: 'Spacing' },
-    { prop: 'background-color', label: 'Background', group: 'Fill' },
-    { prop: 'color', label: 'Text color', group: 'Text' },
-    { prop: 'font-size', label: 'Font size', group: 'Text' },
-    { prop: 'font-weight', label: 'Weight', group: 'Text' },
-    { prop: 'line-height', label: 'Line height', group: 'Text' },
-    { prop: 'letter-spacing', label: 'Tracking', group: 'Text' },
-    { prop: 'border-radius', label: 'Radius', group: 'Border' },
-    { prop: 'border-width', label: 'Border', group: 'Border' },
-    { prop: 'border-style', label: 'Border style', group: 'Border' },
-    { prop: 'border-color', label: 'Border color', group: 'Border' },
-    { prop: 'box-shadow', label: 'Shadow', group: 'Effect' },
-    { prop: 'opacity', label: 'Opacity', group: 'Effect' }
+    { prop: 'width', label: 'Width', group: 'Size', kind: 'length', min: 0, max: 1600, step: 1, unit: 'px' },
+    { prop: 'height', label: 'Height', group: 'Size', kind: 'length', min: 0, max: 1200, step: 1, unit: 'px' },
+    { prop: 'padding', label: 'Padding', group: 'Spacing', kind: 'length', min: 0, max: 240, step: 1, unit: 'px' },
+    { prop: 'margin', label: 'Margin', group: 'Spacing', kind: 'length', min: -240, max: 240, step: 1, unit: 'px' },
+    { prop: 'gap', label: 'Gap', group: 'Spacing', kind: 'length', min: 0, max: 160, step: 1, unit: 'px' },
+    { prop: 'background-color', label: 'Background', group: 'Fill', kind: 'color' },
+    { prop: 'color', label: 'Text color', group: 'Text', kind: 'color' },
+    { prop: 'font-size', label: 'Font size', group: 'Text', kind: 'length', min: 8, max: 96, step: 1, unit: 'px' },
+    { prop: 'font-weight', label: 'Weight', group: 'Text', kind: 'number', min: 100, max: 900, step: 100 },
+    { prop: 'line-height', label: 'Line height', group: 'Text', kind: 'number', min: 0.8, max: 3, step: 0.05 },
+    { prop: 'letter-spacing', label: 'Tracking', group: 'Text', kind: 'length', min: -4, max: 16, step: 0.25, unit: 'px' },
+    { prop: 'border-radius', label: 'Radius', group: 'Border', kind: 'length', min: 0, max: 200, step: 1, unit: 'px' },
+    { prop: 'border-width', label: 'Border', group: 'Border', kind: 'length', min: 0, max: 24, step: 1, unit: 'px' },
+    { prop: 'border-style', label: 'Border style', group: 'Border', kind: 'select', options: ['none', 'solid', 'dashed', 'dotted'] },
+    { prop: 'border-color', label: 'Border color', group: 'Border', kind: 'color' },
+    { prop: 'box-shadow', label: 'Shadow', group: 'Effect', kind: 'text' },
+    { prop: 'opacity', label: 'Opacity', group: 'Effect', kind: 'number', min: 0, max: 1, step: 0.05 }
   ];
   let editTarget = null;
   let editPending = [];
@@ -54,11 +57,15 @@ function editModeClientJs() {
     const listEl = $('editList');
     const statusEl = $('editStatus');
     const nameEl = $('editTargetName');
+    const breadcrumbEl = $('editBreadcrumb');
     const undoBtn = $('editUndo');
     const redoBtn = $('editRedo');
     const resetBtn = $('editReset');
     let rows = new Map();
-    let stale = false;
+    // Stale is per target: reloading one element must not mark an unrelated,
+    // still-live selection unusable.
+    const staleTargets = new Set();
+    const targetStale = t => Boolean(t) && staleTargets.has(t);
 
     function setStatus(text, bad) {
       statusEl.textContent = text || '';
@@ -71,11 +78,27 @@ function editModeClientJs() {
       editPending.forEach(r => last.set(editKey(r.targetId, r.prop), r));
       listEl.innerHTML = '';
       last.forEach(r => {
+        const snapshot = editSnapshots.get(r.targetId) || {};
+        const ctx = snapshot.context || {};
+        const where = [ctx.tag, ctx.testId ? '#' + ctx.testId : '', ctx.name || '']
+          .filter(Boolean).join(' ') || r.targetId;
+        const before = editBaseline.get(editKey(r.targetId, r.prop));
         const li = document.createElement('li');
-        li.textContent = r.prop + ': ' + r.value;
+        const at = document.createElement('span');
+        at.className = 'ei-where';
+        at.textContent = where + ' \\u00b7 ' + r.prop;
+        const from = document.createElement('span');
+        from.className = 'ei-before';
+        from.textContent = before == null ? '\\u2014' : String(before);
+        const to = document.createElement('span');
+        to.className = 'ei-after';
+        to.textContent = String(r.value);
+        li.appendChild(at);
+        li.appendChild(from);
+        li.appendChild(to);
         listEl.appendChild(li);
       });
-      const count = listEl.childElementCount;
+      const count = last.size;
       // Read by the verdict guard above; a resolved change set must land
       // before the owner can approve the design it produced.
       window.__pcPendingEdits = count;
@@ -87,6 +110,7 @@ function editModeClientJs() {
     }
     function renderTarget() {
       if (!editTarget) {
+        breadcrumbEl.textContent = '';
         nameEl.textContent = 'Nothing selected';
         bodyEl.innerHTML = '<p class="edit-empty">Switch to Edit and click an element in the preview.</p>';
         rows = new Map();
@@ -94,8 +118,16 @@ function editModeClientJs() {
         return;
       }
       const ctx = editTarget.context || {};
+      breadcrumbEl.textContent = Array.isArray(ctx.path) && ctx.path.length ? ctx.path.join(' \\u203a ') : '';
       nameEl.textContent = '<' + (ctx.tag || '?') + '>' + (ctx.testId ? ' #' + ctx.testId : '') + (ctx.name ? ' - ' + ctx.name : '');
-      undoBtn.disabled = redoBtn.disabled = resetBtn.disabled = stale && !editPending.length;
+      undoBtn.disabled = redoBtn.disabled = resetBtn.disabled = targetStale(editTarget.targetId) && !editPending.length;
+    }
+    // #rrggbb for the native color picker; value arrives as rgb() from computed
+    // style, or already hex from an override.
+    function toHex(value) {
+      const m = /^rgba?\\((\\d+),\\s*(\\d+),\\s*(\\d+)/.exec(String(value || ''));
+      if (!m) return /^#[0-9a-f]{3,8}$/i.test(String(value || '')) ? value : '#000000';
+      return '#' + [1, 2, 3].map(i => Number(m[i]).toString(16).padStart(2, '0')).join('');
     }
     function renderRows(values) {
       bodyEl.innerHTML = '';
@@ -105,34 +137,116 @@ function editModeClientJs() {
       EDIT_FIELDS.forEach(field => {
         if (field.group !== group) {
           group = field.group;
-          groupEl = document.createElement('div');
+          // Collapsible: <details> keeps keyboard and screen-reader behaviour
+          // without any toggle code.
+          groupEl = document.createElement('details');
           groupEl.className = 'edit-group';
-          const h = document.createElement('div');
-          h.className = 'edit-group-title';
-          h.textContent = group;
-          groupEl.appendChild(h);
+          groupEl.open = true;
+          const summary = document.createElement('summary');
+          summary.textContent = group;
+          groupEl.appendChild(summary);
+          const groupBody = document.createElement('div');
+          groupBody.className = 'edit-group-body';
+          groupEl.appendChild(groupBody);
           bodyEl.appendChild(groupEl);
+          groupEl = groupBody;
         }
-        const row = document.createElement('label');
+        const row = document.createElement('div');
         row.className = 'edit-row';
         row.dataset.prop = field.prop;
         const name = document.createElement('span');
+        name.className = 'edit-row-label';
         name.textContent = field.label;
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.value = (values && values[field.prop]) || '';
-        input.disabled = stale || submitting;
-        input.addEventListener('change', () => {
-          const value = input.value.trim();
-          if (!value) return;
-          if (!applyEdit(editTarget.targetId, field.prop, value)) return;
+        row.appendChild(name);
+        const current = (values && values[field.prop]) || '';
+        const commit = value => {
+          const v = String(value || '').trim();
+          if (!v) return;
+          if (!applyEdit(editTarget.targetId, field.prop, v)) return;
           editTokens.delete(editKey(editTarget.targetId, field.prop));
           // Raw values are looked up against the real stylesheets, so the
           // owner can pick the authored token instead of a literal.
-          postToFrame({ type: 'pc:scan-tokens', targetId: editTarget.targetId, prop: field.prop, value: value });
-        });
-        row.appendChild(name);
-        row.appendChild(input);
+          postToFrame({ type: 'pc:scan-tokens', targetId: editTarget.targetId, prop: field.prop, value: v });
+        };
+        let unitSel = null;
+        if (field.kind === 'length' || field.kind === 'number') {
+          const range = document.createElement('input');
+          range.type = 'range';
+          range.className = 'edit-range';
+          range.min = String(field.min);
+          range.max = String(field.max);
+          range.step = String(field.step || 1);
+          const numeric = parseFloat(current);
+          range.value = String(Number.isFinite(numeric) ? numeric : field.min);
+          range.disabled = submitting || targetStale(editTarget.targetId);
+          const text = document.createElement('input');
+          text.type = 'text';
+          text.className = 'edit-value';
+          text.value = current;
+          text.disabled = range.disabled;
+          range.addEventListener('input', () => {
+            text.value = range.value + (field.kind === 'length' && unitSel && unitSel.value !== 'auto' ? unitSel.value : '');
+          });
+          range.addEventListener('change', () => commit(text.value));
+          text.addEventListener('change', () => commit(text.value));
+          row.appendChild(range);
+          row.appendChild(text);
+          if (field.kind === 'length') {
+            const unit = document.createElement('select');
+            unit.className = 'edit-unit';
+            ['px', 'rem', 'em', '%', 'auto'].forEach(u => {
+              const opt = document.createElement('option');
+              opt.value = u;
+              opt.textContent = u;
+              unit.appendChild(opt);
+            });
+            unit.disabled = range.disabled;
+            unit.addEventListener('change', () => {
+              if (unit.value === 'auto') { text.value = 'auto'; commit('auto'); return; }
+              const num = parseFloat(text.value);
+              text.value = (Number.isFinite(num) ? num : 0) + unit.value;
+              commit(text.value);
+            });
+            unitSel = unit;
+            row.appendChild(unit);
+          }
+        } else if (field.kind === 'color') {
+          const picker = document.createElement('input');
+          picker.type = 'color';
+          picker.className = 'edit-color';
+          picker.value = toHex(current);
+          picker.disabled = submitting || targetStale(editTarget.targetId);
+          const text = document.createElement('input');
+          text.type = 'text';
+          text.className = 'edit-value';
+          text.value = current;
+          text.disabled = picker.disabled;
+          picker.addEventListener('change', () => { text.value = picker.value; commit(picker.value); });
+          text.addEventListener('change', () => commit(text.value));
+          row.appendChild(picker);
+          row.appendChild(text);
+        } else if (field.kind === 'select') {
+          const select = document.createElement('select');
+          select.className = 'edit-value';
+          (field.options || []).forEach(option => {
+            const opt = document.createElement('option');
+            opt.value = option;
+            opt.textContent = option;
+            select.appendChild(opt);
+          });
+          select.value = current && field.options.includes(current) ? current : field.options[0];
+          select.disabled = submitting || targetStale(editTarget.targetId);
+          select.addEventListener('change', () => commit(select.value));
+          row.appendChild(select);
+        } else {
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.className = 'edit-value wide';
+          input.value = current;
+          input.disabled = submitting || targetStale(editTarget.targetId);
+          input.addEventListener('change', () => commit(input.value));
+          row.appendChild(input);
+        }
         groupEl.appendChild(row);
         rows.set(field.prop, row);
         // Candidate chips land here; only authored tokens are clickable.
@@ -141,6 +255,38 @@ function editModeClientJs() {
         chips.dataset.prop = field.prop;
         groupEl.appendChild(chips);
       });
+      // Raw CSS stays available but out of the way. It only accepts the same
+      // closed property set, so it is an input shortcut, not a bypass.
+      const advanced = document.createElement('details');
+      advanced.className = 'edit-group edit-advanced';
+      const summary = document.createElement('summary');
+      summary.textContent = 'Advanced';
+      advanced.appendChild(summary);
+      const area = document.createElement('textarea');
+      area.rows = 2;
+      area.className = 'edit-raw';
+      area.placeholder = 'padding: 24px; border-radius: 12px';
+      area.disabled = submitting || targetStale(editTarget.targetId);
+      const rawBtn = document.createElement('button');
+      rawBtn.type = 'button';
+      rawBtn.className = 'icon-btn';
+      rawBtn.textContent = 'Apply declarations';
+      rawBtn.disabled = area.disabled;
+      rawBtn.addEventListener('click', () => {
+        const allowed = new Set(EDIT_FIELDS.map(f => f.prop));
+        String(area.value || '').split(';').forEach(pair => {
+          const at = pair.indexOf(':');
+          if (at === -1) return;
+          const prop = pair.slice(0, at).trim().toLowerCase();
+          const value = pair.slice(at + 1).trim();
+          if (!allowed.has(prop) || !value) return;
+          applyEdit(editTarget.targetId, prop, value);
+        });
+        area.value = '';
+      });
+      advanced.appendChild(area);
+      advanced.appendChild(rawBtn);
+      bodyEl.appendChild(advanced);
     }
     function renderCandidates(msg) {
       const row = rows.get(msg.prop);
@@ -246,7 +392,7 @@ function editModeClientJs() {
     // anything added later. A chip used to post directly and skipped both the
     // in-flight counter and the stale/submitting guards.
     function applyEdit(targetId, prop, value) {
-      if (submitting || stale) return false;
+      if (submitting || targetStale(targetId)) return false;
       if (!editTarget || targetId !== editTarget.targetId) return false;
       ackNotice = '';
       editInFlight += 1;
@@ -255,8 +401,10 @@ function editModeClientJs() {
     }
     function refreshApply() {
       if (!applyBtn) return;
-      const pending = Number(window.__pcPendingEdits) || 0;
-      applyBtn.disabled = submitting || stale || pending === 0 || editInFlight > 0;
+      // A stale target's overrides are dropped, so they cannot be submitted;
+      // one stale selection must not disable submission for the others.
+      const live = editPending.filter(r => !staleTargets.has(r.targetId)).length;
+      applyBtn.disabled = submitting || live === 0 || editInFlight > 0;
       applyBtn.textContent = submitting ? 'Submitting...' : 'Apply to source';
     }
     async function submitEdits() {
@@ -265,10 +413,15 @@ function editModeClientJs() {
       if (editInFlight > 0) { setStatus('Waiting for the last change to render...', true); return; }
       const targets = buildTargets();
       if (!targets.length) { setStatus('No effective overrides to submit.', true); return; }
-      // The id is assigned once at freeze and reused by every retry, so a
-      // resubmitted batch is a duplicate, not a second change.
-      if (!editFrozen) {
-        editFrozen = { id: 'cs-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8) };
+      // Freeze the payload, not just the id: an identical retry is the same
+      // change request and keeps its id, while a payload the owner edited after
+      // the last attempt is a new request and gets a new id.
+      const fingerprint = JSON.stringify(targets);
+      if (!editFrozen || editFrozen.fp !== fingerprint) {
+        editFrozen = {
+          id: 'cs-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8),
+          fp: fingerprint
+        };
       }
       const payload = {
         kind: 'edits',
@@ -295,6 +448,9 @@ function editModeClientJs() {
         }
       };
       const frozenId = editFrozen.id;
+      // Only the submitted keys are cleared on an ack. Overrides the owner adds
+      // while the request is in flight stay pending instead of disappearing.
+      const submittedKeys = targets.flatMap(t => t.edits.map(edit => editKey(t.targetId, edit.prop)));
       submitting = true;
       refreshApply();
       setStatus('Submitting to your agent...');
@@ -315,12 +471,15 @@ function editModeClientJs() {
           (rejected && rejected.reason === 'DUPLICATE_CHANGE_SET');
         if (acknowledged) {
           // Acknowledged. Only now is the preview state no longer the truth:
-          // clear the overrides so verification sees real source output.
-          postToFrame({ type: 'pc:clear-overrides' });
-          editPending = [];
-          editBaseline.clear();
-          editApplied.clear();
-          editTokens.clear();
+          // clear those overrides so verification sees real source output.
+          postToFrame({ type: 'pc:clear-overrides', keys: submittedKeys });
+          const gone = new Set(submittedKeys);
+          editPending = editPending.filter(r => !gone.has(editKey(r.targetId, r.prop)));
+          gone.forEach(key => {
+            editBaseline.delete(key);
+            editApplied.delete(key);
+            editTokens.delete(key);
+          });
           editFrozen = null;
           ackNotice = 'Sent. Your agent is updating source.';
           renderList();
@@ -345,7 +504,8 @@ function editModeClientJs() {
       if (msg.type === 'pc:select') {
         editTarget = { targetId: msg.targetId, context: msg.context || {} };
         editSnapshots.set(msg.targetId, { context: msg.context || {}, values: {} });
-        stale = false;
+        // Selecting a live target clears only its own stale mark.
+        staleTargets.delete(msg.targetId);
         renderTarget();
         postToFrame({ type: 'pc:probe', targetId: msg.targetId, props: EDIT_FIELDS.map(f => f.prop) });
       } else if (msg.type === 'pc:probe-result') {
@@ -395,22 +555,30 @@ function editModeClientJs() {
           if (alive.get(k) !== 'var(' + tok.name + ')') editTokens.delete(k);
         });
         if (!msg.records || !msg.records.length) editApplied.clear();
-        if (!stale) renderList();
+        renderList();
         if (editTarget) {
           postToFrame({ type: 'pc:probe', targetId: editTarget.targetId, props: EDIT_FIELDS.map(f => f.prop) });
         }
         refreshApply();
       } else if (msg.type === 'pc:targets') {
-        const list = msg.stale || [];
-        const pendingStale = list.filter(s => editPending.some(r => r.targetId === s.targetId));
-        if (editTarget && list.some(s => s.targetId === editTarget.targetId)) {
-          stale = true;
-          renderTarget();
-        }
-        if (pendingStale.length) {
-          setStatus('Some edited elements were replaced by the app. Reselect and re-apply them.', true);
-        } else if (stale) {
-          setStatus('The element was replaced by a reload. Reselect it to continue.', true);
+        const list = Array.isArray(msg.stale) ? msg.stale : [];
+        let dropped = 0;
+        list.forEach(entry => {
+          const id = entry && entry.targetId;
+          if (!id) return;
+          staleTargets.add(id);
+          const before = editPending.length;
+          // A replaced element's overrides no longer exist in the document.
+          // Drop them explicitly so a submission never names a dead target.
+          editPending = editPending.filter(r => r.targetId !== id);
+          dropped += before - editPending.length;
+        });
+        if (editTarget && staleTargets.has(editTarget.targetId)) renderTarget();
+        if (dropped) {
+          renderList();
+          setStatus(dropped + ' edit' + (dropped === 1 ? '' : 's') + ' for replaced elements were dropped. Reselect and re-apply them.', true);
+        } else if (editTarget && staleTargets.has(editTarget.targetId)) {
+          setStatus('The selected element was replaced by a reload. Reselect it to continue.', true);
         }
         refreshApply();
       } else if (msg.type === 'pc:dom-changed') {
@@ -419,21 +587,25 @@ function editModeClientJs() {
         if (editTarget) ids.push(editTarget.targetId);
         postToFrame({ type: 'pc:revalidate', targetIds: Array.from(new Set(ids)) });
       } else if (msg.type === 'pc:ready') {
-        // The preview document was rebuilt: memory-only overrides are gone with
-        // it. Say so instead of leaving a pending list that no longer exists.
-        if (editPending.length) {
-          editPending = [];
-          editBaseline.clear();
-          editApplied.clear();
-          editTokens.clear();
-          editFrozen = null;
-          ackNotice = '';
-          stale = true;
-          renderTarget();
-          renderList();
-          refreshApply();
-          setStatus('Preview reloaded. Pending visual edits were cleared by the reload; re-apply them.', true);
-        }
+        // The document was rebuilt: memory-only overrides are gone with it, and
+        // any selection or in-flight count describes the old document. Reset
+        // all of it so the inspector does not keep a dead selection or a stuck
+        // "waiting for the last change" state.
+        const had = Boolean(editTarget) || editPending.length > 0 || editInFlight > 0;
+        editPending = [];
+        editBaseline.clear();
+        editApplied.clear();
+        editTokens.clear();
+        editFrozen = null;
+        editInFlight = 0;
+        staleTargets.clear();
+        editTarget = null;
+        rows = new Map();
+        ackNotice = '';
+        renderTarget();
+        renderList();
+        refreshApply();
+        if (had) setStatus('Preview reloaded. Pending visual edits were cleared; reselect and re-apply.', true);
       }
     });
 

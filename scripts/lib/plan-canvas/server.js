@@ -329,6 +329,16 @@ function createPlanCanvasServer({
     return session.pendingFeedback && session.pendingFeedback.length > 0 ? 'queued' : 'waiting';
   }
 
+  // Lifecycle of the submitted visual change set, in the inspector's words.
+  // `applying` is derived: the agent is thinking after draining the change set.
+  function visualEditFor(key) {
+    const session = store.get(key);
+    const visual = session && session.visualEdits;
+    if (!visual) return null;
+    const state = visual.state === 'submitted' && presenceFor(key) === 'thinking' ? 'applying' : visual.state;
+    return { state, changeSetId: visual.changeSetId || null };
+  }
+
   function broadcast(key, event, payload) {
     const clients = sseClients.get(key);
     if (!clients) return;
@@ -341,7 +351,7 @@ function createPlanCanvasServer({
     lastPresence.set(key, state);
     // The revision travels with presence so a tab that booted on an older
     // preview can raise its stale banner without a reload.
-    broadcast(key, 'presence', { state, revision: currentRevision(key) });
+    broadcast(key, 'presence', { state, revision: currentRevision(key), visualEdit: visualEditFor(key) });
   }
 
   // Re-broadcast only where an expiry actually changed the answer, so an
@@ -647,7 +657,8 @@ function createPlanCanvasServer({
             item.clientId || (item.changeSet && item.changeSet.id) || item.id),
           rejected: result.rejected,
           pending: result.pending,
-          presence: presenceFor(key)
+          presence: presenceFor(key),
+          visualEdit: visualEditFor(key)
         });
       }
 

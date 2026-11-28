@@ -204,8 +204,24 @@ function normalizeChangeSet(raw, session = null) {
   if (mode === 'framework-native' && session && session.previewMode === 'framework-native') {
     const live = session.previewMeta || {};
     const digest = typeof preview.revisionDigest === 'string' ? preview.revisionDigest : '';
-    if (live.revisionDigest && digest !== live.revisionDigest) {
+    // Every field that names the reviewed revision has to match the live
+    // preview. A matching digest alone let an edit claim another section or a
+    // stale revision label, and a native edit with no digest had nothing to
+    // bind to at all.
+    if (!live.revisionDigest) {
+      fail('MISSING_REVISION', 'the session has no live preview revision to bind this edit to');
+    }
+    if (digest !== live.revisionDigest) {
       fail('STALE_REVISION', 'the reviewed preview revision moved on');
+    }
+    if ((preview.section || '') !== (live.section || '')) {
+      fail('SECTION_MISMATCH', `session previews section ${live.section || '(none)'}`);
+    }
+    if ((preview.revision || '') !== (live.revision || '')) {
+      fail('REVISION_MISMATCH', `session previews revision ${live.revision || '(none)'}`);
+    }
+    if (live.designDigest && (preview.designDigest || '') !== live.designDigest) {
+      fail('DESIGN_MISMATCH', 'the edit was drawn against another design revision');
     }
   }
 

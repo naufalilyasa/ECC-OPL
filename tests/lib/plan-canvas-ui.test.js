@@ -128,7 +128,7 @@ function runTests() {
   if (test('edit inspector stacks under the preview below 760px', () => {
     assert.ok(css.includes('@media (max-width:760px)'), 'narrow-width rule');
     assert.ok(css.includes('.layout{flex-direction:column}'), 'row becomes column');
-    assert.ok(css.includes('.inspector{order:2;width:auto;max-height:45%;'), 'inspector stops holding a fixed 300px');
+    assert.ok(css.includes('.inspector{order:2;width:auto;max-height:58%;'), 'inspector stops holding a fixed width');
   })) passed++; else failed++;
 
   console.log(`\nPassed: ${passed}, Failed: ${failed}`);

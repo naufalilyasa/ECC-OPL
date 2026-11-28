@@ -146,37 +146,67 @@ function canvasCss() {
 
   .layout[data-panel="hidden"] .panel{display:none}
   .panel{width:340px;flex:none;display:flex;flex-direction:column;border-left:1px solid var(--border);background:var(--bg2)}
-  .inspector{width:300px;flex:none;display:flex;flex-direction:column;border-right:1px solid var(--border);background:var(--bg2);overflow-y:auto;padding:12px 14px}
-  .inspector h2{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text2);margin:0 0 8px}
-  .edit-target{font-family:var(--mono);font-size:11.5px;color:var(--text);word-break:break-all;margin-bottom:10px}
-  .edit-actions{display:flex;gap:6px;margin-bottom:12px}
-  .edit-actions .icon-btn{font-size:11.5px;padding:4px 9px}
-  .edit-body{flex:1;min-height:40px}
-  /* Below 760px a 300px inspector plus a 340px panel leave the preview at zero
+  .inspector{width:320px;flex:none;display:flex;flex-direction:column;border-right:1px solid var(--border);background:var(--bg2);overflow:hidden;min-height:0}
+  .inspector h2,.edit-pending h2{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text2);margin:0 0 6px}
+  .edit-head{flex:none;padding:12px 14px 10px;border-bottom:1px solid var(--border)}
+  .edit-breadcrumb{font-family:var(--mono);font-size:10.5px;color:var(--text2);word-break:break-all;margin-bottom:3px;min-height:13px}
+  .edit-target{font-family:var(--mono);font-size:11.5px;color:var(--text);word-break:break-all;margin-bottom:8px}
+  .edit-lifecycle{display:flex;align-items:center;gap:6px;font-size:11px;line-height:1.3;color:var(--text2);background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:4px 8px}
+  .edit-lifecycle .dot{width:7px;height:7px;border-radius:99px;background:var(--text3);flex:none}
+  .edit-lifecycle[data-state="submitted"] .dot{background:var(--orange);box-shadow:0 0 0 2px var(--orange-glow)}
+  .edit-lifecycle[data-state="applying"] .dot{background:var(--accent);box-shadow:0 0 0 2px var(--accent-glow);animation:pulse 1.2s infinite}
+  .edit-lifecycle[data-state="ready"] .dot{background:var(--green);box-shadow:0 0 0 2px var(--green-glow)}
+  .edit-lifecycle[data-state="failed"] .dot{background:#c9556e}
+  .edit-lifecycle[data-state="ready"]{color:var(--green);border-color:var(--green)}
+  .edit-body{flex:1;min-height:80px;overflow-y:auto;padding:10px 14px}
+  .edit-pending{flex:none;max-height:150px;overflow-y:auto;border-top:1px solid var(--border);padding:8px 14px 4px}
+  .edit-pending h2{margin-bottom:4px}
+  #editStatus{flex:none;padding:6px 14px 0;font-size:11.5px;line-height:1.35;color:var(--text2);min-height:0}
+  #editStatus:empty{display:none}
+  .edit-footer{flex:none;position:sticky;bottom:0;background:var(--bg2);border-top:1px solid var(--border);padding:8px 14px 12px;display:flex;flex-direction:column;gap:6px}
+  .edit-actions{display:flex;gap:6px}
+  .edit-actions .icon-btn{flex:1;font-size:11.5px;padding:4px 8px}
+  .edit-apply{height:30px;border-radius:6px;border:1px solid var(--green);background:var(--green-glow);color:var(--green);font-size:12px;font-weight:600;cursor:pointer}
+  .edit-apply:disabled{opacity:.45;cursor:not-allowed}
+  .edit-apply:hover:not(:disabled){background:var(--green);color:#fff}
+  /* Below 760px a 320px inspector plus a 340px panel leave the preview at zero
      width. Stack instead of shrinking: preview first, inspector and panel under it. */
   @media (max-width:760px){
     .bar .actions{flex-wrap:wrap;min-width:0;max-width:100%}
     .layout{flex-direction:column}
     .frame{order:1;min-width:0;min-height:180px}
-    .inspector{order:2;width:auto;max-height:45%;border-right:0;border-bottom:1px solid var(--border)}
+    .inspector{order:2;width:auto;max-height:58%;border-right:0;border-bottom:1px solid var(--border)}
     .panel{order:3;width:auto;max-height:35%;border-left:0;border-top:1px solid var(--border)}
   }
 
   .edit-empty{color:var(--text3);font-size:12px;line-height:1.5}
-  .edit-group{margin-bottom:10px}
-  .edit-group-title{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:5px}
-  .edit-row{display:flex;align-items:center;gap:8px;margin-bottom:4px}
-  .edit-row span{flex:none;width:88px;font-size:11.5px;color:var(--text2)}
-  .edit-row input{flex:1;min-width:0;font:inherit;font-family:var(--mono);font-size:11.5px;color:var(--text);background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:4px 7px}
-  .edit-row input:focus{outline:none;border-color:var(--accent)}
-  .edit-row.conflict input{border-color:#c9556e;background:rgba(201,85,110,.08)}
-  .edit-list{list-style:none;margin:0 0 8px;padding:0;font-family:var(--mono);font-size:11.5px;color:var(--text2)}
-  .edit-list li{padding:3px 0;border-bottom:1px solid var(--border)}
-  .edit-chips{display:flex;flex-wrap:wrap;gap:4px;margin:2px 0 6px 96px;min-height:0}
+  .edit-group{margin:0 0 8px;border:0}
+  .edit-group>summary{display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--text2);padding:4px 0;list-style:none}
+  .edit-group>summary::-webkit-details-marker{display:none}
+  .edit-group>summary::after{content:'+';color:var(--text2);font-family:var(--mono)}
+  .edit-group[open]>summary::after{content:'\\2212'}
+  .edit-row{display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;margin-bottom:6px;padding:4px 5px;border:1px solid transparent;border-radius:6px}
+  .edit-row:hover{background:var(--bg3)}
+  .edit-row-label{flex:0 0 70px;font-size:11.5px;color:var(--text2)}
+  .edit-row input,.edit-row select{font:inherit;font-family:var(--mono);font-size:11.5px;color:var(--text);background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:3px 6px;min-width:0}
+  .edit-row input:focus-visible,.edit-row select:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+  .edit-row input[type=range]{flex:1 1 64px;padding:0;border:0;background:none;accent-color:var(--accent);height:16px}
+  .edit-row input[type=color]{flex:none;width:26px;height:24px;padding:0;background:none}
+  .edit-row input.edit-value{flex:1 1 58px;min-width:50px}
+  .edit-row input.edit-value.wide{flex:1 1 100%}
+  .edit-row select.edit-unit{flex:none;width:58px}
+  .edit-row.conflict{border-color:#c9556e;background:rgba(201,85,110,.1)}
+  .edit-raw{width:100%;margin:4px 0 6px;font-family:var(--mono);font-size:11px;color:var(--text);background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:4px 6px;resize:vertical}
+  .edit-list{list-style:none;margin:0;padding:0;font-family:var(--mono);font-size:11px;color:var(--text2)}
+  .edit-list li{display:flex;flex-wrap:wrap;gap:2px 6px;padding:3px 0;border-bottom:1px solid var(--border)}
+  .edit-list .ei-where{flex:1 1 100%;color:var(--text2);word-break:break-all}
+  .edit-list .ei-before{color:var(--text3);text-decoration:line-through}
+  .edit-list .ei-after{color:var(--accent)}
+  .edit-chips{display:flex;flex-wrap:wrap;gap:4px;margin:2px 0 6px 76px;min-height:0}
   .edit-chip{font:inherit;font-family:var(--mono);font-size:10.5px;color:var(--accent);background:none;border:1px solid var(--border);border-radius:10px;padding:1px 7px;cursor:pointer}
   .edit-chip:hover{border-color:var(--accent)}
   .edit-chip-note{font-size:10.5px;color:var(--text3);line-height:1.4}
-  .edit-scope{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--text2);margin-bottom:12px}
+  .edit-scope{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--text2);margin:0}
   .edit-scope select{font:inherit;font-size:11.5px;color:var(--text);background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:3px 6px}
   .status.bad{color:#e08a9b}
   .panel h2{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);padding:12px 14px 8px}
@@ -663,6 +693,23 @@ function canvasClientJs() {
     presence.querySelector('.label').textContent = PRESENCE_LABELS[state] || state;
     renderActivity(state);
   }
+  // The lifecycle line names what happened to the submitted change set. It is
+  // driven by the server's session state, not inferred from the local list.
+  const VISUAL_EDIT_LABELS = {
+    'preview-only': 'Preview only \\u2014 not in source',
+    submitted: 'Change set sent \\u2014 waiting for your agent',
+    applying: 'Agent is updating source\\u2026',
+    ready: 'Source rendered \\u2014 safe to approve',
+    failed: 'Agent replied but source did not change'
+  };
+  function renderVisualEdit(state) {
+    const el = document.getElementById('editLifecycle');
+    if (!el) return;
+    const value = VISUAL_EDIT_LABELS[state] ? state : 'preview-only';
+    el.setAttribute('data-state', value);
+    el.querySelector('.label').textContent = VISUAL_EDIT_LABELS[value];
+  }
+  renderVisualEdit((boot.visualEdit && boot.visualEdit.state) || 'preview-only');
   function checkStaleRevision(revision) {
     if (boot.previewMode !== 'framework-native') return;
     const notice = document.getElementById('staleNotice');
@@ -679,6 +726,7 @@ function canvasClientJs() {
       const payload = JSON.parse(e.data);
       applyPresence(payload.state);
       checkStaleRevision(payload.revision);
+      if (payload.visualEdit) renderVisualEdit(payload.visualEdit.state);
     });
     es.addEventListener('reload', reloadArtifact);
     es.addEventListener('ended', e => { markEnded(JSON.parse(e.data).endedBy); es.close(); });
@@ -738,6 +786,11 @@ function renderCanvasHtml(session, { clientPath = '/client.js', cssPath = '/canv
     ...(session.previewUrl ? { previewUrl: session.previewUrl } : {}),
     ...(session.previewMeta ? { previewMeta: session.previewMeta } : {}),
     ...(session.editMode ? { editMode: true } : {}),
+    // Where the submitted change set stands; the inspector renders it as a
+    // lifecycle line instead of inferring it from the local pending list.
+    visualEdit: session.visualEdits
+      ? { state: session.visualEdits.state, changeSetId: session.visualEdits.changeSetId || null }
+      : null,
     chat: session.chat
   }).replace(/</g, '\\u003c');
   const artifactSrc = `/artifact/${session.key}/`;
@@ -806,26 +859,34 @@ ${session.editMode ? `  <div id="modeGroup" class="mode-group" role="group" aria
     <div id="endedOverlay" class="overlay"><div class="card"><h3>Session ended</h3><p id="endedWho"></p></div></div>
   </main>
 ${session.editMode ? `  <aside id="inspector" class="inspector" aria-label="Visual edit inspector">
-    <h2>Visual edit</h2>
-    <div id="editTargetName" class="edit-target">Nothing selected</div>
-    <div class="edit-actions">
-      <button id="editUndo" class="icon-btn" type="button">Undo</button>
-      <button id="editRedo" class="icon-btn" type="button">Redo</button>
-      <button id="editReset" class="icon-btn danger" type="button">Reset</button>
+    <div class="edit-head">
+      <h2>Visual edit</h2>
+      <div id="editBreadcrumb" class="edit-breadcrumb">Nothing selected</div>
+      <div id="editTargetName" class="edit-target">Nothing selected</div>
+      <div id="editLifecycle" class="edit-lifecycle" data-state="preview-only" role="status" aria-live="polite">
+        <span class="dot"></span><span class="label">Preview only &mdash; not in source</span>
+      </div>
     </div>
-    <div class="edit-actions">
-      <button id="editApply" class="icon-btn" type="button" disabled>Apply to source</button>
-    </div>
-    <label class="edit-scope">Scope
-      <select id="editScope">
-        <option value="instance">This instance</option>
-        <option value="component">Shared component</option>
-      </select>
-    </label>
     <div id="inspectorBody" class="edit-body"></div>
-    <h2>Pending</h2>
-    <ul id="editList" class="edit-list"></ul>
+    <section class="edit-pending" aria-label="Pending edits">
+      <h2>Pending</h2>
+      <ul id="editList" class="edit-list"></ul>
+    </section>
     <div id="editStatus" class="status" role="status" aria-live="polite"></div>
+    <div class="edit-footer">
+      <label class="edit-scope">Scope
+        <select id="editScope">
+          <option value="instance">This instance</option>
+          <option value="component">Shared component</option>
+        </select>
+      </label>
+      <div class="edit-actions">
+        <button id="editUndo" class="icon-btn" type="button">Undo</button>
+        <button id="editRedo" class="icon-btn" type="button">Redo</button>
+        <button id="editReset" class="icon-btn danger" type="button">Reset</button>
+      </div>
+      <button id="editApply" class="edit-apply" type="button" disabled>Apply to source</button>
+    </div>
   </aside>\n` : ''}  <aside class="panel" aria-label="Verdict and conversation">
     <h2>${nativeApproval ? 'Design verdict' : 'Plan verdict'}</h2>
     <div class="verdict">

@@ -40,6 +40,10 @@ function artifactSdkJs() {
   let internalUntil = 0;
   const editTargets = new Map();   // targetId -> { targetId, el, selector, identity }
   const records = [];              // applied overrides, in order; last wins
+  // Only targets with a read-back in flight get the transition/animation
+  // quieting rule. Leaving it on a target permanently changed how the real app
+  // animated once the editor was done with it.
+  const quietTargets = new Set();
   const redo = [];
   // shortcut: local undo depth capped at 400; the server caps submitted edits
   // at 500 anyway. Raise both together if owners want deeper undo.
@@ -144,8 +148,14 @@ function artifactSdkJs() {
   function contextFor(el) {
     const cs = getComputedStyle(el);
     const rect = el.getBoundingClientRect();
+    // Ancestor chain for the breadcrumb, root first and bounded.
+    const path = [];
+    for (let node = el; node && node.nodeType === 1 && path.length < 5; node = node.parentElement) {
+      path.unshift(node.tagName.toLowerCase());
+    }
     return {
       selector: selectorFor(el),
+      path: path,
       tag: el.tagName.toLowerCase(),
       role: el.getAttribute('role') || '',
       testId: el.getAttribute('data-testid') || '',
@@ -203,13 +213,22 @@ function artifactSdkJs() {
     let css = '';
     editTargets.forEach((t, targetId) => {
       if (!t || !t.el || !t.el.isConnected) return;
+      const mine = byTarget.get(targetId) || [];
+      const quiet = quietTargets.has(targetId);
+      // Nothing of ours is on this element: leave no marker or rule behind, so
+      // a reset returns the app's own transition/animation behaviour.
+      if (!mine.length && !quiet) {
+        if (t.el.getAttribute('data-ecc-edit') === targetId) t.el.removeAttribute('data-ecc-edit');
+        return;
+      }
       t.el.setAttribute('data-ecc-edit', targetId);
       const sel = '[data-ecc-edit="' + targetId + '"]';
       // Transitions and animations outrank even !important declarations, so a
       // target with transition-all reports every override as ineffective while
-      // the change animates, and each probe restarts the transition.
-      css += sel + '{transition:none !important;animation:none !important}\\n';
-      (byTarget.get(targetId) || []).forEach(r => {
+      // the change animates, and each probe restarts the transition. Only while
+      // a read-back is pending: the rule must not outlive the measurement.
+      if (quiet) css += sel + '{transition:none !important;animation:none !important}\\n';
+      mine.forEach(r => {
         if (EDIT_PROPS.has(r.prop) && safeValue(r.value)) {
           css += sel + '{' + r.prop + ':' + r.value + ' !important}\\n';
         }
@@ -296,6 +315,10 @@ function artifactSdkJs() {
     // What the property rendered as before this declaration. A declaration that
     // leaves it where it was is not an edit, whatever the canonical form says
     // (border-width on a borderless element, a value the cascade already set).
+    // Quiet the target first so the baseline is a settled value, not a frame of
+    // whatever transition was running when the owner clicked.
+    quietTargets.add(targetId);
+    renderOverrides();
     const before = readValues(prop, el);
     const record = { targetId: targetId, prop: prop, value: value };
     records.push(record);
@@ -317,6 +340,9 @@ function artifactSdkJs() {
     const finalize = () => {
       const live = el.isConnected;
       const after = live ? readValues(prop, el) : null;
+      // The measurement is done: drop the quieting rule before anything else can
+      // observe it, or the target keeps the editor's transition override.
+      quietTargets.delete(targetId);
       // A declaration that did not render is not a pending edit. Keeping it
       // would let a bad value sit on top of a good one for the same property
       // and hide it from the pending list, or make undo restore junk.
@@ -326,6 +352,7 @@ function artifactSdkJs() {
       } else {
         redo.length = 0;
       }
+      renderOverrides();
       if (!live) return reportApplied(targetId, prop, value, null, 'STALE_TARGET');
       const rect = el.getBoundingClientRect();
       const rendered = SIZE_PROPS.has(prop) ? Math.round(prop === 'width' ? rect.width : rect.height) : null;
@@ -355,11 +382,33 @@ function artifactSdkJs() {
     records.length = 0;
     redo.length = 0;
     internalUntil = Date.now() + 200;
+    // Quiet the targets for the reset read-back only, then let renderOverrides
+    // drop both the rule and the marker: a reset must not leave editor-owned
+    // styling that changes how the app transitions afterwards.
+    editTargets.forEach((t, targetId) => { if (t && t.el) quietTargets.add(targetId); });
     renderOverrides();
-    // Keep data-ecc-edit: the attribute carries the transition:none quieting
-    // rule, and dropping it makes the reset read-back land mid-transition.
     editCurrent = null;
     post({ type: 'pc:override-state', records: [], redo: 0 });
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      editTargets.forEach((t, targetId) => {
+        quietTargets.delete(targetId);
+        if (t && t.el && t.el.getAttribute('data-ecc-edit') === targetId) t.el.removeAttribute('data-ecc-edit');
+      });
+      renderOverrides();
+    }));
+  }
+  // Drop only the overrides the chrome handed back after an ack. Edits the owner
+  // made after the submission are not part of that change set and must survive.
+  function dropOverrides(keys) {
+    const kill = new Set(Array.isArray(keys) ? keys : []);
+    if (!kill.size) return;
+    for (let i = records.length - 1; i >= 0; i--) {
+      const r = records[i];
+      if (kill.has(r.targetId + ':' + r.prop)) records.splice(i, 1);
+    }
+    redo.length = 0;
+    renderOverrides();
+    post({ type: 'pc:override-state', records: records.slice(), redo: 0 });
   }
   function probeTarget(targetId, props) {
     const t = editTargets.get(targetId);
@@ -367,9 +416,15 @@ function artifactSdkJs() {
       return post({ type: 'pc:probe-result', targetId: targetId, values: null, error: 'STALE_TARGET' });
     }
     // Same rendering-lifecycle lag as apply: a probe that lands right after the
-    // sheet is rewritten would report the previous value.
+    // sheet is rewritten would report the previous value. Quiet the target for
+    // the read only, so the probe is settled without leaving a transition
+    // override behind.
+    quietTargets.add(targetId);
+    renderOverrides();
     const read = () => {
       if (!t.el || !t.el.isConnected) {
+        quietTargets.delete(targetId);
+        renderOverrides();
         return post({ type: 'pc:probe-result', targetId: targetId, values: null, error: 'STALE_TARGET' });
       }
       const cs = getComputedStyle(t.el);
@@ -379,6 +434,8 @@ function artifactSdkJs() {
         const longhands = READBACK[p] || [p];
         values[p] = longhands.map(x => cs.getPropertyValue(x).trim()).join(' ');
       });
+      quietTargets.delete(targetId);
+      renderOverrides();
       post({ type: 'pc:probe-result', targetId: targetId, values: values, rect: contextFor(t.el).rect });
     };
     if (typeof requestAnimationFrame === 'function') requestAnimationFrame(() => requestAnimationFrame(read));
@@ -652,10 +709,15 @@ function artifactSdkJs() {
       undoLast();
     } else if (msg.type === 'pc:redo') {
       redoLast();
-    } else if (msg.type === 'pc:reset' || msg.type === 'pc:clear-overrides') {
-      // The chrome sends this only after the server acknowledged the change
-      // set. A failed submission keeps every override for the retry.
+    } else if (msg.type === 'pc:reset') {
       resetAll();
+    } else if (msg.type === 'pc:clear-overrides') {
+      // The chrome sends this only after the server acknowledged the change
+      // set. A failed submission keeps every override for the retry. With keys
+      // it drops just those overrides: edits made after the submission are a
+      // newer change request and must not disappear with the ack.
+      if (Array.isArray(msg.keys)) dropOverrides(msg.keys);
+      else resetAll();
     } else if (msg.type === 'pc:probe') {
       probeTarget(msg.targetId, msg.props);
     } else if (msg.type === 'pc:revalidate') {

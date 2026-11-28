@@ -68,8 +68,16 @@ function runTests() {
 
   if (test('a replaced element blocks further editing', () => {
     assert.ok(js.includes("msg.type === 'pc:targets'"), 'handles revalidation results');
-    assert.ok(js.includes('stale = true'), 'marks the selection stale');
-    assert.ok(js.includes('input.disabled = stale'), 'disables inputs');
+    assert.ok(js.includes('const staleTargets = new Set()'), 'stale is tracked per target');
+    assert.ok(js.includes('targetStale(editTarget.targetId)'), 'only the stale selection is disabled');
+    assert.ok(/editPending = editPending\.filter\(r => r\.targetId !== id\)/.test(js),
+      'overrides of replaced elements are dropped');
+  })) passed++; else failed++;
+
+  if (test('selecting a live target does not clear another target stale mark', () => {
+    const selectAt = js.slice(js.indexOf("msg.type === 'pc:select'"), js.indexOf("msg.type === 'pc:probe-result'"));
+    assert.ok(selectAt.includes('staleTargets.delete(msg.targetId)'), 'clears only the reselected target');
+    assert.ok(!selectAt.includes('staleTargets.clear()'), 'no blanket reset on selection');
   })) passed++; else failed++;
 
   if (test('the SDK overrides through a constructable sheet with a fallback', () => {
@@ -103,10 +111,12 @@ function runTests() {
     assert.ok(sdk.includes("reason: 'missing'"), 'missing targets marked stale');
   })) passed++; else failed++;
 
-  if (test('reset removes every rule and keeps the quieting target attribute', () => {
+  if (test('reset removes every rule and its editor-owned marker', () => {
     assert.ok(sdk.includes('records.length = 0'), 'records cleared');
     const resetBody = sdk.slice(sdk.indexOf('function resetAll'), sdk.indexOf('function probeTarget'));
-    assert.ok(!resetBody.includes("removeAttribute('data-ecc-edit')"), 'attribute retained so reset reads a settled value');
+    assert.ok(resetBody.includes("removeAttribute('data-ecc-edit')"),
+      'marker dropped after the reset read-back so the app transitions again');
+    assert.ok(resetBody.includes('quietTargets.delete(targetId)'), 'quieting removed too');
     assert.ok(sdk.includes("type: 'pc:override-state'"), 'state reported');
   })) passed++; else failed++;
 
@@ -118,7 +128,7 @@ function runTests() {
   })) passed++; else failed++;
 
   if (test('clear-overrides waits for the chrome and is the only reset path', () => {
-    assert.ok(sdk.includes("msg.type === 'pc:reset' || msg.type === 'pc:clear-overrides'"), 'both accepted');
+    assert.ok(sdk.includes("msg.type === 'pc:clear-overrides'"), 'clear-overrides is handled');
     assert.ok(sdk.includes('A failed submission keeps every override for the retry.') ||
       sdk.includes('failed submission keeps every override'), 'failure keeps the pending state');
   })) passed++; else failed++;
@@ -132,7 +142,9 @@ function runTests() {
   if (test('overrides are cleared only after the server acknowledges the change set', () => {
     assert.ok(js.includes('acceptedIds'), 'reads acceptedIds');
     assert.ok(js.includes('accepted.indexOf(frozenId)'), 'matches this change set');
-    const ackAt = js.indexOf("postToFrame({ type: 'pc:clear-overrides' })");
+    assert.ok(js.includes("postToFrame({ type: 'pc:clear-overrides', keys: submittedKeys })"),
+      'only the submitted keys are cleared');
+    const ackAt = js.indexOf("postToFrame({ type: 'pc:clear-overrides', keys: submittedKeys })");
     const checkAt = js.indexOf('accepted.indexOf(frozenId)');
     assert.ok(checkAt !== -1 && ackAt > checkAt, 'clear happens after the ack check');
     assert.ok(js.includes('clear-overrides'), 'uses clear-overrides, not reset');
@@ -158,7 +170,8 @@ function runTests() {
   })) passed++; else failed++;
 
   if (test('the frozen change set id is reused across retries', () => {
-    assert.ok(js.includes('if (!editFrozen) {'), 'freeze once');
+    assert.ok(js.includes('const fingerprint = JSON.stringify(targets)'), 'the payload is frozen, not just the id');
+    assert.ok(js.includes('editFrozen.fp !== fingerprint'), 'a changed payload is a new change request');
     assert.ok(js.includes("'cs-' + Date.now()"), 'ids are generated locally');
     assert.ok(js.includes('clientId: editFrozen.id'), 'clientId echoes the same id');
     assert.ok(js.includes('id: editFrozen.id'), 'changeSet.id matches clientId');
@@ -222,7 +235,7 @@ function runTests() {
 
   if (test('a preview reload cannot leave a phantom pending list', () => {
     assert.ok(js.includes("msg.type === 'pc:ready'"), 'reload is observed');
-    assert.ok(js.includes('Pending visual edits were cleared by the reload'), 'the owner is told');
+    assert.ok(js.includes('Pending visual edits were cleared; reselect and re-apply'), 'the owner is told');
   })) passed++; else failed++;
 
   if (test('an override still in flight blocks the verdict', () => {
@@ -249,7 +262,7 @@ function runTests() {
 
   if (test('every override path shares one guard', () => {
     assert.ok(js.includes('function applyEdit(targetId, prop, value)'), 'single entry point');
-    assert.ok(js.includes('if (submitting || stale) return false;'), 'it honours the submission guards');
+    assert.ok(js.includes('if (submitting || targetStale(targetId)) return false;'), 'it honours the submission guards');
     assert.ok(js.includes('if (!applyEdit(msg.targetId, msg.prop'), 'chips go through it');
   })) passed++; else failed++;
 
@@ -262,7 +275,7 @@ function runTests() {
   })) passed++; else failed++;
 
   if (test('stale cannot trap the owner without reset', () => {
-    assert.ok(js.includes('stale && !editPending.length'), 'reset stays available while edits exist');
+    assert.ok(js.includes('targetStale(editTarget.targetId) && !editPending.length'), 'reset stays available while edits exist');
   })) passed++; else failed++;
 
   if (test('the ack message survives the state sync that follows it', () => {

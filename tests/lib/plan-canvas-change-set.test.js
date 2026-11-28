@@ -15,6 +15,10 @@ const {
 } = require('../../scripts/lib/plan-canvas/change-set');
 const { createSessionStore } = require('../../scripts/lib/plan-canvas/sessions');
 
+const sha = seed => require('crypto').createHash('sha256').update(seed).digest('hex');
+const DIGEST = sha('live-revision');
+const DIGEST_OLD = sha('old-revision');
+
 function test(name, fn) {
   try {
     fn();
@@ -33,7 +37,7 @@ function changes(mutate) {
     version: 1,
     session: 'abcdef123456',
     route: 'http://127.0.0.1:5199/pricing',
-    preview: { mode: 'framework-native', framework: 'react', revision: 'r2', revisionDigest: 'digest-a' },
+    preview: { mode: 'framework-native', framework: 'react', revision: 'r2', revisionDigest: DIGEST },
     viewport: { w: 1440, h: 900, dpr: 1 },
     scope: 'instance',
     targets: [
@@ -64,7 +68,7 @@ function code(fn) {
 const liveSession = {
   key: 'abcdef123456',
   previewMode: 'framework-native',
-  previewMeta: { revision: 'r2', revisionDigest: 'digest-a' }
+  previewMeta: { revision: 'r2', revisionDigest: DIGEST }
 };
 
 function runTests() {
@@ -126,7 +130,7 @@ function runTests() {
 
   if (test('a stale preview revision is rejected', () => {
     assert.strictEqual(code(() => normalizeChangeSet(changes(cs => {
-      cs.preview.revisionDigest = 'digest-old';
+      cs.preview.revisionDigest = DIGEST_OLD;
     }), liveSession)), 'STALE_REVISION');
   })) passed++; else failed++;
 
@@ -186,7 +190,7 @@ function runTests() {
     const store = createSessionStore({ stateDir: path.join(dir, 'state') });
     const { session } = store.open(artifact, {
       previewMode: 'framework-native',
-      previewMeta: { revision: 'r2', revisionDigest: 'digest-a' }
+      previewMeta: { revision: 'r2', revisionDigest: DIGEST }
     });
     const item = { kind: 'edits', clientId: 'c-1', changeSet: changes(cs => { cs.session = session.key; }) };
 
@@ -208,7 +212,7 @@ function runTests() {
     const store = createSessionStore({ stateDir: path.join(dir, 'state') });
     const { session } = store.open(artifact, {
       previewMode: 'framework-native',
-      previewMeta: { revision: 'r2', revisionDigest: 'digest-a' }
+      previewMeta: { revision: 'r2', revisionDigest: DIGEST }
     });
     const bad = {
       kind: 'edits',
@@ -261,7 +265,7 @@ function runTests() {
     const store = createSessionStore({ stateDir: path.join(dir, 'state') });
     const { session } = store.open(artifact, {
       previewMode: 'framework-native',
-      previewMeta: { revision: 'r2', revisionDigest: 'digest-a' }
+      previewMeta: { revision: 'r2', revisionDigest: DIGEST }
     });
     const edits = { kind: 'edits', clientId: 'c-1', changeSet: changes(cs => { cs.session = session.key; }) };
     assert.strictEqual(store.queueFeedback(session.key, [edits]).accepted.length, 1);

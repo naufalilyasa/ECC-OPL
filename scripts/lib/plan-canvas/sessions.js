@@ -85,6 +85,24 @@ function previewIdentity(session) {
   ].join('\u0000');
 }
 
+// Where the submitted source change stands, in the same vocabulary the inspector
+// shows. `preview-only` is the default: overrides exist only in the browser.
+// `ready` means the preview was re-opened on a different revision, so the
+// rendered output now names real source rather than a temporary override.
+const VISUAL_EDIT_STATES = new Set(['preview-only', 'submitted', 'applying', 'ready', 'failed']);
+
+function setVisualEdit(session, state, extra) {
+  if (!session || !VISUAL_EDIT_STATES.has(state)) return;
+  const previous = session.visualEdits || {};
+  // Carry the submitted digest forward: the `failed` check compares the live
+  // preview against the revision the owner submitted, so dropping it here would
+  // make every agent reply look like a source change.
+  session.visualEdits = Object.assign({}, previous, { state: state, at: nowIso() }, extra || {});
+  if (state !== 'preview-only' && !session.visualEdits.changeSetId) {
+    session.visualEdits.changeSetId = null;
+  }
+}
+
 function planDigestOrNull(file) {
   try {
     return computePlanDigest(file);
@@ -382,8 +400,18 @@ function createSessionStore({ stateDir = resolveStateDir() } = {}) {
         delete session.previewUrl;
         delete session.previewMeta;
       }
-      if (previewIdentity(session) !== before && Array.isArray(session.pendingFeedback)) {
-        session.pendingFeedback = session.pendingFeedback.filter(item => item.kind !== 'verdict');
+      if (previewIdentity(session) !== before) {
+        if (Array.isArray(session.pendingFeedback)) {
+          session.pendingFeedback = session.pendingFeedback.filter(item => item.kind !== 'verdict');
+        }
+        // Reopening the preview on a different revision is how source changes
+        // arrive. That is the only signal that the submitted edits rendered.
+        const live = session.previewMeta || {};
+        const visual = session.visualEdits;
+        if (visual && (visual.state === 'submitted' || visual.state === 'applying')
+          && live.revisionDigest && live.revisionDigest !== (visual.submittedRevisionDigest || null)) {
+          setVisualEdit(session, 'ready', { changeSetId: visual.changeSetId || null });
+        }
       }
     }
     session.updatedAt = nowIso();
@@ -407,6 +435,13 @@ function createSessionStore({ stateDir = resolveStateDir() } = {}) {
       // the preview (in this batch or still queued) has not reached source yet.
       const undrained = (session.pendingFeedback || []).some(item => item.kind === 'edits');
       if (batchHasEdits || undrained) return reject('PENDING_EDITS', { verdict: raw.verdict });
+      // Accepted edits are not source yet. A verdict stays back until the
+      // preview was reopened on the revision those edits produced, so an
+      // approval always names rendered source and not a temporary override.
+      const visual = session.visualEdits;
+      if (visual && (visual.state === 'submitted' || visual.state === 'applying' || visual.state === 'failed')) {
+        return reject('VISUAL_EDIT_UNRESOLVED', { verdict: raw.verdict, state: visual.state });
+      }
       binding = validateVerdictSubmission(raw, session, key);
       if (!binding.ok) return reject(binding.reason, { verdict: raw.verdict });
     }
@@ -474,6 +509,18 @@ function createSessionStore({ stateDir = resolveStateDir() } = {}) {
       } else rejected.push(result.rejected);
     }
     session.pendingFeedback.push(...accepted);
+    const acceptedEdits = accepted.find(item => item.kind === 'edits' && item.changeSet);
+    if (acceptedEdits) {
+      // The change set is queued, not source. Record which revision it was
+      // drawn against so reopening on a new digest can be recognised later.
+      const live = session.previewMeta || {};
+      session.visualEdits = {
+        state: 'submitted',
+        at: nowIso(),
+        changeSetId: acceptedEdits.changeSet.id,
+        submittedRevisionDigest: live.revisionDigest || null
+      };
+    }
     for (const item of accepted) {
       session.chat.push({ role: 'user', kind: item.kind, text: chatLineFor(item), at: item.at });
     }
@@ -501,6 +548,10 @@ function createSessionStore({ stateDir = resolveStateDir() } = {}) {
         return false;
       });
       session.pendingFeedback = [];
+      if (items.some(item => item.kind === 'edits') && session.visualEdits) {
+        // An agent drained the change set: it is working on source now.
+        setVisualEdit(session, 'applying', { changeSetId: session.visualEdits.changeSetId || null });
+      }
       // Every queued verdict was stale: nothing is waiting any more, so the
       // session must not stay in the 'feedback' state.
       if (items.length === 0 && session.status === 'feedback') session.status = 'open';
@@ -535,6 +586,16 @@ function createSessionStore({ stateDir = resolveStateDir() } = {}) {
     if (!session) return null;
     const entry = { role: 'agent', kind: 'chat', text: sanitizeText(text), at: nowIso() };
     session.chat.push(entry);
+    // The agent spoke and the preview revision did not move: the submitted
+    // visual edits did not reach source. Say so instead of leaving the state
+    // stuck at `applying` and the verdict permanently blocked.
+    const visual = session.visualEdits;
+    if (visual && (visual.state === 'submitted' || visual.state === 'applying')) {
+      const live = (session.previewMeta || {}).revisionDigest || null;
+      if (live === (visual.submittedRevisionDigest || null)) {
+        setVisualEdit(session, 'failed', { changeSetId: visual.changeSetId || null });
+      }
+    }
     session.updatedAt = nowIso();
     persist();
     return entry;
@@ -577,6 +638,14 @@ function createSessionStore({ stateDir = resolveStateDir() } = {}) {
     queueFeedback,
     takeFeedback,
     addAgentReply,
+    markVisualEdit(key, state, extra) {
+      const session = get(key);
+      if (!session) return null;
+      setVisualEdit(session, state, extra);
+      session.updatedAt = nowIso();
+      persist();
+      return session.visualEdits;
+    },
     end,
     list,
     hasOpenSessions

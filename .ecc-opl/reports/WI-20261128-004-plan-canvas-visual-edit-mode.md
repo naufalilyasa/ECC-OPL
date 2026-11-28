@@ -1,7 +1,7 @@
 # WI-20261128-004 — Plan Canvas framework-native visual edit mode
 
 deliveryStatus: COMPLETED_WITH_LIMITATIONS
-verificationStatus: PARTIAL (real browser runs on React/Vite, Vue/Vite, Laravel+Inertia and a two-instance shared-component page; Svelte/Next/Nuxt/Angular unverified)
+verificationStatus: PARTIAL (real browser runs on React/Vite, Vue/Vite, Laravel+Inertia, a two-instance shared-component page and a two-instance real React component; Svelte/Next/Nuxt/Angular and an Antigravity CLI canvas runtime unverified)
 
 ## Summary
 
@@ -87,6 +87,27 @@ column. Roll-up:
 | legacy standalone HTML + ordinary plan review unchanged | 22 | suite-only |
 | OpenCode/AGY install closure intact | 23 | suite-only (`validate-commands`, catalog check) |
 | shared-component instance isolation | 11 | proven — two clones of one template; editing one leaves the sibling at `15px`, the selector matches one element, component scope is owner-confirmed |
+| one real React component, two instances | 11 / 7 | proven — one `StatCard` definition, two call sites; runtime override and an instance-only source prop both leave the sibling at `26px` |
+
+## Closure cycle (external verdict follow-up)
+
+The external verdict was **ARCHITECTURE ACCEPTED** with eleven numbered closure
+requirements. The editor was not rebuilt; every change landed in the existing
+`scripts/lib/plan-canvas/` modules.
+
+| # | Requirement | What changed | Evidence |
+|---|---|---|---|
+| 1 | per-target stale tracking | `staleTargets` set in `edit-mode.js`; `pc:select` drops only the reselected id; `pc:targets` prunes stale ids from pending and reports a dropped count | closure test 1 |
+| 2 | freeze the payload, not the id | `editFrozen` carries `{id, fp}` where `fp = JSON.stringify(targets)`; a changed payload mints a new id; the ack clears only the submitted keys | closure tests 2, 3 |
+| 3 | preview-only / submitted / applying / ready / failed | `VISUAL_EDIT_STATES` + `setVisualEdit` in `sessions.js`, `visualEditFor()` in `server.js`, `#editLifecycle` in `ui.js` | closure tests 5, 5b; browser run |
+| 4 | full revision binding | `normalizeChangeSet()` rejects `MISSING_REVISION`, `SECTION_MISMATCH`, `REVISION_MISMATCH`, `DESIGN_MISMATCH`; exact `revisionDigest` equality for framework-native sessions | closure test 6; `plan-canvas-change-set.test.js` |
+| 5 | reconcile document-scoped state | `quietTargets` in `sdk.js`; the quieting rule is emitted only while a read-back is pending, then stripped with `data-ecc-edit`; `dropOverrides(keys)` backs `pc:clear-overrides` with keys | closure tests 4, 7 |
+| 6 | real inspector controls | typed `EDIT_FIELDS` (`length`/`number`/`color`/`select`/`text`), sliders + exact input + unit selects, `<details>` groups, breadcrumb, before/after pending rows, sticky footer, lifecycle line; raw CSS confined to `Advanced` | `evidence/phase7-item6-inspector-ui.md` |
+| 7 | instance-only change in real source | `StatCard` rendered twice; override then a call-site prop; sibling untouched | `evidence/phase7-item7-react-component-instances.md` |
+| 8 | Nexvora change stays uncommitted | no commit or push touching `nexvora-hris`; the frame exception remains `@env(['local','development'])` | `git status` on the owner app |
+| 9 | installed-runtime closure | installed OpenCode canvas was missing `change-set.js`/`edit-mode.js` and four stale modules; synced and then loaded and run from the installed path | `evidence/phase7-item9-installed-runtime-closure.md` |
+| 10 | focused behavioural tests | `tests/lib/plan-canvas-visual-edit-closure.test.js`, 9 assertions over the eight listed scenarios | suite run below |
+| 11 | consolidated report | this document | — |
 
 ## Evidence
 
@@ -101,6 +122,14 @@ column. Roll-up:
   isolation, one-element selector, owner-confirmed component scope, sibling re-render.
 - `evidence/phase7-review2-high-fixes.md` — the four HIGH findings from quick review run 2, each
   with the live status strings that prove the fix.
+- `evidence/phase7-item6-inspector-ui.md` — the reworked inspector in a real browser: typed
+  controls, no PENDING/EFFECT/status overlap, lifecycle `preview-only` → `submitted` → `ready`,
+  390×844 stacking.
+- `evidence/phase7-item7-react-component-instances.md` — one real `StatCard`, two call sites;
+  runtime override and an instance-only source prop, sibling untouched.
+- `evidence/phase7-item9-installed-runtime-closure.md` — the installed OpenCode canvas before and
+  after the sync, module load map, and the installed server serving on `127.0.0.1:4731`.
+- `evidence/item6-item7/*.png` — seven screenshots referenced by the three items above.
 
 Owner-app changes (authorized section only, `nexvora-hris`):
 
@@ -115,11 +144,40 @@ The `// hmr probe` line added during the HMR investigation was removed; the file
 ## Verification
 
 ```
-node tests/run-all.js plan-canvas   300 / 300 passed (14 files)
-node scripts/ci/validate-commands.js
-node scripts/ci/command-registry.js --check
-npm run catalog:check
+node tests/run-all.js plan-canvas   313 / 313 passed (15 files)
+node tests/lib/plan-canvas-visual-edit-closure.test.js   9 / 9 passed
+node scripts/ci/validate-commands.js                     7 command files
+npm run command-registry:check                           up to date
+npm run catalog:check                                    72 agents / 7 commands / 380 skills
 ```
+
+Test-count reconciliation. The report previously recorded **300 / 300 (14
+files)**. Reworking the assertions for the closure requirements (per-target
+stale, keyed clear, payload fingerprint, reset marker removal, the 58% inspector
+stack) moved the same suite to **304 / 304 (14 files)**; one earlier run was
+recorded as 303 because it predated an assertion that was added in the same
+pass. The closure work item added a fifteenth file,
+`tests/lib/plan-canvas-visual-edit-closure.test.js`, with 9 assertions, so the
+authoritative figure is **313 / 313 (15 files)**. Only the last number is a
+measurement of the current tree.
+
+Closure suite, all passing:
+
+```
+1.  one stale target does not clear another, and its overrides drop
+2.  a retry reuses identity plus payload; a changed payload is a new request
+3.  edits added while submitting survive the acknowledgement
+4.  a reload during an in-flight override resets the editor state
+5.  the lifecycle moves submitted -> applying -> ready and blocks verdicts
+5b. an agent reply that does not move the digest marks the change failed
+6.  a native edit must bind section, revision, digest and design
+7.  reset and apply leave no editor-owned styling behind
+8.  the inspector exposes real controls per property kind
+```
+
+Real-browser runs behind those assertions: React/Vite inspector session
+`3bee5e31caad` (desktop 1440x900 and narrow 390x844), React component instances
+session `070be98d1f0e`, and the installed-runtime server on `127.0.0.1:4731`.
 
 Pre-existing, unrelated failures in this repo are unchanged and not caused by this work item:
 
@@ -131,14 +189,30 @@ Pre-existing, unrelated failures in this repo are unchanged and not caused by th
 
 - Svelte, Next, Nuxt and Angular hosts are unverified. DEC-01 makes none of them a requirement,
   but no claim should be made about them.
-- The Laravel `X-Frame-Options` change is live in the owner app and awaits owner sign-off.
-- Review run 2 returned BLOCK on four HIGH findings; all four are fixed and re-proven in a browser
-  (`evidence/phase7-review2-high-fixes.md`). The review's MEDIUM and LOW items were not addressed.
+- The Laravel `X-Frame-Options` change is live in the owner app and awaits owner sign-off. Nothing
+  was committed or pushed inside `nexvora-hris`.
+- Verdict reconciliation. The **external** verdict is ARCHITECTURE ACCEPTED (the eleven closure
+  items above are the follow-up). The **internal** quick review run 2 returned BLOCK on four HIGH
+  findings; all four are fixed and re-proven in a browser
+  (`evidence/phase7-review2-high-fixes.md`). The review's MEDIUM and LOW items were not addressed,
+  so the internal verdict is "no CRITICAL, no HIGH, MEDIUM/LOW deferred" — not a clean pass.
 - The Plan Canvas session store is in-memory: restarting the canvas server discards sessions. This
   is why failed-submission retry was proven by mutating the session digest rather than killing the
   server.
 - Row 20's stale detection follows **node identity**. A Fast Refresh that keeps the node correctly
   does not mark stale; a re-render that replaces it does.
+- **Runtime preview isolation is not source-level component isolation.** The override sheet scopes
+  rules per target id, so the sibling instance is unreachable at runtime. A source edit is
+  instance-scoped only because it was placed at one call site (a prop). If an agent instead edits
+  the shared component definition, every instance changes — which is the correct behaviour for that
+  edit, and is why `Scope: Shared component` exists and warns.
+- The installed **Antigravity CLI has no plan-canvas runtime**: no `scripts/lib/plan-canvas`, no
+  canvas skill directory, no `ecc-plan-canvas` on `PATH`. Its edit-mode closure is therefore not
+  verified there. Fixing that means installing a new surface, not closing this one.
+- Resize handles are deferred by the external verdict (allowed to follow). Drag-reparenting and
+  anything Figma-shaped stays out of scope.
+- Installed-runtime closure was checked on this machine only, by loading and running the synced
+  modules. No other machine or package-manager install was exercised.
 
 ## Next permitted step
 
