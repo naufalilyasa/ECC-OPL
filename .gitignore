@@ -123,12 +123,9 @@ assets/images/security/badrudi-exploit.mp4
 .playwright-mcp/
 
 # ECC-OPL engineering workspace — working artifacts are local by default.
-# Ignore the contents, not the directory, so the un-ignores below can apply.
+# Only consolidated reports are tracked; manifests, progress, timelines,
+# approvals, evidence and archived items stay out of Git.
 .ecc-opl/*
-# Consolidated reports and work-item manifests are the only tracked surfaces.
 !.ecc-opl/reports/
-!.ecc-opl/work-items/
-!.ecc-opl/work-items/*/
-.ecc-opl/work-items/*/*
-!.ecc-opl/work-items/*/manifest.json
+!.ecc-opl/reports/**
 # Local-only alternative (never committed): add the same rule to .git/info/exclude

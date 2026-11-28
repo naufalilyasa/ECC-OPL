@@ -53,13 +53,18 @@ for R in "$CLAUDE_PLUGIN_ROOT" \
          "./.agents" "." "${CLAUDE_CONFIG_DIR:-$HOME/.claude}"; do
   [ -n "$R" ] && [ -f "$R/scripts/lib/work-item/work-item.js" ] && { WI="$R/scripts/lib/work-item/work-item.js"; break; }
 done
-if [ -z "$WI" ] || [ "$ECC_OPL_STANDALONE" = "1" ] || [ "${1:-}" = "--standalone" ]; then MODE=standalone
-else ITEM=$(node "$WI" resolve); [ "$ITEM" = "none" ] && MODE=standalone || MODE=bound; fi
+# TASK_SLUG is this task's identity, not the last active pointer.
+TASK_SLUG="<kebab-slug-of-this-task>"
+if [ -z "$WI" ]; then echo "work-item helper not found — running standalone (legacy paths)"; MODE=standalone
+elif [ "$ECC_OPL_STANDALONE" = "1" ] || [ "${1:-}" = "--standalone" ]; then echo "legacy paths (explicit opt-out)"; MODE=standalone
+elif [ -n "$EXPLICIT_ID" ]; then ITEM=$(node "$WI" bind --id "$EXPLICIT_ID") || exit 1; MODE=bound
+else ITEM=$(node "$WI" bind --slug "$TASK_SLUG") || exit 1; MODE=bound; fi
+[ "$MODE" = "bound" ] && echo "bound: $ITEM -> .ecc-opl/work-items/$ITEM"
 ```
 
-Standalone prints the report to chat exactly as below. When bound, also write it to
-`.ecc-opl/work-items/<ITEM>/implementation/verify-<date>.md` and append
-`node "$WI" append --workflow verify --artifact verify --path <report>`.
+Legacy paths apply only under the two explicit opt-outs above; a missing pointer is not one.
+When bound, write the report to `.ecc-opl/work-items/<ITEM>/implementation/verify-<date>.md`
+and append it with `--outcome pass|fail`.
 
 ## Verification Report
 

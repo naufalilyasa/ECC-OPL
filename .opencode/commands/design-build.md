@@ -29,15 +29,18 @@ does not carry).
 Every `docs/design/...` path below and in the skill resolves against `DESIGN_ROOT`:
 
 ```bash
-DESIGN_ROOT="docs/design"          # standalone default
-# bound: .ecc-opl/active names a live item, and neither --standalone nor
-# ECC_OPL_STANDALONE=1 is set → DESIGN_ROOT=".ecc-opl/work-items/<ITEM>/design"
+# Bound by default: bind this task's identity, then design inside its item.
+# TASK_SLUG is what this run is about, not the last active pointer.
+ITEM=$(node <helper> bind --slug "<kebab-slug-of-this-task>") || exit 1
+DESIGN_ROOT=".ecc-opl/work-items/$ITEM/design"
+# legacy paths only under --standalone or ECC_OPL_STANDALONE=1:
+#   DESIGN_ROOT="docs/design"
 ```
 
-Resolve the work item with the shared helper (`scripts/lib/work-item/work-item.js`) probed at
-`$CLAUDE_PLUGIN_ROOT`, `${OPENCODE_CONFIG_DIR:-$HOME/.config/opencode}`, `./.agents`, `.`,
-`${CLAUDE_CONFIG_DIR:-$HOME/.claude}`. No helper or no live item means standalone: no
-`.ecc-opl/` writes and byte-identical legacy behaviour.
+Resolve the helper (`scripts/lib/work-item/work-item.js`) at `$CLAUDE_PLUGIN_ROOT`,
+`${OPENCODE_CONFIG_DIR:-$HOME/.config/opencode}`, `./.agents`, `.`,
+`${CLAUDE_CONFIG_DIR:-$HOME/.claude}`. A missing helper still means standalone, so an
+uninstalled project is never blocked — but a missing pointer is not an opt-out.
 
 `--resume` reads `$DESIGN_ROOT/BUILD-STATE.md` first, then falls back to
 `docs/design/BUILD-STATE.md`, so a build started before binding still resumes. Canvas state stays

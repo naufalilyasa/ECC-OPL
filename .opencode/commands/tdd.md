@@ -18,14 +18,26 @@ for R in "$CLAUDE_PLUGIN_ROOT" \
          "./.agents" "." "${CLAUDE_CONFIG_DIR:-$HOME/.claude}"; do
   [ -n "$R" ] && [ -f "$R/scripts/lib/work-item/work-item.js" ] && { WI="$R/scripts/lib/work-item/work-item.js"; break; }
 done
+# TASK_SLUG is this task's identity, not the last active pointer.
+TASK_SLUG="<kebab-slug-of-this-task>"
 if [ -z "$WI" ]; then echo "work-item helper not found — running standalone (legacy paths)"; MODE=standalone
-elif [ "$ECC_OPL_STANDALONE" = "1" ] || [ "${1:-}" = "--standalone" ]; then MODE=standalone
-elif [ -n "$EXPLICIT_ID" ]; then ITEM=$(node "$WI" resolve --id "$EXPLICIT_ID") && MODE=bound
-else ITEM=$(node "$WI" resolve); [ "$ITEM" = "none" ] && MODE=standalone || MODE=bound; fi
+elif [ "$ECC_OPL_STANDALONE" = "1" ] || [ "${1:-}" = "--standalone" ]; then echo "legacy paths (explicit opt-out)"; MODE=standalone
+elif [ -n "$EXPLICIT_ID" ]; then ITEM=$(node "$WI" bind --id "$EXPLICIT_ID") || exit 1; MODE=bound
+else ITEM=$(node "$WI" bind --slug "$TASK_SLUG") || exit 1; MODE=bound; fi
+[ "$MODE" = "bound" ] && echo "bound: $ITEM -> .ecc-opl/work-items/$ITEM"
 ```
 
-Precedence: `--standalone` > `$ECC_OPL_STANDALONE=1` > `--work-item <id>` > `.ecc-opl/active` > standalone.
-Standalone is byte-identical to today; no `.ecc-opl/` writes.
+Precedence: `--standalone` > `$ECC_OPL_STANDALONE=1` > `--work-item <id>` > exact `TASK_SLUG` match > new work item.
+A missing pointer is not an opt-out: the helper binds the item whose slug matches this task and creates
+one when none matches. If you cannot name this task in one slug, ask the owner instead of reusing the
+node that happens to be active. Legacy paths survive only through the two explicit opt-outs above.
+Legacy paths (no `.ecc-opl/` writes) apply only under the explicit opt-outs.
+
+### 0a. Applicable plan (bound only)
+Consume the plan the owner approved for this item —
+`.ecc-opl/work-items/$ITEM/plan/*.plan.md`, or `plan_ref.path` in
+`.opencode/workflows/active.json`. A plan that is unapproved or belongs to another work item is
+refused, not silently adopted.
 
 ## Orchestration Workflow
 

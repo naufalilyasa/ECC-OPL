@@ -354,13 +354,21 @@ Semua workflow ECC-OPL membaca/menulis artifact kerja lewat satu direktori proye
 ```
 
 **Binding.** Presedensi: `--standalone` > `ECC_OPL_STANDALONE=1` > `--work-item <id>` >
-`.ecc-opl/active` > standalone default. Tanpa work item aktif, command berjalan persis seperti
-sebelumnya (path legacy, tanpa tulisan `.ecc-opl/`).
+exact `TASK_SLUG` match > item baru. Default bukan lagi "standalone": setiap workflow mengikat
+identitas task-nya sendiri lewat `node "$WI" bind --slug "$TASK_SLUG"` — item yang slug-nya sama
+di-resume, objektif berbeda membuat item baru, dan item yang aktif terakhir tidak dipakai sebagai
+tebakan. Pointer absen bukan opt-out; legacy path hanya berlaku lewat dua flag eksplisit di atas.
+`bind --id` pada item `closed` otomatis membukanya kembali (`reopen`).
 
-**Helper.** `scripts/lib/work-item/work-item.js` (`resolve|ensure|append|progress|close|archive`).
+**Helper.** `scripts/lib/work-item/work-item.js`
+(`bind|resolve|append|progress|close|reopen|archive`; `ensure` = alias `bind`).
 Dicari di `$CLAUDE_PLUGIN_ROOT`, `${OPENCODE_CONFIG_DIR:-$HOME/.config/opencode}`, `./.agents`,
 `.`, `${CLAUDE_CONFIG_DIR:-$HOME/.claude}`. Bila tidak ketemu: mode standalone dengan satu baris
 pemberitahuan — tidak pernah menulis `.ecc-opl/` dari inline heredoc.
+`resolve --id <unknown>` keluar dengan kode 1, bukan mencetak `none`, jadi preamble tidak bisa
+salah menganggap binding gagal sebagai sukses. `archive` menolak item yang belum `closed`,
+memindai `archive/` saat membuat ID baru (identitas tidak pernah dipakai ulang), dan menyimpan
+referensi artifact eksternal di `archive/index.json`.
 Helper ini CommonJS: bila disalin manual ke proyek ber-`"type": "module"` di `package.json`,
 sertakan juga `scripts/lib/work-item/package.json` dan `scripts/lib/state-store/package.json`
 (isi `{"type":"commonjs"}`), kalau tidak Node menganggap `.js` sebagai ESM dan gagal dengan
@@ -370,9 +378,21 @@ sertakan juga `scripts/lib/work-item/package.json` dan `scripts/lib/state-store/
 eksekusi (workflow/phase/gates). `progress.json` hanya indeks turunan dari `timeline.jsonl` dan
 selalu bisa dibangun ulang. `.opencode/markers/` tetap baseline inkremental.
 
-**Git.** Hanya `reports/` dan `work-items/*/manifest.json` yang di-track; seluruh artifact kerja
-lain di-ignore. Alternatif lokal tanpa mengubah `.gitignore`: `.git/info/exclude`. Tidak ada
-commit/push otomatis dari workflow mana pun.
+**Event.** `append` menerima `--run`, `--revision`, `--outcome`
+(`pass|fail|blocked|pending_approval|skipped|incomplete`), `--evidence`, dan `--note` bebas.
+`progress.json` menurunkan `outcomes`, `runs`, `blockers`, `pendingApprovals`, `nextActions`;
+completion tidak pernah disimpulkan dari keberadaan artifact atau jumlah event, dan event lama
+tidak ditimpa run berikutnya (timeline append-only).
+
+**PRD & plan routing.** `plan-prd` menulis ke `.ecc-opl/work-items/<ITEM>/prd/`; `/plan` hanya
+mengonsumsi PRD berstatus `APPROVED` (atau draft yang disebut owner secara eksplisit), dan `tdd`
+hanya mengonsumsi plan yang sudah disetujui. Draft yang tidak terkait atau belum disetujui tidak
+pernah dikonsumsi otomatis.
+
+**Git.** Hanya `reports/` yang di-track; manifest, progress, timeline, working docs, approvals,
+evidence, runtime, dan artifact arsip di-ignore. `bind` menulis `.ecc-opl/.gitignore` bila proyek
+ber-git; `--ignore-mode local` menulis aturan yang sama ke `.git/info/exclude`, `--ignore-mode none`
+tidak menulis apa pun. Tidak ada commit/push otomatis dari workflow mana pun.
 
 **Laporan final.** `.ecc-opl/reports/<WI-ID>.md`, nama file stabil (id sudah memuat slug).
 Field wajib: `deliveryStatus` (COMPLETED | COMPLETED_WITH_LIMITATIONS | BLOCKED |
