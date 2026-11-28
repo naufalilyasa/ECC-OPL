@@ -4,7 +4,6 @@ const fs = require('fs');
 const crypto = require('crypto');
 const os = require('os');
 const path = require('path');
-const initSqlJs = require('sql.js');
 const { withStateStoreLock, recordCleanupError } = require('./file-lock');
 
 const { applyMigrations, getAppliedMigrations } = require('./migrations');
@@ -426,7 +425,9 @@ function openDatabase(SQL, dbPath, trustedReads) {
 
 async function createStateStore(options = {}) {
   const dbPath = resolveStateStorePath(options);
-  const SQL = await initSqlJs();
+  // Loaded lazily: the projection is a derived cache, so a broken sql.js install
+  // must degrade to a warning instead of killing the requiring module.
+  const SQL = await require('sql.js')();
   const trustedReads = new WeakSet();
   const db = openDatabase(SQL, dbPath, trustedReads);
   let appliedMigrations;

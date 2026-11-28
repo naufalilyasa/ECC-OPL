@@ -159,6 +159,8 @@ function get(base, pathname) {
     assert.ok(html.includes('framework-native · react · 01-app-shell · r3'));
     assert.ok(html.includes('id="openSeparate"'));
     assert.ok(html.includes('href="http://127.0.0.1:5199/"'));
+    assert.ok(html.includes('id="previewUrl"'), 'preview URL shown in the top bar');
+    assert.ok(html.includes('>http://127.0.0.1:5199/</a>'), 'URL chip renders the address');
     const boot = bootstrapOf(html);
     assert.equal(boot.previewMode, 'framework-native');
     assert.equal(boot.previewUrl, 'http://127.0.0.1:5199/');
@@ -173,6 +175,7 @@ function get(base, pathname) {
     const html = renderCanvasHtml(session);
     assert.ok(!html.includes('id="modeChip"'));
     assert.ok(!html.includes('id="openSeparate"'));
+    assert.ok(!html.includes('id="previewUrl"'));
     const boot = bootstrapOf(html);
     assert.equal('previewMode' in boot, false);
     assert.equal('previewUrl' in boot, false);
@@ -201,8 +204,8 @@ function get(base, pathname) {
       assert.ok(res.body.includes('src="http://127.0.0.1:5199/"'));
       assert.ok(res.body.includes('id="app-frame"'));
       assert.ok(res.body.includes('/live-bridge.js'));
-      assert.ok(res.body.includes('Open separately'));
-      assert.ok(res.body.includes('01-app-shell'));
+      assert.ok(!res.body.includes('Open separately'), 'metadata lives in the canvas top bar only');
+      assert.ok(!res.body.includes('class="bar"'), 'wrapper does not rebuild the top bar');
       assert.ok(!res.body.includes('should not be served'));
     });
 

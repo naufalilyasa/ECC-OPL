@@ -94,13 +94,16 @@ function canvasCss() {
   ::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
   button{font-family:var(--font)}
 
-  .bar{flex:none;display:flex;align-items:center;gap:12px;height:52px;padding:0 16px;background:color-mix(in srgb,var(--bg2) 88%,transparent);border-bottom:1px solid var(--border);backdrop-filter:blur(16px)}
-  .brand{display:flex;align-items:center;gap:9px;min-width:0}
+  .bar{flex:none;display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;min-height:52px;padding:8px 14px;background:color-mix(in srgb,var(--bg2) 88%,transparent);border-bottom:1px solid var(--border);backdrop-filter:blur(16px)}
+  .brand{display:flex;align-items:center;gap:9px;min-width:0;flex:none}
   .brand .logo{width:26px;height:26px;flex:none;background:linear-gradient(135deg,var(--accent),var(--pink));border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff}
   .brand .name{font-size:13.5px;font-weight:600;white-space:nowrap}
-  .brand .file{font-size:11.5px;color:var(--text2);font-family:var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:34vw}
+  .brand .file{font-size:11.5px;color:var(--text2);font-family:var(--mono);white-space:nowrap}
   .bar .spacer{flex:1}
-  .mode-chip{font-size:11px;font-family:var(--mono);color:var(--accent);background:var(--accent-glow);border:1px solid var(--accent-dim);border-radius:99px;padding:2px 9px;white-space:nowrap;max-width:30vw;overflow:hidden;text-overflow:ellipsis}
+  .bar .actions{display:flex;align-items:center;gap:8px;flex:none}
+  .mode-chip{font-size:11px;font-family:var(--mono);color:var(--accent);background:var(--accent-glow);border:1px solid var(--accent-dim);border-radius:99px;padding:3px 10px;white-space:normal;line-height:1.35}
+  .url-chip{display:inline-flex;align-items:center;min-height:24px;font-size:11px;font-family:var(--mono);color:var(--text2);background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:3px 9px;text-decoration:none;flex:none;white-space:nowrap}
+  .url-chip:hover{color:var(--text);border-color:var(--accent-dim)}
   a.icon-btn{text-decoration:none}
 
   .presence{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:500;color:var(--text2);background:var(--bg3);border:1px solid var(--border);border-radius:99px;padding:3px 10px 3px 8px;white-space:nowrap}
@@ -707,7 +710,8 @@ function renderCanvasHtml(session, { clientPath = '/client.js', cssPath = '/canv
     <span class="file" title="${escapeHtml(session.file)}">${escapeHtml(name)}</span>
   </div>
   <div class="spacer"></div>
-${session.previewMode ? `  <span id="modeChip" class="mode-chip" title="Preview mode">${escapeHtml(modeLabel)}</span>\n` : ''}${session.previewUrl ? `  <a id="openSeparate" class="icon-btn" href="${escapeHtml(session.previewUrl)}" target="_blank" rel="noopener" title="Open the live preview in its own tab">Open separately</a>\n` : ''}  <div id="presence" class="presence" data-state="waiting"><span class="dot"></span><span class="label">agent not connected</span></div>
+${session.previewMode ? `  <span id="modeChip" class="mode-chip" title="Preview mode">${escapeHtml(modeLabel)}</span>\n` : ''}${session.previewUrl ? `  <a id="previewUrl" class="url-chip" href="${escapeHtml(session.previewUrl)}" target="_blank" rel="noopener" title="Live preview URL">${escapeHtml(session.previewUrl)}</a>\n` : ''}  <div class="actions">
+  <div id="presence" class="presence" data-state="waiting"><span class="dot"></span><span class="label">agent not connected</span></div>
   <div id="annotate" class="toggle" role="switch" aria-pressed="true" title="Toggle annotate mode (Cmd/Ctrl+I)">
     <span>Annotate</span><span class="track"><span class="knob"></span></span>
   </div>
@@ -724,10 +728,12 @@ ${session.previewMode ? `  <span id="modeChip" class="mode-chip" title="Preview 
     </select>
     <input id="viewportCustom" type="number" min="240" max="4096" step="1" placeholder="px" title="Custom viewport width (px)" hidden>
   </div>
+  ${session.previewUrl ? `<a id="openSeparate" class="icon-btn" href="${escapeHtml(session.previewUrl)}" target="_blank" rel="noopener" title="Open the live preview in its own tab">Open separately</a>` : ''}
   <button id="panelBtn" class="icon-btn" type="button" title="Hide conversation panel" aria-pressed="true">Panel</button>
   <button id="themeBtn" class="icon-btn" type="button">light</button>
   <button id="reloadBtn" class="icon-btn" type="button" title="Reload artifact">Reload</button>
   <button id="endBtn" class="icon-btn danger" type="button">End session</button>
+  </div>
 </header>
 <div id="staleNotice" class="stale-notice" role="status" hidden></div>
 <div class="layout">

@@ -25,9 +25,12 @@ Do not use it for a one-shot component edit or a review of an existing page.
 
 Every `docs/design/...` path in this skill resolves against `DESIGN_ROOT`:
 
-- standalone (default): `docs/design`
-- bound: `.ecc-opl/work-items/<ITEM>/design`, when `.ecc-opl/active` names a live work item and
-  neither `--standalone` nor `ECC_OPL_STANDALONE=1` is set
+- bound (default): `.ecc-opl/work-items/<ITEM>/design`, where `<ITEM>` is this task's identity
+  from `work-item.js bind --slug "<this-task-slug>"` (explicit ID → that item, related active
+  item → continue, otherwise a new item). `.ecc-opl/active` alone is the last-active pointer,
+  not the decision.
+- standalone: `docs/design`, only under `--standalone` / `ECC_OPL_STANDALONE=1`, or when the
+  helper is not installed at all
 
 The same relative structure applies under either root (`DESIGN.md`, `contracts/`,
 `BUILD-STATE.md`, `ASSETS.md`, `TYPOGRAPHY-MAP.md`, `sections/`, `evidence/`). `--resume` reads
